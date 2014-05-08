@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>14.10. Test Snappy and Protobuf &mdash; The Stingray Schema-Based File Reader</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '4.4.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
+    <link rel="up" title="14. Testing" href="index.html" />
+    <link rel="next" title="14.11. stingray.test __init__.py" href="test_init.html" />
+    <link rel="prev" title="14.9. COBOL Integration Tests" href="cobol_2.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="test_init.html" title="14.11. stingray.test __init__.py"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cobol_2.html" title="14.9. COBOL Integration Tests"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">14. Testing</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="test-snappy-and-protobuf">
+<span id="test-snappy-protobuf"></span><h1>14.10. Test Snappy and Protobuf<a class="headerlink" href="#test-snappy-and-protobuf" title="Permalink to this headline">¶</a></h1>
+<p>These are tests for the snappy decompression and the protobuf object encoding.</p>
+<div class="section" id="overheads">
+<h2>14.10.1. Overheads<a class="headerlink" href="#overheads" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;stingray.snappy and stingray.protobuf Unit Tests.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">stingray.snappy</span>
+<span class="kn">import</span> <span class="nn">stingray.protobuf</span>
+<span class="kn">import</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">sys</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="snappy-reader">
+<h2>14.10.2. Snappy Reader<a class="headerlink" href="#snappy-reader" title="Permalink to this headline">¶</a></h2>
+<p>The snappy decompressor is built around several layers of protocol.</p>
+<ol class="arabic simple">
+<li>There&#8217;s a framing protocol with a frame type and size.</li>
+<li>There&#8217;s a size for the uncompressed data in the frame.</li>
+<li>There are the 4 kinds of snappy tags that create the data.<ul>
+<li>00 : literal</li>
+<li>01, 10, 11 : copies with various kinds of sizes and offsets.</li>
+</ul>
+</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Snappy</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="c">#logging.getLogger().setLevel( logging.DEBUG )</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span>
+            <span class="n">b</span><span class="s">&#39;</span><span class="se">\x00\x11\x00\x00</span><span class="s">&#39;</span> <span class="c"># Header: 17 bytes in frame</span>
+            <span class="n">b</span><span class="s">&#39;</span><span class="se">\x18</span><span class="s">&#39;</span> <span class="c"># Size of the uncompressed data</span>
+            <span class="n">b</span><span class="s">&#39;</span><span class="se">\x14</span><span class="s">hi mom&#39;</span> <span class="c"># 000101,00 -&gt; literal of 5+1=6 bytes</span>
+            <span class="n">b</span><span class="s">&#39;</span><span class="se">\x09\x06</span><span class="s">&#39;</span> <span class="c"># 000,010,01 00000110 -&gt; copy 4+2=6 bytes offset of 6</span>
+            <span class="n">b</span><span class="s">&#39;</span><span class="se">\x16\x00\x0C</span><span class="s">&#39;</span> <span class="c"># 000101,10 00000000 00001100 -&gt; copy 5+1=6 bytes offset of 12</span>
+            <span class="n">b</span><span class="s">&#39;</span><span class="se">\x17\x00\x00\x12</span><span class="s">&#39;</span> <span class="c"># 000101,11 00000000 00000000 00000000 00010010 -&gt; copy 5+1=6 bytes offset of 18</span>
+
+            <span class="n">b</span><span class="s">&#39;</span><span class="se">\x00\x0a\x00\x00</span><span class="s">&#39;</span> <span class="c"># Header: 10 bytes in frame</span>
+            <span class="n">b</span><span class="s">&#39;</span><span class="se">\x08</span><span class="s">&#39;</span> <span class="c"># Size of the uncompressed data</span>
+            <span class="n">b</span><span class="s">&#39;</span><span class="se">\x1C</span><span class="s">ZYXW!@#$&#39;</span> <span class="c"># 000111,00 -&gt; literal of 7+1=8 bytes</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snappy</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">snappy</span><span class="o">.</span><span class="n">Snappy</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">test_should_decompress</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">data</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snappy</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">b</span><span class="s">&#39;hi momhi momhi momhi momZYXW!@#$&#39;</span><span class="p">,</span> <span class="n">data</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="protobuf-decoder">
+<h2>14.10.3. Protobuf Decoder<a class="headerlink" href="#protobuf-decoder" title="Permalink to this headline">¶</a></h2>
+<p>The protobuf decoder unpacks various kinds of data to create simple Message instances.</p>
+<p>This is a two-layer protocol.</p>
+<p>There&#8217;s a protobuf-encoded ArchiveInfo message.</p>
+<div class="highlight-python"><div class="highlight"><pre>message ArchiveInfo {
+    optional uint64 identifier = 1;
+    repeated MessageInfo message_infos = 2;
+}
+</pre></div>
+</div>
+<p>This contains a protobuf-encoded MessageInfo message.</p>
+<div class="highlight-python"><div class="highlight"><pre>message MessageInfo {
+    required uint32 type = 1;
+    repeated uint32 version = 2 [packed = true];
+    required uint32 length = 3;
+    repeated FieldInfo field_infos = 4;
+    repeated uint64 object_references = 5 [packed = true];
+    repeated uint64 data_references = 6 [packed = true];
+}
+</pre></div>
+</div>
+<p>The message has a payload, which is the relevant message that is part of the Numbers
+workbook.</p>
+<p>Here&#8217;s the proto definition for the test message encoded in the payload below.</p>
+<div class="highlight-python"><div class="highlight"><pre>message DocumentArchive {
+  repeated .TSP.Reference sheets = 1;
+  required .TSA.DocumentArchive super = 8;
+  optional .TSP.Reference calculation_engine = 3 [deprecated = true];
+  required .TSP.Reference stylesheet = 4;
+  required .TSP.Reference sidebar_order = 5;
+  required .TSP.Reference theme = 6;
+  optional .TN.UIStateArchive uistate = 7;
+  optional .TSP.Reference custom_format_list = 9;
+  optional string printer_id = 10;
+  optional string paper_id = 11;
+  optional .TSP.Size page_size = 12;
+}
+</pre></div>
+</div>
+<p>Note that each part of this (except for <tt class="docutils literal"><span class="pre">printer_id</span></tt> and <tt class="docutils literal"><span class="pre">paper_id</span></tt>)
+could involve decoding a contained message. We don&#8217;t recursively descend, however,
+merely decoding the top message.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Protobuf</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="c">#logging.getLogger(&quot;Archive_Reader&quot;).setLevel( logging.DEBUG )</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span> <span class="p">(</span>
+            <span class="mi">37</span><span class="p">,</span> <span class="c"># 37 bytes follow.</span>
+            <span class="c"># AchiveInfo and MessageInfo</span>
+            <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">133</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">134</span><span class="p">,</span>
+            <span class="mi">12</span><span class="p">,</span> <span class="mi">185</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">132</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">137</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">183</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">136</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">184</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">183</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span>
+            <span class="c"># Payload</span>
+            <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">183</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">183</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">136</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span>
+            <span class="mi">42</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">185</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">137</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">58</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">132</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span>
+            <span class="mi">2</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">133</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">184</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">58</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">134</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">97</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">108</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">116</span><span class="p">,</span> <span class="mi">116</span><span class="p">,</span>
+            <span class="mi">101</span><span class="p">,</span> <span class="mi">114</span><span class="p">,</span> <span class="mi">98</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">protobuf</span><span class="o">.</span><span class="n">Archive_Reader</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">test_should_decode</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">message_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">archive_iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">m0_id</span><span class="p">,</span> <span class="n">m0_m</span> <span class="o">=</span> <span class="n">message_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">m0_id</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;TN.DocumentArchive&quot;</span><span class="p">,</span> <span class="n">m0_m</span><span class="o">.</span><span class="n">name_</span> <span class="p">)</span>
+        <span class="n">sheets</span><span class="o">=</span> <span class="n">m0_m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">[(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">183</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">183</span><span class="p">,</span> <span class="mi">15</span><span class="p">)],</span> <span class="n">sheets</span> <span class="p">)</span>
+        <span class="nb">super</span><span class="o">=</span> <span class="n">m0_m</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">[(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">58</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">132</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">133</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">184</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">135</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">58</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">134</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="nb">super</span> <span class="p">)</span>
+        <span class="n">calculation_engine</span><span class="o">=</span> <span class="n">m0_m</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">[],</span> <span class="n">calculation_engine</span> <span class="p">)</span>
+        <span class="n">stylesheet</span><span class="o">=</span> <span class="n">m0_m</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">[(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">136</span><span class="p">,</span> <span class="mi">12</span><span class="p">)],</span> <span class="n">stylesheet</span> <span class="p">)</span>
+        <span class="n">sidebar_order</span><span class="o">=</span> <span class="n">m0_m</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">[(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">185</span><span class="p">,</span> <span class="mi">14</span><span class="p">)],</span> <span class="n">sidebar_order</span> <span class="p">)</span>
+        <span class="n">theme</span><span class="o">=</span> <span class="n">m0_m</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">[(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">137</span><span class="p">,</span> <span class="mi">12</span><span class="p">)],</span> <span class="n">theme</span> <span class="p">)</span>
+        <span class="n">uistate</span><span class="o">=</span> <span class="n">m0_m</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">[],</span> <span class="n">uistate</span> <span class="p">)</span>
+        <span class="n">custom_format_list</span><span class="o">=</span> <span class="n">m0_m</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">[],</span> <span class="n">custom_format_list</span> <span class="p">)</span>
+        <span class="n">printer_id</span><span class="o">=</span> <span class="n">m0_m</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">[(</span><span class="mi">32</span><span class="p">,)],</span> <span class="n">printer_id</span> <span class="p">)</span>
+        <span class="n">paper_id</span><span class="o">=</span> <span class="n">m0_m</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+        <span class="c"># b&#39;na-letter&#39; is the paper_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">[(</span><span class="mi">110</span><span class="p">,</span> <span class="mi">97</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">108</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">116</span><span class="p">,</span> <span class="mi">116</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">114</span><span class="p">)],</span> <span class="n">paper_id</span> <span class="p">)</span>
+        <span class="n">page_size</span><span class="o">=</span> <span class="n">m0_m</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">[(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">68</span><span class="p">)],</span> <span class="n">page_size</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="test-suite-and-runner">
+<h2>14.10.4. Test Suite and Runner<a class="headerlink" href="#test-suite-and-runner" title="Permalink to this headline">¶</a></h2>
+<p>In case we want to build up a larger test suite, we avoid doing
+any real work unless this is the main module being executed.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">test</span>
+<span class="n">suite</span><span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">suite_maker</span><span class="p">(</span> <span class="nb">globals</span><span class="p">()</span> <span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span> <span class="n">__file__</span> <span class="p">)</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">suite</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">14.10. Test Snappy and Protobuf</a><ul>
+<li><a class="reference internal" href="#overheads">14.10.1. Overheads</a></li>
+<li><a class="reference internal" href="#snappy-reader">14.10.2. Snappy Reader</a></li>
+<li><a class="reference internal" href="#protobuf-decoder">14.10.3. Protobuf Decoder</a></li>
+<li><a class="reference internal" href="#test-suite-and-runner">14.10.4. Test Suite and Runner</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cobol_2.html"
+                        title="previous chapter">14.9. COBOL Integration Tests</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_init.html"
+                        title="next chapter">14.11. stingray.test <tt class="docutils literal"><span class="pre">__init__.py</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/testing/snappy_protobuf.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="test_init.html" title="14.11. stingray.test __init__.py"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cobol_2.html" title="14.9. COBOL Integration Tests"
+             >previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" >14. Testing</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, S. Lott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

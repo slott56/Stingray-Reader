@@ -1,0 +1,410 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>14.6. Workbook Testing &mdash; The Stingray Schema-Based File Reader</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '4.4.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
+    <link rel="up" title="14. Testing" href="index.html" />
+    <link rel="next" title="14.7. COBOL Schema Testing" href="cobol.html" />
+    <link rel="prev" title="14.5. Schema Loader Testing" href="schema_loader.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cobol.html" title="14.7. COBOL Schema Testing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="schema_loader.html" title="14.5. Schema Loader Testing"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">14. Testing</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="workbook-testing">
+<h1>14.6. Workbook Testing<a class="headerlink" href="#workbook-testing" title="Permalink to this headline">¶</a></h1>
+<p>There are many types of workbooks.  See <a class="reference internal" href="../workbook.html#workbook"><em>Workbook Module &#8211; Uniform Wrapper on All Workbooks</em></a> for details.</p>
+<p>These tests use actual files in the <tt class="file docutils literal"><span class="pre">sample</span></tt> directory.</p>
+<ul class="simple">
+<li><tt class="file docutils literal"><span class="pre">csv_workbook.csv</span></tt> used by <a class="reference internal" href="#csv-workbook-tests">CSV_Workbook Tests</a>.</li>
+<li><tt class="file docutils literal"><span class="pre">excel97_workbook.xls</span></tt> used by <a class="reference internal" href="#xls-workbook-tests">XLS_Workbook Tests</a>.</li>
+<li><tt class="file docutils literal"><span class="pre">excel_workbook.xlsx</span></tt> used by <a class="reference internal" href="#xlsx-workbook-tests">XLSX_Workbook Tests</a>.</li>
+<li><tt class="file docutils literal"><span class="pre">ooo_workbook.ods</span></tt> used by <a class="reference internal" href="#ods-workbook-tests">ODS_Workbook Tests</a>.</li>
+<li><tt class="file docutils literal"><span class="pre">tab_workbook.tab</span></tt> used by <a class="reference internal" href="#csv-workbook-with-tab-delimiters">CSV_Workbook with Tab delimiters</a>.</li>
+<li><tt class="file docutils literal"><span class="pre">workbook.simple</span></tt> used by <a class="reference internal" href="#fixed-workbook-tests">Fixed_Workbook Tests</a>.  <tt class="file docutils literal"><span class="pre">simple.csv</span></tt> is the schema.</li>
+<li><tt class="file docutils literal"><span class="pre">numbers_workbook.numbers</span></tt> used by <a class="reference internal" href="#numbers-workbook-tests">Numbers_Workbook Tests</a>.</li>
+</ul>
+<div class="section" id="overheads">
+<h2>14.6.1. Overheads<a class="headerlink" href="#overheads" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;stingray.workbook Unit Tests.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">decimal</span>
+<span class="kn">import</span> <span class="nn">stingray.sheet</span>
+<span class="kn">import</span> <span class="nn">stingray.schema</span>
+<span class="kn">import</span> <span class="nn">stingray.schema.loader</span>
+<span class="kn">import</span> <span class="nn">stingray.workbook</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="csv-workbook-tests">
+<h2>14.6.2. CSV_Workbook Tests<a class="headerlink" href="#csv-workbook-tests" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="../workbook.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a>  produces a list of sheet names, is a factory
+for individual <tt class="docutils literal"><span class="pre">Sheet</span></tt> instances and produces the rows of
+a named sheet.  Also, a <a class="reference internal" href="../workbook.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a> is a context.</p>
+<p>All subclasses of <a class="reference internal" href="../workbook.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a> must be polymorphic with this
+degenerate special cases.
+This means that the tests are nearly identical.</p>
+<p>The most important distinction among the various physical formats
+is that other formats (XLS, XLSX, ODS, etc.) support multiple
+sheets in a single workbook, where CSV (and Fixed) have only a
+single sheet in the workbook.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestCSVWorkbook</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
+    <span class="n">theClass</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">CSV_Workbook</span>
+    <span class="n">extraKW</span><span class="o">=</span> <span class="p">{}</span>
+    <span class="n">theFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;csv_workbook.csv&#39;</span><span class="p">)</span>
+    <span class="n">theName</span> <span class="o">=</span> <span class="s">&quot;csv_workbook&quot;</span>
+    <span class="n">theSheets</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;csv_workbook&quot;</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theClass</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">theFile</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">extraKW</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_have_sheets</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theSheets</span><span class="p">),</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">sheets</span><span class="p">())</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_open_sheet_1</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&#39;Sheet1&#39;</span> <span class="p">)</span>
+        <span class="n">row_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">s</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_list</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">7</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Col 1 - int&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Col 2.0 - float&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;Column &quot;3&quot; - string&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Column &#39;4&#39; - date&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Column 5 - boolean&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Column 6 - empty&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Column 7 - Error&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_have_data_sheet_1</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&#39;Sheet1&#39;</span> <span class="p">)</span>
+        <span class="n">row_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">s</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_list</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">42</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span> <span class="mf">3.1415926</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_float</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">u&#39;string&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_create_context</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">theClass</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">theFile</span> <span class="p">)</span> <span class="k">as</span> <span class="n">ctx</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theSheets</span><span class="p">),</span> <span class="nb">set</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">sheets</span><span class="p">())</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_use_context</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theSheets</span><span class="p">),</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">sheets</span><span class="p">())</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="csv-workbook-with-tab-delimiters">
+<h2>14.6.3. CSV_Workbook with Tab delimiters<a class="headerlink" href="#csv-workbook-with-tab-delimiters" title="Permalink to this headline">¶</a></h2>
+<p>The idea is that we have a very small change to handle different
+delimiters in the <tt class="docutils literal"><span class="pre">csv</span></tt> module.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestTabWorkbook</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
+    <span class="n">theClass</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">CSV_Workbook</span>
+    <span class="n">extraKW</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;delimiter&#39;</span><span class="p">:</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span> <span class="p">}</span>
+    <span class="n">theFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;tab_workbook.tab&#39;</span><span class="p">)</span>
+    <span class="n">theName</span> <span class="o">=</span> <span class="s">&quot;tab_workbook&quot;</span>
+    <span class="n">theSheets</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;tab_workbook&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fixed-workbook-tests">
+<h2>14.6.4. Fixed_Workbook Tests<a class="headerlink" href="#fixed-workbook-tests" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="../workbook.html#workbook.Fixed_Workbook" title="workbook.Fixed_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Fixed_Workbook</span></tt></a> is similar to a <a class="reference internal" href="../workbook.html#workbook.CSV_Workbook" title="workbook.CSV_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.CSV_Workbook</span></tt></a>.
+It always has an external schema and the column contents
+might be different due to encoding or truncation issues.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestFixedWorkbook</span><span class="p">(</span> <span class="n">TestCSVWorkbook</span> <span class="p">):</span>
+    <span class="n">theClass</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">Fixed_Workbook</span>
+    <span class="n">theFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;workbook.simple&#39;</span><span class="p">)</span>
+    <span class="n">theName</span> <span class="o">=</span> <span class="s">&quot;workbook&quot;</span>
+    <span class="n">theSheets</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;workbook&quot;</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema_wb</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">CSV_Workbook</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;simple.csv&#39;</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="n">esl</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">ExternalSchemaLoader</span><span class="p">(</span> <span class="n">schema_wb</span><span class="p">,</span>
+            <span class="s">&#39;sheet1&#39;</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">=</span> <span class="n">esl</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theClass</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">theFile</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_open_sheet_1</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&#39;Sheet1&#39;</span> <span class="p">)</span>
+        <span class="n">row_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">s</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_list</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">7</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Col 1 - int&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Col 2.0 - f&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;Column &quot;3&quot;&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Column &#39;4&#39;&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Column 5 -&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Column 6 -&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Column 7 -&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_create_context</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">theClass</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">theFile</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="p">)</span> <span class="k">as</span> <span class="n">ctx</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theSheets</span><span class="p">),</span> <span class="nb">set</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">sheets</span><span class="p">())</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ods-workbook-tests">
+<h2>14.6.5. ODS_Workbook Tests<a class="headerlink" href="#ods-workbook-tests" title="Permalink to this headline">¶</a></h2>
+<p>An ODS workbook is the gold standard.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestODSWorkbook</span><span class="p">(</span> <span class="n">TestCSVWorkbook</span> <span class="p">):</span>
+    <span class="n">theClass</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">ODS_Workbook</span>
+    <span class="n">theFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;ooo_workbook.ods&#39;</span><span class="p">)</span>
+    <span class="n">theName</span> <span class="o">=</span> <span class="s">&quot;ooo_workbook&quot;</span>
+    <span class="n">theSheets</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Sheet1&#39;</span><span class="p">,</span><span class="s">&#39;Sheet2&#39;</span><span class="p">,</span><span class="s">&#39;Sheet3&#39;</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">test_should_open_sheet_2</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&#39;Sheet2&#39;</span><span class="p">,</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">EmbeddedSchemaSheet</span><span class="p">,</span>
+            <span class="n">loader_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">HeadingRowSchemaLoader</span> <span class="p">)</span>
+        <span class="n">row_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">s</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c">#print( &#39;row_list=&#39;, row_list )</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_list</span><span class="p">)</span> <span class="p">)</span>
+        <span class="c"># First row (after the heading)</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">u&#39;data&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c"># Headings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">u&#39;Sheet 2 </span><span class="se">\u2013</span><span class="s"> int&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">u&#39;Sheet 2 </span><span class="se">\u2013</span><span class="s"> string&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="xls-workbook-tests">
+<h2>14.6.6. XLS_Workbook Tests<a class="headerlink" href="#xls-workbook-tests" title="Permalink to this headline">¶</a></h2>
+<p>An XLS workbook can have multiple sheets.  Each sheet can have
+a different schema. This should appear to be like an ODS workbook.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestXLSWorkbook</span><span class="p">(</span> <span class="n">TestODSWorkbook</span> <span class="p">):</span>
+    <span class="n">theClass</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">XLS_Workbook</span>
+    <span class="n">theFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;excel97_workbook.xls&#39;</span><span class="p">)</span>
+    <span class="n">theName</span> <span class="o">=</span> <span class="s">&quot;excel97_workbook&quot;</span>
+    <span class="n">theSheets</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Sheet1&#39;</span><span class="p">,</span><span class="s">&#39;Sheet2&#39;</span><span class="p">,</span><span class="s">&#39;Sheet3&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="xlsx-workbook-tests">
+<h2>14.6.7. XLSX_Workbook Tests<a class="headerlink" href="#xlsx-workbook-tests" title="Permalink to this headline">¶</a></h2>
+<p>An XLSX workbook should be functionally identical to an ODS workbook.
+The physical format is remarkably different, but the content must appear identical.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestXLSXWorkbook</span><span class="p">(</span> <span class="n">TestODSWorkbook</span> <span class="p">):</span>
+    <span class="n">theClass</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">XLSX_Workbook</span>
+    <span class="n">theFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;excel_workbook.xlsx&#39;</span><span class="p">)</span>
+    <span class="n">theName</span> <span class="o">=</span> <span class="s">&quot;excel_workbook&quot;</span>
+    <span class="n">theSheets</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Sheet1&#39;</span><span class="p">,</span><span class="s">&#39;Sheet2&#39;</span><span class="p">,</span><span class="s">&#39;Sheet3&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="numbers-workbook-tests">
+<h2>14.6.8. Numbers_Workbook Tests<a class="headerlink" href="#numbers-workbook-tests" title="Permalink to this headline">¶</a></h2>
+<p>A Numbers workbook should be functionally similar to an ODS workbook.
+There are two different physical formats each remarkably different, but the content must appear as
+close to identical as practical. There&#8217;s another layer of meaning here,
+however. Numbers has Worksapces (a/k/a &#8220;Pages&#8221;) with Tables. The list of &#8220;sheets&#8221; is (workspace,table) pairs.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestNumbers09Workbook</span><span class="p">(</span> <span class="n">TestCSVWorkbook</span> <span class="p">):</span>
+    <span class="n">theClass</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">Numbers09_Workbook</span>
+    <span class="n">theFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;numbers_workbook_09.numbers&#39;</span><span class="p">)</span>
+    <span class="n">theName</span> <span class="o">=</span> <span class="s">&quot;numbers_workbook_09&quot;</span>
+    <span class="n">theSheets</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&#39;Sheet 1&#39;</span><span class="p">,</span><span class="s">&#39;Table 1&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;Sheet 2&#39;</span><span class="p">,</span><span class="s">&#39;Table 1&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;Sheet 3&#39;</span><span class="p">,</span> <span class="s">&#39;Table 1&#39;</span><span class="p">)]</span>
+    <span class="k">def</span> <span class="nf">test_should_open_sheet_1</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="p">(</span><span class="s">&#39;Sheet 1&#39;</span><span class="p">,</span><span class="s">&#39;Table 1&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">row_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">s</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_list</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">7</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Col 1 - int&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Col 2.0 - float&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;Column &quot;3&quot; - string&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Column &#39;4&#39; - date&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Column 5 - boolean&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Column 6 - empty&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Column 7 - Error&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_read_workbook</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read from workbook instead of sheet.&quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="p">(</span><span class="s">&#39;Sheet 1&#39;</span><span class="p">,</span><span class="s">&#39;Table 1&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">row_list_wb</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">rows_of</span><span class="p">(</span> <span class="n">s</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="n">row_list_s</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">s</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">row_list_wb</span><span class="p">,</span> <span class="n">row_list_s</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_have_data_sheet_1</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="p">(</span><span class="s">&#39;Sheet 1&#39;</span><span class="p">,</span><span class="s">&#39;Table 1&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">row_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">s</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_list</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">42</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c">#print( repr(row[1]) )</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span><span class="s">&#39;3.1415926&#39;</span><span class="p">),</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_decimal</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span> <span class="mf">3.1415926</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_float</span><span class="p">()</span> <span class="p">)</span> <span class="c"># ?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">u&#39;string&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>Also, iWork &#8216;13 Numbers</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p>Implement Numbers13_Workbook</p>
+<p class="last">iWork13 is not implemented at all. We have a technology spike that appears to work.</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@unittest.skip</span><span class="p">(</span><span class="s">&quot;Not even close to implemented&quot;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">TestNumbers13Workbook</span><span class="p">(</span> <span class="n">TestNumbers09Workbook</span> <span class="p">):</span>
+    <span class="n">theClass</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">Numbers13_Workbook</span>
+    <span class="n">theFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;numbers_workbook_13.numbers&#39;</span><span class="p">)</span>
+    <span class="n">theName</span> <span class="o">=</span> <span class="s">&quot;numbers_workbook_13&quot;</span>
+    <span class="n">theSheets</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&#39;Sheet 1&#39;</span><span class="p">,</span><span class="s">&#39;Table 1&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;Sheet 2&#39;</span><span class="p">,</span><span class="s">&#39;Table 1&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;Sheet 3&#39;</span><span class="p">,</span> <span class="s">&#39;Table 1&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="workbook-factory-function">
+<h2>14.6.9. Workbook Factory Function<a class="headerlink" href="#workbook-factory-function" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../workbook.html#workbook.open_workbook" title="workbook.open_workbook"><tt class="xref py py-func docutils literal"><span class="pre">workbook.open_workbook()</span></tt></a> function should provide
+simple, uniform access to a workbook file.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestWBFactory</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_should_open_csv</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">open_workbook</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span><span class="s">&#39;csv_workbook.csv&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="nb">set</span><span class="p">([</span><span class="s">&#39;csv_workbook&#39;</span><span class="p">]),</span> <span class="nb">set</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">sheets</span><span class="p">())</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_open_fixed</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">open_workbook</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span><span class="s">&#39;workbook.simple&#39;</span><span class="p">),</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">ExternalSchemaSheet</span><span class="p">,</span>
+            <span class="n">schema_path</span><span class="o">=</span><span class="s">&#39;sample&#39;</span><span class="p">,</span>
+            <span class="n">schema_sheet</span><span class="o">=</span><span class="s">&#39;simple&#39;</span><span class="p">,</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="nb">set</span><span class="p">([</span><span class="s">&#39;workbook&#39;</span><span class="p">]),</span> <span class="nb">set</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">sheets</span><span class="p">())</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_open_xls</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">open_workbook</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span><span class="s">&#39;excel97_workbook.xls&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="nb">set</span><span class="p">([</span><span class="s">&#39;Sheet1&#39;</span><span class="p">,</span><span class="s">&#39;Sheet2&#39;</span><span class="p">,</span><span class="s">&#39;Sheet3&#39;</span><span class="p">]),</span> <span class="nb">set</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">sheets</span><span class="p">())</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_open_xlsx</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">open_workbook</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span><span class="s">&#39;excel_workbook.xlsx&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="nb">set</span><span class="p">([</span><span class="s">&#39;Sheet1&#39;</span><span class="p">,</span><span class="s">&#39;Sheet2&#39;</span><span class="p">,</span><span class="s">&#39;Sheet3&#39;</span><span class="p">]),</span> <span class="nb">set</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">sheets</span><span class="p">())</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_open_ods</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">open_workbook</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span><span class="s">&#39;ooo_workbook.ods&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="nb">set</span><span class="p">([</span><span class="s">&#39;Sheet1&#39;</span><span class="p">,</span><span class="s">&#39;Sheet2&#39;</span><span class="p">,</span><span class="s">&#39;Sheet3&#39;</span><span class="p">]),</span> <span class="nb">set</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">sheets</span><span class="p">())</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="test-suite-and-runner">
+<h2>14.6.10. Test Suite and Runner<a class="headerlink" href="#test-suite-and-runner" title="Permalink to this headline">¶</a></h2>
+<p>In case we want to build up a larger test suite, we avoid doing
+any real work unless this is the main module being executed.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">test</span>
+<span class="n">suite</span><span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">suite_maker</span><span class="p">(</span> <span class="nb">globals</span><span class="p">()</span> <span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span> <span class="n">__file__</span> <span class="p">)</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">suite</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">14.6. Workbook Testing</a><ul>
+<li><a class="reference internal" href="#overheads">14.6.1. Overheads</a></li>
+<li><a class="reference internal" href="#csv-workbook-tests">14.6.2. CSV_Workbook Tests</a></li>
+<li><a class="reference internal" href="#csv-workbook-with-tab-delimiters">14.6.3. CSV_Workbook with Tab delimiters</a></li>
+<li><a class="reference internal" href="#fixed-workbook-tests">14.6.4. Fixed_Workbook Tests</a></li>
+<li><a class="reference internal" href="#ods-workbook-tests">14.6.5. ODS_Workbook Tests</a></li>
+<li><a class="reference internal" href="#xls-workbook-tests">14.6.6. XLS_Workbook Tests</a></li>
+<li><a class="reference internal" href="#xlsx-workbook-tests">14.6.7. XLSX_Workbook Tests</a></li>
+<li><a class="reference internal" href="#numbers-workbook-tests">14.6.8. Numbers_Workbook Tests</a></li>
+<li><a class="reference internal" href="#workbook-factory-function">14.6.9. Workbook Factory Function</a></li>
+<li><a class="reference internal" href="#test-suite-and-runner">14.6.10. Test Suite and Runner</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="schema_loader.html"
+                        title="previous chapter">14.5. Schema Loader Testing</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cobol.html"
+                        title="next chapter">14.7. COBOL Schema Testing</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/testing/workbook.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cobol.html" title="14.7. COBOL Schema Testing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="schema_loader.html" title="14.5. Schema Loader Testing"
+             >previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" >14. Testing</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, S. Lott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

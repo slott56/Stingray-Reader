@@ -1,0 +1,807 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>14.9. COBOL Integration Tests &mdash; The Stingray Schema-Based File Reader</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '4.4.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
+    <link rel="up" title="14. Testing" href="index.html" />
+    <link rel="next" title="14.10. Test Snappy and Protobuf" href="snappy_protobuf.html" />
+    <link rel="prev" title="14.8. COBOL Schema Loader Unit Tests" href="cobol_loader.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="snappy_protobuf.html" title="14.10. Test Snappy and Protobuf"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cobol_loader.html" title="14.8. COBOL Schema Loader Unit Tests"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">14. Testing</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="cobol-integration-tests">
+<h1>14.9. COBOL Integration Tests<a class="headerlink" href="#cobol-integration-tests" title="Permalink to this headline">¶</a></h1>
+<p>These tests use the unittest framework, but don&#8217;t test small
+fixtures in isolation.   These are &#8220;integration&#8221; tests of the <a class="reference internal" href="../cobol_init.html#module-cobol" title="cobol"><tt class="xref py py-mod docutils literal"><span class="pre">cobol</span></tt></a>
+and <a class="reference internal" href="../cobol_loader.html#module-cobol.loader" title="cobol.loader"><tt class="xref py py-mod docutils literal"><span class="pre">cobol.loader</span></tt></a> modules.</p>
+<p>See <a class="reference internal" href="../cobol.html#cobol"><em>The COBOL Package</em></a> and <a class="reference internal" href="../cobol_loader.html#cobol-loader"><em>COBOL Loader Module &#8211; Parse COBOL Source to Load a Schema</em></a>.</p>
+<div class="section" id="overheads">
+<h2>14.9.1. Overheads<a class="headerlink" href="#overheads" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;stingray.cobol Integration Tests.</span>
+<span class="sd">This tests the cobol and cobol loader without mocked objects.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">decimal</span>
+<span class="kn">import</span> <span class="nn">stingray.cobol.loader</span>
+<span class="kn">import</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">sys</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="superclass-for-tests">
+<h2>14.9.2. Superclass For Tests<a class="headerlink" href="#superclass-for-tests" title="Permalink to this headline">¶</a></h2>
+<p>This is a handy superclass for all the various tests.  It refactors the
+<tt class="xref py py-meth docutils literal"><span class="pre">setUp()</span></tt> method to assure that all of the tests have a common fixture.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">DDE_Test</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">Lexer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rf</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">RecordFactory</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dde-test-copybook-1-with-basic-features">
+<h2>14.9.3. DDE Test copybook 1 with basic features<a class="headerlink" href="#dde-test-copybook-1-with-basic-features" title="Permalink to this headline">¶</a></h2>
+<p>Some basic COBOL.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">copy1</span><span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">      * COPY1.COB</span>
+<span class="s">       01  DETAIL-LINE.</span>
+<span class="s">           05                              PIC X(7).</span>
+<span class="s">           05  QUESTION                    PIC ZZ.</span>
+<span class="s">           05                              PIC X(6).</span>
+<span class="s">           05  PRINT-YES                   PIC ZZ.</span>
+<span class="s">           05                              PIC X(3).</span>
+<span class="s">           05  PRINT-NO                    PIC ZZ.</span>
+<span class="s">           05                              PIC X(6).</span>
+<span class="s">           05  NOT-SURE                    PIC ZZ.</span>
+<span class="s">           05                              PIC X(7).</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Be sure it parses.  Be sure we can extract data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Copybook_1</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dde1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rf</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">copy1</span><span class="p">)</span> <span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c">#stingray.cobol.loader.report( self.dde1 )</span>
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">dde1</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">7</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;QUESTION&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;QUESTION&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;ZZ&quot;</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;QUESTION&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;QUESTION&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">15</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;PRINT-YES&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;PRINT-YES&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;ZZ&quot;</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;PRINT-YES&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">20</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;PRINT-NO&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;PRINT-NO&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;ZZ&quot;</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;PRINT-NO&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">28</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;NOT-SURE&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;NOT-SURE&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;ZZ&quot;</span><span class="p">,</span> <span class="n">dde1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;NOT-SURE&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_extract</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dde1</span><span class="p">]</span> <span class="p">)</span>
+        <span class="c">#print( schema )</span>
+        <span class="n">schema_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="n">data</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;ABCDEFG01HIJKLM02OPQ03RSTUVW04YZabcde&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">data</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c">#stingray.cobol.loader.dump( self.dde1, row )</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;1&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&#39;QUESTION&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&#39;PRINT-YES&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&#39;PRINT-NO&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_float</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span><span class="s">&#39;4&#39;</span><span class="p">),</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&#39;NOT-SURE&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_decimal</span><span class="p">()</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dde-test-copybook-2-with-88-level-item">
+<h2>14.9.4. DDE Test copybook 2 with 88-level item<a class="headerlink" href="#dde-test-copybook-2-with-88-level-item" title="Permalink to this headline">¶</a></h2>
+<p>Include 88-level items in the source.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">copy2</span><span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">      * COPY2.COB</span>
+<span class="s">       01  WORK-AREAS.</span>
+<span class="s">           05  ARE-THERE-MORE-RECORDS      PIC X(3)    VALUE &#39;YES&#39;.</span>
+<span class="s">               88  NO-MORE-RECORDS                     VALUE &#39;NO &#39;.</span>
+<span class="s">           05  ANSWER-SUB                  PIC 99.</span>
+<span class="s">           05  QUESTION-SUB                PIC 99.</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Be sure it parses.  Be sure we can extract data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Copybook_2</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dde2</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rf</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">copy2</span><span class="p">)</span> <span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c">#stingray.cobol.loader.report( self.dde2 )</span>
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">dde2</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;ARE-THERE-MORE-RECORDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dde2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;ARE-THERE-MORE-RECORDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;XXX&quot;</span><span class="p">,</span> <span class="n">dde2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;ARE-THERE-MORE-RECORDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;NO-MORE-RECORDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dde2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;NO-MORE-RECORDS&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dde2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;ANSWER-SUB&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">5</span><span class="p">,</span> <span class="n">dde2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;QUESTION-SUB&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_extract</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dde2</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">schema_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="n">data</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;NO 4567&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">data</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c">#stingray.cobol.loader.dump( self.dde2, row )</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;NO&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;ARE-THERE-MORE-RECORDS&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;NO&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;NO-MORE-RECORDS&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dde-test-copybook-3-with-nested-occurs-level">
+<h2>14.9.5. DDE Test copybook 3 with nested occurs level<a class="headerlink" href="#dde-test-copybook-3-with-nested-occurs-level" title="Permalink to this headline">¶</a></h2>
+<p>This is a common two-dimensional COBOL structure.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">copy3</span><span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">      * COPY3.COB</span>
+<span class="s">       01  SURVEY-RESPONSES.</span>
+<span class="s">           05  QUESTION-NUMBER         OCCURS 10 TIMES.</span>
+<span class="s">               10  RESPONSE-CATEGORY     OCCURS 3 TIMES.</span>
+<span class="s">                   15  ANSWER                          PIC 99.</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Be sure that the various access methods (via Attribute and via Python tuple-of-tuples) all work.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Copybook_3</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dde3</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rf</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">copy3</span><span class="p">)</span> <span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c">#stingray.cobol.loader.report( self.dde3 )</span>
+    <span class="k">def</span> <span class="nf">test_should_extract</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dde3</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">schema_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;111213212223313233414243515253616263717273818283919293010203&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">data</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c">#stingray.cobol.loader.dump( self.dde3, row )</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">12</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;ANSWER&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">21</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span> <span class="n">schema_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;ANSWER&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">21</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span> <span class="n">schema_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;ANSWER&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">21</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span> <span class="n">schema_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;ANSWER&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">1</span><span class="p">))[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">IndexError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dde-test-copybook-4-from-page-174-with-nested-occurs-level">
+<h2>14.9.6. DDE Test copybook 4 from page 174 with nested occurs level<a class="headerlink" href="#dde-test-copybook-4-from-page-174-with-nested-occurs-level" title="Permalink to this headline">¶</a></h2>
+<p>From IBM COBOL Language Reference Manual, fourth edition: SC26-9046-03.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">page174</span><span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">       01 TABLE-RECORD.</span>
+<span class="s">          05 EMPLOYEE-TABLE OCCURS 10 TIMES</span>
+<span class="s">                ASCENDING KEY IS WAGE-RATE EMPLOYEE-NO</span>
+<span class="s">                INDEXED BY A, B.</span>
+<span class="s">             10 EMPLOYEE-NAME PIC X(20).</span>
+<span class="s">             10 EMPLOYEE-NO PIC 9(6).</span>
+<span class="s">             10 WAGE-RATE PIC 9999V99.</span>
+<span class="s">             10 WEEK-RECORD OCCURS 52 TIMES</span>
+<span class="s">                   ASCENDING KEY IS WEEK-NO INDEXED BY C.</span>
+<span class="s">                15 WEEK-NO PIC 99.</span>
+<span class="s">                15 AUTHORIZED-ABSENCES PIC 9.</span>
+<span class="s">                15 UNAUTHORIZED-ABSENCES PIC 9.</span>
+<span class="s">                15 LATE-ARRIVALS PIC 9.</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Be sure it parses.  There&#8217;s nothing novel in the structure, but the syntax
+has numerous things we need to gracefully skip.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Copybook_4</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dde4</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rf</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">page174</span><span class="p">)</span> <span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c">#stingray.cobol.loader.report( self.dde4 )</span>
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">dde4</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2920</span><span class="p">,</span> <span class="n">dde4</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde4</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">10</span><span class="p">,</span> <span class="n">dde4</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;EMPLOYEE-TABLE&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">occurs</span><span class="o">.</span><span class="n">number</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">52</span><span class="p">,</span> <span class="n">dde4</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;WEEK-RECORD&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">occurs</span><span class="o">.</span><span class="n">number</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">5</span><span class="p">,</span> <span class="n">dde4</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;WEEK-RECORD&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">52</span><span class="o">*</span><span class="mi">5</span><span class="o">+</span><span class="mi">32</span><span class="p">,</span> <span class="n">dde4</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;EMPLOYEE-TABLE&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;999999&quot;</span><span class="p">,</span> <span class="n">dde4</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;EMPLOYEE-NO&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="n">dde4</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">schema_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">(</span><span class="mi">52</span><span class="o">*</span><span class="mi">5</span><span class="o">+</span><span class="mi">32</span><span class="p">)</span><span class="o">+</span><span class="mi">32</span><span class="o">+</span><span class="mi">5</span><span class="o">+</span><span class="mi">4</span><span class="p">,</span> <span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;LATE-ARRIVALS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="p">(</span><span class="mi">52</span><span class="o">*</span><span class="mi">5</span><span class="o">+</span><span class="mi">32</span><span class="p">)</span><span class="o">+</span><span class="mi">32</span><span class="o">+</span><span class="mi">5</span><span class="o">+</span><span class="mi">5</span><span class="o">+</span><span class="mi">4</span><span class="p">,</span> <span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;LATE-ARRIVALS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dde-test-copybook-5-from-page-195-with-simple-redefines">
+<h2>14.9.7. DDE Test copybook 5 from page 195 with simple redefines<a class="headerlink" href="#dde-test-copybook-5-from-page-195-with-simple-redefines" title="Permalink to this headline">¶</a></h2>
+<p>Here is a redefines example.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">page195</span><span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">       01  REDEFINES-RECORD.</span>
+<span class="s">           05  A PICTURE X(6).</span>
+<span class="s">           05  B REDEFINES A.</span>
+<span class="s">               10  B-1 PICTURE X(2).</span>
+<span class="s">               10  B-2 PICTURE 9(4).</span>
+<span class="s">           05  C PICTURE 99V99.</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Be sure it parses.  Be sure we can extract data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Copybook_5</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dde5</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rf</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">page195</span><span class="p">)</span> <span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c">#stingray.cobol.loader.report( self.dde5 )</span>
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">dde5</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">10</span><span class="p">,</span> <span class="n">dde5</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dde5</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde5</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dde5</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde5</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde5</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;B-1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde5</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;B-1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dde5</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;B-2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde5</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;B-2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;9999&quot;</span><span class="p">,</span> <span class="n">dde5</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;B-2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dde5</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;C&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dde5</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;C&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_should_extract</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dde5</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">schema_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="n">data</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;AB12345678&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">data</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c">#stingray.cobol.loader.dump( self.dde5, row )</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;AB1234&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;A&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;AB1234&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;B&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;AB&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;B-1&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;1234&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;B-2&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;56.78&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;C&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dde-test-copybook-6-from-page-197-with-another-redefines">
+<h2>14.9.8. DDE Test copybook 6 from page 197 with another redefines<a class="headerlink" href="#dde-test-copybook-6-from-page-197-with-another-redefines" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">page197</span><span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">       01  REDEFINES-RECORD.</span>
+<span class="s">           05 NAME-2.</span>
+<span class="s">              10 SALARY PICTURE XXX.</span>
+<span class="s">              10 SO-SEC-NO PICTURE X(9).</span>
+<span class="s">              10 MONTH PICTURE XX.</span>
+<span class="s">           05 NAME-1 REDEFINES NAME-2.</span>
+<span class="s">              10 WAGE PICTURE 999V999.</span>
+<span class="s">              10 EMP-NO PICTURE X(6).</span>
+<span class="s">              10 YEAR PICTURE XX.</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Be sure it parses.  Be sure we can extract data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Copybook_6</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dde6</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rf</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">page197</span><span class="p">)</span> <span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c">#stingray.cobol.loader.report( self.dde6 )</span>
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">dde6</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde6</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;SALARY&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;SALARY&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">9</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;SO-SEC-NO&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;SO-SEC-NO&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;MONTH&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">12</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;MONTH&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;WAGE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;WAGE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;999999&quot;</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;WAGE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;WAGE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">precision</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;EMP-NO&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;EMP-NO&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;YEAR&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">12</span><span class="p">,</span> <span class="n">dde6</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;YEAR&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_should_extract_1</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dde6</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">schema_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="n">data1</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;ABC123456789DE&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">data1</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c">#stingray.cobol.loader.dump( self.dde6, row )</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;ABC&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;SALARY&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;123456789&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;SO-SEC-NO&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;DE&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;MONTH&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_should_extract_2</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dde6</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">schema_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="n">data2</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;123456ABCDEF78&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">data2</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c">#stingray.cobol.loader.dump( self.dde6, row )</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEquals</span><span class="p">(</span> <span class="mf">123.456</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;WAGE&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_float</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;ABCDEF&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;EMP-NO&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;78&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;YEAR&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dde-test-copybook-7-from-page-198-example-a">
+<h2>14.9.9. DDE Test copybook 7 from page 198, example &#8220;A&#8221;<a class="headerlink" href="#dde-test-copybook-7-from-page-198-example-a" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">page198A</span><span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">       01  REDEFINES-RECORD.</span>
+<span class="s">           05 REGULAR-EMPLOYEE.</span>
+<span class="s">              10 LOCATION PICTURE A(8).</span>
+<span class="s">              10 GRADE PICTURE X(4).</span>
+<span class="s">              10 SEMI-MONTHLY-PAY PICTURE 9999V99.</span>
+<span class="s">              10 WEEKLY-PAY REDEFINES SEMI-MONTHLY-PAY</span>
+<span class="s">                  PICTURE 999V999.</span>
+<span class="s">           05 TEMPORARY-EMPLOYEE REDEFINES REGULAR-EMPLOYEE.</span>
+<span class="s">              10 LOCATION PICTURE A(8).</span>
+<span class="s">              10 FILLER PICTURE X(6).</span>
+<span class="s">              10 HOURLY-PAY PICTURE 99V99.</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Be sure it parses.  Be sure we can extract data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Copybook_7</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dde7</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rf</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">page198A</span><span class="p">)</span> <span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c">#stingray.cobol.loader.report( self.dde7 )</span>
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">dde7</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde7</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">18</span><span class="p">,</span> <span class="n">dde7</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;REGULAR-EMPLOYEE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">18</span><span class="p">,</span> <span class="n">dde7</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;TEMPORARY-EMPLOYEE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dde7</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;SEMI-MONTHLY-PAY&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dde7</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;WEEKLY-PAY&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_should_extract_1</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dde7</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">schema_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="n">data1</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;ABCDEFGHijkl123456&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">data1</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c"># Can&#39;t dump with TEMPORARY-EMPLOYEE</span>
+        <span class="c">#stingray.cobol.loader.dump( self.dde7.get(&quot;REGULAR-EMPLOYEE&quot;), row )</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;1234.56&#39;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;SEMI-MONTHLY-PAY&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_should_extract_2</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dde7</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">schema_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="n">data2</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;ABCDEFGHijklmn1234&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">data2</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c"># Can&#39;t dump with REGULAR-EMPLOYEE</span>
+        <span class="c">#stingray.cobol.loader.dump( self.dde7.get(&quot;TEMPORARY-EMPLOYEE&quot;), row )</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;12.34&#39;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&quot;HOURLY-PAY&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dde-test-copybook-8-from-page-198-example-b">
+<h2>14.9.10. DDE Test copybook 8 from page 198, example &#8220;B&#8221;<a class="headerlink" href="#dde-test-copybook-8-from-page-198-example-b" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">page198B</span><span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">       01  REDEFINES-RECORD.</span>
+<span class="s">           05 REGULAR-EMPLOYEE.</span>
+<span class="s">               10 LOCATION PICTURE A(8).</span>
+<span class="s">               10 GRADE PICTURE X(4).</span>
+<span class="s">               10 SEMI-MONTHLY-PAY PICTURE 999V999.</span>
+<span class="s">           05 TEMPORARY-EMPLOYEE REDEFINES REGULAR-EMPLOYEE.</span>
+<span class="s">               10 LOCATION PICTURE A(8).</span>
+<span class="s">               10 FILLER PICTURE X(6).</span>
+<span class="s">               10 HOURLY-PAY PICTURE 99V99.</span>
+<span class="s">               10 CODE-H REDEFINES HOURLY-PAY PICTURE 9999.</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Be sure it parses.  Be sure we can extract data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Copybook_8</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dde8</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rf</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">page198B</span><span class="p">)</span> <span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="c">#stingray.cobol.loader.report( self.dde8 )</span>
+        <span class="n">dde8</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde8</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">18</span><span class="p">,</span> <span class="n">dde8</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;REGULAR-EMPLOYEE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">18</span><span class="p">,</span> <span class="n">dde8</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;TEMPORARY-EMPLOYEE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dde8</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;SEMI-MONTHLY-PAY&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dde8</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;HOURLY-PAY&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dde8</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;CODE-H&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_should_extract_1</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dde8</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">schema_path_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="n">data1</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;ABCDEFGHijkl123456&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">data1</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c">#stingray.cobol.loader.dump( self.dde8, row )</span>
+        <span class="c">#print( &quot;SEMI-MONTHLY-PAY&quot;, schema_path_dict[&#39;REDEFINES-RECORD.REGULAR-EMPLOYEE.SEMI-MONTHLY-PAY&#39;] )</span>
+        <span class="c">#print( &quot;row.cell(...)&quot;, row.cell(schema_path_dict[&#39;REDEFINES-RECORD.REGULAR-EMPLOYEE.SEMI-MONTHLY-PAY&#39;]) )</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEquals</span><span class="p">(</span> <span class="mf">123.456</span><span class="p">,</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_path_dict</span><span class="p">[</span><span class="s">&#39;REDEFINES-RECORD.REGULAR-EMPLOYEE.SEMI-MONTHLY-PAY&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_float</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_should_extract_2</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dde8</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">schema_path_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="n">data2</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;ABCDEFGHijklmn1234&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">data2</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c">#stingray.cobol.loader.dump( self.dde8, row )</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mf">12.34</span><span class="p">,</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_path_dict</span><span class="p">[</span><span class="s">&#39;REDEFINES-RECORD.TEMPORARY-EMPLOYEE.HOURLY-PAY&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_float</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1234</span><span class="p">,</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_path_dict</span><span class="p">[</span><span class="s">&#39;REDEFINES-RECORD.TEMPORARY-EMPLOYEE.CODE-H&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="n">schema_name_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;REDEFINES-RECORD.TEMPORARY-EMPLOYEE.HOURLY-PAY&quot;</span><span class="p">,</span>
+            <span class="n">schema_name_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;HOURLY-PAY&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">path</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="test-copybook-9-multiple-01-levels">
+<h2>14.9.11. Test Copybook 9, Multiple 01 Levels<a class="headerlink" href="#test-copybook-9-multiple-01-levels" title="Permalink to this headline">¶</a></h2>
+<p>Some basic COBOL with two top-level records.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">copy9</span><span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">       01  DETAIL-LINE.</span>
+<span class="s">           05  QUESTION                    PIC ZZ.</span>
+<span class="s">           05  PRINT-YES                   PIC ZZ.</span>
+<span class="s">           05  PRINT-NO                    PIC ZZ.</span>
+<span class="s">           05  NOT-SURE                    PIC ZZ.</span>
+<span class="s">       01  SUMMARY-LINE REDEFINES DETAIL-LINE.</span>
+<span class="s">           05  COUNT                       PIC ZZ.</span>
+<span class="s">           05  FILLER                      PIC XX.</span>
+<span class="s">           05  FILLER                      PIC XX.</span>
+<span class="s">           05  FILLER                      PIC XX.</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Be sure it parses.  Be sure we can extract data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Copybook_9</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dde9a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde9b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rf</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">copy9</span><span class="p">)</span> <span class="p">)</span>
+        <span class="c">#stingray.cobol.loader.report( self.dde9a )</span>
+        <span class="c">#stingray.cobol.loader.report( self.dde9b )</span>
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">dde9</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde9a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;QUESTION&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;QUESTION&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;ZZ&quot;</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;QUESTION&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;QUESTION&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;PRINT-YES&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;PRINT-YES&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;ZZ&quot;</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;PRINT-YES&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">4</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;PRINT-NO&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;PRINT-NO&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;ZZ&quot;</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;PRINT-NO&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">6</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;NOT-SURE&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;NOT-SURE&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;ZZ&quot;</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;NOT-SURE&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="n">dde9</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde9b</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;COUNT&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;COUNT&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;ZZ&quot;</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;COUNT&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde9</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;COUNT&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_extract</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dde9a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde9b</span><span class="p">]</span> <span class="p">)</span>
+        <span class="c">#print( schema )</span>
+        <span class="n">schema_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">schema</span> <span class="p">)</span>
+        <span class="n">data</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;01020304&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">data</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="c">#stingray.cobol.loader.dump( self.dde9a, row )</span>
+        <span class="c">#stingray.cobol.loader.dump( self.dde9b, row )</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;1&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&#39;QUESTION&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&#39;PRINT-YES&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">3</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&#39;PRINT-NO&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_float</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span><span class="s">&#39;4&#39;</span><span class="p">),</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&#39;NOT-SURE&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_decimal</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;1&quot;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema_dict</span><span class="p">[</span><span class="s">&#39;COUNT&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="test-copybook-10-occurs-depending-on">
+<h2>14.9.12. Test Copybook 10, Occurs Depending On<a class="headerlink" href="#test-copybook-10-occurs-depending-on" title="Permalink to this headline">¶</a></h2>
+<p>The basic ODO situation: size depends on another item in the record.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">copy10</span><span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">       01  MAIN-AREA.</span>
+<span class="s">           03 REC-1.</span>
+<span class="s">             05 FIELD-1                       PIC 9.</span>
+<span class="s">             05 FIELD-2 OCCURS 1 TO 5 TIMES</span>
+<span class="s">                  DEPENDING ON FIELD-1        PIC X(05).</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Be sure it parses.</p>
+<p>To be sure we can compute the offset, we need to extract data.
+For that, we&#8217;ll need a mock <tt class="xref py py-class docutils literal"><span class="pre">stingray.cobol.COBOL_File</span></tt> to provide
+data for setting size and offset.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Copybook_10</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dde10</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rf</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">copy10</span><span class="p">)</span> <span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c">#stingray.cobol.loader.report( self.dde10 )</span>
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">dde10</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde10</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;9&quot;</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">5</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;XXXXX&quot;</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_should_setsizeandoffset</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">dde10</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde10</span>
+
+        <span class="n">schema</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="n">dde10</span><span class="p">]</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;3111112222233333&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;IGNORED&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;9&quot;</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">5</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;XXXXX&quot;</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde10</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="test-copybook-11-complex-occurs-depending-on">
+<h2>14.9.13. Test Copybook 11, Complex Occurs Depending On<a class="headerlink" href="#test-copybook-11-complex-occurs-depending-on" title="Permalink to this headline">¶</a></h2>
+<p>A fairly complex ODO situation: size and offset depends other items
+in the record.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">copy11</span><span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">       01  MAIN-AREA.</span>
+<span class="s">           03 REC-1.</span>
+<span class="s">              05 FIELD-1                       PIC 9.</span>
+<span class="s">              05 FIELD-3                       PIC 9.</span>
+<span class="s">              05 FIELD-2 OCCURS 1 TO 5 TIMES</span>
+<span class="s">                   DEPENDING ON FIELD-1        PIC X(05).</span>
+<span class="s">           03 REC-2.</span>
+<span class="s">              05 FIELD-4 OCCURS 1 TO 5 TIMES</span>
+<span class="s">                   DEPENDING ON FIELD-3        PIC X(05).</span>
+<span class="s">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Be sure it parses.</p>
+<p>To be sure we can compute the offset, we need to extract data.
+For that, we&#8217;ll need a mock <tt class="xref py py-class docutils literal"><span class="pre">stingray.cobol.COBOL_File</span></tt> to provide
+data for setting size and offset.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test_Copybook_11</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dde11</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rf</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">copy11</span><span class="p">)</span> <span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c">#stingray.cobol.loader.report( self.dde11 )</span>
+
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">dde11</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde11</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;9&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">5</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;XXXXX&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-3&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-3&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;9&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-3&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-3&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-4&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">5</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-4&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;XXXXX&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-4&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-4&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_should_setsizeandoffset</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">dde11</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde11</span>
+
+        <span class="n">schema</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">make_schema</span><span class="p">(</span> <span class="p">[</span><span class="n">dde11</span><span class="p">]</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">file_object</span><span class="o">=</span> <span class="p">[</span><span class="s">&quot;321111122222333334444455555&quot;</span><span class="p">,],</span>
+            <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;9&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-1&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">5</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;XXXXX&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-2&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-3&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-3&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;9&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-3&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-3&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">17</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-4&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">offset</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">5</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-4&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;XXXXX&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-4&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">sizeScalePrecision</span><span class="o">.</span><span class="n">final</span>  <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">dde11</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="s">&quot;FIELD-4&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="test-suite-and-runner">
+<h2>14.9.14. Test Suite and Runner<a class="headerlink" href="#test-suite-and-runner" title="Permalink to this headline">¶</a></h2>
+<p>In case we want to build up a larger test suite, we avoid doing
+any real work unless this is the main module being executed.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">test</span>
+<span class="n">suite</span><span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">suite_maker</span><span class="p">(</span> <span class="nb">globals</span><span class="p">()</span> <span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">test</span><span class="o">.</span><span class="n">Logger</span><span class="p">(</span> <span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span> <span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span> <span class="s">&quot;stingray.cobol.defs&quot;</span> <span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span> <span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="n">__file__</span> <span class="p">)</span>
+        <span class="c">#unittest.TextTestRunner().run(suite())</span>
+        <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">(</span> <span class="n">Test_Copybook_11</span><span class="p">()</span> <span class="p">)</span> <span class="c"># Specific debugging</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">14.9. COBOL Integration Tests</a><ul>
+<li><a class="reference internal" href="#overheads">14.9.1. Overheads</a></li>
+<li><a class="reference internal" href="#superclass-for-tests">14.9.2. Superclass For Tests</a></li>
+<li><a class="reference internal" href="#dde-test-copybook-1-with-basic-features">14.9.3. DDE Test copybook 1 with basic features</a></li>
+<li><a class="reference internal" href="#dde-test-copybook-2-with-88-level-item">14.9.4. DDE Test copybook 2 with 88-level item</a></li>
+<li><a class="reference internal" href="#dde-test-copybook-3-with-nested-occurs-level">14.9.5. DDE Test copybook 3 with nested occurs level</a></li>
+<li><a class="reference internal" href="#dde-test-copybook-4-from-page-174-with-nested-occurs-level">14.9.6. DDE Test copybook 4 from page 174 with nested occurs level</a></li>
+<li><a class="reference internal" href="#dde-test-copybook-5-from-page-195-with-simple-redefines">14.9.7. DDE Test copybook 5 from page 195 with simple redefines</a></li>
+<li><a class="reference internal" href="#dde-test-copybook-6-from-page-197-with-another-redefines">14.9.8. DDE Test copybook 6 from page 197 with another redefines</a></li>
+<li><a class="reference internal" href="#dde-test-copybook-7-from-page-198-example-a">14.9.9. DDE Test copybook 7 from page 198, example &#8220;A&#8221;</a></li>
+<li><a class="reference internal" href="#dde-test-copybook-8-from-page-198-example-b">14.9.10. DDE Test copybook 8 from page 198, example &#8220;B&#8221;</a></li>
+<li><a class="reference internal" href="#test-copybook-9-multiple-01-levels">14.9.11. Test Copybook 9, Multiple 01 Levels</a></li>
+<li><a class="reference internal" href="#test-copybook-10-occurs-depending-on">14.9.12. Test Copybook 10, Occurs Depending On</a></li>
+<li><a class="reference internal" href="#test-copybook-11-complex-occurs-depending-on">14.9.13. Test Copybook 11, Complex Occurs Depending On</a></li>
+<li><a class="reference internal" href="#test-suite-and-runner">14.9.14. Test Suite and Runner</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cobol_loader.html"
+                        title="previous chapter">14.8. COBOL Schema Loader Unit Tests</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="snappy_protobuf.html"
+                        title="next chapter">14.10. Test Snappy and Protobuf</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/testing/cobol_2.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="snappy_protobuf.html" title="14.10. Test Snappy and Protobuf"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cobol_loader.html" title="14.8. COBOL Schema Loader Unit Tests"
+             >previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" >14. Testing</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, S. Lott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

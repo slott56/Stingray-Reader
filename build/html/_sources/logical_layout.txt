@@ -1,0 +1,601 @@
+
+.. _`logical_layout`:
+
+######################################
+``stingray`` Developer's Guide
+######################################
+
+Or, "How do I use ``stingray`` to work with a schema?"
+
+We use Stingray to build applications because 
+we have a fundamental question about a file and an application.
+
+    **How do we validate that a file and an application use the same schema?**
+    
+Or
+
+    **How do we validate the conceptual schema?**
+    
+There are two sides to this: File and Application.
+
+-   Given a data file, how do we bind schema information to that file?
+
+-   What schema does an application require?
+
+We do need to note the following.
+
+    **If it was simple, we wouldn't need this package, would we?**
+
+As noted in :ref:`intro`, we have three levels of schema that need to be bound to a file.
+
+-   **Physical Format**.  We can make this transparent to our applications.
+    See :ref:`workbook` and :ref:`cobol` for details. 
+    
+-   **Logical Layout**.  This is how an application program will make use
+    of the data found in a file.  Logical layout can be embedded in a file
+    or separate.  Our applications and files both need to agree on a logical
+    layout.  
+    
+-   **Conceptual Content**.  
+    A single conceptual schema may be implemented by a number of physical
+    formats and logical layouts.  
+    An application should be able to tolerate variability in the logical
+    layout as long is it matches the expected **conceptual** schema.
+    
+We'll tackle this in several pieces.
+
+-   **File Schema**.  `Binding a Schema to a File`_ describes some preliminary
+    operational steps that make Stingray work more simply and reliably.
+
+-   **Application Schema**.  `Binding a Schema to an Application`_ and `Schema Version Numbering`_
+
+-   **Processing**.  `Data Attribute Mapping -- Using a Schema`_ and `Data Transformation`_
+
+-   **Application Design Patterns**.
+    We can then dig into Stingray application programming in `stingray Application Design`.
+    
+We'll look at some demonstration programs in :ref:`demo`.
+
+Binding a Schema to a File 
+=================================
+
+We're only going to bind two levels of schema to a file.  The conceptual schema
+would require some kind of formal ontology, something that's rarely available.
+
+**Logical Layout**. 
+A workbook in a well-known physical format has two ways to bind logial layout to data.  Our :py:class:`sheet.Sheet` subclass hierarchy, along with the various :py:mod:`schema.loader` components will to handle this.
+
+-   **Embedded**.  This is column titles within the sheet.  Or
+    any variation on that theme.
+    In spite of the vagaries, this works out well,
+    is quite popular and can be managed by building different schema loaders.
+    
+-   **External**.  This is a separate sheet or separate file.  
+    This  requires 
+    some data management discipline to be sure that the schema and file match
+    up properly.  Naming conventions and directory structures are
+    *essential* for working with external schema. 
+
+**Physical Format**.  Generally, a file name provides a hint as to the physical file format.
+:file:`.csv`, :file:`.xls`, :file:`.xlsx`, :file:`.xlsm`, :file:`.ods` describe the physical format.   Our :py:class:`cell.Cell`, :py:class:`sheet.Sheet`, and
+:py:class:`workbook.Workbook` handles this nicely.
+
+For fixed-format files, however,
+there's no *simple* extension that describes the physical layout.
+Further, fixed format files combine logical layout and physical format into
+a single schema description. 
+
+For fixed format files, the following conventions help
+bind a file to its schema.
+
+-   The data file extension is the base name of a schema file. 
+    :file:`mydata.someschema`.
+
+-   Schema files must be be either a DDE file or a 
+    workbook in a well-known format.
+    :samp:`someschema.cob` or :file:`someschema.xlsx`.
+    
+A DDE file is in COBOL notation, and defines the field name, type and size.  The offsets are deduced from the declarations using COBOL language semantics.
+
+A workbook with a schema must adhere to a few conventions to be usable.
+If the workbook uses multiple sheets, the standard sheet name ``"Schema"`` 
+defines the appropriate sheet.
+There must be an internal meta-schema on line one of the sheet
+that provides the expected column names.
+The column names "name", "offset", "size", "type".  Only "name" is required 
+in general.
+For fixed format files, "offset", "size" and "type" are also required.
+Additional columns are allowed, but will be ignored.
+Type definitions are "text", "number", "date" and "boolean".  
+
+**Examples**.  We might see the following file names.
+
+.. parsed-literal::
+
+    september_2001.exchange_1
+    november_2011.some_dde_name
+    october_2011.some_dde_name
+    
+The ``september_2001.exchange_1`` file is a fixed format file 
+which requires the ``exchange_1.xls`` metadata workbook.
+
+The ``november_2011.some_dde_name`` and ``october_2011.some_dde_name`` files
+are fixed format files which require the ``some_dde_name.cob`` metadata.
+
+Binding a Schema to an Application
+====================================
+
+We would like to be sure that our application's expectations for a
+schema are aligned with the schema actually present.  
+An application has several ways to bind its schema information.
+
+-   **Implicitly**.  The code simply mentions specific columns
+    (either by name or position).
+    
+-   **Explicitly**.   The code has a formal "requires" check to be sure
+    that the schema provided by the file actually matches the 
+    schema required by the application.
+
+Explicit schema binding parallels the configuration management issue of module
+dependency. A file can be said to *provide* a given schema and an
+application *requires* a given schema.
+
+Sadly, we don't always have a pithy summary of a schema.  It would be nice to
+call it ``econometrics_vendorX_1.2`` where we identify the 
+generic type of data, the source for that file, and the schema version
+number.  We might be able to work something like this out. 
+First, however, let's allow for variant schemas and get those bound
+to file and application.  
+
+We'll look at some approaches to this in `Schema Version Numbering`_,
+below.
+
+If we don't implement this, 
+we're left with implicit schema binding in our applications.  
+
+Schema Version Numbering
+=================================
+
+XSD's can have version numbers.  This is a very cool.
+
+See http://www.xfront.com/Versioning.pdf for detailed discussion of how
+to represent schema version information.
+
+Databases, however, lack version numbering in the schema.  This leads to potential
+compatibilty issues between application programs that expect version 3 of the
+schema and an older database that implements version 2 of the schema.
+
+Our file schema, similarly, don't have a tidy, unambiguous numbering.
+
+For external schema, we can embed the version in the file names.
+
+For a database schema, we can easily use the schema name to carry
+version information.  We could have a :samp:`name_{version}` kind of
+convention for all schema, allowing an application to confirm schema
+compatibility with a trivial query.
+
+For embedded schema, however, we have no *easy* to handle schema identification
+and version numbering.  We could
+build an algorithm to compare the embedded schema against other (external) 
+schemata to determine a matching version.  
+
+This may lead to further data profiling to reason out what the file is.  
+At about this point, the operation is better done manually.  Checking
+the embedded schema against existing schema and a manual examination
+of the data profiling will allow a human to determine the schema.
+
+Then, once the schema has been identified, command-line options
+can be used to bind the schema to file for correct processing.
+
+Data Attribute Mapping -- Using a Schema
+==========================================
+
+Using a schema is the heart of the semantic problem.
+
+We want to have just one application that is adaptable to a number
+of closely-related data file schemata.  Ideally, there's one, 
+but as a practical matter, there
+are several similar schema.
+
+We need to provide three pieces of information, minimally.
+
+-   Target attribute within our application.
+
+-   Target Data type conversion.
+
+-   Source attribute based on name or position.
+
+We could use a number of different encodings for this relationship.
+We could write it as properties, or XML, or some other notation.
+
+However, that triple is essentially a Python assignment statement
+with *target*, *to_type* and *source*.
+
+..  parsed-literal::
+
+    *target* = row.cell( schema['*source*'] ).*to_type*()
+
+There is a tiny bit of boilerplate in this assignment statement. 
+When using repeating groups, items with duplicated column names, or REDEFINES clauses, the "boilerplate" expands to necessary code.  In particular, the
+lazy extraction of cell values is often essential.
+
+In the case where there are no repeating groups, or REDEFINES clauses, we can make our API
+more fluent by building a row dictionary from row and schema.  This kind of
+eager cell processing is risky.
+
+..  parsed-literal::
+
+    row_dict = dict( 
+        (a.name, row.cell(a)) for a in schema )
+
+This allows the following  *target*, *to_type* and *source* triple.
+
+..  parsed-literal::
+
+    *target* = row['*source*'].*to_type*()
+
+
+For multiple attributes, this is our use case.
+
+..  parsed-literal::
+
+    def build_record( aRow ):
+        return dict(
+            name = aRow['some column'].to_str(),
+            address = aRow['another column'].to_str(),
+            zip = aRow['zip'].to_digit_str(5),
+            phone = aRow['phone'].to_digit_str(),
+        )
+        
+The idea is to build an application-specific mapping from a row
+in a file, given the logical layout information buried in the schema
+definition.
+
+Of course, the schema can lie, and the application can misuse the data.
+Those are inevitable (and therefore insoluble) problems.  This is why
+we must write customized software to handle these data sources.
+
+In the case of variant schemata, we would like something like this.
+
+..  parsed-literal::
+
+    def build_record_1( aRow ):
+        return dict(
+            name = aRow['some column'].to_str(),
+            address = arow['another column'].to_str(),
+            zip = aRow['zip'].to_digit_str(5),
+            phone = aRow['phone'].to_digit_str(),
+        )
+
+    def build_record_2( aRow ):
+        return dict(
+            name = aRow['variant column'].to_str(),
+            address = arow['different column'].to_str(),
+            zip = aRow['zip'].to_digit_str(9),
+            phone = aRow['phone'].to_digit_str(),
+        )
+
+..  py:function:: make_builder(args)
+        
+..  parsed-literal::
+
+    def make_builder( args ):
+        return eval( 'build_record_{0}'.format(args.layout) )
+
+The :func:`make_builder` function selects one of the available
+builders based on a run-time option.
+
+Data Transformation
+=================================
+
+Under :ref:`cells` above, we noted that there are two 
+parts to data handling: Capture and Conversion.  Capture is part
+of parsing the physical format.  Conversion is part of the final 
+application, and has nothing to do with the schema that describes
+the data source.
+
+A target data type transformation (or conversion) could be considerably more complex
+than the trivial case of decoding a floating-point number to a digit 
+string.  It could involve any combination of filtering, cleansing, 
+conforming to an existing database, or rewriting.
+
+..  parsed-literal::
+
+    def build_record_3( aRow ):
+        if aRow['flag'].is_empty():
+            return None
+        zip_str = aRow['zip'].to_str()
+        if '-' not in zip:
+            if len(zip) <= 5:
+                zip= aRow['zip'].to_digit_str(5)
+            else:
+                zip= aRow['zip'].to_digit_str(9)
+        else:
+            zip= zip_str.replace('-'.'')
+        return dict(
+            name = aRow['variant column'].to_str(),
+            address = arow['different column'].to_str(),
+            zip = zip,
+            phone = aRow['phone'].to_digit_str(),
+        )
+        
+This shows filtering and cleasing operations.  Yes, it's complex.
+Indeed, it's complex enough that alternative languages (i.e., properties,
+XLST, etc.) are much less clear than simple Python.
+
+``stingray`` Application Design
+=================================
+
+For testability, each application needs to be decomposed into several levels of
+processing.
+
+-   Row-Level.  Inidividual Python objects built from a row of the input.
+
+-   Sheet-Level.  Collections of Python objects built from rows.
+
+-   Workbook-Level.  Collections of sheets.
+
+Each of these tiers is separated to facilitate unit testing.  Generally, 
+the testing goes two ways.  We test our application to be sure the schemata
+are used properly.    In :ref:`demo_sqa`, we'll look at how we 
+apply unit tests validate that the the input files have the expected schema.
+
+Row-Level Processing
+----------------------
+
+Row-level processing is centered on a suite of builder functions.
+These handle the detailed mapping 
+from variant logical layouts to a single, standardized conceptual schema.
+
+Each builder creates a simple dictionary.  Each dictionary key is the standardized
+attribute names used by internal Python class definitions.
+
+**Q**.  Why not build the final Python objects from the source row?
+
+**A**.  The source row needs to be validated to see if an object can be built.  
+It seems simpler to map the logical layout in the source document to a 
+standardized structure that matches the conceptual schema.  This standardized 
+structure can be validated. 
+
+This follows the design patterns from the Django project where a ``ModelForm`` is used to validate data before attempting to build a ``Model`` instance.
+
+..  parsed-literal::
+
+    def builder_1( row ):
+        return dict(
+            *key* = row.cell( row.sheet.schema['field'] ).to_type(),
+        )
+        
+    def is_valid( row_dict ):
+        *All present or accounted for?*
+        return *state*
+
+    def make_app_object( row_dict ):
+        return App_Object( \*\*row_dict )
+
+This allows us to pick the builder based on a "logical layout" command-line
+option.  Something like the following is used to make an application 
+flexible with respect to layout.
+
+..  parsed-literal::
+
+    def make_builder( args ):
+        if args.layout in ("1", "D", "d"):
+            return builder_1
+        elif args.layout == "2":
+            return builder_2
+        else 
+            raise Exception( "Unknown layout value: {0}".format(args.layout) )
+
+To avoid updating this ``if`` statement, yet more Python features can be used.
+
+For example, we might want to package all builders in a separate module.
+This provides a focused location for change that leaves the application
+untouched when handling Yet Another Logical Layout, y'all.
+
+..  parsed-literal::
+
+    def make_builder( args ):
+        builder_name = 'builder_{0}'.format( args.layout )
+        globals = {}
+        execfile( 'builders.py', globals )
+        return globals[builder_name]
+    
+Or
+
+..  parsed-literal::
+
+    def make_builder( args ):
+        import builders
+        return eval('builders.builder_{0}'.format( args.layout ))
+
+
+The builders are tested individually.  They are subject to considerable change.
+New builders are created frequently.
+
+The validation should be common to all logical layouts.  
+It's not subject to much variation.  
+The testing of validation and processing is still important,
+but it doesn't have the change velocity that builders have.
+
+Sheet-Level Processing
+------------------------
+
+The next higher layer is sheet-level processing.  For the most part, 
+sheets are generally rows of a single logcal type.  In exceptional cases,
+a sheet may have multiple types coincedentally bound into a single sheet.
+We'll return to the multiple-types-per-sheet issue below.
+
+For the single-type-per-sheet, we have a processing function like
+the following.
+
+..  py:function:: process_sheet( sheet, builder )
+
+..  parsed-literal::
+        
+    def process_sheet( sheet, builder=builder_1 ):
+        counts= defaultdict( int )
+        object_iter = ( 
+            builder(row))
+            for row in sheet.schema.rows_as_dict_iter(sheet) )
+        for source in object_iter:
+            counts['input'] += 1
+            if is_valid(source):
+                counts['valid'] += 1
+                # *The real processing*
+                obj= make_app_object( source )
+                obj.save()
+            else:
+                counts['invalid'] += 1
+        return counts
+
+This kind of sheet is tested two ways.  First, with a test fixture that provides
+specific rows based on requirements, edge-cases and other "white-box" considerations.
+
+It is also tested with "live-file".  The counts can be checked.  This actually
+tests the file as much as it tests the sheet processing function.
+
+When processing multiple-types-per-sheet, there are two choices for doing this.
+
+-   Multiple-Pass and Filters.
+
+-   One Pass and Switch.
+
+The multiple-pass option looks like this.  Each pass applies a filter and 
+then does the appropriate processing.
+
+..  parsed-literal::
+        
+    def process_sheet_filter_1( sheet ):
+        counts= defaultdict( int )
+        object_iter = ( 
+            builder(row))
+            for row in sheet.schema.rows_as_dict_iter(sheet) )
+        for source in object_iter:
+            counts['input'] += 1
+            if *filter_1(source)*\ :
+                counts['accept'] += 1
+                *processing_1(source)*
+            else:
+                counts['reject'] += 1                
+
+The one-pass option looks like this.  A "switch" function is used to 
+discriminate each kind of row that is found in the sheet.
+
+..  parsed-literal::
+        
+    def process_sheet_switch( sheet ):
+        counts= defaultdict( int )
+        object_iter = ( 
+            builder(row))
+            for row in sheet.schema.rows_as_dict_iter(sheet) )
+        for source in object_iter:
+            counts['input'] += 1
+            if *switch_1(source)*\ :
+                counts['accept-1'] += 1
+                *processing_1(source)*
+            elif *switch_2(source)*\ :
+                counts['accept-2'] += 1
+                *processing_2(source)*
+            *elif etc.*
+            else:
+                counts['reject'] += 1                
+
+Both approaches work well; there's no "better".  
+The overhead of multiple passes may be higher because
+of the I/O cost for a large sheet of data.
+
+The multiple pass design can work out particularly well with multi-processing. 
+Each ``process_sheet_filter_x`` function can be started as independent processes to work in parallel. 
+
+For smaller sheets of data -- sheets that fit in memory -- multiple passes
+may  be the same cost as a single pass with a complex switch.
+
+Workbook Processing
+---------------------
+
+The overall processing of a given workbook input looks like this.
+
+..  py:function:: process_workbook( sheet, builder )
+
+..  parsed-literal::
+
+    def process_workbook( source, builder ):
+        for name in source.sheets():
+            # *Sheet filter?  Or multi-way elif switch?*
+            sheet= source.sheet( name, 
+                sheet.EmbeddedSchemaSheet,
+                loader_class=schema.loader.HeadingRowSchemaLoader )
+            counts= process_sheet( sheet, builder )
+            pprint.pprint( counts )
+
+This makes two claims about the workbook.
+
+-   All sheets in the workbook have the same schema rules.
+    In this example, it's an embedded schema in each sheet and the schema is the heading row.
+    We could easily use an ExternalSchemaSheet and an external schema.
+    
+-   A single :func:`process_sheet` function is appropriate for all sheets.
+
+If a workbook doesn't meet these criteria, then a (potentially) more complex
+workbook processing function is needed.  A sheet filter is usually necessary.
+
+Sheet name filtering is also subject to the kind of change that
+builders are subject to.  Each variant logical layout may also have
+a variation in sheet names.  It helps to separate the sheet filter functions
+in the same way builders are separated.   New functions are added with 
+remarkable regularity
+
+..  parsed-literal::
+    
+    def sheet_filter_1( name ):
+        return re.match( r'*pattern*', name ) 
+
+Or, perhaps something like this that uses a shell file-name pattern instead of a
+more sophisticated regular expression. 
+
+..  parsed-literal::
+    
+    def sheet_filter_2( name ):
+        return fnmatch.fnmatch( name, '*pattern*' ) 
+
+Command-Line Interface
+----------------------
+
+We have an optional argument for verbosity and a positional argument that
+provides all the files to profile.
+
+::
+
+    def parse_args():
+        parser= argparse.ArgumentParser()
+        parser.add_argument( 'file', nargs='+' )
+        parser.add_argument( '-l', '--layout' )
+        parser.add_argument( '-v', '--verbose', dest='verbosity',
+            default=logging.INFO, action='store_const', const=logging.DEBUG )
+        return parser.parse_args()
+
+The overall main program looks something like this.
+
+::
+
+    if __name__ == "__main__":
+        logging.basicConfig( stream=sys.stderr )
+        args= parse_args()
+        logging.getLogger().setLevel( args.verbosity )
+        builder= make_builder( args )
+        try:
+            for file in args:
+                with workbook.open_workbook( input ) as source:
+                    process_workbook( source, builder )
+            status= 0
+        except Exception as e:
+            logging.exception( e )
+            status= 3 
+        logging.shutdown()
+        sys.exit( status )
+        
+This main program switch allows us to test the various functions (:func:`process_workbook`, :func:`process_sheet`, the builders, etc.) in isolation.
+
+It also allows us to reuse these functions to build larger (and more complete) 
+applications from smaller components.

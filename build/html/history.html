@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>13. History &mdash; The Stingray Schema-Based File Reader</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '4.4.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="The Stingray Schema-Based File Reader" href="index.html" />
+    <link rel="next" title="14. Testing" href="testing/index.html" />
+    <link rel="prev" title="12.4. Reading COBOL Files" href="demo/cobol_reader.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="testing/index.html" title="14. Testing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="demo/cobol_reader.html" title="12.4. Reading COBOL Files"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">The Stingray Schema-Based File Reader</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="history">
+<span id="id1"></span><h1>13. History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
+<p>Latest release is 4.4.1.</p>
+<div class="section" id="version-4">
+<h2>13.1. Version 4<a class="headerlink" href="#version-4" title="Permalink to this headline">¶</a></h2>
+<p>Version 4 dates from March, 2014. It switches to Python3.3</p>
+<p>Change Details:</p>
+<ul>
+<li><p class="first">Added a &#8220;replacing&#8221; option to the COBOL Schema Loader.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;xyzzy.cob&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cobol</span><span class="p">:</span>
+    <span class="n">schema</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">COBOLSchemaLoader</span><span class="p">(</span> <span class="n">cobol</span><span class="p">,</span> <span class="n">replacing</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;&#39;WORD&#39;&quot;</span><span class="p">,</span> <span class="s">&quot;BAR&quot;</span><span class="p">)</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>The idea is to permit a copybook that expects &#8220;REPLACING&#8221; to be parsed.</p>
+</li>
+<li><p class="first">Handle multiple 01-level declarations.</p>
+<p>When we look at the context for <a class="reference internal" href="cobol_loader.html#cobol.loader.RecordFactory.makeRecord" title="cobol.loader.RecordFactory.makeRecord"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.loader.RecordFactory.makeRecord()</span></tt></a>, this
+becomes an iterator which yields each <tt class="docutils literal"><span class="pre">01</span></tt> level DDE.</p>
+<p>When the stack is popped
+down to empty, yield the structure and then start parsing again.</p>
+<p>The <a class="reference internal" href="cobol_loader.html#cobol.loader.COBOLSchemaLoader.load" title="cobol.loader.COBOLSchemaLoader.load"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.loader.COBOLSchemaLoader.load()</span></tt></a> method builds the
+schema, iterates through all the <tt class="docutils literal"><span class="pre">01</span></tt> objects returned by <a class="reference internal" href="cobol_loader.html#cobol.loader.RecordFactory.makeRecord" title="cobol.loader.RecordFactory.makeRecord"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.loader.RecordFactory.makeRecord()</span></tt></a>,
+and returns <tt class="docutils literal"><span class="pre">v.schema</span></tt> as the resulting schema.</p>
+<p>Any unit test that uses <a class="reference internal" href="cobol_loader.html#cobol.loader.RecordFactory.makeRecord" title="cobol.loader.RecordFactory.makeRecord"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.loader.RecordFactory.makeRecord()</span></tt></a> must change to reflect
+it&#8217;s revised interface as an iterator.</p>
+</li>
+<li><p class="first">Add some COBOL demos.</p>
+</li>
+<li><p class="first">Handle more complex VALUES clauses for more complex 88-level items.</p>
+</li>
+<li><p class="first">Restructure cobol, cobol.loader to add a cobol.defs module.</p>
+</li>
+<li><p class="first">Handle Occurs Depending On. Parse the syntax for ODO. Update LazyRow to
+tweak size and offset information for each row fetched.</p>
+</li>
+<li><p class="first">Add Z/OS RECFM handling in the <a class="reference internal" href="cobol_init.html#cobol.EBCDIC_File" title="cobol.EBCDIC_File"><tt class="xref py py-class docutils literal"><span class="pre">cobol.EBCDIC_File</span></tt></a> class.
+This will allow processing &#8220;Raw&#8221; EBCDIC files with RECFM of V and
+RECFM of VB &#8211; these files include BDW and RDW headers on blocks
+and records.</p>
+</li>
+<li><p class="first">Fix the <a class="reference internal" href="cobol_init.html#cobol.dump" title="cobol.dump"><tt class="xref py py-func docutils literal"><span class="pre">cobol.dump()</span></tt></a> to properly iterate through all fields.</p>
+</li>
+<li><p class="first">Fix the <a class="reference internal" href="cobol_defs.html#cobol.defs.Usage" title="cobol.defs.Usage"><tt class="xref py py-class docutils literal"><span class="pre">cobol.defs.Usage</span></tt></a> hierarchy to properly handle
+data which can&#8217;t be converted. An ErrorCell is created in the (all too common)
+case where the COBOL data is invalid.</p>
+</li>
+<li><p class="first">Support iWork &#8216;09 Numbers Workbook files.</p>
+</li>
+<li><p class="first">Remove <tt class="docutils literal"><span class="pre">%</span></tt> string formatting and <tt class="docutils literal"><span class="pre">from</span> <span class="pre">__future__</span></tt>. Correct class
+references.
+<a class="reference external" href="https://sourceforge.net/p/stingrayreader/tickets/6/">https://sourceforge.net/p/stingrayreader/tickets/6/</a></p>
+</li>
+<li><p class="first">Updated documentation.
+<a class="reference external" href="https://sourceforge.net/p/stingrayreader/tickets/7/">https://sourceforge.net/p/stingrayreader/tickets/7/</a></p>
+</li>
+<li><p class="first">Handled precision of comp3 correctly.
+<a class="reference external" href="https://sourceforge.net/p/stingrayreader/tickets/9/">https://sourceforge.net/p/stingrayreader/tickets/9/</a></p>
+</li>
+<li><p class="first">Added <a class="reference internal" href="cobol_loader.html#cobol.loader.Lexer_Long_Lines" title="cobol.loader.Lexer_Long_Lines"><tt class="xref py py-class docutils literal"><span class="pre">cobol.loader.Lexer_Long_Lines</span></tt></a> to parse copybooks with
+junk in positions 72:80 of each line.
+<a class="reference external" href="https://sourceforge.net/p/stingrayreader/tickets/11/">https://sourceforge.net/p/stingrayreader/tickets/11/</a></p>
+</li>
+<li><p class="first">Added RECFM=N to handle variable-length files with NO BDW/RDW words.
+This is the default.
+<a class="reference external" href="https://sourceforge.net/p/stingrayreader/tickets/12/">https://sourceforge.net/p/stingrayreader/tickets/12/</a></p>
+</li>
+</ul>
+</div>
+<div class="section" id="version-3">
+<h2>13.2. Version 3<a class="headerlink" href="#version-3" title="Permalink to this headline">¶</a></h2>
+<p>Version 3 dates from August of 2011.  It unifies COBOL DDE
+processing with Workbook processing.  They&#8217;re both essentially the
+same thing.</p>
+<p>The idea is to provide a schema that structures access to a file.</p>
+<p>And release a much better version of the data profiling for COBOL files.</p>
+</div>
+<div class="section" id="version-2">
+<h2>13.3. Version 2<a class="headerlink" href="#version-2" title="Permalink to this headline">¶</a></h2>
+<p>An almost &#8211; but not quite &#8211; unrelated development was a library to unify
+various kinds of workbooks.</p>
+<p>This was started in &#8216;06 or so.  The context was econometric data analysis.
+The sources were rarely formatted consistently.  While spreadsheets were
+common, fixed-format files (clearly produced by COBOL) had to be handled
+gracefully.</p>
+<p>The misdirection of following the <tt class="xref py py-mod docutils literal"><span class="pre">csv</span></tt> design patterns for eager
+loading of rows created small complications that were worked around badly
+because lazy row loading was missing from the design.</p>
+<p>The idea of the separation of physical format from logical layout was
+the obvious consequence of the endless format and layout variations
+for a single conceptual schema.</p>
+<p>Also, this reinforced the uselessness of trying to create a data-mapping
+DSL when Python expresses the data mapping perfectly.</p>
+<p>The data mapping triple is</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">target</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">conversion</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Since this is &#8211; effectively &#8211; Python code, a DSL to do this is a waste of time.</p>
+</div>
+<div class="section" id="version-1">
+<h2>13.4. Version 1<a class="headerlink" href="#version-1" title="Permalink to this headline">¶</a></h2>
+<p>Version 1 started in &#8216;02 or so.  Again, the context is data warehouse processing.</p>
+<p>COBOL-based files were being examined as part of a data profiling exercise.</p>
+<p>The data profiling use case  was very simple.  In effect, it was something
+like the following.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">summary</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="p">)</span>
+<span class="k">def</span> <span class="nf">process_sheet</span><span class="p">(</span> <span class="n">sheet</span> <span class="p">):</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">rows_as_dict_iter</span><span class="p">(</span><span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">()):</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+            <span class="n">summary</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">row</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span> <span class="n">attribute</span> <span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">[</span><span class="n">attribute</span><span class="p">]:</span>
+            <span class="k">print</span><span class="p">(</span> <span class="n">k</span><span class="p">,</span> <span class="n">summary</span><span class="p">[</span><span class="n">attribute</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>This version was a rewrite of the original C into Python.</p>
+<p>It was posted into SourceForge as <a class="reference external" href="https://sourceforge.net/projects/cobol-dde/">https://sourceforge.net/projects/cobol-dde/</a>.</p>
+</div>
+<div class="section" id="version-0">
+<h2>13.5. Version 0<a class="headerlink" href="#version-0" title="Permalink to this headline">¶</a></h2>
+<p>Version 0 started in the late 90&#8217;s.  In the context of data warehouse processing,
+COBOL-based files were being moved from mainframe to a VAX (later a Dec Alpha).</p>
+<p>The original processing included the following.</p>
+<ol class="arabic simple">
+<li>Convert the EBCDIC files from mixed display and COMP-3 to all display.</li>
+<li>Copy the files from Z/OS to the VAX (or Alpha) via a magnetic tape transfer.
+This handled EBCDIC to ASCII conversion. (It was the 90&#8217;s.)</li>
+<li>Convert the resulting ASCII files from all display back to the original
+mixture of display and COMP-3 to resurrect the original data.</li>
+<li>Process the files for warehouse loading.</li>
+</ol>
+<p>The first version of this schema-based file reader did away with the painful,
+not-system-utility copying steps.  It reduced the processing to this.</p>
+<ol class="arabic simple">
+<li>Copy the files from Z/OS to the VAX (or Alpha) via a magnetic tape transfer.
+Do no conversion.  The resulting file was mixed display and COMP-3 in EBCDIC
+encoding.</li>
+<li>Use the COBOL source DDE to determine field encoding rules.  Copy the
+source file from mixed display and COMP-3 in EBCDIC
+encoding to mixed display and COMP-3 in ASCII
+encoding.</li>
+<li>Process the files for warehouse loading.</li>
+</ol>
+<p>This was written in C.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/Stingray_belon1553_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">13. History</a><ul>
+<li><a class="reference internal" href="#version-4">13.1. Version 4</a></li>
+<li><a class="reference internal" href="#version-3">13.2. Version 3</a></li>
+<li><a class="reference internal" href="#version-2">13.3. Version 2</a></li>
+<li><a class="reference internal" href="#version-1">13.4. Version 1</a></li>
+<li><a class="reference internal" href="#version-0">13.5. Version 0</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="demo/cobol_reader.html"
+                        title="previous chapter">12.4. Reading COBOL Files</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="testing/index.html"
+                        title="next chapter">14. Testing</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/history.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="testing/index.html" title="14. Testing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="demo/cobol_reader.html" title="12.4. Reading COBOL Files"
+             >previous</a> |</li>
+        <li><a href="index.html">The Stingray Schema-Based File Reader</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, S. Lott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

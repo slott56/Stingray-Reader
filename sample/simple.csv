@@ -1,0 +1,8 @@
+"name","offset","size","type"
+"Col 1 - int",1,11,"int"
+"Col 2.0 – float",12,11,"float"
+"Column “3” - string",23,11,"str"
+"Column '4' – date",34,11,"datetime"
+"Column 5 – boolean",45,11,"bool"
+"Column 6 – empty",56,11,"str"
+"Column 7 – Error",67,11,"str"

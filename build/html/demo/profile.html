@@ -1,0 +1,424 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>12.3. Data Profiling Demonstration &mdash; The Stingray Schema-Based File Reader</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '4.4.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
+    <link rel="up" title="12. Stingray Demo Applications" href="index.html" />
+    <link rel="next" title="12.4. Reading COBOL Files" href="cobol_reader.html" />
+    <link rel="prev" title="12.2. Application Level Data Validation Technique" href="validation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cobol_reader.html" title="12.4. Reading COBOL Files"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="validation.html" title="12.2. Application Level Data Validation Technique"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">12. <strong>Stingray</strong> Demo Applications</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="data-profiling-demonstration">
+<span id="demo-profile"></span><h1>12.3. Data Profiling Demonstration<a class="headerlink" href="#data-profiling-demonstration" title="Permalink to this headline">¶</a></h1>
+<p>This is a simple data profiling application that can be applied
+to workbooks to examine the data prior to creating builders.</p>
+<p>This produces simple RST-format output on stdout.</p>
+<p>A common use case is the following:</p>
+<div class="highlight-bash"><div class="highlight"><pre>python3 demo/profile.py sample/<span class="se">\*</span>.csv &gt;profile_csv.rst
+rst2html.py profile_csv.rst profile_csv.html
+</pre></div>
+</div>
+<p>This gives us an HTML-formatted report.</p>
+<div class="section" id="overheads">
+<h2>12.3.1. Overheads<a class="headerlink" href="#overheads" title="Permalink to this headline">¶</a></h2>
+<p>We depend on a number of Python libraries.  Plus, of course, we&#8217;re
+creating workbooks, working with sheets and schema.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span> <span class="nn">stingray.workbook</span>
+<span class="kn">import</span> <span class="nn">stingray.sheet</span>
+<span class="kn">import</span> <span class="nn">stingray.schema</span>
+
+<span class="n">logger</span><span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span> <span class="n">__name__</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="processing-context">
+<h2>12.3.2. Processing Context<a class="headerlink" href="#processing-context" title="Permalink to this headline">¶</a></h2>
+<p>This class handles the accumulation of global statistics on the source data.
+This a context manager which assures that we&#8217;ll successfully process the
+statistics in spite of any exception which might occur.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Gather_Statistics</span><span class="p">:</span>
+    <span class="n">stop_on_exception</span><span class="o">=</span> <span class="bp">False</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="n">value</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span> <span class="p">):</span>
+        <span class="k">if</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">False</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="validation.html#demo-validate"><em>Application Level Data Validation Technique</em></a> for a more complete example of this kind of use
+of a context manager.</p>
+</div>
+<div class="section" id="processing">
+<h2>12.3.3. Processing<a class="headerlink" href="#processing" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference internal" href="../developer.html#developer"><em>The Stingray Developer&#8217;s Guide</em></a> for background. We&#8217;re going to need a &#8220;sheet process function.&#8221;
+This transforms the source sheet into the target collection, usually an output file.</p>
+<p>The <a class="reference internal" href="../developer.html#process_sheet" title="process_sheet"><tt class="xref py py-func docutils literal"><span class="pre">process_sheet()</span></tt></a> function the heart of the application.
+This handles all the rows present in a given sheet.</p>
+<p>We use <tt class="docutils literal"><span class="pre">source_row[attr]</span></tt> to accumulate the <a class="reference internal" href="../cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> instance
+information.  This can help identify the source data format as well as the value.</p>
+<p>We can use <tt class="docutils literal"><span class="pre">source_row[attr].value</span></tt> to accumulate the &#8220;raw&#8221; Python values
+present in the spreadsheet.</p>
+<p>An alternative is to use a <a class="reference internal" href="../cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> conversion to a desired
+type.  We might, for example, use <tt class="xref py py-meth docutils literal"><span class="pre">cell.Cell.to_str()</span></tt> to convert a raw value
+to a string.  This would better parallel the way that an application will
+use the data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">process_sheet</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">persistence</span> <span class="p">):</span>
+    <span class="n">counts</span><span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span> <span class="nb">int</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">source_row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">rows_as_dict_iter</span><span class="p">(</span><span class="n">sheet</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s">u&#39;read&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">source_row</span><span class="p">:</span>
+                <span class="n">persistence</span><span class="o">.</span><span class="n">count</span><span class="p">(</span> <span class="n">attr</span><span class="p">,</span> <span class="n">source_row</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s">u&#39;invalid&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">persistence</span><span class="o">.</span><span class="n">stop_on_exception</span><span class="p">:</span> <span class="k">raise</span>
+            <span class="n">summary</span><span class="o">=</span> <span class="s">&quot;{0} &#39;{1}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">e</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span> <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span> <span class="n">summary</span> <span class="p">)</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s">u&#39;error &#39;</span><span class="o">+</span><span class="n">summary</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">title</span><span class="o">=</span> <span class="s">&quot;{0} :: {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">sheet</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">sheet</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span> <span class="n">title</span> <span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span> <span class="s">&quot;=&quot;</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">title</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">print</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="p">:</span>
+        <span class="n">name</span><span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">print</span><span class="p">(</span> <span class="n">name</span> <span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span> <span class="s">&quot;-&quot;</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">print</span><span class="p">()</span>
+        <span class="k">print</span><span class="p">(</span> <span class="s">&quot;..  csv-table::&quot;</span> <span class="p">)</span>
+        <span class="k">print</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">persistence</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
+            <span class="k">print</span><span class="p">(</span> <span class="s">&#39;    &quot;{0}&quot;,&quot;{1}&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">k</span><span class="p">,</span> <span class="n">persistence</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="k">print</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">counts</span>
+</pre></div>
+</div>
+<p>Some applications will have variant processing for workbooks that
+contain different types of sheets.
+This leads to different <tt class="docutils literal"><span class="pre">process_this_sheet</span></tt>  and <tt class="docutils literal"><span class="pre">process_that_sheet</span></tt> functions.
+Each  will follow the above template to process all rows of the sheet.</p>
+</div>
+<div class="section" id="high-level-interfaces">
+<h2>12.3.4. High-Level Interfaces<a class="headerlink" href="#high-level-interfaces" title="Permalink to this headline">¶</a></h2>
+<p>This version of <tt class="xref py py-func docutils literal"><span class="pre">validate()</span></tt> doesn&#8217;t really do very much.  We don&#8217;t have
+any persistence, so there&#8217;s no sensible alternative do this for simple
+data gathering. In more complex applications, we might have a <tt class="xref py py-func docutils literal"><span class="pre">process()</span></tt>
+function which does some more complex processing.</p>
+<p>However, it&#8217;s often helpful to follow the template design for other,
+more sophisticated, applications.  For that reason, we provide the
+processing context as a kind of  <strong>Strategy</strong> object to the <a class="reference internal" href="../developer.html#process_sheet" title="process_sheet"><tt class="xref py py-func docutils literal"><span class="pre">process_sheet()</span></tt></a> function.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span> <span class="n">sheet</span> <span class="p">):</span>
+    <span class="k">with</span> <span class="n">Gather_Statistics</span><span class="p">()</span> <span class="k">as</span> <span class="n">mode</span><span class="p">:</span>
+        <span class="n">counts</span><span class="o">=</span> <span class="n">process_sheet</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">mode</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">counts</span>
+</pre></div>
+</div>
+<p>Note that the following <a class="reference internal" href="../developer.html#process_workbook" title="process_workbook"><tt class="xref py py-func docutils literal"><span class="pre">process_workbook()</span></tt></a> function makes some specific claims about the given
+file.  In particular:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../sheet.html#sheet.EmbeddedSchemaSheet" title="sheet.EmbeddedSchemaSheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.EmbeddedSchemaSheet</span></tt></a>.  The schema is embedded within each sheet.</li>
+<li><a class="reference internal" href="../schema_loader.html#schema.loader.HeadingRowSchemaLoader" title="schema.loader.HeadingRowSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></tt></a>.  The schema is the heading row.</li>
+</ul>
+<p>If these assumptions are not universally true, then different application
+programs or different <a class="reference internal" href="../developer.html#process_workbook" title="process_workbook"><tt class="xref py py-func docutils literal"><span class="pre">process_workbook()</span></tt></a> functions must be written to handle other kinds of workbooks.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">process_workbook</span><span class="p">(</span> <span class="nb">input</span> <span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">sheets</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s">&quot;{0} :: {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="nb">input</span><span class="p">,</span> <span class="n">name</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="n">sheet</span><span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="n">name</span><span class="p">,</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">EmbeddedSchemaSheet</span><span class="p">,</span>
+            <span class="n">loader_class</span><span class="o">=</span><span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">HeadingRowSchemaLoader</span> <span class="p">)</span>
+        <span class="n">counts</span><span class="o">=</span> <span class="n">validate</span><span class="p">(</span> <span class="n">sheet</span> <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">counts</span><span class="p">))</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="command-line-interface">
+<h2>12.3.5. Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h2>
+<p>We have an optional argument for verbosity and a positional argument that
+provides all the files to profile.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
+    <span class="n">parser</span><span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span> <span class="s">&#39;file&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;+&#39;</span> <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span> <span class="s">&#39;-v&#39;</span><span class="p">,</span> <span class="s">&#39;--verbose&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;verbosity&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_const&#39;</span><span class="p">,</span> <span class="n">const</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The main-import switch allows us to import this module and reuse the components
+or run it as a command-line application.  To run from the command line, we have several issues to address.</p>
+<ol class="arabic simple">
+<li>Logging.</li>
+<li>Parameter Parsing.  This includes interpreting options.</li>
+<li>Argument Processing.  This means looping over the positional arguments.</li>
+<li>Opening Workbooks.  Some applications can&#8217;t use the default
+<a class="reference internal" href="../workbook.html#workbook.Opener" title="workbook.Opener"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Opener</span></tt></a>.  A subclass of Opener, or more complex logic,
+may be required.</li>
+<li>Gracefully catching and logging exceptions.</li>
+<li>Exit Status to the OS.</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span> <span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="p">)</span>
+    <span class="n">args</span><span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span> <span class="n">args</span><span class="o">.</span><span class="n">verbosity</span> <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="nb">input</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">open_workbook</span><span class="p">(</span> <span class="nb">input</span> <span class="p">)</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+                <span class="n">process_workbook</span><span class="p">(</span> <span class="n">source</span> <span class="p">)</span>
+        <span class="n">status</span><span class="o">=</span> <span class="mi">0</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span> <span class="n">e</span> <span class="p">)</span>
+        <span class="n">status</span><span class="o">=</span> <span class="mi">3</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span> <span class="n">status</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="running-the-demo">
+<h3>12.3.5.1. Running the Demo<a class="headerlink" href="#running-the-demo" title="Permalink to this headline">¶</a></h3>
+<p>We can run this program like this:</p>
+<div class="highlight-bash"><div class="highlight"><pre>python3 demo/profile.py sample/<span class="se">\*</span>.csv &gt;profile_csv.rst
+rst2html.py profile_csv.rst profile_csv.html
+</pre></div>
+</div>
+<p>The RST output file looks like this:</p>
+<div class="highlight-python"><div class="highlight"><pre>sample/csv_workbook.csv :: csv_workbook
+=======================================
+
+Col 1 - int
+-----------
+
+..  csv-table::
+
+        &quot;TextCell(&#39;9973&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;42&#39;)&quot;,&quot;1&quot;
+
+Col 2.0 - float
+---------------
+
+..  csv-table::
+
+        &quot;TextCell(&#39;3.1415926&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;2.7182818&#39;)&quot;,&quot;1&quot;
+
+Column &quot;3&quot; - string
+-------------------
+
+..  csv-table::
+
+        &quot;TextCell(&#39;string&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;data&#39;)&quot;,&quot;1&quot;
+
+Column &#39;4&#39; - date
+-----------------
+
+..  csv-table::
+
+        &quot;TextCell(&#39;09/10/56&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;01/18/59&#39;)&quot;,&quot;1&quot;
+
+Column 5 - boolean
+------------------
+
+..  csv-table::
+
+        &quot;TextCell(&#39;TRUE&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;FALSE&#39;)&quot;,&quot;1&quot;
+
+Column 6 - empty
+----------------
+
+..  csv-table::
+
+        &quot;TextCell(&#39;&#39;)&quot;,&quot;2&quot;
+
+Column 7 - Error
+----------------
+
+..  csv-table::
+
+        &quot;TextCell(&#39;#DIV/0!&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;#NAME?&#39;)&quot;,&quot;1&quot;
+
+sample/simple.csv :: simple
+===========================
+
+name
+----
+
+..  csv-table::
+
+        &quot;TextCell(&#39;Column 6 – empty&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;Column “3” - string&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;Col 2.0 – float&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&quot;Column &#39;4&#39; – date&quot;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;Column 7 – Error&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;Column 5 – boolean&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;Col 1 - int&#39;)&quot;,&quot;1&quot;
+
+offset
+------
+
+..  csv-table::
+
+        &quot;TextCell(&#39;45&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;56&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;34&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;67&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;1&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;23&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;12&#39;)&quot;,&quot;1&quot;
+
+size
+----
+
+..  csv-table::
+
+        &quot;TextCell(&#39;11&#39;)&quot;,&quot;7&quot;
+
+type
+----
+
+..  csv-table::
+
+        &quot;TextCell(&#39;float&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;bool&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;datetime&#39;)&quot;,&quot;1&quot;
+        &quot;TextCell(&#39;str&#39;)&quot;,&quot;3&quot;
+        &quot;TextCell(&#39;int&#39;)&quot;,&quot;1&quot;
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">12.3. Data Profiling Demonstration</a><ul>
+<li><a class="reference internal" href="#overheads">12.3.1. Overheads</a></li>
+<li><a class="reference internal" href="#processing-context">12.3.2. Processing Context</a></li>
+<li><a class="reference internal" href="#processing">12.3.3. Processing</a></li>
+<li><a class="reference internal" href="#high-level-interfaces">12.3.4. High-Level Interfaces</a></li>
+<li><a class="reference internal" href="#command-line-interface">12.3.5. Command-Line Interface</a><ul>
+<li><a class="reference internal" href="#running-the-demo">12.3.5.1. Running the Demo</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="validation.html"
+                        title="previous chapter">12.2. Application Level Data Validation Technique</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cobol_reader.html"
+                        title="next chapter">12.4. Reading COBOL Files</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/demo/profile.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cobol_reader.html" title="12.4. Reading COBOL Files"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="validation.html" title="12.2. Application Level Data Validation Technique"
+             >previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" >12. <strong>Stingray</strong> Demo Applications</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, S. Lott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

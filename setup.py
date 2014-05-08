@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+
+# .. _`installation`:
+#
+# ##############################
+# Installation via ``setup.py``
+# ##############################
+#
+# The Stingray distribution kit (minimally) is just the following.
+#
+# -   :file:`source`.  The RST-formatted source used by PyLit3 to 
+#     to create code and documentation.
+#
+# -   :file:`sample`.  Several sample workbooks used for testing.
+#
+# -   :file:`build.py`.  The build procedure.  
+#
+# Given these two directories, the build procedure uses PyLit3 to create ``stingray`` package.  
+# It uses Sphinx to create the documentation.
+#
+# Optional Build-from-Scratch
+# =============================
+#
+# See :ref:`build` for more information on the build procedure.  
+# This is an optional step to recreate the Python code from the documentation.
+#
+# The build process required PyLit3 and Sphinx to be installed.
+# Setuptools can be used to simplify installation.
+#
+# -   PyLit.  https://github.com/slott56/PyLit-3
+#
+# -   Sphinx.  http://sphinx.pocoo.org/
+#
+# -   Setuptools.  http://pypi.python.org/pypi/setuptools
+#
+# A fresh SVN checkout may have dates and times in an order that baffles PyLit3.
+# It's sensible to simply delete the :file:`stingray`, :file:`demo` and :file:`test` 
+# directories to do a complete rebuild.
+#
+# ..  code-block:: bash
+#
+#     python3 build.py
+#    
+# Installation via Distutils
+# =============================
+#    
+# To install ``stingray`` you can use the following.
+# On Linux, this may require privileges via ``sudo``.
+#
+# ..  code-block:: bash
+#
+#     sudo python3 setup.py install
+#    
+# In some cases, you might want to break this down into a build step that
+# doesn't require privileges and the final install step, which does require
+# privileges.
+#
+# ..      code-block:: bash
+#        
+#         python3 setup.py build
+#         sudo python3 setup.py install
+#
+# The ``setup.py`` File
+# ======================
+#
+# To use Stingray, you must have the following package installed.
+#
+# -   xlrd.  http://www.lexicon.net/sjmachin/xlrd.htm
+#
+#     Version 0.9.2 is Python 3 compatible. https://pypi.python.org/pypi/xlrd/0.9.2
+#
+# This provides Python package information.
+#
+# ::
+
+from setuptools import setup
+import sys
+
+if sys.version_info < (3,3):
+    print( "Stringray requires Python 3.3" )
+    sys.exit(2)
+
+setup(
+    name='stingray',
+    version='4.4.1',
+    description='Schema-Based File Reader, COBOL, EBCDIC Conversion, ETL, Data Profiling',
+    author='S.Lott',
+    author_email='s_lott@yahoo.com',
+    url='https://sourceforge.net/projects/stingray/',
+    packages=[
+        'stingray', 
+        'stingray.schema',
+        'stingray.cobol',
+        ],
+    package_data={'stingray': ['*.json']},
+
+# We depend on the release of Python itself, based on the ``sys.version_info`` named tuple.
+# We have a few Python3.3 features.
+#
+# We depend XLRD, which comes from PyPi. This is required for normal use and operation.
+#
+# For a full build from the source document, we depend on having a new release
+# of Sphinx and PyLit3.
+#
+# The ``obsoletes`` is there in case anyone did happen to download the previous release.
+#
+# ::
+
+    install_requires=["xlrd>=0.9","sphinx>1.2"],
+    obsoletes=["cobol_dde","data_profile"],
+    
+# Here are some `trove classifiers <http://pypi.python.org/pypi?%3Aaction=list_classifiers>`_.
+#
+# ::
+
+    classifiers=[
+        "Development Status :: 6 - Mature",
+        "Environment :: Console",
+        "Intended Audience :: Developers",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: COBOL",
+        "Topic :: Database",
+        "Topic :: Software Development :: Libraries",
+        "Topic :: Software Development :: Quality Assurance",
+        ],
+    )
+    

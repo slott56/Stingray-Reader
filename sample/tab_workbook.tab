@@ -1,0 +1,3 @@
+Col 1 - int	Col 2.0 - float	Column "3" - string	Column '4' - date	Column 5 - boolean	Column 6 - empty	Column 7 - Error
+42	3.1415926	string	09/10/56	TRUE		#DIV/0!
+9973	2.72182818	data	01/18/59	FALSE		#NAME?

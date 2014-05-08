@@ -1,0 +1,506 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>10. The COBOL Package &mdash; The Stingray Schema-Based File Reader</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '4.4.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="The Stingray Schema-Based File Reader" href="index.html" />
+    <link rel="next" title="10.2.1. COBOL Package – Extend Schema to Handle EBCDIC" href="cobol_init.html" />
+    <link rel="prev" title="9.2. Protobuf Module – Unpacking iWork 13 files." href="protobuf.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cobol_init.html" title="10.2.1. COBOL Package – Extend Schema to Handle EBCDIC"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="protobuf.html" title="9.2. Protobuf Module – Unpacking iWork 13 files."
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">The Stingray Schema-Based File Reader</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-cobol-package">
+<span id="cobol"></span><h1>10. The COBOL Package<a class="headerlink" href="#the-cobol-package" title="Permalink to this headline">¶</a></h1>
+<p>Or.  &#8220;How do I access COBOL-defined data from Python&#8221;?</p>
+<p>We have three problems to solve to get COBOL data into Python applications.</p>
+<ul class="simple">
+<li>Most of the <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> subclasses aren&#8217;t really appropriate for
+data coming from COBOL applications.
+Indeed, only <a class="reference internal" href="cell.html#cell.TextCell" title="cell.TextCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.TextCell</span></tt></a> is really appropriate.</li>
+<li>The schema more complex than the
+flat-file schema expected by <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>.<ul>
+<li>The structure is hierarchical.</li>
+<li>Each attribute has a large number of properties required for proper
+conversion to Python types.</li>
+<li>There are repeating groups (based on the &#8220;OCCURS&#8221; clauses).</li>
+<li>There are attributes with locations based on other attributes.
+These are defined by Occurs Depending On clauses.</li>
+<li>There are fields that may have invalid data due to a &#8220;REDEFINES&#8221; clause.
+The USAGE information indicates the encoding of the data which is
+expected to be in the field, the actual data may not match the definition.</li>
+</ul>
+</li>
+<li>The schema is encoded in COBOL.  That is the subject of <a class="reference internal" href="cobol_loader.html#cobol-loader"><em>COBOL Loader Module &#8211; Parse COBOL Source to Load a Schema</em></a>.</li>
+</ul>
+<div class="section" id="requirements">
+<h2>10.1. Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>The essential COBOL use case is to create usable Python objects from the source file data.</p>
+<p>For each source file row, there&#8217;s a two-step operation.</p>
+<ol class="arabic simple">
+<li>Access elements of each row using the COBOL DDE structure.</li>
+<li>Build Python objects from the Cells found in the row.
+Building Python objects is best done with a &#8220;builder&#8221; function,
+as shown above in <a class="reference internal" href="schema.html#schema"><em>Schema Package &#8211; Schema and Attribute Definitions</em></a>, <a class="reference internal" href="developer.html#developer"><em>The Stingray Developer&#8217;s Guide</em></a>, and <a class="reference internal" href="demo/index.html#demo"><em>Stingray Demo Applications</em></a>.</li>
+</ol>
+<div class="section" id="high-level-processing">
+<h3>10.1.1. High-Level Processing<a class="headerlink" href="#high-level-processing" title="Permalink to this headline">¶</a></h3>
+<p>A <a class="reference internal" href="sheet.html#sheet.Row" title="sheet.Row"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Row</span></tt></a> appears to be a sequential collection of
+<a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> instances.  The schema is
+used for <strong>lazy</strong>  creation of <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> instances.
+Cells may have bad data, and the use of <cite>REDEFINES</cite> means that
+a row cannot be built eagerly.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;sample/zipcty.cob&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cobol</span><span class="p">:</span>
+    <span class="n">schema</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">COBOLSchemaLoader</span><span class="p">(</span> <span class="n">cobol</span> <span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    <span class="c">#pprint.pprint( schema )</span>
+<span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="s">&#39;sample/zipcty1&#39;</span><span class="p">,</span> <span class="s">&#39;sample/zipcty2&#39;</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">filename</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span> <span class="k">as</span> <span class="n">wb</span><span class="p">:</span>
+        <span class="n">sheet</span><span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="n">filename</span> <span class="p">)</span>
+        <span class="n">counts</span><span class="o">=</span> <span class="n">process_sheet</span><span class="p">(</span> <span class="n">sheet</span> <span class="p">)</span>
+        <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span> <span class="n">counts</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="xref py py-class docutils literal"><span class="pre">Character_File</span></tt> class is for files in all character (no packed decimal)
+encoded in ASCII.
+These kinds of files are expected to have proper <tt class="docutils literal"><span class="pre">'\n'</span></tt> characters at the end of each record.</p>
+<p>For an EBCDIC file, use the <a class="reference internal" href="cobol_init.html#cobol.EBCDIC_File" title="cobol.EBCDIC_File"><tt class="xref py py-class docutils literal"><span class="pre">cobol.EBCDIC_File</span></tt></a> class. These files
+lack a specific record delimiter character. If the &#8220;RECFM&#8221; (Record Format) is
+V or VB, there&#8217;s a header word with length instead of a delimiter.</p>
+<p>Processing a COBOL &#8220;sheet&#8221; is a slight extension to processing workbook sheets.
+We can turned the simple sequential COBOL-based schema into a dictionary.
+The keys are the simple field names as well as the full field paths.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">process_sheet</span><span class="p">(</span> <span class="n">sheet</span> <span class="p">):</span>
+    <span class="c"># Simple field names</span>
+    <span class="n">schema_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">schema</span> <span class="p">)</span>
+    <span class="c"># Dot-puncutated field paths</span>
+    <span class="n">schema_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">schema</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="n">counts</span><span class="o">=</span> <span class="p">{</span> <span class="s">&#39;read&#39;</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
+    <span class="n">row_iter</span><span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span>
+    <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">row_iter</span><span class="p">)</span>
+    <span class="n">header</span><span class="o">=</span> <span class="n">header_builder</span><span class="p">(</span> <span class="n">row</span><span class="p">,</span> <span class="n">schema_dict</span> <span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span> <span class="n">header</span> <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">row_iter</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">=</span> <span class="n">row_builder</span><span class="p">(</span> <span class="n">row</span><span class="p">,</span> <span class="n">schema_dict</span> <span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span> <span class="n">data</span> <span class="p">)</span>
+        <span class="n">counts</span><span class="p">[</span><span class="s">&#39;read&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">counts</span>
+</pre></div>
+</div>
+<p>This relies on two functions to access elements: <tt class="docutils literal"><span class="pre">header_builder()</span></tt> and <tt class="docutils literal"><span class="pre">row_builder()</span></tt>.
+Each of these will use the dictionary schema to access individual elements.</p>
+</div>
+<div class="section" id="access-elements-via-schema">
+<h3>10.1.2. Access Elements Via Schema<a class="headerlink" href="#access-elements-via-schema" title="Permalink to this headline">¶</a></h3>
+<p>A function like the following builds an object from a row using the schema.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">header_builder</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">types</span><span class="o">.</span><span class="n">SimpleNamespace</span><span class="p">(</span>
+        <span class="n">file_version_year</span><span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema</span><span class="p">[</span><span class="s">&#39;FILE-VERSION-YEAR&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">(),</span>
+        <span class="n">file_version_month</span><span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema</span><span class="p">[</span><span class="s">&#39;FILE-VERSION-MONTH&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">(),</span>
+        <span class="n">copyright_symbol</span><span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema</span><span class="p">[</span><span class="s">&#39;COPYRIGHT-SYMBOL&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">(),</span>
+        <span class="n">tape_sequence_no</span><span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">schema</span><span class="p">[</span><span class="s">&#39;TAPE-SEQUENCE-NO&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_str</span><span class="p">(),</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>We use <tt class="docutils literal"><span class="pre">schema['FILE-VERSION-YEAR']</span></tt> to track down the attribute details.
+We use this information to build a <tt class="docutils literal"><span class="pre">Cell</span></tt> from the current row.</p>
+<p>We also need to handle repeating groups.
+In the case of repeating elements,  the repeating collection of elements
+creates a tuple-of-tuples structure which we can index.</p>
+<p>This gives us two ways to provide an OCCURS index values.  The first is
+to associate the index with the <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a>, as follows.</p>
+<p>While the following is weird, it parallels COBOL usage of indexing and element naming.  The idea is to provide the lowest level of name and all the indexes
+above it in one construct.</p>
+<pre class="literal-block">
+def process_sheet( sheet ):
+    for row in sheet.rows():
+        foo= row.cell(schema[<em>n</em>]).to_str()
+        bar= row.cell(schema[<em>m</em>].index(<em>i</em>, <em>j</em>)).to_str()
+</pre>
+<p>The second way to provide an index is provide a subset of the indexes and get a kind of slice.
+This is like the positional version, shown above.</p>
+<pre class="literal-block">
+def process_sheet( sheet ):
+    for row in sheet.rows():
+        foo= row.cell(schema[<em>n</em>]).to_str()
+        bar= row.cell(schema[<em>m</em>])[<em>i</em>][<em>j</em>].to_str()
+</pre>
+</div>
+<div class="section" id="possible-added-fluency">
+<h3>10.1.3. Possible Added Fluency<a class="headerlink" href="#possible-added-fluency" title="Permalink to this headline">¶</a></h3>
+<p>The path names are awkward to use since they must include every level
+from the <tt class="docutils literal"><span class="pre">01</span></tt> to the relevant item.</p>
+<p>A subclass of <a class="reference internal" href="schema.html#schema.Schema" title="schema.Schema"><tt class="xref py py-class docutils literal"><span class="pre">schema.Schema</span></tt></a> <em>could</em> introduce
+a method like <tt class="docutils literal"><span class="pre">get_name()</span></tt> to make a schema into a slightly more fluent
+mapping in addition to a sequenmce.</p>
+<pre class="literal-block">
+foo= row.cell(schema_dict.get_name('bar'))
+baz_i_j= row.cell(schema_dict.get_name('baz').index(<em>i</em>, <em>j</em>))
+</pre>
+<p>This doesn&#8217;t works for unique names.</p>
+<p>The COBOL <tt class="docutils literal"><span class="pre">OF</span></tt> syntax <em>could</em> be modeled using a fluent <tt class="docutils literal"><span class="pre">of()</span></tt> method.</p>
+<pre class="literal-block">
+foo= row.cell(schema_dict.get('foo').of('bar'))
+baz_i_j= row.cell(schema_dict.get('baz').index(<em>i</em>, <em>j</em>))
+baz_i_quux_j = row.cell(schema_dict.get('baz').index(<em>i</em>).of('quux').index(<em>j</em>))
+</pre>
+<p>This is all potentially useful for hyper-complex COBOL record layouts.</p>
+</div>
+<div class="section" id="low-level-processing">
+<h3>10.1.4. Low-Level Processing<a class="headerlink" href="#low-level-processing" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="cobol_init.html#cobol.dump" title="cobol.dump"><tt class="xref py py-func docutils literal"><span class="pre">cobol.dump()</span></tt></a> function can dump a record showing
+raw bytes.</p>
+<p>This relies on the <a class="reference internal" href="cobol_init.html#cobol.dump_iter" title="cobol.dump_iter"><tt class="xref py py-func docutils literal"><span class="pre">cobol.dump_iter()</span></tt></a> function. This function
+iterates through all DDE elements (in order) providing a five-tuple of the
+original DDE, the derived attribute, a tuple of specific index values used, the
+raw bytes found and any <tt class="docutils literal"><span class="pre">Cell</span></tt> object if the data was actually valid.</p>
+<p>The indices tuple may be an empty tuple for non-OCCURS data. For OCCURS data,
+all combinations of index values are used, so large, nested structures may produce
+long lists of values.</p>
+<p>The raw bytes and the <tt class="docutils literal"><span class="pre">Cell</span></tt> object are (technically) redundant, since all
+subclasses of <tt class="docutils literal"><span class="pre">Cell</span></tt> used by the <tt class="docutils literal"><span class="pre">cobol</span></tt> package have a <tt class="docutils literal"><span class="pre">raw</span></tt> attribute with
+the raw bytes. However, it&#8217;s sometimes simpler to have this expanded in the tuple.</p>
+</div>
+<div class="section" id="the-occurs-depending-on-problem">
+<h3>10.1.5. The Occurs Depending On Problem<a class="headerlink" href="#the-occurs-depending-on-problem" title="Permalink to this headline">¶</a></h3>
+<p>There are two kinds of DDE&#8217;s: group and elementary. A group DDE is a collection of DDE&#8217;s.
+An elementary does not contain anything. This makes a DDE a proper tree.</p>
+<p>A DDE, <img class="math" src="_images/math/425d86ba2f2979d75b7535c2bcf92c33ed6b285a.png" alt="d"/>, has two interesting properties: the offset, <img class="math" src="_images/math/484d557e75d3acc0db0dffb835543a8a21ef13bf.png" alt="d_o"/>, and the
+size, <img class="math" src="_images/math/d9c4121eba49051c80a6f701235a176b69a875b7.png" alt="d_s"/>. We&#8217;re interested in the bytes associated with a particular DDE
+element, <img class="math" src="_images/math/8960863313de7ac089c69c968db30eb996ae09a8.png" alt="B[d]"/>. These bytes are fetched from a larger buffer, <img class="math" src="_images/math/7d5440fe62c35baa61b9a396b06ec281fc5cc561.png" alt="B = \{ B_0, B_1, B_2, ..., B_n \}"/>.</p>
+<p>This allows us to fetch the bytes from a buffer by getting
+bytes <img class="math" src="_images/math/8038b5ab4d420c3565e83aa33cd4a08be7bc635d.png" alt="B[d] = \{B_x | d_o \leq x &lt; d_o+d_s\}"/>.</p>
+<p>The size of an elementary DDE, <img class="math" src="_images/math/d9c4121eba49051c80a6f701235a176b69a875b7.png" alt="d_s"/>, is fixed by the picture clause.</p>
+<p>The size of a group DDE is the sum of the children. <img class="math" src="_images/math/ddee8cda87b03a0dd9257ebcb15dc434f96054ef.png" alt="d_s = \sum_{c \in d}c_s"/>.
+While this seems clear, it doesn&#8217;t include the <tt class="docutils literal"><span class="pre">OCCURS</span></tt> clause issues: we&#8217;ll return to
+those below.</p>
+<p>The DDE&#8217;s in a tree can have three species of relationships.</p>
+<ul>
+<li><p class="first">Predecessor/Successor. The predecessor of <img class="math" src="_images/math/425d86ba2f2979d75b7535c2bcf92c33ed6b285a.png" alt="d"/> is <img class="math" src="_images/math/dda20917f0d84a62024a0526f6549492d7c138a2.png" alt="P(d)"/>.</p>
+<p>The offset of an item is <img class="math" src="_images/math/80acc216ca255748d5c96586b820bee9bbcc3695.png" alt="d_o = P(d)_o + P(d)_s"/>. This applies recursively
+to the first item in the DDE collection.
+For the first item in a DDE, <img class="math" src="_images/math/0f84f2273b34091fd2be509dc6dc6f674776f44c.png" alt="d_0"/>, <img class="math" src="_images/math/612b7fae873e450f1d80599db301ce61520ee4d4.png" alt="P(d_0)_o=0"/> and <img class="math" src="_images/math/b4bdf4276f27317634c4b1d107d64bf3d751e55a.png" alt="P(d_0)_s=0"/>.</p>
+</li>
+<li><p class="first">Parent/Child. The parent contains a group of items; the parent of <img class="math" src="_images/math/425d86ba2f2979d75b7535c2bcf92c33ed6b285a.png" alt="d"/> is <img class="math" src="_images/math/788ee41ac51067e716d10fe62dfb25cce259585a.png" alt="G(d)"/>,
+we can say <img class="math" src="_images/math/9cdf713740e91a0439c3e47300717f6bd3a16a48.png" alt="d \in G(d)"/>.</p>
+</li>
+<li><p class="first">Redefines. This DDE&#8217;s offset (and size) is defined by another item, <img class="math" src="_images/math/97e1799f47b8019cd88b44fc16f61f0763c05e51.png" alt="R(d)"/>.
+<img class="math" src="_images/math/5aa5494eb8f786a401d4b3f2a8371af7635f85d1.png" alt="d_o = R(d)_o"/> and <img class="math" src="_images/math/32b19495b70de0a49bc9836fcf7fe352a279bbec.png" alt="d_s = R(d)_s"/>.</p>
+</li>
+</ul>
+<p>The predecessor/successor relationship is implied by the order of the DDE&#8217;s as they&#8217;re
+compiled. If they have the same level number, they&#8217;re successors.</p>
+<p>The child relationship is specified via the level numbers. A larger level number
+implies a child of a lower level number.</p>
+<p>The redefines relationship is specified via the <tt class="docutils literal"><span class="pre">REDEFINES</span></tt> clause.</p>
+<p>This is complicated by the <tt class="docutils literal"><span class="pre">OCCURS</span></tt> clause. There are two versions in the COBOL language
+manual, to which we&#8217;ll add third.</p>
+<ul class="simple">
+<li>&#8220;Format 1&#8221; has a fixed number of occurrences, <img class="math" src="_images/math/bd10583c6143a88fc9c0d45370e00ddbbcf540c7.png" alt="O(d) = n"/>, comes from <tt class="docutils literal"><span class="pre">OCCURS</span> <span class="pre">n</span> <span class="pre">TIMES</span></tt>.</li>
+<li>&#8220;Format 2&#8221; means the number of occurrences depends on a piece of data,
+in another DDE, the depends-n basis, <img class="math" src="_images/math/23b53ce3cef471d80956c6d5773e113e658a924b.png" alt="D(d)"/>. This means that
+<img class="math" src="_images/math/7303dae7da515b82a74a5f3652843e512796c829.png" alt="O(d) = B[ D(d) ]"/>. This comes from <tt class="docutils literal"><span class="pre">OCCURS</span> <span class="pre">n</span> <span class="pre">TO</span> <span class="pre">m</span> <span class="pre">TIMES</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span> <span class="pre">b</span></tt>.
+The lower and upper bounds, <em>n</em> and <em>m</em>, are irrelevant. Only the dependency matters.</li>
+<li>To this, we can add &#8220;Format 0&#8221; which has a single occurrence, <img class="math" src="_images/math/5bf3fcc9195e84af1d47d81156497236aa714fc6.png" alt="O(d)=1"/>.
+This is the default if no occurrence information is provided.</li>
+</ul>
+<p>This adds another interesting attribute, the total size of an item, <img class="math" src="_images/math/c787a1b45837b039641f7d7dccffb96852d40db8.png" alt="d_t=d_s \times O(d)"/>.
+The total size is the elementary size times the number of occurrences.</p>
+<p>This changes our definition of size of a group item to the sum of the total sizes,
+not the sum of the simple size.  <img class="math" src="_images/math/d394dbbb027a9ffea5a23d6f33fe9c596512614a.png" alt="d_t = d_s = \sum_{c \in d}{c_t} \times O(d)"/>.</p>
+<p>This also changes how we fetch the bytes, <img class="math" src="_images/math/8960863313de7ac089c69c968db30eb996ae09a8.png" alt="B[d]"/>, because we need index information
+for each <tt class="docutils literal"><span class="pre">OCCURS</span></tt> clause in the parents of <em>d</em>. In COBOL we might be getting <tt class="docutils literal"><span class="pre">D(</span> <span class="pre">I</span> <span class="pre">)</span></tt>.</p>
+<div class="math">
+<p><img src="_images/math/504ac6b215d0c5a186b2d950676f026a4c1938e8.png" alt="B[d:i] = \{ B_x | d_o+(i)d_s \leq x &lt; d_o+(i+1)d_s \}"/></p>
+</div><p>The indices may be much more complex, however. A common situation is a group-level item
+with an occurrence that nests an elementary item with an occurrence. This is a two-dimensional
+structure. In COBOL it might be <tt class="docutils literal"><span class="pre">D(</span> <span class="pre">J</span> <span class="pre">)</span> <span class="pre">OF</span> <span class="pre">G(</span> <span class="pre">I</span> <span class="pre">)</span></tt>. More commonly, it&#8217;s written <tt class="docutils literal"><span class="pre">D(</span> <span class="pre">I,</span> <span class="pre">J</span> <span class="pre">)</span></tt> where
+the indices are applied from top-most group DDE down the tree to the lowest-level items.</p>
+<div class="math">
+<p><img src="_images/math/e47b27c8a4ab0500b84a4bf0bda1e337beabc340.png" alt="B[d:i,j] = \{ B_x | G(d:i)_o+jd_s \leq x &lt; G(d:i)_o+(j+1)d_s \}"/></p>
+</div><p>The offset, <img class="math" src="_images/math/484d557e75d3acc0db0dffb835543a8a21ef13bf.png" alt="d_o"/> is computed recursively using
+a combination of predecessors, <img class="math" src="_images/math/dda20917f0d84a62024a0526f6549492d7c138a2.png" alt="P(d)"/>, groups, <img class="math" src="_images/math/788ee41ac51067e716d10fe62dfb25cce259585a.png" alt="G(d)"/>, and redefinitions,
+<img class="math" src="_images/math/97e1799f47b8019cd88b44fc16f61f0763c05e51.png" alt="R(d)"/>. There are several cases.</p>
+<ul class="simple">
+<li>If there&#8217;s a REDEFINES clause, <img class="math" src="_images/math/f0d620ef9d50f579537198fecbae7fa793d86b0d.png" alt="d_o= R(d)_o"/>.</li>
+<li>If there&#8217;s a predecessor, <img class="math" src="_images/math/edda97fb5edae6c3982638fa480b51a1ba99910a.png" alt="d_o= P(d)_o + P(d)_s \times O(P(d))"/>.</li>
+<li>If there&#8217;s no predecessor, there may be a containing group, <img class="math" src="_images/math/733f5b12ad1febcae41a836c21129914058a7342.png" alt="d_o= G(d)_o + G(d)_s \times O(G(d))"/>.
+This is more complex than it appears because a group could contain an occurrence clause.
+<img class="math" src="_images/math/484dc558cfded7b055cbc902028ac5200218f3d1.png" alt="G(d:i)_o = G(d)_o+iG(d)_s"/>.</li>
+<li>If there&#8217;s no predecessor and no group, <img class="math" src="_images/math/750f5b865b368cd43b32f603c8d696353836111c.png" alt="d_o = 0"/>.</li>
+</ul>
+<p>The two cases which involve the occurs information, <img class="math" src="_images/math/7f855203ee4b83dec4344be5bc248c0ad7227b94.png" alt="O(P(d))"/> and <img class="math" src="_images/math/28e683722be2a855fb4242fb8d75344ca1e3673c.png" alt="O(G(d))"/>
+may include &#8220;format 2&#8221; occurs and depend on data within an actual record.
+We may have <img class="math" src="_images/math/2be02518f896299a509a6bec7c8ddaf3b34c3d38.png" alt="O(P(d)) = B[ D(P(d)) ]"/> or <img class="math" src="_images/math/e9856ae117ad84ddffbbadabeebd72b17eda53f9.png" alt="O(G(d)) = B[ D(G(d)) ]"/>.</p>
+</div>
+<div class="section" id="variable-length-cobol-records">
+<h3>10.1.6. Variable-Length COBOL Records<a class="headerlink" href="#variable-length-cobol-records" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://publib.boulder.ibm.com/infocenter/zos/basics/index.jsp?topic=/com.ibm.zos.zconcepts/zconcepts_159.htm">https://publib.boulder.ibm.com/infocenter/zos/basics/index.jsp?topic=/com.ibm.zos.zconcepts/zconcepts_159.htm</a></p>
+<p>V (Variable)</p>
+<p>This format has one logical record as one physical block. A
+variable-length logical record consists of a record descriptor word
+(RDW) followed by the data. The record descriptor word is a 4-byte field
+describing the record. The first 2 bytes contain the length of the
+logical record (including the 4-byte RDW). The length can be from 4 to
+32,760 bytes. All bits of the third and fourth bytes must be 0, because
+other values are used for spanned records. This format is seldom used.</p>
+<p>VB (Variable Blocked)</p>
+<p>This format places several variable-length logical records (each with an
+RDW) in one physical block. The software must place an additional Block
+Descriptor Word (BDW) at the beginning of the block, containing the
+total length of the block.</p>
+<img alt="_images/zOSB037.png" src="_images/zOSB037.png" />
+<p>See <a class="reference external" href="http://en.wikipedia.org/wiki/Data_set_(IBM_mainframe">http://en.wikipedia.org/wiki/Data_set_(IBM_mainframe</a>)</p>
+<p>See <a class="reference external" href="http://www.simotime.com/vrecex01.htm">http://www.simotime.com/vrecex01.htm</a></p>
+<p>There are three relevant encoding possibilities. These are the COBOL &#8220;RECFM&#8221;
+options in the JCL for the file. Each record is preceded by a
+Record Descriptor Word (RDW).</p>
+<p><tt class="docutils literal"><span class="pre">V</span></tt>   Variable.</p>
+<blockquote>
+<div><p>The four bytes preceding the logical record is the Record Descriptor Word. The content is as follows.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Bytes</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1-2</td>
+<td>This is the length of the logical record plus the length of the four-byte Descriptor Word.</td>
+</tr>
+<tr class="row-odd"><td>3-4</td>
+<td>Usually low values</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">VB</span></tt>  Variable Blocked.</p>
+<blockquote>
+<div><p>The four bytes preceding the logical record (Descriptor Word) are as follows.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Bytes</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1-2</td>
+<td>This is the length of the logical record plus the length of the four-byte Descriptor Word.</td>
+</tr>
+<tr class="row-odd"><td>3-4</td>
+<td>The length of the block including four-byte Descriptor Word.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>A block can have multiple records in it. The block length must be &gt;= record length.</p>
+<p><tt class="docutils literal"><span class="pre">VBS</span></tt>     Variable Blocked Spanned.</p>
+<blockquote>
+<div><p>The four bytes preceding the logical record is the Segment Descriptor Word. The content is as follows.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Bytes</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1-2</td>
+<td>This is the length of the logical record plus the length of the four-byte Descriptor Word.</td>
+</tr>
+<tr class="row-odd"><td>3</td>
+<td>Segment Control Codes: see below.</td>
+</tr>
+<tr class="row-even"><td>4</td>
+<td>Low value, reserved for future use</td>
+</tr>
+</tbody>
+</table>
+<p>Segment Control Code</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Value</th>
+<th class="head">Relative position of segment</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>00</td>
+<td>A complete logical record</td>
+</tr>
+<tr class="row-odd"><td>01</td>
+<td>The first segment of a multiple segments record</td>
+</tr>
+<tr class="row-even"><td>02</td>
+<td>The last segment of a multiple segments record</td>
+</tr>
+<tr class="row-odd"><td>03</td>
+<td>A middle segment of a multiple segments record</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>This RECFM detail must be provided as part of opening the workbook/sheet so that rows can be
+properly located within the content.</p>
+<p>We&#8217;ve added a series of RECFM classes as a <strong>Strategy</strong> to
+read files with variable length records.</p>
+</div>
+<div class="section" id="the-bad-data-problem">
+<h3>10.1.7. The Bad Data Problem<a class="headerlink" href="#the-bad-data-problem" title="Permalink to this headline">¶</a></h3>
+<p>Even with a <a class="reference internal" href="sheet.html#sheet.LazyRow" title="sheet.LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">sheet.LazyRow</span></tt></a>, we have to be tolerant of COBOL data which doesn&#8217;t match
+the schema. The <a class="reference internal" href="cobol_defs.html#cobol.defs.Usage.create_func" title="cobol.defs.Usage.create_func"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.defs.Usage.create_func()</span></tt></a> function may encounter an exception.
+If so, then a <a class="reference internal" href="cobol_defs.html#cobol.defs.ErrorCell" title="cobol.defs.ErrorCell"><tt class="xref py py-class docutils literal"><span class="pre">cobol.defs.ErrorCell</span></tt></a> is created instead of the class
+defined by the Usage and Picture classes.</p>
+<p>The <a class="reference internal" href="cobol_defs.html#cobol.defs.ErrorCell" title="cobol.defs.ErrorCell"><tt class="xref py py-class docutils literal"><span class="pre">cobol.defs.ErrorCell</span></tt></a> includes the raw bytes, but a value of <tt class="docutils literal"><span class="pre">None</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="implementation">
+<h2>10.2. Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
+<p>These are the modules that extend the core functionality of Stingray
+to handle COBOL files and EBCDIC data.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cobol_init.html">10.2.1. COBOL Package &#8211; Extend Schema to Handle EBCDIC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cobol_loader.html">10.2.2. COBOL Loader Module &#8211; Parse COBOL Source to Load a Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cobol_defs.html">10.2.3. COBOL Definitions Module &#8211; Handle COBOL DDE&#8217;s</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/Stingray_belon1553_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">10. The COBOL Package</a><ul>
+<li><a class="reference internal" href="#requirements">10.1. Requirements</a><ul>
+<li><a class="reference internal" href="#high-level-processing">10.1.1. High-Level Processing</a></li>
+<li><a class="reference internal" href="#access-elements-via-schema">10.1.2. Access Elements Via Schema</a></li>
+<li><a class="reference internal" href="#possible-added-fluency">10.1.3. Possible Added Fluency</a></li>
+<li><a class="reference internal" href="#low-level-processing">10.1.4. Low-Level Processing</a></li>
+<li><a class="reference internal" href="#the-occurs-depending-on-problem">10.1.5. The Occurs Depending On Problem</a></li>
+<li><a class="reference internal" href="#variable-length-cobol-records">10.1.6. Variable-Length COBOL Records</a></li>
+<li><a class="reference internal" href="#the-bad-data-problem">10.1.7. The Bad Data Problem</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#implementation">10.2. Implementation</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="protobuf.html"
+                        title="previous chapter">9.2. Protobuf Module &#8211; Unpacking iWork 13 files.</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cobol_init.html"
+                        title="next chapter">10.2.1. COBOL Package &#8211; Extend Schema to Handle EBCDIC</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/cobol.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cobol_init.html" title="10.2.1. COBOL Package – Extend Schema to Handle EBCDIC"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="protobuf.html" title="9.2. Protobuf Module – Unpacking iWork 13 files."
+             >previous</a> |</li>
+        <li><a href="index.html">The Stingray Schema-Based File Reader</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, S. Lott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,522 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>12.2. Application Level Data Validation Technique &mdash; The Stingray Schema-Based File Reader</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '4.4.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
+    <link rel="up" title="12. Stingray Demo Applications" href="index.html" />
+    <link rel="next" title="12.3. Data Profiling Demonstration" href="profile.html" />
+    <link rel="prev" title="12.1. Unit Level Validation for Application and Data" href="data_quality.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="profile.html" title="12.3. Data Profiling Demonstration"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="data_quality.html" title="12.1. Unit Level Validation for Application and Data"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">12. <strong>Stingray</strong> Demo Applications</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="application-level-data-validation-technique">
+<span id="demo-validate"></span><h1>12.2. Application Level Data Validation Technique<a class="headerlink" href="#application-level-data-validation-technique" title="Permalink to this headline">¶</a></h1>
+<p>We validate that that a file actually matches a schema through a three-part valiation process.
+We looked at the first two parts in <a class="reference internal" href="data_quality.html#demo-sqa"><em>Unit Level Validation for Application and Data</em></a>.</p>
+<ul class="simple">
+<li>Validate an application&#8217;s use of a schema via conventional unit testing.</li>
+<li>Validate file conformance to a schema via &#8220;live-file testing&#8221;.</li>
+</ul>
+<p>In this section we&#8217;ll show how to include
+a <strong>File Validation</strong> mode in every file processing application.</p>
+<p>Having a validation mode means that we must disentangle all of the persistent state change
+operations from the input and processing in our application.
+The &#8220;normal&#8221; mode uses persistent changes based on the output.
+The validation mode doesn&#8217;t make persistent changes;
+it can be viewed as a sort of &#8220;dry run&#8221;: all the processing; none of the writing.</p>
+<p>We&#8217;ll do this with a combination of the <strong>Command</strong> and the <strong>Strategy</strong> design patterns.
+We&#8217;ll create applications
+which validate their input file and have a simple plug-in strategy for
+doing any final persistent processing on that file.</p>
+<div class="section" id="state-change-commands">
+<h2>12.2.1. State Change Commands<a class="headerlink" href="#state-change-commands" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>Command</strong> design patterns is helpful for isolating state changes in an application.</p>
+<p>Each change (create, update, delete) creates a <strong>Command</strong>.
+In validate mode, these are created but not applied.
+In &#8220;normal&#8221; processing mode, these are created and applied.</p>
+<p>For Extract-Transform-Load (ETL) applications, the commands are the loads.</p>
+<p>For create-retrieve-update-delete (CRUD) programs, the commands are variations on create, update and delete.</p>
+<p>For data warehouse dimensional conformance applications, the
+command may be a slowly-changing dimension (SCD) algorithm that does insert
+or update (or both) into a dimension table.</p>
+<p>For applications that involve a (potentially) complex multi-step workflow with
+(potentially) several state changes along the way, each change is a command.</p>
+<p>In some cases, a fairly sophisticated <strong>Command</strong> class hierarchy is
+called for.  In other cases, however, the individual commands can be
+merged into the validate <strong>Strategy</strong> object as methods.</p>
+</div>
+<div class="section" id="persistence-context-manager">
+<h2>12.2.2. Persistence Context Manager<a class="headerlink" href="#persistence-context-manager" title="Permalink to this headline">¶</a></h2>
+<p>One good way to distinguish between persistent and transient processing
+is to use a <strong>Strategy</strong> class hierarchy.
+This will have two variations on the persistent state changes.</p>
+<ul class="simple">
+<li><strong>Validate</strong>.  This subclass does nothing.</li>
+<li><strong>Process</strong>.  This subclass actually makes persistent state changes.</li>
+</ul>
+<p>Combining the validate <strong>Strategy</strong> with the state change <strong>Command</strong>
+leads to class similar to the following.</p>
+<p>The superclass does the persistent processing. This is the &#8220;normal&#8221; mode
+that makes proper changes to the filesystem or database.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Persistent_Processing</span><span class="p">:</span>
+    <span class="n">stop_on_exception</span><span class="o">=</span> <span class="bp">True</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">context</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">=</span> <span class="n">context</span>
+    <span class="k">def</span> <span class="nf">save_this</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">this_instance</span> <span class="p">):</span>
+        <span class="n">this_instance</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">save_that</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">this_instance</span> <span class="p">):</span>
+        <span class="n">that_instance</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We&#8217;ll fold in the Context Manager interface.  This is a polite way to support
+any preparation or finalization.  For example, we would use the context manager
+to create database connections, or finalize file system operations, etc.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span>
+<span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span> <span class="p">):</span>
+    <span class="k">if</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">False</span>
+</pre></div>
+</div>
+<p>Here&#8217;s a subclass which implements a safe, do-nothing strategy.  This
+is used for &#8220;validate-mode&#8221; processing. It&#8217;s a subclass that turns off
+persistence.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Validate_Only_Processing</span><span class="p">(</span> <span class="n">Persistent_Processing</span> <span class="p">):</span>
+    <span class="n">stop_on_exception</span><span class="o">=</span> <span class="bp">False</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">context</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">=</span> <span class="n">context</span>
+    <span class="k">def</span> <span class="nf">save_this</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">this_instance</span> <span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">save_that</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">this_instance</span> <span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Alternate Design</p>
+<p>We could revise this design to make the validation mode the superclass.
+The subclass could then add the persistence features.</p>
+<p>This doesn&#8217;t actually work out well in practice.</p>
+<p>Why not?</p>
+<p>It&#8217;s too easy to overlook things in the validation mode superclass.
+The normal persistent processing subclass then winds up having a <strong>lot</strong> of extra
+stuff added to it.</p>
+<p class="last">The design winds up somewhat better looking if we remove persistence.</p>
+</div>
+<p>Having these two classes allows us to configure our
+application processing as follows. We can define high-level functions
+like <tt class="xref py py-func docutils literal"><span class="pre">validate()</span></tt> and <tt class="xref py py-func docutils literal"><span class="pre">process()</span></tt> that are identical
+except for the context manager that&#8217;s used.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">some_context</span> <span class="p">):</span>
+    <span class="k">with</span> <span class="n">Validate_Only_Processing</span><span class="p">(</span> <span class="n">some_context</span> <span class="p">)</span> <span class="k">as</span> <span class="n">mode</span><span class="p">:</span>
+        <span class="n">counts</span><span class="o">=</span> <span class="n">process_sheet</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">mode</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">counts</span>
+
+<span class="k">def</span> <span class="nf">process</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">some_context</span> <span class="p">):</span>
+    <span class="k">with</span> <span class="n">Persistent_Processing</span><span class="p">(</span> <span class="n">some_context</span> <span class="p">)</span> <span class="k">as</span> <span class="n">mode</span><span class="p">:</span>
+        <span class="n">counts</span><span class="o">=</span> <span class="n">process_sheet</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">mode</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">counts</span>
+</pre></div>
+</div>
+<p>Both of these <tt class="xref py py-func docutils literal"><span class="pre">validate()</span></tt> and <tt class="xref py py-func docutils literal"><span class="pre">process()</span></tt> functions
+rely on a common <tt class="xref py py-func docutils literal"><span class="pre">process_sheeet()</span></tt>. This is agnostic of the
+processing context; it simply does its work.</p>
+<div class="highlight-python"><div class="highlight"><pre>def process_sheet( sheet, persistence ):
+    for row in sheet.schema.rows_as_dict_iter(sheet):
+        try:
+            this= build_this( row )
+            f= ThisForm( this )
+            if f.is_valid():
+                persistence.save_this( this )
+        except Exception, e:
+            if persistence.stop_on_exception: raise
+</pre></div>
+</div>
+<p>This allows us to effectively unit test by creating a
+mock version of <tt class="docutils literal"><span class="pre">Persistent_Processing</span></tt> and invoking
+the <tt class="docutils literal"><span class="pre">process_sheet</span></tt> function.</p>
+</div>
+<div class="section" id="example-application">
+<h2>12.2.3. Example Application<a class="headerlink" href="#example-application" title="Permalink to this headline">¶</a></h2>
+<p>We depend on a number of Python libraries.  Plus, of course, we&#8217;re
+creating workbooks, working with sheets and schema.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span> <span class="nn">stingray.workbook</span>
+<span class="kn">import</span> <span class="nn">stingray.sheet</span>
+<span class="kn">import</span> <span class="nn">stingray.schema</span>
+
+<span class="n">logger</span><span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span> <span class="n">__name__</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="orm-layer">
+<h3>12.2.3.1. ORM Layer<a class="headerlink" href="#orm-layer" title="Permalink to this headline">¶</a></h3>
+<p>We&#8217;ll often have an Object-Relational Mapping (ORM) layer.
+These are components that are widely shared.  They could be SQLAlchemy
+mapped class or a Django ORM class.</p>
+<p>It&#8217;s appropriate to supplement the ORM with a &#8220;Form&#8221; that
+follows the Django design pattern. This is a class that is used for validating
+and creating model instances.</p>
+<p>Here&#8217;s our fake model object, <tt class="xref py py-class docutils literal"><span class="pre">This</span></tt>, and it&#8217;s form, <tt class="xref py py-class docutils literal"><span class="pre">ThisForm</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">This</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">=</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="k">pass</span> <span class="c"># The ORM save operation</span>
+
+<span class="k">class</span> <span class="nc">ThisForm</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="o">=</span> <span class="n">kw</span>
+    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="p">[</span><span class="s">&#39;key&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="n">This</span><span class="p">(</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">clean</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>We need to be sure that the ORM&#8217;s save operation is only invoked through our persistence
+processing <strong>Strategy</strong> object.  With some libraries the persistence can
+be implicit, making it difficult to assure that persistence is disabled properly.</p>
+<p>There are a number of ways to handle implicit persistence in ORM layers.
+It may be necessary to provide a mock database &#8220;engine&#8221; or interface
+in order to disable persistence.</p>
+</div>
+<div class="section" id="id1">
+<h3>12.2.3.2. Persistence Context Manager<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>These two classes define our two modes: validation and normal operations.
+The superclass defines the normal processing mode: we actually save objects.
+The subclass defines validation-only mode: we don&#8217;t save anything.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Persistent_Processing</span><span class="p">:</span>
+    <span class="n">stop_on_exception</span><span class="o">=</span> <span class="bp">True</span>
+    <span class="k">def</span> <span class="nf">save_this</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">this_instance</span> <span class="p">):</span>
+        <span class="n">this_instance</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span> <span class="p">):</span>
+        <span class="k">if</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">False</span>
+
+<span class="k">class</span> <span class="nc">Validate_Only_Processing</span><span class="p">(</span> <span class="n">Persistent_Processing</span> <span class="p">):</span>
+    <span class="n">stop_on_exception</span><span class="o">=</span> <span class="bp">False</span>
+    <span class="k">def</span> <span class="nf">save_this</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">this_instance</span> <span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+<p>In larger and more sophisticated applications, there may be a much more
+complex set of class definitions to enable or disable persistence.</p>
+</div>
+<div class="section" id="builder-functions">
+<h3>12.2.3.3. Builder Functions<a class="headerlink" href="#builder-functions" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="../developer.html#developer"><em>The Stingray Developer&#8217;s Guide</em></a> for background. We&#8217;re going to need a &#8220;builder function.&#8221;
+This transforms the source row object into the target object or collection.</p>
+<p>To handle variant logical layouts, a number of builder functions are provided
+to map the logical schemata to a more standardized conceptual schema.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">builder_1</span><span class="p">(</span> <span class="n">row</span> <span class="p">):</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;Column &quot;3&quot; - string&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">(),</span>
+        <span class="n">value</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;Col 2.0 - float&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_float</span><span class="p">()</span>
+    <span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">builder_2</span><span class="p">(</span> <span class="n">row</span> <span class="p">):</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">key</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;Column 3&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">(),</span>
+        <span class="n">value</span><span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;Column 2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_float</span><span class="p">()</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that these builder functions are frequently added to. It&#8217;s rare to get these
+down to a single version that always works.</p>
+<p>Consequently, it&#8217;s important to always <strong>add</strong> new builder functions.  Logical layouts are a
+moving target.  Old layouts don&#8217;t go away; making changes to a builder is a bad idea.</p>
+<p>It helps to have a function like this to map argument values to a builder function.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">make_builder</span><span class="p">(</span> <span class="n">args</span> <span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&#39;1&#39;</span><span class="p">:</span> <span class="n">builder_1</span><span class="p">,</span>
+            <span class="s">&#39;2&#39;</span><span class="p">:</span> <span class="n">builder_2</span>
+            <span class="p">}[</span><span class="n">args</span><span class="o">.</span><span class="n">layout</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>It can help to have a better naming convention that &#8220;_1&#8221; and &#8220;_2&#8221;.  In practice,
+however, it&#8217;s sometimes hard to determine why a logical layout changed, making
+it hard to assign a meaningful name to the layout.</p>
+</div>
+<div class="section" id="processing">
+<h3>12.2.3.4. Processing<a class="headerlink" href="#processing" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="../developer.html#developer"><em>The Stingray Developer&#8217;s Guide</em></a> for background. We&#8217;re going to need a &#8220;sheet process function.&#8221;
+This transforms the source sheet into the target collection, usually an output file.</p>
+<p>The <a class="reference internal" href="../developer.html#process_sheet" title="process_sheet"><tt class="xref py py-func docutils literal"><span class="pre">process_sheet()</span></tt></a> function is the heart of the application.
+This handles all the rows present in a given sheet.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">process_sheet</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">builder</span><span class="p">,</span> <span class="n">persistence</span> <span class="p">):</span>
+    <span class="n">counts</span><span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span> <span class="nb">int</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">source_row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">rows_as_dict_iter</span><span class="p">(</span><span class="n">sheet</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s">u&#39;read&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">row_dict</span><span class="o">=</span> <span class="n">builder</span><span class="p">(</span> <span class="n">source_row</span> <span class="p">)</span>
+            <span class="n">f</span><span class="o">=</span> <span class="n">ThisForm</span><span class="p">(</span> <span class="o">**</span><span class="n">row_dict</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+                <span class="n">counts</span><span class="p">[</span><span class="s">&#39;processed&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">this</span><span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="n">persistence</span><span class="o">.</span><span class="n">save_this</span><span class="p">(</span> <span class="n">this</span> <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">counts</span><span class="p">[</span><span class="s">&#39;rejected&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s">&#39;invalid&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">persistence</span><span class="o">.</span><span class="n">stop_on_exception</span><span class="p">:</span> <span class="k">raise</span>
+            <span class="n">summary</span><span class="o">=</span> <span class="s">&quot;{0} {1!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">e</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span> <span class="n">summary</span> <span class="p">)</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s">u&#39;error&#39;</span><span class="p">,</span><span class="n">summary</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">counts</span>
+</pre></div>
+</div>
+<p>Some applications will have variant processing for workbooks that
+contain different types of sheets.
+This leads to different <tt class="xref py py-func docutils literal"><span class="pre">process_this_sheet()</span></tt> and <tt class="xref py py-func docutils literal"><span class="pre">process_that_sheet()</span></tt> functions.
+Each will follow the above template to process all rows of the sheet.</p>
+</div>
+<div class="section" id="high-level-interfaces">
+<h3>12.2.3.5. High-Level Interfaces<a class="headerlink" href="#high-level-interfaces" title="Permalink to this headline">¶</a></h3>
+<p>These are the functions that can be used for live-file unit testing
+of the application as a whole. The <tt class="xref py py-func docutils literal"><span class="pre">validate()</span></tt> function
+uses a context manager for validation only. THe <tt class="xref py py-func docutils literal"><span class="pre">process()</span></tt> function
+uses the other context manager to that actual work is performed.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">builder</span> <span class="p">):</span>
+    <span class="k">with</span> <span class="n">Validate_Only_Processing</span><span class="p">()</span> <span class="k">as</span> <span class="n">mode</span><span class="p">:</span>
+        <span class="n">counts</span><span class="o">=</span> <span class="n">process_sheet</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">builder</span><span class="p">,</span> <span class="n">mode</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">counts</span>
+
+<span class="k">def</span> <span class="nf">process</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">builder</span> <span class="p">):</span>
+    <span class="k">with</span> <span class="n">Persistent_Processing</span><span class="p">()</span> <span class="k">as</span> <span class="n">mode</span><span class="p">:</span>
+        <span class="n">counts</span><span class="o">=</span> <span class="n">process_sheet</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">builder</span><span class="p">,</span> <span class="n">mode</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">counts</span>
+</pre></div>
+</div>
+<p>These higher-level functions share a common <a class="reference internal" href="../developer.html#process_workbook" title="process_workbook"><tt class="xref py py-func docutils literal"><span class="pre">process_workbook()</span></tt></a>
+function that does the real work.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">process_workbook</span><span class="p">(</span> <span class="n">source</span><span class="p">,</span> <span class="n">sheet_func</span><span class="p">,</span> <span class="n">builder_func</span> <span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">sheets</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s">&quot;{0} :: {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="nb">input</span><span class="p">,</span> <span class="n">name</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="n">sheet</span><span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="n">name</span><span class="p">,</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">EmbeddedSchemaSheet</span><span class="p">,</span>
+            <span class="n">loader_class</span><span class="o">=</span><span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">HeadingRowSchemaLoader</span> <span class="p">)</span>
+        <span class="n">counts</span><span class="o">=</span> <span class="n">sheet_func</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">builder_func</span> <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">counts</span><span class="p">))</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>When we do live-file testing of a given file, we can do something like the following.
+This uses <tt class="xref py py-func docutils literal"><span class="pre">validate()</span></tt> to assure that the file&#8217;s schema is correct.
+See <a class="reference internal" href="data_quality.html#demo-sqa"><em>Unit Level Validation for Application and Data</em></a> for more information.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">some_app</span> <span class="kn">import</span> <span class="n">validate</span>
+<span class="k">class</span> <span class="nc">Test_Some_File</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">open_workbook</span><span class="p">(</span> <span class="nb">input</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">builder_func</span><span class="o">=</span> <span class="n">builder_1</span>
+    <span class="k">def</span> <span class="nf">test_should_process_sheet1</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">sheet</span><span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="s">&quot;Sheet1&quot;</span><span class="p">,</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">EmbeddedSchemaSheet</span><span class="p">,</span>
+            <span class="n">loader_class</span><span class="o">=</span><span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">HeadingRowSchemaLoader</span> <span class="p">)</span>
+        <span class="n">counts</span><span class="o">=</span> <span class="n">validate</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder_func</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">12345</span><span class="p">,</span> <span class="n">counts</span><span class="p">[</span><span class="s">u&#39;read&#39;</span><span class="p">]</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="command-line-interface">
+<h3>12.2.3.6. Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h3>
+<p>We have some standard arguments.  While we&#8217;d like to use &#8220;-v&#8221; for validate mode, this gets confused with setting the verbosity level.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
+    <span class="n">parser</span><span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span> <span class="s">&#39;file&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;+&#39;</span> <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span> <span class="s">&#39;-d&#39;</span><span class="p">,</span> <span class="s">&#39;--dry-run&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span>  <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span> <span class="s">&#39;-l&#39;</span><span class="p">,</span> <span class="s">&#39;--layout&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;1&#39;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">,</span><span class="s">&#39;2&#39;</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span> <span class="s">&#39;-v&#39;</span><span class="p">,</span> <span class="s">&#39;--verbose&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;verbosity&#39;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_const&#39;</span><span class="p">,</span> <span class="n">const</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The overall main program looks something like this.  It handles a number of
+common main-program issues.</p>
+<ol class="arabic simple">
+<li>Logging.</li>
+<li>Parameter Parsing.  This includes interpreting options.</li>
+<li>Argument Processing.  This means looping over the positional arguments.</li>
+<li>Opening Workbooks.  Some applications can&#8217;t use the default
+<a class="reference internal" href="../workbook.html#workbook.Opener" title="workbook.Opener"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Opener</span></tt></a>.  A subclass of Opener, or more complex logic,
+may be required.</li>
+<li>Gracefully catching and logging exceptions.</li>
+<li>Exit Status to the OS.</li>
+</ol>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span> <span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="p">)</span>
+    <span class="n">args</span><span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span> <span class="n">args</span><span class="o">.</span><span class="n">verbosity</span> <span class="p">)</span>
+    <span class="n">builder_func</span><span class="o">=</span> <span class="n">make_builder</span><span class="p">(</span> <span class="n">args</span> <span class="p">)</span>
+    <span class="n">sheet_func</span><span class="o">=</span> <span class="n">validate</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">dry_run</span> <span class="k">else</span> <span class="n">process</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s">&quot;Mode: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">sheet_func</span><span class="o">.</span><span class="n">__name__</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="nb">input</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">open_workbook</span><span class="p">(</span> <span class="nb">input</span> <span class="p">)</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+                <span class="n">process_workbook</span><span class="p">(</span> <span class="n">source</span><span class="p">,</span> <span class="n">sheet_func</span><span class="p">,</span> <span class="n">builder_func</span> <span class="p">)</span>
+        <span class="n">status</span><span class="o">=</span> <span class="mi">0</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span> <span class="n">e</span> <span class="p">)</span>
+        <span class="n">status</span><span class="o">=</span> <span class="mi">3</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span> <span class="n">status</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="running-the-demo">
+<h2>12.2.4. Running the Demo<a class="headerlink" href="#running-the-demo" title="Permalink to this headline">¶</a></h2>
+<p>We can run this program like this.</p>
+<div class="highlight-bash"><div class="highlight"><pre>python3 demo/app.py -d -l 1 sample/<span class="se">\*</span>.csv
+</pre></div>
+</div>
+<p>This will apply builder with layout <tt class="docutils literal"><span class="pre">1</span></tt> against all of the <tt class="file docutils literal"><span class="pre">sameple/*.csv</span></tt> files.</p>
+<p>The output looks like this</p>
+<div class="highlight-none"><div class="highlight"><pre>INFO:demo/app.py:Mode: validate
+INFO:demo/app.py:sample/csv_workbook.csv :: csv_workbook
+INFO:demo/app.py:{&#39;input&#39;: 2, &#39;valid&#39;: 2}
+INFO:demo/app.py:sample/simple.csv :: simple
+ERROR:demo/app.py:KeyError &#39;Column &quot;3&quot; - string&#39;
+ERROR:demo/app.py:KeyError &#39;Column &quot;3&quot; - string&#39;
+ERROR:demo/app.py:KeyError &#39;Column &quot;3&quot; - string&#39;
+ERROR:demo/app.py:KeyError &#39;Column &quot;3&quot; - string&#39;
+ERROR:demo/app.py:KeyError &#39;Column &quot;3&quot; - string&#39;
+ERROR:demo/app.py:KeyError &#39;Column &quot;3&quot; - string&#39;
+ERROR:demo/app.py:KeyError &#39;Column &quot;3&quot; - string&#39;
+INFO:demo/app.py:{&#39;KeyError \&#39;Column &quot;3&quot; - string\&#39;&#39;: 7, &#39;input&#39;: 7}
+</pre></div>
+</div>
+<p>We can see that <tt class="file docutils literal"><span class="pre">sample/csv_workbook.csv</span></tt> has two valid rows.</p>
+<p>We can see that <tt class="file docutils literal"><span class="pre">sample/simple.csv</span></tt> has seven rows, all of which are missing the required value.  If all the rows are wrong, the schema in the file
+doesn&#8217;t match the schema required by the application.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">12.2. Application Level Data Validation Technique</a><ul>
+<li><a class="reference internal" href="#state-change-commands">12.2.1. State Change Commands</a></li>
+<li><a class="reference internal" href="#persistence-context-manager">12.2.2. Persistence Context Manager</a></li>
+<li><a class="reference internal" href="#example-application">12.2.3. Example Application</a><ul>
+<li><a class="reference internal" href="#orm-layer">12.2.3.1. ORM Layer</a></li>
+<li><a class="reference internal" href="#id1">12.2.3.2. Persistence Context Manager</a></li>
+<li><a class="reference internal" href="#builder-functions">12.2.3.3. Builder Functions</a></li>
+<li><a class="reference internal" href="#processing">12.2.3.4. Processing</a></li>
+<li><a class="reference internal" href="#high-level-interfaces">12.2.3.5. High-Level Interfaces</a></li>
+<li><a class="reference internal" href="#command-line-interface">12.2.3.6. Command-Line Interface</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#running-the-demo">12.2.4. Running the Demo</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="data_quality.html"
+                        title="previous chapter">12.1. Unit Level Validation for Application and Data</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="profile.html"
+                        title="next chapter">12.3. Data Profiling Demonstration</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/demo/validation.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="profile.html" title="12.3. Data Profiling Demonstration"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="data_quality.html" title="12.1. Unit Level Validation for Application and Data"
+             >previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" >12. <strong>Stingray</strong> Demo Applications</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, S. Lott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

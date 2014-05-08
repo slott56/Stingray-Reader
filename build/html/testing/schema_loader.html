@@ -1,0 +1,365 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>14.5. Schema Loader Testing &mdash; The Stingray Schema-Based File Reader</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '4.4.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
+    <link rel="up" title="14. Testing" href="index.html" />
+    <link rel="next" title="14.6. Workbook Testing" href="workbook.html" />
+    <link rel="prev" title="14.4. Schema Module Tests" href="schema.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="workbook.html" title="14.6. Workbook Testing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="schema.html" title="14.4. Schema Module Tests"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">14. Testing</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="schema-loader-testing">
+<h1>14.5. Schema Loader Testing<a class="headerlink" href="#schema-loader-testing" title="Permalink to this headline">¶</a></h1>
+<p>A Schema Loader will build a schema from a variety of sources.</p>
+<ul class="simple">
+<li>Embedded in the first row of a sheet.
+The <a class="reference internal" href="../schema_loader.html#schema.loader.HeadingRowSchemaLoader" title="schema.loader.HeadingRowSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></tt></a> handles this.</li>
+<li>Embedded elsewhere in a sheet.
+A subclass of <a class="reference internal" href="../schema_loader.html#schema.loader.SchemaLoader" title="schema.loader.SchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.SchemaLoader</span></tt></a> can handle this.</li>
+<li>An external schema, read from a separate file.
+The <a class="reference internal" href="../schema_loader.html#schema.loader.ExternalSchemaLoader" title="schema.loader.ExternalSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.ExternalSchemaLoader</span></tt></a> or a subclass can handle this.</li>
+<li>A &#8220;hard-coded&#8221; schema, written as a Python object definition.
+A static instance of <a class="reference internal" href="../schema.html#schema.Schema" title="schema.Schema"><tt class="xref py py-class docutils literal"><span class="pre">schema.Schema</span></tt></a> handles this gracefully.</li>
+</ul>
+<p>For the essential implementation, see <a class="reference internal" href="../schema_loader.html#schema-loader"><em>Schema Loader Module &#8211; Load Embedded or External Schema</em></a>.</p>
+<p>Also, we will have schemata written in COBOL notation, but that&#8217;s handled separately.</p>
+<div class="section" id="overheads">
+<h2>14.5.1. Overheads<a class="headerlink" href="#overheads" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;stingray.schema.loader Unit Tests.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">stingray.schema</span>
+<span class="kn">import</span> <span class="nn">stingray.sheet</span>
+<span class="kn">import</span> <span class="nn">stingray.schema.loader</span>
+</pre></div>
+</div>
+<p>First, we define mock classes.</p>
+<p><tt class="xref py py-class docutils literal"><span class="pre">MockWorkbook</span></tt> class  implements a minimal interface that a <a class="reference internal" href="../sheet.html#sheet.Sheet" title="sheet.Sheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Sheet</span></tt></a> can rely on.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">SheetMockWorkbook</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">rows_of</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">requested</span><span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">sheet</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sheet_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mock_sheet</span>
+</pre></div>
+</div>
+<p><tt class="xref py py-class docutils literal"><span class="pre">MockSheet</span></tt> class  implements a minimal interface that a <a class="reference internal" href="../sheet.html#sheet.Row" title="sheet.Row"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Row</span></tt></a> can rely on.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MockSheet</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">workbook</span><span class="p">,</span> <span class="n">sheet_name</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">workbook</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">=</span> <span class="n">workbook</span><span class="p">,</span> <span class="n">sheet_name</span>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mock_schema</span>
+    <span class="k">def</span> <span class="nf">rows</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">rows_of</span><span class="p">(</span> <span class="bp">self</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p><tt class="xref py py-class docutils literal"><span class="pre">MockRow</span></tt> class  implements a minimal interface that collects cell instances.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MockRow</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">=</span> <span class="n">sheet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span> <span class="n">data</span>
+    <span class="k">def</span> <span class="nf">cell</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">attribute</span><span class="o">.</span><span class="n">position</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="headingrowschemaloader-tests">
+<h2>14.5.2. HeadingRowSchemaLoader Tests<a class="headerlink" href="#headingrowschemaloader-tests" title="Permalink to this headline">¶</a></h2>
+<p>A <tt class="xref py py-class docutils literal"><span class="pre">schema.loader.SchemaLoader`</span></tt> is abstract, and doesn&#8217;t require much independent testing.</p>
+<p>A <a class="reference internal" href="../schema_loader.html#schema.loader.HeadingRowSchemaLoader" title="schema.loader.HeadingRowSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></tt></a> builds a <a class="reference internal" href="../schema.html#schema.Schema" title="schema.Schema"><tt class="xref py py-class docutils literal"><span class="pre">schema.Schema</span></tt></a> from the first row from a <a class="reference internal" href="../sheet.html#sheet.Sheet" title="sheet.Sheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Sheet</span></tt></a>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestHeadingRowSchemaParser</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">=</span> <span class="n">SheetMockWorkbook</span><span class="p">(</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">=</span> <span class="n">MockSheet</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">,</span> <span class="s">&#39;The_Name&#39;</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">MockRow</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="p">,</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;Col 1&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;Col 2&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">)</span> <span class="p">),</span>
+            <span class="n">MockRow</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="p">,</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;First&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">)</span> <span class="p">),</span>
+            <span class="n">MockRow</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="p">,</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;Second&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span> <span class="p">),</span>
+            <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">HeadingRowSchemaLoader</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Col 1&quot;</span><span class="p">,</span> <span class="n">schema</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Col 2&quot;</span><span class="p">,</span> <span class="n">schema</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="externalschemaloader">
+<h2>14.5.3. ExternalSchemaLoader<a class="headerlink" href="#externalschemaloader" title="Permalink to this headline">¶</a></h2>
+<p>An <a class="reference internal" href="../schema_loader.html#schema.loader.ExternalSchemaLoader" title="schema.loader.ExternalSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.ExternalSchemaLoader</span></tt></a>  builds
+a <a class="reference internal" href="../schema.html#schema.Schema" title="schema.Schema"><tt class="xref py py-class docutils literal"><span class="pre">schema.Schema</span></tt></a>  from another <a class="reference internal" href="../workbook.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestExternalSchemaLoader</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">=</span> <span class="n">SheetMockWorkbook</span><span class="p">(</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">mock_sheet</span><span class="o">=</span> <span class="n">MockSheet</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">,</span> <span class="s">&#39;The_Name&#39;</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">mock_sheet</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Schema</span><span class="p">(</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="n">create</span><span class="o">=</span><span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">),</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span><span class="s">&quot;offset&quot;</span><span class="p">,</span><span class="n">create</span><span class="o">=</span><span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">),</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span><span class="s">&quot;size&quot;</span><span class="p">,</span><span class="n">create</span><span class="o">=</span><span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">),</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span><span class="s">&quot;type&quot;</span><span class="p">,</span><span class="n">create</span><span class="o">=</span><span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">sheet</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">mock_sheet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="c">#MockRow( sheet, stingray.cell.TextCell(&quot;name&quot;, self.wb),</span>
+            <span class="c">#  stingray.cell.TextCell(&quot;offset&quot;, self.wb),</span>
+            <span class="c">#  stingray.cell.TextCell(&quot;size&quot;, self.wb),</span>
+            <span class="c">#  stingray.cell.TextCell(&quot;type&quot;, self.wb),</span>
+            <span class="c">#  ),</span>
+            <span class="n">MockRow</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;Col 1&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span> <span class="p">),</span>
+              <span class="p">),</span>
+            <span class="n">MockRow</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;Col 2&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;str&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="p">),</span>
+            <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">ExternalSchemaLoader</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">,</span> <span class="s">&#39;The_Name&#39;</span><span class="p">,)</span>
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Col 1&quot;</span><span class="p">,</span> <span class="n">schema</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Col 2&quot;</span><span class="p">,</span> <span class="n">schema</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="externalschemasheet-tests">
+<h2>14.5.4. ExternalSchemaSheet Tests<a class="headerlink" href="#externalschemasheet-tests" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../sheet.html#sheet.ExternalSchemaSheet" title="sheet.ExternalSchemaSheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.ExternalSchemaSheet</span></tt></a> creates a schema from an external
+source, usually another Workbook.</p>
+<p>An external schema can be loaded using an <a class="reference internal" href="../schema_loader.html#schema.loader.ExternalSchemaLoader" title="schema.loader.ExternalSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.ExternalSchemaLoader</span></tt></a>.
+However, we can also hard-code a Schema.  Or build it some other way.</p>
+<p>A <a class="reference internal" href="../workbook.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a> uses this type to build each individual <a class="reference internal" href="../sheet.html#sheet.Sheet" title="sheet.Sheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Sheet</span></tt></a>,
+attaching the schema (and column titles, etc.) to each <a class="reference internal" href="../sheet.html#sheet.Row" title="sheet.Row"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Row</span></tt></a>
+that gets built.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestExternalSchemaSheet</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">=</span> <span class="n">SheetMockWorkbook</span><span class="p">(</span> <span class="p">)</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Schema</span><span class="p">(</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span> <span class="s">&quot;Col 1&quot;</span> <span class="p">),</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span> <span class="s">&quot;Col 2&quot;</span> <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">ExternalSchemaSheet</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">,</span> <span class="s">&#39;The_Name&#39;</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">MockRow</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="p">,</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;First&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">)</span> <span class="p">),</span>
+            <span class="n">MockRow</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="p">,</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;Second&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span> <span class="p">),</span>
+            <span class="p">]</span>
+    <span class="k">def</span> <span class="nf">test_should_iterate</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">rows_as_dict_iter</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">dict</span><span class="p">(</span> <span class="nb">zip</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="p">),</span> <span class="n">r</span> <span class="p">)</span> <span class="p">)</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="n">row_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span>  <span class="n">rows_as_dict_iter</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;The_Name&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">requested</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_list</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span> <span class="nb">all</span><span class="p">(</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="nb">dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">row_list</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="n">row</span><span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;Col 1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;First&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;Col 2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="n">row</span><span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;Col 1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Second&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;Col 2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_have_attributes</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;The_Name&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="embeddedschemasheet-tests">
+<h2>14.5.5. EmbeddedSchemaSheet Tests<a class="headerlink" href="#embeddedschemasheet-tests" title="Permalink to this headline">¶</a></h2>
+<p>An <a class="reference internal" href="../sheet.html#sheet.EmbeddedSchemaSheet" title="sheet.EmbeddedSchemaSheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.EmbeddedSchemaSheet</span></tt></a> creates a schema from the workbook and
+produces rows.  It relies on a <a class="reference internal" href="../schema_loader.html#schema.loader.HeadingRowSchemaLoader" title="schema.loader.HeadingRowSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></tt></a>, which
+we must mock.</p>
+<p>Here&#8217;s a mock schema loader.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MockLoader</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">=</span> <span class="n">sheet</span>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">schema</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Schema</span><span class="p">(</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span> <span class="s">&quot;Col 1&quot;</span> <span class="p">),</span>
+            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span> <span class="s">&quot;Col 2&quot;</span> <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">schema</span>
+    <span class="k">def</span> <span class="nf">rows</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">row_iter</span><span class="o">=</span> <span class="nb">iter</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="n">skip_this</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">row_iter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">row_iter</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestEmbeddedSchemaSheet</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">=</span> <span class="n">SheetMockWorkbook</span><span class="p">(</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">EmbeddedSchemaSheet</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">,</span> <span class="s">&#39;The_Name&#39;</span><span class="p">,</span> <span class="n">loader_class</span><span class="o">=</span><span class="n">MockLoader</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">MockRow</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="p">,</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;Col 1&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;Col 2&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">)</span> <span class="p">),</span>
+            <span class="n">MockRow</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="p">,</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;First&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">)</span> <span class="p">),</span>
+            <span class="n">MockRow</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="p">,</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
+              <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s">&quot;Second&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span> <span class="p">),</span>
+            <span class="p">]</span>
+    <span class="k">def</span> <span class="nf">test_should_iterate</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="n">rows_as_dict_iter</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">dict</span><span class="p">(</span> <span class="nb">zip</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="p">),</span> <span class="n">r</span> <span class="p">)</span> <span class="p">)</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
+        <span class="n">row_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span>  <span class="n">rows_as_dict_iter</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;The_Name&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">requested</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_list</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span> <span class="nb">all</span><span class="p">(</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="nb">dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">row_list</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="n">row</span><span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;Col 1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;First&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;Col 2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="n">row</span><span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;Col 1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;Second&quot;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;Col 2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_have_attributes</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;The_Name&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="test-suite-and-runner">
+<h2>14.5.6. Test Suite and Runner<a class="headerlink" href="#test-suite-and-runner" title="Permalink to this headline">¶</a></h2>
+<p>In case we want to build up a larger test suite, we avoid doing
+any real work unless this is the main module being executed.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">test</span>
+<span class="n">suite</span><span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">suite_maker</span><span class="p">(</span> <span class="nb">globals</span><span class="p">()</span> <span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span> <span class="n">__file__</span> <span class="p">)</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">suite</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">14.5. Schema Loader Testing</a><ul>
+<li><a class="reference internal" href="#overheads">14.5.1. Overheads</a></li>
+<li><a class="reference internal" href="#headingrowschemaloader-tests">14.5.2. HeadingRowSchemaLoader Tests</a></li>
+<li><a class="reference internal" href="#externalschemaloader">14.5.3. ExternalSchemaLoader</a></li>
+<li><a class="reference internal" href="#externalschemasheet-tests">14.5.4. ExternalSchemaSheet Tests</a></li>
+<li><a class="reference internal" href="#embeddedschemasheet-tests">14.5.5. EmbeddedSchemaSheet Tests</a></li>
+<li><a class="reference internal" href="#test-suite-and-runner">14.5.6. Test Suite and Runner</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="schema.html"
+                        title="previous chapter">14.4. Schema Module Tests</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="workbook.html"
+                        title="next chapter">14.6. Workbook Testing</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/testing/schema_loader.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="workbook.html" title="14.6. Workbook Testing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="schema.html" title="14.4. Schema Module Tests"
+             >previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" >14. Testing</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, S. Lott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
