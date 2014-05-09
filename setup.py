@@ -6,6 +6,16 @@
 # Installation via ``setup.py``
 # ##############################
 #
+# Use the following link to get the latest code:
+#
+#     ``git clone git://git.code.sf.net/p/stingrayreader/code stingrayreader-code``
+#    
+# It's also possible to get an archive distribution kit. These may be 
+# slightly out of date.
+#
+# Optional Build-from-Scratch
+# =============================
+#
 # The Stingray distribution kit (minimally) is just the following.
 #
 # -   :file:`source`.  The RST-formatted source used by PyLit3 to 
@@ -18,9 +28,6 @@
 # Given these two directories, the build procedure uses PyLit3 to create ``stingray`` package.  
 # It uses Sphinx to create the documentation.
 #
-# Optional Build-from-Scratch
-# =============================
-#
 # See :ref:`build` for more information on the build procedure.  
 # This is an optional step to recreate the Python code from the documentation.
 #
@@ -32,10 +39,6 @@
 # -   Sphinx.  http://sphinx.pocoo.org/
 #
 # -   Setuptools.  http://pypi.python.org/pypi/setuptools
-#
-# A fresh SVN checkout may have dates and times in an order that baffles PyLit3.
-# It's sensible to simply delete the :file:`stingray`, :file:`demo` and :file:`test` 
-# directories to do a complete rebuild.
 #
 # ..  code-block:: bash
 #
@@ -91,6 +94,7 @@ setup(
         'stingray', 
         'stingray.schema',
         'stingray.cobol',
+        'stingray.workbook',
         ],
     package_data={'stingray': ['*.json']},
 

@@ -84,7 +84,7 @@ cope with EBCDIC or packed decimal conversions.</li>
 <tbody valign="top">
 <tr class="row-even"><td>XL_CELL_EMPTY</td>
 <td>0</td>
-<td>empty string u&#8217;&#8216;</td>
+<td>empty string &#8216;&#8217;</td>
 </tr>
 <tr class="row-odd"><td>XL_CELL_TEXT</td>
 <td>1</td>
@@ -108,7 +108,7 @@ cope with EBCDIC or packed decimal conversions.</li>
 </tr>
 <tr class="row-even"><td>XL_CELL_BLANK</td>
 <td>6</td>
-<td>empty string u&#8217;&#8216;. Note: this type will appear only when open_workbook(..., formatting_info=True) is used.</td>
+<td>empty string &#8216;&#8217;. Note: this type will appear only when open_workbook(..., formatting_info=True) is used.</td>
 </tr>
 </tbody>
 </table>
@@ -323,7 +323,7 @@ hashable.</p>
 
 <p>An <tt class="docutils literal"><span class="pre">EmptyCell</span></tt> implements empty cells.  <tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt> may report them as a type <tt class="docutils literal"><span class="pre">XL_CELL_EMPTY</span></tt>. A Numbers spreadsheet may use the <tt class="docutils literal"><span class="pre">&lt;o&gt;</span></tt> or <tt class="docutils literal"><span class="pre">&lt;g&gt;</span></tt> tag.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">EmptyCell</span><span class="p">(</span> <span class="n">Cell</span> <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The *value* will be u&#39;&#39;, but we ignore that.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;The *value* will be &#39;&#39;, but we ignore that.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span> <span class="k">return</span> <span class="bp">True</span>
     <span class="k">def</span> <span class="nf">to_int</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span> <span class="k">return</span> <span class="bp">None</span>
     <span class="k">def</span> <span class="nf">to_float</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span> <span class="k">return</span> <span class="bp">None</span>

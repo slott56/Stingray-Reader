@@ -90,7 +90,7 @@ schema.</p>
 <li class="toctree-l1"><a class="reference internal" href="sheet.html">5. Sheet Module &#8211; Sheet and Row Access</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema.html">6. Schema Package &#8211; Schema and Attribute Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="schema_loader.html">7. Schema Loader Module &#8211; Load Embedded or External Schema</a></li>
-<li class="toctree-l1"><a class="reference internal" href="workbook.html">8. Workbook Module &#8211; Uniform Wrapper on All Workbooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workbook/index.html">8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="iwork13.html">9. The iWork &#8216;13 Numbers Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cobol.html">10. The COBOL Package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">11. The <strong>Stingray</strong> Developer&#8217;s Guide</a></li>
@@ -107,11 +107,6 @@ schema.</p>
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
 <div class="section" id="the-todo-list">
 <h2>The TODO List<a class="headerlink" href="#the-todo-list" title="Permalink to this headline">¶</a></h2>
-<div class="admonition-todo admonition">
-<p class="first admonition-title">Todo</p>
-<p class="last">Test hashable interface of Cell</p>
-</div>
-<p class="todo-source">(The <a class="reference internal" href="cell.html#index-0"><em>original entry</em></a> is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cell.rst, line 214.)</p>
 <div class="admonition-todo admonition">
 <p class="first admonition-title">Todo</p>
 <p>refactor setSizeAndOffset()</p>
@@ -143,18 +138,18 @@ we create the a &#8220;schema dictionary&#8221; using simple names and path name
 <p class="todo-source">(The <a class="reference internal" href="testing/cobol_loader.html#index-0"><em>original entry</em></a> is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/testing/cobol_loader.rst, line 983.)</p>
 <div class="admonition-todo admonition">
 <p class="first admonition-title">Todo</p>
-<p>Implement Numbers13_Workbook</p>
-<p class="last">iWork13 is not implemented at all. We have a technology spike that appears to work.</p>
+<p class="last">Refactor this, it feels clunky.</p>
 </div>
-<p class="todo-source">(The <a class="reference internal" href="testing/workbook.html#index-0"><em>original entry</em></a> is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/testing/workbook.rst, line 246.)</p>
+<p class="todo-source">(The <a class="reference internal" href="workbook/ods.html#index-0"><em>original entry</em></a> is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/ods.rst, line 120.)</p>
 <div class="admonition-todo admonition">
 <p class="first admonition-title">Todo</p>
 <p>Refactor workbook package</p>
 <p>This module needs to be rebuilt into a package which
 imports a number of subsidiary modules. It&#8217;s too large
 as written.</p>
-<p>Adding Numbers &#8216;13 will make it even more monstrous.</p>
-<p>It should become (like <a class="reference internal" href="cobol_init.html#module-cobol" title="cobol"><tt class="xref py py-mod docutils literal"><span class="pre">cobol</span></tt></a>) a high-level package
+<p>Adding Numbers &#8216;13 will make this module even more monstrous.
+Adding future spreadsheets will on exacerbate the problem.</p>
+<p>It should become (like <a class="reference internal" href="../cobol_init.html#module-cobol" title="cobol"><tt class="xref py py-mod docutils literal"><span class="pre">cobol</span></tt></a>) a high-level package
 that imports top-level classes from modules within the package.</p>
 <blockquote>
 <div><p><tt class="docutils literal"><span class="pre">from</span> <span class="pre">workbook.csv</span> <span class="pre">import</span> <span class="pre">CSV_Workbook</span></tt></p>
@@ -163,21 +158,21 @@ that imports top-level classes from modules within the package.</p>
 </div></blockquote>
 <p>This should make a transparent change from module to package.</p>
 <p class="last">The top-level definition for <tt class="xref py py-class docutils literal"><span class="pre">cobol.Workbook</span></tt> must
-to be refactored into a &#8220;defs&#8221; module that can be shared by
-all the modules in the package.</p>
+to be refactored into a <tt class="docutils literal"><span class="pre">base</span></tt> module that can be shared by
+all the modules in the package that extend this base definition.</p>
 </div>
-<p class="todo-source">(The <a class="reference internal" href="workbook.html#index-0"><em>original entry</em></a> is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook.rst, line 153.)</p>
+<p class="todo-source">(The <a class="reference internal" href="workbook/init.html#index-0"><em>original entry</em></a> is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/init.rst, line 170.)</p>
 <div class="admonition-todo admonition">
 <p class="first admonition-title">Todo</p>
-<p class="last">Refactor this, it feels clunky.</p>
+<p class="last">Test hashable interface of Cell</p>
 </div>
-<p class="todo-source">(The <a class="reference internal" href="workbook.html#index-1"><em>original entry</em></a> is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook.rst, line 940.)</p>
+<p class="todo-source">(The <a class="reference internal" href="cell.html#index-0"><em>original entry</em></a> is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cell.rst, line 214.)</p>
 <div class="admonition-todo admonition">
 <p class="first admonition-title">Todo</p>
-<p>Implement Numbers13_Workbook</p>
-<p class="last">Use snappy and protobuf to read the IWA members of the archive.</p>
+<p>Additional Numbers13_Workbook Feature</p>
+<p class="last">Translate Formula and Formula error to Text</p>
 </div>
-<p class="todo-source">(The <a class="reference internal" href="workbook.html#index-2"><em>original entry</em></a> is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook.rst, line 1363.)</p>
+<p class="todo-source">(The <a class="reference internal" href="workbook/numbers_13.html#index-0"><em>original entry</em></a> is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/numbers_13.rst, line 27.)</p>
 </div>
 <div class="section" id="indices-and-tables">
 <h2>Indices and Tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>

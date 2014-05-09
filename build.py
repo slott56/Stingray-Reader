@@ -53,7 +53,7 @@
 #
 #     ..  code-block:: bash
 #    
-#         python3.3 -m pylit -t source/build.rst build.py
+#         python3 -m pylit -t source/build.rst build.py
 #
 #     This reports that an extract was written to :file:`build.py`.
 #    
@@ -64,7 +64,7 @@
 #
 #     ..  code-block:: bash
 #    
-#         python3.3 build.py
+#         python3 build.py
 #        
 #     At the end of this step, the directory tree will include the following.
 #    
@@ -221,11 +221,20 @@ def run_test():
 def build():
     mkdir( 'stingray/schema' )
     mkdir( 'stingray/cobol' )
+    mkdir( 'stingray/workbook' )
     
     pylit_build( 'source/stingray_init.rst', 'stingray/__init__.py' )
     pylit_build( 'source/cell.rst', 'stingray/cell.py' )
     pylit_build( 'source/sheet.rst', 'stingray/sheet.py' )
-    pylit_build( 'source/workbook.rst', 'stingray/workbook.py' )
+    pylit_build( 'source/workbook/init.rst', 'stingray/workbook/__init__.py' )
+    pylit_build( 'source/workbook/base.rst', 'stingray/workbook/base.py' )
+    pylit_build( 'source/workbook/csv.rst', 'stingray/workbook/csv.py' )
+    pylit_build( 'source/workbook/xls.rst', 'stingray/workbook/xls.py' )
+    pylit_build( 'source/workbook/xlsx.rst', 'stingray/workbook/xlsx.py' )
+    pylit_build( 'source/workbook/ods.rst', 'stingray/workbook/ods.py' )
+    pylit_build( 'source/workbook/numbers_09.rst', 'stingray/workbook/numbers_09.py' )
+    pylit_build( 'source/workbook/numbers_13.rst', 'stingray/workbook/numbers_13.py' )
+    pylit_build( 'source/workbook/fixed.rst', 'stingray/workbook/fixed.py' )
     pylit_build( 'source/schema.rst', 'stingray/schema/__init__.py' )
     pylit_build( 'source/schema_loader.rst', 'stingray/schema/loader.py' )
     pylit_build( 'source/cobol_init.rst', 'stingray/cobol/__init__.py' )

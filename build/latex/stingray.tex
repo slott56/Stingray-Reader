@@ -14,7 +14,7 @@
 
 
 \title{The Stingray Schema-Based File Reader}
-\date{May 08, 2014}
+\date{May 09, 2014}
 \release{4.4.1}
 \author{S. Lott}
 \newcommand{\sphinxlogo}{}
@@ -32,66 +32,66 @@
     \PYG@it{\PYG@bf{\PYG@ff{#1}}}}}}}
 \def\PYG#1#2{\PYG@reset\PYG@toks#1+\relax+\PYG@do{#2}}
 
-\expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@si\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.44,0.63,0.82}{##1}}}
-\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
-\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
-\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
 \expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
-\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@gs\endcsname{\let\PYG@bf=\textbf}
+\expandafter\def\csname PYG@tok@gt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
 \expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
-\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
-\expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
-\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
-\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
-\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
+\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
 \expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
 \expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
-\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
-\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
-\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
 \expandafter\def\csname PYG@tok@no\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.38,0.68,0.84}{##1}}}
 \expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@gs\endcsname{\let\PYG@bf=\textbf}
-\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@gt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
-\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
-\expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
+\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
+\expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
+\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
+\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
 \expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
+\expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
+\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
+\expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
+\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@si\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.44,0.63,0.82}{##1}}}
+\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 
 \def\PYGZbs{\char`\\}
 \def\PYGZus{\char`\_}
@@ -172,7 +172,7 @@ schema.
 \label{index:contents}\label{index:the-stingray-schema-based-file-reader}
 
 \section{Introduction}
-\label{introduction:introduction}\label{introduction:intro}\label{introduction::doc}
+\label{introduction:intro}\label{introduction:introduction}\label{introduction::doc}
 Given a workbook -- or any other ``flat'' file -- how is it organized?  What does it \emph{mean}?
 
 How can we ignore details that are merely physical?
@@ -862,7 +862,7 @@ that supports sheets with embedded as well as external schema.
 Imported as \code{stingray.sheet}.
 
 \item {} 
-\code{workbook.py}.  The {\hyperref[workbook:workbook]{\emph{Workbook Module -- Uniform Wrapper on All Workbooks}}} families.
+\code{workbook.py}.  The {\hyperref[workbook/index:workbook]{\emph{Workbook Package -- Uniform Wrappers for Workbooks}}} families.
 Imported as \code{stingray.workbook}.
 
 \item {} 
@@ -926,7 +926,7 @@ This is approximately pure overhead required to make a Python package.
 
 
 \section{Cell Module -- Data Element Containers and Conversions}
-\label{cell:cell-module-data-element-containers-and-conversions}\label{cell:cells}\label{cell:module-cell}\label{cell::doc}\index{cell (module)}
+\label{cell:cell-module-data-element-containers-and-conversions}\label{cell:module-cell}\label{cell:cells}\label{cell::doc}\index{cell (module)}
 The point of a {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} is two-fold.
 \begin{itemize}
 \item {} 
@@ -963,7 +963,7 @@ XL\_CELL\_EMPTY
  & 
 0
  & 
-empty string u'`
+empty string `'
 \\
 
 XL\_CELL\_TEXT
@@ -1005,7 +1005,7 @@ XL\_CELL\_BLANK
  & 
 6
  & 
-empty string u'`. Note: this type will appear only when open\_workbook(..., formatting\_info=True) is used.
+empty string `'. Note: this type will appear only when open\_workbook(..., formatting\_info=True) is used.
 \\
 \hline\end{tabulary}
 
@@ -1279,7 +1279,7 @@ An \code{EmptyCell} implements empty cells.  \code{xlrd} may report them as a ty
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{EmptyCell}\PYG{p}{(} \PYG{n}{Cell} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}The *value* will be u\PYGZsq{}\PYGZsq{}, but we ignore that.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}The *value* will be \PYGZsq{}\PYGZsq{}, but we ignore that.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{k}{def} \PYG{n+nf}{is\PYGZus{}empty}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:} \PYG{k}{return} \PYG{n+nb+bp}{True}
     \PYG{k}{def} \PYG{n+nf}{to\PYGZus{}int}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:} \PYG{k}{return} \PYG{n+nb+bp}{None}
     \PYG{k}{def} \PYG{n+nf}{to\PYGZus{}float}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:} \PYG{k}{return} \PYG{n+nb+bp}{None}
@@ -1593,7 +1593,7 @@ this to {\hyperref[cobol:cobol]{\emph{The COBOL Package}}}.
 
 
 \section{Sheet Module -- Sheet and Row Access}
-\label{sheet:module-sheet}\label{sheet:sheets}\label{sheet:sheet-module-sheet-and-row-access}\label{sheet::doc}\index{sheet (module)}
+\label{sheet:sheets}\label{sheet:sheet-module-sheet-and-row-access}\label{sheet:module-sheet}\label{sheet::doc}\index{sheet (module)}
 A \emph{Sheet} is a generator
 of \emph{Row} objects.  A \emph{Row} is a sequence of {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} instances, identified by position.
 
@@ -1805,7 +1805,7 @@ Sheet and Row are essentially lazy sequences.
 \end{Verbatim}
 
 There are two ``implicit'' dependencies, also.
-A row depends on details of an {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} and a {\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}}.
+A row depends on details of an {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} and a {\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}}.
 However, there's no real need to present a formal import for this.
 The Attribute and Workbook are simply opaque
 objects passed around as arguments.
@@ -1855,7 +1855,7 @@ A Sheet produces this simple row-as-list.  A Schema can transform this
 into row-as-dict or some even more elaborate structure.
 
 A row depends on details of an {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}}
-and a {\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}}.
+and a {\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}}.
 This feels circular, but doesn't present any real problems.
 
 The {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} conversions are handled by the Workbook.
@@ -2137,7 +2137,7 @@ This assures proper packed decimal conversion of redefined fields.
 
 
 \section{Schema Package -- Schema and Attribute Definitions}
-\label{schema:module-schema}\label{schema:schema-package-schema-and-attribute-definitions}\label{schema:schema}\label{schema::doc}\index{schema (module)}
+\label{schema:schema}\label{schema:module-schema}\label{schema:schema-package-schema-and-attribute-definitions}\label{schema::doc}\index{schema (module)}
 A \emph{Schema} contains data descriptions.  It's a collection of \emph{Attribute} specifications.
 
 For our purposes, we're trying to cover the following bases:
@@ -2568,7 +2568,7 @@ A subclass might introduce yet more attributes.
         \PYG{k}{return} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Attribute( name=\PYGZob{}0.name!r\PYGZcb{}, position=\PYGZob{}0.position\PYGZcb{}, offset=\PYGZob{}0.offset\PYGZcb{}, size=\PYGZob{}0.size\PYGZcb{} )}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}
 \end{Verbatim}
 
-An {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} is used by a {\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}} to
+An {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} is used by a {\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}} to
 extract cell data from a row.
 
 The use case looks like this for a Fixed format workbook.  For other
@@ -2588,7 +2588,7 @@ Attribute( name= ``mm-dd-yy'', size= \emph{n}, offset= \emph{m},
 
 
 \section{Schema Loader Module -- Load Embedded or External Schema}
-\label{schema_loader:schema-loader}\label{schema_loader:module-schema.loader}\label{schema_loader:schema-loader-module-load-embedded-or-external-schema}\label{schema_loader::doc}\index{schema.loader (module)}
+\label{schema_loader:schema-loader-module-load-embedded-or-external-schema}\label{schema_loader:schema-loader}\label{schema_loader:module-schema.loader}\label{schema_loader::doc}\index{schema.loader (module)}
 A \emph{Schema Loader} loads the attributes of a schema from a source document.
 There are a variety of sources.
 \begin{itemize}
@@ -3027,8 +3027,14 @@ We'll delegate that to {\hyperref[cobol_loader:cobol-loader]{\emph{COBOL Loader 
 more complex than simply loading rows from a sheet of a workbook.
 
 
-\section{Workbook Module -- Uniform Wrapper on All Workbooks}
-\label{workbook:module-workbook}\label{workbook:workbook-module-uniform-wrapper-on-all-workbooks}\label{workbook:workbook}\label{workbook::doc}\index{workbook (module)}
+\section{Workbook Package -- Uniform Wrappers for Workbooks}
+\label{workbook/index:workbook-package-uniform-wrappers-for-workbooks}\label{workbook/index:workbook}\label{workbook/index::doc}
+This package includes a base definition module plus a module for
+each physical format.
+
+
+\subsection{Workbook \_\_init\_\_ Module -- Wrapper for all implementations}
+\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}\label{workbook/init:workbook-init}\label{workbook/init:module-workbook}\label{workbook/init::doc}\index{workbook (module)}
 A \emph{Workbook} is a collection of \emph{Sheets}.  It's also a set of decoding
 rules required to translate bytes (or XML text) into meaningful \emph{Cell} instances.
 
@@ -3064,10 +3070,10 @@ This is because the decoding of bytes to create a cell is entirely a feature
 of the Workbook.
 
 
-\subsection{Use Case}
-\label{workbook:use-case}
+\subsubsection{Use Case}
+\label{workbook/init:use-case}
 See {\hyperref[introduction:intro]{\emph{Introduction}}} for our physical-format independence use case.
-A {\hyperref[workbook:workbook.open_workbook]{\code{workbook.open\_workbook()}}} function allows a program to be
+A {\hyperref[workbook/init:workbook.open_workbook]{\code{workbook.open\_workbook()}}} function allows a program to be
 independent of physical format.
 \begin{alltt}
 def process\_workbook( input ):
@@ -3100,8 +3106,8 @@ def process\_workbook( source ):
 \end{alltt}
 
 
-\subsection{Physical Formats}
-\label{workbook:physical-formats}
+\subsubsection{Physical Formats}
+\label{workbook/init:physical-formats}
 Much data is transferred via formats
 tied to desktop spreadsheet software or
 informed by legacy mainframe design patterns.
@@ -3158,8 +3164,28 @@ The Fixed and COBOL format files, on the other hand, require physical schema inf
 We'll look at COBOL in depth, in {\hyperref[cobol:cobol]{\emph{The COBOL Package}}}.
 
 
-\subsection{Model}
-\label{workbook:model}
+\subsubsection{iWork Numbers}
+\label{workbook/init:iwork-numbers}
+The Stingray model of sheet/row/cell structure does not
+easily fit the Numbers sheet/table/row/cell structure.
+
+Option 1:
+\begin{quote}
+
+Workbook -\textgreater{} new layer (Numbers ``Workspace'') -\textgreater{} Sheet (Numbers ``Table'') -\textgreater{} Row -\textgreater{} Cell
+\end{quote}
+
+Option 2:
+\begin{quote}
+
+Combine (Workspace,Table) into a 2-tuple, and call this a ``sheet'' name
+
+This will fit with Stingray acceptably.
+\end{quote}
+
+
+\subsubsection{Model}
+\label{workbook/init:model}
 \begin{Verbatim}[commandchars=\\\{\}]
 http://yuml.me/diagram/scruffy;/class/
 \PYGZsh{}workbook,
@@ -3176,8 +3202,8 @@ http://yuml.me/diagram/scruffy;/class/
 \includegraphics[width=6in]{workbook.png}
 
 
-\subsection{Implementation Overheads}
-\label{workbook:implementation-overheads}
+\subsubsection{Implementation Overheads}
+\label{workbook/init:implementation-overheads}
 \begin{notice}{note}{Todo}
 
 Refactor workbook package
@@ -3186,7 +3212,8 @@ This module needs to be rebuilt into a package which
 imports a number of subsidiary modules. It's too large
 as written.
 
-Adding Numbers `13 will make it even more monstrous.
+Adding Numbers `13 will make this module even more monstrous.
+Adding future spreadsheets will on exacerbate the problem.
 
 It should become (like {\hyperref[cobol_init:module-cobol]{\code{cobol}}}) a high-level package
 that imports top-level classes from modules within the package.
@@ -3202,8 +3229,8 @@ that imports top-level classes from modules within the package.
 This should make a transparent change from module to package.
 
 The top-level definition for \code{cobol.Workbook} must
-to be refactored into a ``defs'' module that can be shared by
-all the modules in the package.
+to be refactored into a \code{base} module that can be shared by
+all the modules in the package that extend this base definition.
 \end{notice}
 
 A few Python overheads that must be physically first in the
@@ -3234,7 +3261,6 @@ we'll be given schema objects to work with.
 \PYG{k+kn}{import} \PYG{n+nn}{xml.etree.cElementTree} \PYG{k+kn}{as} \PYG{n+nn}{dom}
 \PYG{k+kn}{from} \PYG{n+nn}{collections} \PYG{k+kn}{import} \PYG{n}{defaultdict}
 \PYG{k+kn}{import} \PYG{n+nn}{zipfile}
-\PYG{k+kn}{import} \PYG{n+nn}{csv}
 \PYG{k+kn}{import} \PYG{n+nn}{datetime}
 \PYG{k+kn}{from} \PYG{n+nn}{io} \PYG{k+kn}{import} \PYG{n+nb}{open}
 \PYG{k+kn}{import} \PYG{n+nn}{os.path}
@@ -3247,149 +3273,53 @@ we'll be given schema objects to work with.
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.cell}
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.schema.loader}
+
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.csv} \PYG{k+kn}{import} \PYG{n}{CSV\PYGZus{}Workbook}
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.xls} \PYG{k+kn}{import} \PYG{n}{XLS\PYGZus{}Workbook}
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.xlsx} \PYG{k+kn}{import} \PYG{n}{XLSX\PYGZus{}Workbook}
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.ods} \PYG{k+kn}{import} \PYG{n}{ODS\PYGZus{}Workbook}
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.numbers\PYGZus{}09} \PYG{k+kn}{import} \PYG{n}{Numbers09\PYGZus{}Workbook}
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.numbers\PYGZus{}13} \PYG{k+kn}{import} \PYG{n}{Numbers13\PYGZus{}Workbook}
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.fixed} \PYG{k+kn}{import} \PYG{n}{Fixed\PYGZus{}Workbook}
 \end{Verbatim}
 
 
-\subsection{Workbook Structure}
-\label{workbook:workbook-structure}\index{Workbook (class in workbook)}
-
-\begin{fulllineitems}
-\phantomsection\label{workbook:workbook.Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{Workbook}}
-\end{fulllineitems}
-
-
-We note that these physical formats all encode a single, common data structure.
-Here are some abstract definitions.
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{class} \PYG{n+nc}{Workbook}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}A workbook file; a collection of Sheets.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{o}{=}\PYG{n+nb+bp}{None} \PYG{p}{)}\PYG{p}{:}
-        \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Prepare the workbook for reading.}
-
-\PYG{l+s+sd}{        :param name: File name}
-\PYG{l+s+sd}{        :param file\PYGZus{}object: Optional file\PYGZhy{}like object.  If omitted, the named file is opened.}
-\PYG{l+s+sd}{        \PYGZdq{}\PYGZdq{}\PYGZdq{}}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{name}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{file\PYGZus{}obj}\PYG{o}{=} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{the\PYGZus{}file} \PYG{o}{=} \PYG{n+nb+bp}{None} \PYG{c}{\PYGZsh{} Any internal files}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{datemode}\PYG{o}{=} \PYG{l+m+mi}{0} \PYG{c}{\PYGZsh{} For xlrd}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{log}\PYG{o}{=} \PYG{n}{logging}\PYG{o}{.}\PYG{n}{getLogger}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}class\PYGZus{}\PYGZus{}}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}qualname\PYGZus{}\PYGZus{}} \PYG{p}{)}
-    \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}repr\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
-        \PYG{k}{return} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{}(\PYGZob{}1!r\PYGZcb{})}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}class\PYGZus{}\PYGZus{}}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}qualname\PYGZus{}\PYGZus{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
-\end{Verbatim}
-\index{sheet() (workbook.Workbook method)}
-
-\begin{fulllineitems}
-\phantomsection\label{workbook:workbook.Workbook.sheet}\pysiglinewithargsret{\code{Workbook.}\bfcode{sheet}}{\emph{sheet\_name}, \emph{sheet\_type}, \emph{*args}, \emph{**kw}}{}
-There are two varieties of sheets, depending on the presence or
-absence of a schema.
-
-\end{fulllineitems}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{def} \PYG{n+nf}{sheet}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet\PYGZus{}name}\PYG{p}{,} \PYG{n}{sheet\PYGZus{}type}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{o}{*}\PYG{n}{args}\PYG{p}{,} \PYG{o}{*}\PYG{o}{*}\PYG{n}{kw} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Returns a :py:class:{}`sheet.Sheet{}`, ready for processing.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{k}{if} \PYG{n}{sheet\PYGZus{}type} \PYG{o+ow}{is} \PYG{n+nb+bp}{None}\PYG{p}{:} \PYG{n}{sheet\PYGZus{}type}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{Sheet}
-    \PYG{n}{sheet} \PYG{o}{=} \PYG{n}{sheet\PYGZus{}type}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet\PYGZus{}name}\PYG{p}{,} \PYG{o}{*}\PYG{n}{args}\PYG{p}{,} \PYG{o}{*}\PYG{o}{*}\PYG{n}{kw} \PYG{p}{)}
-    \PYG{k}{return} \PYG{n}{sheet}
-\end{Verbatim}
-\index{sheets() (workbook.Workbook method)}
-
-\begin{fulllineitems}
-\phantomsection\label{workbook:workbook.Workbook.sheets}\pysiglinewithargsret{\code{Workbook.}\bfcode{sheets}}{}{}
-\end{fulllineitems}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{def} \PYG{n+nf}{sheets}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}List of sheet names.}
-\PYG{l+s+sd}{    The filename is a handy default for CSV and Fixed files.}
-\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{n}{nm}\PYG{p}{,} \PYG{n}{\PYGZus{}} \PYG{o}{=} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{splitext}\PYG{p}{(} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{basename}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{name}\PYG{p}{)} \PYG{p}{)}
-    \PYG{k}{return} \PYG{p}{[} \PYG{n}{nm} \PYG{p}{]}
-\end{Verbatim}
-
-The Context Manager interface.
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}enter\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
-    \PYG{k}{return} \PYG{n+nb+bp}{self}
-\PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}exit\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{exc\PYGZus{}type}\PYG{p}{,} \PYG{n}{exc\PYGZus{}val}\PYG{p}{,} \PYG{n}{exc\PYGZus{}tb} \PYG{p}{)}\PYG{p}{:}
-    \PYG{k}{if} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{the\PYGZus{}file}\PYG{p}{:}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{the\PYGZus{}file}\PYG{o}{.}\PYG{n}{close}\PYG{p}{(}\PYG{p}{)}
-    \PYG{k}{if} \PYG{n}{exc\PYGZus{}type} \PYG{o+ow}{is} \PYG{o+ow}{not} \PYG{n+nb+bp}{None}\PYG{p}{:} \PYG{k}{return} \PYG{n+nb+bp}{False}
-\end{Verbatim}
-\index{rows\_of() (workbook.Workbook method)}
-
-\begin{fulllineitems}
-\phantomsection\label{workbook:workbook.Workbook.rows_of}\pysiglinewithargsret{\code{Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
-\end{fulllineitems}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{def} \PYG{n+nf}{rows\PYGZus{}of}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}An iterator over all rows of the given sheet.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{k}{raise} \PYG{n+ne}{NotImplementedError}
-\end{Verbatim}
-\index{row\_get() (workbook.Workbook method)}
-
-\begin{fulllineitems}
-\phantomsection\label{workbook:workbook.Workbook.row_get}\pysiglinewithargsret{\code{Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
-\end{fulllineitems}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{def} \PYG{n+nf}{row\PYGZus{}get}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{row}\PYG{p}{,} \PYG{n}{attribute} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Create a Cell from the row\PYGZsq{}s data.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{k}{raise} \PYG{n+ne}{NotImplementedError}
-\end{Verbatim}
-
-There are distinct subclasses of {\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}}, based on the
-physical file format.
-
-Many of our physical formats don't require any physical schema information.
-A \textbf{Fixed} file, however, requires
-a physical format schema definition in order to decompose
-each line into cells.
-
-
-\subsection{Workbook Subclasses}
-\label{workbook:workbook-subclasses}
-We have a number of concrete subclasses of {\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}}.
+\subsubsection{Workbook Subclasses}
+\label{workbook/init:workbook-subclasses}
+We have a number of concrete subclasses of {\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}}.
 \begin{itemize}
 \item {} 
-{\hyperref[workbook:workbook.CSV_Workbook]{\code{workbook.CSV\_Workbook}}}.  This is a degenerate case, where the workbook appears to contain
+{\hyperref[workbook/csv:workbook.CSV_Workbook]{\code{workbook.CSV\_Workbook}}}.  This is a degenerate case, where the workbook appears to contain
 a single sheet.  This sheet is the CSV file, accessed via the built-in
 \code{csv.reader()}.
 
 \item {} 
-{\hyperref[workbook:workbook.XLS_Workbook]{\code{workbook.XLS\_Workbook}}}.  This is the workbook as processed by \code{xlrd}.  These classes
+{\hyperref[workbook/xls:workbook.XLS_Workbook]{\code{workbook.XLS\_Workbook}}}.  This is the workbook as processed by \code{xlrd}.  These classes
 wrap \code{xlrd} classes to which the real work is delegated.
 
 \item {} 
-{\hyperref[workbook:workbook.XLSX_Workbook]{\code{workbook.XLSX\_Workbook}}}.  This is the workbook after unzipping and using an XML parser
+{\hyperref[workbook/xlsx:workbook.XLSX_Workbook]{\code{workbook.XLSX\_Workbook}}}.  This is the workbook after unzipping and using an XML parser
 on the various document parts.  Mostly, this is a matter of unzipping
 and parsing parts of the document to create a DOM which can be traversed
 as needed.
 
 \item {} 
-{\hyperref[workbook:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}}.  This is actually a fairly complex case.  The workbook will appear to
+{\hyperref[workbook/fixed:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}}.  This is actually a fairly complex case.  The workbook will appear to
 contain a single sheet; this sheet is the fixed format file.  Schema information
 was required up front, unlike the other formats.
 
 \item {} 
-{\hyperref[workbook:workbook.Numbers09_Workbook]{\code{workbook.Numbers09\_Workbook}}}.
+{\hyperref[workbook/numbers_09:workbook.Numbers09_Workbook]{\code{workbook.Numbers09\_Workbook}}}.
 This handles the iWork `09 Numbers files with multiple
 workspaces and multiple tables in each workspace.
 
 \item {} 
-{\hyperref[workbook:workbook.Numbers13_Workbook]{\code{workbook.Numbers13\_Workbook}}}
+{\hyperref[workbook/numbers_13:workbook.Numbers13_Workbook]{\code{workbook.Numbers13\_Workbook}}}
 These handle the iWork `13 Numbers files with multiple
 workspaces and multiple tables in each workspace.
 
 \item {} 
-{\hyperref[workbook:workbook.ODS_Workbook]{\code{workbook.ODS\_Workbook}}}.
+{\hyperref[workbook/ods:workbook.ODS_Workbook]{\code{workbook.ODS\_Workbook}}}.
 
 \end{itemize}
 
@@ -3416,11 +3346,227 @@ a member of a larger archive.
 \end{itemize}
 
 
-\subsubsection{CSV Workbook}
-\label{workbook:csv-workbook}\index{CSV\_Workbook (class in workbook)}
+\subsubsection{Workbook Factory}
+\label{workbook/init:workbook-factory}\index{No\_Schema (class in workbook)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.CSV_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{CSV\_Workbook}}
+\phantomsection\label{workbook/init:workbook.No_Schema}\pysigline{\strong{class }\code{workbook.}\bfcode{No\_Schema}}
+\end{fulllineitems}
+
+
+The {\hyperref[workbook/init:workbook.No_Schema]{\code{No\_Schema}}} exception is raised if there's a problem
+loading a schema.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{class} \PYG{n+nc}{No\PYGZus{}Schema}\PYG{p}{(} \PYG{n+ne}{Exception} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}A valid schema could not be loaded.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{pass}
+\end{Verbatim}
+\index{Opener (class in workbook)}
+
+\begin{fulllineitems}
+\phantomsection\label{workbook/init:workbook.Opener}\pysigline{\strong{class }\code{workbook.}\bfcode{Opener}}
+\end{fulllineitems}
+
+
+An opener \textbf{Factory} class.  A subclass can extend this to handle other file
+extensions and physical formats.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{class} \PYG{n+nc}{Opener}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}An extensible opener that examines the file extension.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}call\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
+        \PYG{n}{schema\PYGZus{}path}\PYG{o}{=}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{schema\PYGZus{}sheet}\PYG{o}{=} \PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{o}{*}\PYG{o}{*}\PYG{n}{kw} \PYG{p}{)}\PYG{p}{:}
+        \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Open a workbook.}
+\PYG{l+s+sd}{        :param name: filename to open.}
+\PYG{l+s+sd}{        :param file\PYGZus{}object: File\PYGZhy{}like object to process.  If not}
+\PYG{l+s+sd}{        provided the named file will be opened.}
+\PYG{l+s+sd}{        :param schema\PYGZus{}path: Directory with external schema files}
+\PYG{l+s+sd}{        :param schema\PYGZus{}sheet: A sheet in an external schema workbook.}
+\PYG{l+s+sd}{        \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+        \PYG{n}{\PYGZus{}}\PYG{p}{,} \PYG{n}{ext} \PYG{o}{=} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{splitext}\PYG{p}{(} \PYG{n}{name} \PYG{p}{)}
+        \PYG{n}{ext} \PYG{o}{=} \PYG{n}{ext}\PYG{o}{.}\PYG{n}{lower}\PYG{p}{(}\PYG{p}{)}
+        \PYG{k}{if} \PYG{n}{ext} \PYG{o}{==} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.xls}\PYG{l+s}{\PYGZdq{}}\PYG{p}{:} \PYG{k}{return} \PYG{n}{XLS\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}
+        \PYG{k}{elif} \PYG{n}{ext} \PYG{o+ow}{in} \PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.xlsx}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.xlsm}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{p}{:}
+            \PYG{k}{return} \PYG{n}{XLSX\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}
+        \PYG{k}{elif} \PYG{n}{ext} \PYG{o+ow}{in} \PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.csv}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{p}{)}\PYG{p}{:}
+            \PYG{k}{return} \PYG{n}{CSV\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{p}{,} \PYG{o}{*}\PYG{o}{*}\PYG{n}{kw} \PYG{p}{)}
+        \PYG{k}{elif} \PYG{n}{ext} \PYG{o+ow}{in} \PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.tab}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{p}{)}\PYG{p}{:}
+            \PYG{k}{return} \PYG{n}{CSV\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{p}{,} \PYG{n}{delimiter}\PYG{o}{=}\PYG{l+s}{\PYGZsq{}}\PYG{l+s+se}{\PYGZbs{}t}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{o}{*}\PYG{o}{*}\PYG{n}{kw} \PYG{p}{)}
+        \PYG{k}{elif} \PYG{n}{ext} \PYG{o+ow}{in} \PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.ods}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{p}{)}\PYG{p}{:}
+            \PYG{k}{return} \PYG{n}{ODS\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}
+        \PYG{k}{elif} \PYG{n}{ext} \PYG{o+ow}{in} \PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.numbers}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{p}{)}\PYG{p}{:}
+            \PYG{c}{\PYGZsh{} Directory? It\PYGZsq{}s Numbers13\PYGZus{}Workbook; Zipfile? It\PYGZsq{}s Numbers09\PYGZus{}Workbook}
+            \PYG{k}{if} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{is\PYGZus{}dir}\PYG{p}{(} \PYG{n}{name} \PYG{p}{)}\PYG{p}{:}
+                \PYG{k}{return} \PYG{n}{Numbers13\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}
+            \PYG{k}{else}\PYG{p}{:}
+                \PYG{k}{return} \PYG{n}{Numbers09\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{c}{\PYGZsh{} Ideally somefile.schema is the file}
+            \PYG{c}{\PYGZsh{} and schema.csv can be tracked down.}
+            \PYG{n}{schema\PYGZus{}pat}\PYG{o}{=} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{join}\PYG{p}{(}\PYG{n}{schema\PYGZus{}path}\PYG{p}{,} \PYG{n}{ext}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{p}{]}\PYG{o}{+}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.*}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
+            \PYG{n}{schema\PYGZus{}choices}\PYG{o}{=} \PYG{n}{glob}\PYG{o}{.}\PYG{n}{glob}\PYG{p}{(} \PYG{n}{schema\PYGZus{}pat} \PYG{p}{)}
+            \PYG{k}{if} \PYG{n}{schema\PYGZus{}choices}\PYG{p}{:}
+                \PYG{n}{schema\PYGZus{}name}\PYG{o}{=} \PYG{n}{schema\PYGZus{}choices}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+                \PYG{n}{schema\PYGZus{}wb}\PYG{o}{=} \PYG{n}{open\PYGZus{}workbook}\PYG{p}{(} \PYG{n}{schema\PYGZus{}name} \PYG{p}{)}
+                \PYG{n}{esl}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{ExternalSchemaLoader}\PYG{p}{(} \PYG{n}{schema\PYGZus{}wb}\PYG{p}{,} \PYG{n}{schema\PYGZus{}sheet} \PYG{p}{)}
+                \PYG{n}{schema}\PYG{o}{=} \PYG{n}{esl}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{(}\PYG{p}{)}
+                \PYG{k}{return} \PYG{n}{Fixed\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{p}{,} \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
+            \PYG{k}{else}\PYG{p}{:}
+                \PYG{k}{raise} \PYG{n}{No\PYGZus{}Schema}\PYG{p}{(} \PYG{n}{schema\PYGZus{}pat} \PYG{p}{)}
+\end{Verbatim}
+\index{open\_workbook() (in module workbook)}
+
+\begin{fulllineitems}
+\phantomsection\label{workbook/init:workbook.open_workbook}\pysiglinewithargsret{\code{workbook.}\bfcode{open\_workbook}}{\emph{name}, \emph{file\_object}, \emph{schema\_path}, \emph{schema\_sheet}}{}
+\end{fulllineitems}
+
+
+The default {\hyperref[workbook/init:workbook.open_workbook]{\code{workbook.open\_workbook()}}} is simply an instance
+of the {\hyperref[workbook/init:workbook.Opener]{\code{workbook.Opener}}}.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{open\PYGZus{}workbook}\PYG{o}{=} \PYG{n}{Opener}\PYG{p}{(}\PYG{p}{)}
+\end{Verbatim}
+
+This allows a user to create subclasses to handle the various other file name extensions.
+Often, there are application-specific rules, or command-line options that
+will determine a mapping bewtween filename and physical format.
+
+Also, an application may require external schema, or there may be an optional
+external schema with application-specific rules for handling this.
+
+For fixed format files, we attempt to track down and load the relevant
+schema.  An application might have narrower and more specific rules
+for binding file and schema.  See below for the {\hyperref[schema_loader:schema.loader.ExternalSchemaLoader]{\code{schema.loader.ExternalSchemaLoader}}} class.
+
+
+\subsection{Workbook Base Definition}
+\label{workbook/base:workbook-base-definition}\label{workbook/base:workbook-base}\label{workbook/base::doc}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{logging}
+\PYG{k+kn}{import} \PYG{n+nn}{os}
+
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
+\end{Verbatim}
+\phantomsection\label{workbook/base:module-workbook}\index{workbook (module)}\index{Workbook (class in workbook)}
+
+\begin{fulllineitems}
+\phantomsection\label{workbook/base:workbook.Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{Workbook}}
+\end{fulllineitems}
+
+
+We note that these physical formats all encode a single, common data structure.
+Here are some abstract definitions.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{class} \PYG{n+nc}{Workbook}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}A workbook file; a collection of Sheets.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{o}{=}\PYG{n+nb+bp}{None} \PYG{p}{)}\PYG{p}{:}
+        \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Prepare the workbook for reading.}
+
+\PYG{l+s+sd}{        :param name: File name}
+\PYG{l+s+sd}{        :param file\PYGZus{}object: Optional file\PYGZhy{}like object.  If omitted, the named file is opened.}
+\PYG{l+s+sd}{        \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{name}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{file\PYGZus{}obj}\PYG{o}{=} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{the\PYGZus{}file} \PYG{o}{=} \PYG{n+nb+bp}{None} \PYG{c}{\PYGZsh{} Any internal files}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{datemode}\PYG{o}{=} \PYG{l+m+mi}{0} \PYG{c}{\PYGZsh{} For xlrd}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{log}\PYG{o}{=} \PYG{n}{logging}\PYG{o}{.}\PYG{n}{getLogger}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}class\PYGZus{}\PYGZus{}}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}qualname\PYGZus{}\PYGZus{}} \PYG{p}{)}
+    \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}repr\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
+        \PYG{k}{return} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{}(\PYGZob{}1!r\PYGZcb{})}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}class\PYGZus{}\PYGZus{}}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}qualname\PYGZus{}\PYGZus{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
+\end{Verbatim}
+\index{sheet() (workbook.Workbook method)}
+
+\begin{fulllineitems}
+\phantomsection\label{workbook/base:workbook.Workbook.sheet}\pysiglinewithargsret{\code{Workbook.}\bfcode{sheet}}{\emph{sheet\_name}, \emph{sheet\_type}, \emph{*args}, \emph{**kw}}{}
+There are two varieties of sheets, depending on the presence or
+absence of a schema.
+
+\end{fulllineitems}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{sheet}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet\PYGZus{}name}\PYG{p}{,} \PYG{n}{sheet\PYGZus{}type}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{o}{*}\PYG{n}{args}\PYG{p}{,} \PYG{o}{*}\PYG{o}{*}\PYG{n}{kw} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Returns a :py:class:{}`sheet.Sheet{}`, ready for processing.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{if} \PYG{n}{sheet\PYGZus{}type} \PYG{o+ow}{is} \PYG{n+nb+bp}{None}\PYG{p}{:} \PYG{n}{sheet\PYGZus{}type}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{Sheet}
+    \PYG{n}{sheet} \PYG{o}{=} \PYG{n}{sheet\PYGZus{}type}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet\PYGZus{}name}\PYG{p}{,} \PYG{o}{*}\PYG{n}{args}\PYG{p}{,} \PYG{o}{*}\PYG{o}{*}\PYG{n}{kw} \PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{sheet}
+\end{Verbatim}
+\index{sheets() (workbook.Workbook method)}
+
+\begin{fulllineitems}
+\phantomsection\label{workbook/base:workbook.Workbook.sheets}\pysiglinewithargsret{\code{Workbook.}\bfcode{sheets}}{}{}
+\end{fulllineitems}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{sheets}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}List of sheet names.}
+\PYG{l+s+sd}{    The filename is a handy default for CSV and Fixed files.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{nm}\PYG{p}{,} \PYG{n}{\PYGZus{}} \PYG{o}{=} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{splitext}\PYG{p}{(} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{basename}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{name}\PYG{p}{)} \PYG{p}{)}
+    \PYG{k}{return} \PYG{p}{[} \PYG{n}{nm} \PYG{p}{]}
+\end{Verbatim}
+
+The Context Manager interface.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}enter\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
+    \PYG{k}{return} \PYG{n+nb+bp}{self}
+\PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}exit\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{exc\PYGZus{}type}\PYG{p}{,} \PYG{n}{exc\PYGZus{}val}\PYG{p}{,} \PYG{n}{exc\PYGZus{}tb} \PYG{p}{)}\PYG{p}{:}
+    \PYG{k}{if} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{the\PYGZus{}file}\PYG{p}{:}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{the\PYGZus{}file}\PYG{o}{.}\PYG{n}{close}\PYG{p}{(}\PYG{p}{)}
+    \PYG{k}{if} \PYG{n}{exc\PYGZus{}type} \PYG{o+ow}{is} \PYG{o+ow}{not} \PYG{n+nb+bp}{None}\PYG{p}{:} \PYG{k}{return} \PYG{n+nb+bp}{False}
+\end{Verbatim}
+\index{rows\_of() (workbook.Workbook method)}
+
+\begin{fulllineitems}
+\phantomsection\label{workbook/base:workbook.Workbook.rows_of}\pysiglinewithargsret{\code{Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+\end{fulllineitems}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{rows\PYGZus{}of}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}An iterator over all rows of the given sheet.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{raise} \PYG{n+ne}{NotImplementedError}
+\end{Verbatim}
+\index{row\_get() (workbook.Workbook method)}
+
+\begin{fulllineitems}
+\phantomsection\label{workbook/base:workbook.Workbook.row_get}\pysiglinewithargsret{\code{Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
+\end{fulllineitems}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{row\PYGZus{}get}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{row}\PYG{p}{,} \PYG{n}{attribute} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Create a Cell from the row\PYGZsq{}s data.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{raise} \PYG{n+ne}{NotImplementedError}
+\end{Verbatim}
+
+There are distinct subclasses of {\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}}, based on the
+physical file format.
+
+Many of our physical formats don't require any physical schema information.
+A \textbf{Fixed} file, however, requires
+a physical format schema definition in order to decompose
+each line into cells.
+
+
+\subsection{CSV Workbook}
+\label{workbook/csv:workbook-csv}\label{workbook/csv:csv-workbook}\label{workbook/csv::doc}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{csv}
+\PYG{k+kn}{import} \PYG{n+nn}{logging}
+\PYG{k+kn}{import} \PYG{n+nn}{pprint}
+
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.base} \PYG{k+kn}{import} \PYG{n}{Workbook}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.cell}
+\end{Verbatim}
+\phantomsection\label{workbook/csv:module-workbook}\index{workbook (module)}\index{CSV\_Workbook (class in workbook)}
+
+\begin{fulllineitems}
+\phantomsection\label{workbook/csv:workbook.CSV_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{CSV\_Workbook}}
 \end{fulllineitems}
 
 
@@ -3452,11 +3598,11 @@ that \code{csv} normally creates.
 We can build an eager {\hyperref[sheet:sheet.Row]{\code{sheet.Row}}} or a {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}} from
 the available data.
 The eager Row includes the conversions.  The {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}} defers
-the conversions until the callback to {\hyperref[workbook:workbook.Workbook.row_get]{\code{workbook.Workbook.row\_get()}}}.
+the conversions until the callback to {\hyperref[workbook/base:workbook.Workbook.row_get]{\code{workbook.Workbook.row\_get()}}}.
 \index{rows\_of() (workbook.CSV\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.CSV_Workbook.rows_of}\pysiglinewithargsret{\code{CSV\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+\phantomsection\label{workbook/csv:workbook.CSV_Workbook.rows_of}\pysiglinewithargsret{\code{CSV\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
 \end{fulllineitems}
 
 
@@ -3473,7 +3619,7 @@ the conversions until the callback to {\hyperref[workbook:workbook.Workbook.row_
 \index{row\_get() (workbook.CSV\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.CSV_Workbook.row_get}\pysiglinewithargsret{\code{CSV\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
+\phantomsection\label{workbook/csv:workbook.CSV_Workbook.row_get}\pysiglinewithargsret{\code{CSV\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
 \end{fulllineitems}
 
 
@@ -3487,11 +3633,21 @@ Since \code{csv} is eager, returning an individual {\hyperref[cell:cell.TextCell
 is easy.
 
 
-\subsubsection{XLS Workbook}
-\label{workbook:xls-workbook}\index{XLS\_Workbook (class in workbook)}
+\subsection{XLS Workbook}
+\label{workbook/xls:xls-workbook}\label{workbook/xls:workbook-xls}\label{workbook/xls::doc}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{xlrd}
+\PYG{k+kn}{import} \PYG{n+nn}{logging}
+\PYG{k+kn}{import} \PYG{n+nn}{pprint}
+
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.base} \PYG{k+kn}{import} \PYG{n}{Workbook}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.cell}
+\end{Verbatim}
+\phantomsection\label{workbook/xls:module-workbook}\index{workbook (module)}\index{XLS\_Workbook (class in workbook)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.XLS_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{XLS\_Workbook}}
+\phantomsection\label{workbook/xls:workbook.XLS_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{XLS\_Workbook}}
 \end{fulllineitems}
 
 
@@ -3519,7 +3675,7 @@ values that \code{xlrd} normally creates.
 \index{sheets() (workbook.XLS\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.XLS_Workbook.sheets}\pysiglinewithargsret{\code{XLS\_Workbook.}\bfcode{sheets}}{}{}
+\phantomsection\label{workbook/xls:workbook.XLS_Workbook.sheets}\pysiglinewithargsret{\code{XLS\_Workbook.}\bfcode{sheets}}{}{}
 \end{fulllineitems}
 
 
@@ -3531,11 +3687,11 @@ values that \code{xlrd} normally creates.
 
 We can build an eager {\hyperref[sheet:sheet.Row]{\code{sheet.Row}}} or a {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}} from the available data.
 The eager Row includes the conversions.  The LazyRow defers the conversions
-until the callback to {\hyperref[workbook:workbook.XLS_Workbook.row_get]{\code{XLS\_Workbook.row\_get()}}}.
+until the callback to {\hyperref[workbook/xls:workbook.XLS_Workbook.row_get]{\code{XLS\_Workbook.row\_get()}}}.
 \index{rows\_of() (workbook.XLS\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.XLS_Workbook.rows_of}\pysiglinewithargsret{\code{XLS\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+\phantomsection\label{workbook/xls:workbook.XLS_Workbook.rows_of}\pysiglinewithargsret{\code{XLS\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
 \end{fulllineitems}
 
 
@@ -3551,7 +3707,7 @@ until the callback to {\hyperref[workbook:workbook.XLS_Workbook.row_get]{\code{X
 \index{row\_get() (workbook.XLS\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.XLS_Workbook.row_get}\pysiglinewithargsret{\code{XLS\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
+\phantomsection\label{workbook/xls:workbook.XLS_Workbook.row_get}\pysiglinewithargsret{\code{XLS\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
 \end{fulllineitems}
 
 
@@ -3561,7 +3717,7 @@ until the callback to {\hyperref[workbook:workbook.XLS_Workbook.row_get]{\code{X
     \PYG{k}{return} \PYG{n}{row}\PYG{p}{[}\PYG{n}{attribute}\PYG{o}{.}\PYG{n}{position}\PYG{p}{]}
 \end{Verbatim}
 
-In {\hyperref[workbook:workbook.XLS_Workbook.rows_of]{\code{XLS\_Workbook.rows\_of()}}} we built a row eagerly.
+In {\hyperref[workbook/xls:workbook.XLS_Workbook.rows_of]{\code{XLS\_Workbook.rows\_of()}}} we built a row eagerly.
 That way, returning an individual Cell is easy.
 
 Convert a single \code{xlrd.Cell} to a proper subclass of {\hyperref[cell:cell.Cell]{\code{cell.Cell}}}
@@ -3588,11 +3744,24 @@ Convert a single \code{xlrd.Cell} to a proper subclass of {\hyperref[cell:cell.C
 \end{Verbatim}
 
 
-\subsubsection{XLSX or XLSM Workbook}
-\label{workbook:xlsx-or-xlsm-workbook}\index{XLSX\_Workbook (class in workbook)}
+\subsection{XLSX or XLSM Workbook}
+\label{workbook/xlsx:xlsx-or-xlsm-workbook}\label{workbook/xlsx:workbook-xlsx}\label{workbook/xlsx::doc}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{logging}
+\PYG{k+kn}{import} \PYG{n+nn}{pprint}
+\PYG{k+kn}{import} \PYG{n+nn}{xml.etree.cElementTree} \PYG{k+kn}{as} \PYG{n+nn}{dom}
+\PYG{k+kn}{import} \PYG{n+nn}{re}
+\PYG{k+kn}{import} \PYG{n+nn}{zipfile}
+\PYG{k+kn}{from} \PYG{n+nn}{collections} \PYG{k+kn}{import} \PYG{n}{defaultdict}
+
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.base} \PYG{k+kn}{import} \PYG{n}{Workbook}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.cell}
+\end{Verbatim}
+\phantomsection\label{workbook/xlsx:module-workbook}\index{workbook (module)}\index{XLSX\_Workbook (class in workbook)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.XLSX_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{XLSX\_Workbook}}
+\phantomsection\label{workbook/xlsx:workbook.XLSX_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{XLSX\_Workbook}}
 \end{fulllineitems}
 
 
@@ -3715,7 +3884,7 @@ with tempfile.TemporaryFile( ) as temp:
 \index{sheets() (workbook.XLSX\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.XLSX_Workbook.sheets}\pysiglinewithargsret{\code{XLSX\_Workbook.}\bfcode{sheets}}{}{}
+\phantomsection\label{workbook/xlsx:workbook.XLSX_Workbook.sheets}\pysiglinewithargsret{\code{XLSX\_Workbook.}\bfcode{sheets}}{}{}
 \end{fulllineitems}
 
 
@@ -3740,7 +3909,7 @@ to proper 0-based Python index of \code{(\emph{row}, \emph{col})}.
 We can build an eager {\hyperref[sheet:sheet.Row]{\code{sheet.Row}}} or a  {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}} from the available data.
 The eager {\hyperref[sheet:sheet.Row]{\code{sheet.Row}}} is built from {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} objects.
 The {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}} delegates the creation
-of {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} objects to {\hyperref[workbook:workbook.Workbook.row_get]{\code{Workbook.row\_get()}}}.
+of {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} objects to {\hyperref[workbook/base:workbook.Workbook.row_get]{\code{Workbook.row\_get()}}}.
 
 This uses an incremental parser, also.  There are four kinds of tags that
 have to be located.
@@ -3769,7 +3938,7 @@ enough information to build the Cell instance.
 \index{rows\_of() (workbook.XLSX\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.XLSX_Workbook.rows_of}\pysiglinewithargsret{\code{XLSX\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+\phantomsection\label{workbook/xlsx:workbook.XLSX_Workbook.rows_of}\pysiglinewithargsret{\code{XLSX\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
 \end{fulllineitems}
 
 
@@ -3827,7 +3996,7 @@ enough information to build the Cell instance.
 \index{row\_get() (workbook.XLSX\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.XLSX_Workbook.row_get}\pysiglinewithargsret{\code{XLSX\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
+\phantomsection\label{workbook/xlsx:workbook.XLSX_Workbook.row_get}\pysiglinewithargsret{\code{XLSX\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
 \end{fulllineitems}
 
 
@@ -3876,105 +4045,23 @@ containing cell type information.
 \end{Verbatim}
 
 
-\subsubsection{Fixed-Format Workbook}
-\label{workbook:fixed-format-workbook}\index{Fixed\_Workbook (class in workbook)}
-
-\begin{fulllineitems}
-\phantomsection\label{workbook:workbook.Fixed_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{Fixed\_Workbook}}
-\end{fulllineitems}
-
-
-Like a CSV workbook, this is a kind of degenerate case.  We don't have
-a lot of sheets, or a lot of data types.
-
-A subclass might do EBCDIC conversion and possibly even decode
-packed decimal numbers.  To do this, a COBOL-language DDE would be
-required as the schema definition.
-
+\subsection{ODS Workbook}
+\label{workbook/ods:workbook-ods}\label{workbook/ods:ods-workbook}\label{workbook/ods::doc}
 \begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{class} \PYG{n+nc}{Fixed\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{Workbook} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}A file with fixed\PYGZhy{}sized, no\PYGZhy{}punctuation fields.}
+\PYG{k+kn}{import} \PYG{n+nn}{logging}
+\PYG{k+kn}{import} \PYG{n+nn}{pprint}
+\PYG{k+kn}{import} \PYG{n+nn}{xml.etree.cElementTree} \PYG{k+kn}{as} \PYG{n+nn}{dom}
+\PYG{k+kn}{import} \PYG{n+nn}{zipfile}
+\PYG{k+kn}{import} \PYG{n+nn}{datetime}
 
-\PYG{l+s+sd}{    A schema is **required** to parse the attributes.}
-
-\PYG{l+s+sd}{    The rows are defined as :py:class:{}`stingray.sheet.LazyRow{}` instances so that}
-\PYG{l+s+sd}{    bad data can be gracefully skipped over.}
-\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{n}{row\PYGZus{}class}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{LazyRow}
-
-    \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{n}{schema}\PYG{o}{=}\PYG{n+nb+bp}{None} \PYG{p}{)}\PYG{p}{:}
-        \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Prepare the workbook for reading.}
-
-\PYG{l+s+sd}{        :param name: File name}
-\PYG{l+s+sd}{        :param file\PYGZus{}object: Optional file\PYGZhy{}like object.  If omitted, the named file is opened.}
-\PYG{l+s+sd}{        :param schema: Schema required for processing.}
-\PYG{l+s+sd}{        \PYGZdq{}\PYGZdq{}\PYGZdq{}}
-        \PYG{n+nb}{super}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}
-        \PYG{k}{if} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{file\PYGZus{}obj}\PYG{p}{:}
-            \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{the\PYGZus{}file}\PYG{o}{=} \PYG{n+nb+bp}{None}
-            \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{file\PYGZus{}obj}
-        \PYG{k}{else}\PYG{p}{:}
-            \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{the\PYGZus{}file} \PYG{o}{=} \PYG{n+nb}{open}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{rt}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
-            \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{the\PYGZus{}file}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{=} \PYG{n}{schema}
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.base} \PYG{k+kn}{import} \PYG{n}{Workbook}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.cell}
 \end{Verbatim}
-\index{sheet() (workbook.Fixed\_Workbook method)}
+\phantomsection\label{workbook/ods:module-workbook}\index{workbook (module)}\index{ODS\_Workbook (class in workbook)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.Fixed_Workbook.sheet}\pysiglinewithargsret{\code{Fixed\_Workbook.}\bfcode{sheet}}{\emph{sheet}}{}
-\end{fulllineitems}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{def} \PYG{n+nf}{sheet}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet\PYGZus{}name} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}sheet\PYGZus{}type is ignored; it must be an external schema.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{k}{return} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{ExternalSchemaSheet}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet\PYGZus{}name}\PYG{p}{,} \PYG{n}{schema}\PYG{o}{=}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{schema} \PYG{p}{)}
-\end{Verbatim}
-
-We can build eager {\hyperref[sheet:sheet.Row]{\code{sheet.Row}}} instances for some
-kinds of flat files.  Eager rows, however, don't generalize well to COBOL structures.
-
-Therefore, we must build  {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}} objects here and defer the
-data type conversion until {\hyperref[workbook:workbook.Fixed_Workbook.row_get]{\code{workbook.Fixed\_Workbook.row\_get()}}}.
-Or {\hyperref[cobol_init:cobol.COBOL_File.row_get]{\code{cobol.COBOL\_File.row\_get()}}}, which can be more complex still.
-\index{rows\_of() (workbook.Fixed\_Workbook method)}
-
-\begin{fulllineitems}
-\phantomsection\label{workbook:workbook.Fixed_Workbook.rows_of}\pysiglinewithargsret{\code{Fixed\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
-\end{fulllineitems}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{def} \PYG{n+nf}{rows\PYGZus{}of}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}An iterator over all rows of the named sheet.}
-\PYG{l+s+sd}{    For Fixed files, the sheet.name is simply ignored.}
-\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{=} \PYG{n}{sheet}
-    \PYG{k}{for} \PYG{n}{data} \PYG{o+ow}{in} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{p}{:}
-        \PYG{n}{logging}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{n}{pprint}\PYG{o}{.}\PYG{n}{pformat}\PYG{p}{(} \PYG{n}{data}\PYG{p}{,} \PYG{n}{indent}\PYG{o}{=}\PYG{l+m+mi}{4} \PYG{p}{)} \PYG{p}{)}
-        \PYG{n}{row} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{row\PYGZus{}class}\PYG{p}{(} \PYG{n}{sheet}\PYG{p}{,} \PYG{n}{data}\PYG{o}{=}\PYG{n}{data} \PYG{p}{)}
-        \PYG{k}{yield} \PYG{n}{row}
-\end{Verbatim}
-\index{row\_get() (workbook.Fixed\_Workbook method)}
-
-\begin{fulllineitems}
-\phantomsection\label{workbook:workbook.Fixed_Workbook.row_get}\pysiglinewithargsret{\code{Fixed\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
-\end{fulllineitems}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{def} \PYG{n+nf}{row\PYGZus{}get}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{row}\PYG{p}{,} \PYG{n}{attr} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Create a :py:class:{}`cell.Cell{}` from the row\PYGZsq{}s data.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{n}{extract}\PYG{o}{=} \PYG{n}{row}\PYG{o}{.}\PYG{n}{\PYGZus{}state}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{data}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{[}\PYG{n}{attr}\PYG{o}{.}\PYG{n}{offset}\PYG{p}{:}\PYG{n}{attr}\PYG{o}{.}\PYG{n}{offset}\PYG{o}{+}\PYG{n}{attr}\PYG{o}{.}\PYG{n}{size}\PYG{p}{]}
-    \PYG{k}{return} \PYG{n}{attr}\PYG{o}{.}\PYG{n}{create}\PYG{p}{(} \PYG{n}{extract}\PYG{o}{.}\PYG{n}{rstrip}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
-\end{Verbatim}
-
-
-\subsubsection{ODS Workbook}
-\label{workbook:ods-workbook}\index{ODS\_Workbook (class in workbook)}
-
-\begin{fulllineitems}
-\phantomsection\label{workbook:workbook.ODS_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{ODS\_Workbook}}
+\phantomsection\label{workbook/ods:workbook.ODS_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{ODS\_Workbook}}
 \end{fulllineitems}
 
 
@@ -4032,7 +4119,7 @@ the name attribute from that tag.
 \index{sheets() (workbook.ODS\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.ODS_Workbook.sheets}\pysiglinewithargsret{\code{ODS\_Workbook.}\bfcode{sheets}}{}{}
+\phantomsection\label{workbook/ods:workbook.ODS_Workbook.sheets}\pysiglinewithargsret{\code{ODS\_Workbook.}\bfcode{sheets}}{}{}
 \end{fulllineitems}
 
 
@@ -4043,7 +4130,7 @@ the name attribute from that tag.
 
 We can build an eager {\hyperref[sheet:sheet.Row]{\code{sheet.Row}}} or a {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}} from
 the available data.  The eager Row includes the conversions.
-The LazyRow defers the conversions to {\hyperref[workbook:workbook.ODS_Workbook.row_get]{\code{ODS\_Workbook.row\_get()}}}.
+The LazyRow defers the conversions to {\hyperref[workbook/ods:workbook.ODS_Workbook.row_get]{\code{ODS\_Workbook.row\_get()}}}.
 
 In ODS documents, the cell's value can be carried in the value attribute or
 it can be a mixed content value of the element.  There are three cases.
@@ -4061,7 +4148,7 @@ it can be a mixed content value of the element.  There are three cases.
 \index{rows\_of() (workbook.ODS\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.ODS_Workbook.rows_of}\pysiglinewithargsret{\code{ODS\_Workbook.}\bfcode{rows\_of}}{}{}
+\phantomsection\label{workbook/ods:workbook.ODS_Workbook.rows_of}\pysiglinewithargsret{\code{ODS\_Workbook.}\bfcode{rows\_of}}{}{}
 \end{fulllineitems}
 
 
@@ -4078,7 +4165,7 @@ it can be a mixed content value of the element.  There are three cases.
 \index{row\_get() (workbook.ODS\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.ODS_Workbook.row_get}\pysiglinewithargsret{\code{ODS\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
+\phantomsection\label{workbook/ods:workbook.ODS_Workbook.row_get}\pysiglinewithargsret{\code{ODS\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
 \end{fulllineitems}
 
 
@@ -4166,34 +4253,30 @@ At \code{\textless{}table-cell} end: finalize the accumulated value.
 \end{itemize}
 
 
-\subsubsection{Numbers 09 Workbook}
-\label{workbook:numbers-09-workbook}
-The Stingray model of sheet/row/cell structure does not
-easily fit the Numbers sheet/table/row/cell structure.
+\subsection{Numbers 09 Workbook}
+\label{workbook/numbers_09:workbook-number09}\label{workbook/numbers_09:numbers-09-workbook}\label{workbook/numbers_09::doc}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{logging}
+\PYG{k+kn}{import} \PYG{n+nn}{pprint}
+\PYG{k+kn}{import} \PYG{n+nn}{xml.etree.cElementTree} \PYG{k+kn}{as} \PYG{n+nn}{dom}
+\PYG{k+kn}{import} \PYG{n+nn}{zipfile}
+\PYG{k+kn}{import} \PYG{n+nn}{datetime}
+\PYG{k+kn}{import} \PYG{n+nn}{decimal}
 
-Option 1:
-\begin{quote}
-
-Workbook -\textgreater{} new layer (Numbers ``Workspace'') -\textgreater{} Sheet (Numbers ``Table'') -\textgreater{} Row -\textgreater{} Cell
-\end{quote}
-
-Option 2:
-\begin{quote}
-
-Combine (Workspace,Table) into a 2-tuple, and call this a ``sheet'' name
-
-This will fit with Stingray acceptably.
-\end{quote}
-
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.base} \PYG{k+kn}{import} \PYG{n}{Workbook}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.cell}
+\end{Verbatim}
+\phantomsection\label{workbook/numbers_09:module-workbook}\index{workbook (module)}
 The iWork 09 format is a (simpler) Zip file with an XML document inside it.
 There may be slight variations between native Numbers `09 and Numbers `13 doing
 a ``save as'' in Numbers `09 format.
 
-Numbers `13 is entirely different. See {\hyperref[workbook:numbers-13-workbook]{Numbers 13 Workbook}}.
+Numbers `13 is entirely different. See {\hyperref[workbook/numbers_13:workbook-number13]{\emph{Numbers 13 Workbook}}}.
 \index{Numbers09\_Workbook (class in workbook)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.Numbers09_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{Numbers09\_Workbook}}
+\phantomsection\label{workbook/numbers_09:workbook.Numbers09_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{Numbers09\_Workbook}}
 \end{fulllineitems}
 
 
@@ -4297,7 +4380,7 @@ Create a \code{Cell} instance from the decoded data.
         \PYG{n}{epoch}\PYG{o}{=} \PYG{n}{datetime}\PYG{o}{.}\PYG{n}{datetime}\PYG{p}{(}\PYG{l+m+mi}{2001}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{)}
         \PYG{n}{delta}\PYG{o}{=} \PYG{n}{datetime}\PYG{o}{.}\PYG{n}{timedelta}\PYG{p}{(} \PYG{n}{seconds}\PYG{o}{=}\PYG{n}{seconds} \PYG{p}{)}
         \PYG{n}{theDate}\PYG{o}{=} \PYG{n}{epoch} \PYG{o}{+} \PYG{n}{delta}
-        \PYG{k}{return} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{FloatDateCell}\PYG{p}{(} \PYG{n}{theDate}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
+        \PYG{k}{return} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{DateCell}\PYG{p}{(} \PYG{n}{theDate}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
 
     \PYG{k}{elif} \PYG{n}{cell}\PYG{o}{.}\PYG{n}{tag} \PYG{o}{==} \PYG{n}{formula\PYGZus{}tag}\PYG{p}{:} \PYG{c}{\PYGZsh{} formula or error.}
         \PYG{n}{s}\PYG{o}{=} \PYG{n}{cell}\PYG{o}{.}\PYG{n}{get}\PYG{p}{(}\PYG{n}{s\PYGZus{}attr}\PYG{p}{)}
@@ -4493,8 +4576,10 @@ Picking a sheet involves matching a two-part name: (workspace, table).
 \PYG{l+s+sd}{        Each grid\PYGZhy{}row fetches a number of cell values to assemble a row.}
 \PYG{l+s+sd}{        Row\PYGZsq{}s may be variable length (sigh) but padded to the number of columns}
 \PYG{l+s+sd}{        specified in the grid.}
+
+\PYG{l+s+sd}{    :param sheet: a Sheet object to retrieve rows from.}
 \PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{c}{\PYGZsh{}print( self.\PYGZus{}\PYGZus{}class\PYGZus{}\PYGZus{}.\PYGZus{}\PYGZus{}qualname\PYGZus{}\PYGZus{}, sheet, sheet.name )}
+    \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{rows of \PYGZob{}0\PYGZcb{}: \PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{sheet}\PYG{p}{,} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{name}\PYG{p}{)} \PYG{p}{)}
     \PYG{n}{ws\PYGZus{}name}\PYG{p}{,} \PYG{n}{t\PYGZus{}name} \PYG{o}{=} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{name}
     \PYG{n}{ws}\PYG{p}{,} \PYG{n}{tables}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{workspace}\PYG{p}{[}\PYG{n}{ws\PYGZus{}name}\PYG{p}{]}
     \PYG{n}{tabular\PYGZus{}model}\PYG{o}{=} \PYG{n}{tables}\PYG{p}{[}\PYG{n}{t\PYGZus{}name}\PYG{p}{]}
@@ -4526,13 +4611,29 @@ Picking a sheet involves matching a two-part name: (workspace, table).
 \end{Verbatim}
 
 
-\subsubsection{Numbers 13 Workbook}
-\label{workbook:numbers-13-workbook}
+\subsection{Numbers 13 Workbook}
+\label{workbook/numbers_13:numbers-13-workbook}\label{workbook/numbers_13:workbook-number13}\label{workbook/numbers_13::doc}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{logging}
+\PYG{k+kn}{import} \PYG{n+nn}{pprint}
+\PYG{k+kn}{import} \PYG{n+nn}{zipfile}
+\PYG{k+kn}{import} \PYG{n+nn}{datetime}
+\PYG{k+kn}{import} \PYG{n+nn}{decimal}
+\PYG{k+kn}{import} \PYG{n+nn}{os}
+\PYG{k+kn}{import} \PYG{n+nn}{struct}
+
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.base} \PYG{k+kn}{import} \PYG{n}{Workbook}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.cell}
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.snappy} \PYG{k+kn}{import} \PYG{n}{Snappy}
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.protobuf} \PYG{k+kn}{import} \PYG{n}{Archive\PYGZus{}Reader}\PYG{p}{,} \PYG{n}{Message}
+\end{Verbatim}
+\phantomsection\label{workbook/numbers_13:module-workbook}\index{workbook (module)}
 \begin{notice}{note}{Todo}
 
-Implement Numbers13\_Workbook
+Additional Numbers13\_Workbook Feature
 
-Use snappy and protobuf to read the IWA members of the archive.
+Translate Formula and Formula error to Text
 \end{notice}
 
 The iWork 13 format is a directory with an \code{index.zip} file. The ZIP contains
@@ -4547,7 +4648,7 @@ Instead, we'll simply import a local snappy and protobuf reader.
 \index{Numbers13\_Workbook (class in workbook)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.Numbers13_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{Numbers13\_Workbook}}
+\phantomsection\label{workbook/numbers_13:workbook.Numbers13_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{Numbers13\_Workbook}}
 \end{fulllineitems}
 
 
@@ -4560,118 +4661,376 @@ Instead, we'll simply import a local snappy and protobuf reader.
 \PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{o}{=}\PYG{n+nb+bp}{None} \PYG{p}{)}\PYG{p}{:}
         \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Prepare the workbook for reading.}
+
 \PYG{l+s+sd}{        :param name: File name}
-\PYG{l+s+sd}{        :param file\PYGZus{}object: Optional file\PYGZhy{}like object. Ignored for iWork13 files.}
-\PYG{l+s+sd}{            Although, we might be able to use the internal handle to open}
-\PYG{l+s+sd}{            it as a proper directory.}
+\PYG{l+s+sd}{        :param file\PYGZus{}object: Ignored for iWork13 files.}
+
+\PYG{l+s+sd}{        We might be able to use the file\PYGZsq{}s internal handle to open}
+\PYG{l+s+sd}{        it as a proper directory. But we don\PYGZsq{}t.}
+\PYG{l+s+sd}{        \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+        \PYG{n+nb}{super}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n+nb+bp}{None} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{load\PYGZus{}archive}\PYG{p}{(} \PYG{n}{name} \PYG{p}{)}
+\end{Verbatim}
+
+Read the archive to get the serialized messages. This method deserializes
+all of the protobuf-encoded messages. It's a shabby stand-in for proper protobuf
+processing.
+
+One thing we \emph{could} do is to refactor this method into a bunch of methods,
+each of which is tied to a specific class of message. That would parallel the
+way protobuf really works.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nd}{@staticmethod}
+\PYG{k}{def} \PYG{n+nf}{load\PYGZus{}archive}\PYG{p}{(} \PYG{n}{filename} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Extract all the protobuf\PYGZhy{}serialized Archived messages.}
+\PYG{l+s+sd}{    We don\PYGZsq{}t actually need to read **all** of them.}
+\PYG{l+s+sd}{    We really only need Index/Document.iwa, Index/CalculationEngine.iwa, and}
+\PYG{l+s+sd}{    all Index/Tables/*.iwa. But that\PYGZsq{}s almost everything.}
+
+\PYG{l+s+sd}{    :param filename: File name}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{log}\PYG{o}{=} \PYG{n}{logging}\PYG{o}{.}\PYG{n}{getLogger}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{load\PYGZus{}archive}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}
+    \PYG{n}{snappy}\PYG{o}{=} \PYG{n}{Snappy}\PYG{p}{(}\PYG{p}{)}
+    \PYG{n}{reader}\PYG{o}{=} \PYG{n}{Archive\PYGZus{}Reader}\PYG{p}{(}\PYG{p}{)}
+    \PYG{n}{archive}\PYG{o}{=}\PYG{n+nb}{dict}\PYG{p}{(}\PYG{p}{)}
+    \PYG{k}{with} \PYG{n}{zipfile}\PYG{o}{.}\PYG{n}{ZipFile}\PYG{p}{(} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{join}\PYG{p}{(} \PYG{n}{filename}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{index.zip}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)} \PYG{p}{)} \PYG{k}{as} \PYG{n}{index}\PYG{p}{:}
+        \PYG{k}{for} \PYG{n}{n} \PYG{o+ow}{in} \PYG{n}{index}\PYG{o}{.}\PYG{n}{namelist}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}
+            \PYG{n}{log}\PYG{o}{.}\PYG{n}{info}\PYG{p}{(} \PYG{n}{n} \PYG{p}{)}
+            \PYG{k}{with} \PYG{n}{index}\PYG{o}{.}\PYG{n}{open}\PYG{p}{(} \PYG{n}{n} \PYG{p}{)} \PYG{k}{as} \PYG{n}{member}\PYG{p}{:}
+                \PYG{n}{data}\PYG{o}{=} \PYG{n}{snappy}\PYG{o}{.}\PYG{n}{decompress}\PYG{p}{(} \PYG{n}{member} \PYG{p}{)}
+                \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} bytes}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{data}\PYG{p}{)}\PYG{p}{)} \PYG{p}{)}
+                \PYG{k}{for} \PYG{n+nb}{id}\PYG{p}{,} \PYG{n}{m} \PYG{o+ow}{in} \PYG{n}{reader}\PYG{o}{.}\PYG{n}{archive\PYGZus{}iter}\PYG{p}{(} \PYG{n}{data} \PYG{p}{)}\PYG{p}{:}
+                    \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0:4d\PYGZcb{}: \PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n+nb}{id}\PYG{p}{,} \PYG{n}{m} \PYG{p}{)} \PYG{p}{)}
+                    \PYG{n}{archive}\PYG{p}{[}\PYG{n+nb}{id}\PYG{p}{]}\PYG{o}{=} \PYG{n}{m}
+                    \PYG{k}{if} \PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}} \PYG{o}{==} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{TN.DocumentArchive}\PYG{l+s}{\PYGZdq{}}\PYG{p}{:}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{sheets}\PYG{o}{=} \PYG{p}{[}\PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Reference}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{sheet}\PYG{p}{)} \PYG{k}{for} \PYG{n}{sheet} \PYG{o+ow}{in} \PYG{n}{m}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{]}
+                        \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{sheets}\PYG{p}{)} \PYG{p}{)}
+                    \PYG{k}{elif} \PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}} \PYG{o}{==} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{TN.SheetArchive}\PYG{l+s}{\PYGZdq{}}\PYG{p}{:}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{name}\PYG{o}{=} \PYG{n+nb}{bytes}\PYG{p}{(}\PYG{n}{m}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{decode}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{UTF\PYGZhy{}8}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{drawable\PYGZus{}infos}\PYG{o}{=} \PYG{p}{[}\PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Reference}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{ref}\PYG{p}{)} \PYG{k}{for} \PYG{n}{ref} \PYG{o+ow}{in} \PYG{n}{m}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{p}{]}
+                        \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{} \PYGZob{}2\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{name}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{drawable\PYGZus{}infos}\PYG{p}{)} \PYG{p}{)}
+                    \PYG{k}{elif} \PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}} \PYG{o}{==} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{TST.TableInfoArchive}\PYG{l+s}{\PYGZdq{}}\PYG{p}{:}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{super}\PYG{o}{=} \PYG{n}{Message}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{DrawableArchive}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{m}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{p}{)}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{tableModel}\PYG{o}{=} \PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Reference}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{m}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}
+                        \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{} \PYGZob{}2\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{super}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{tableModel}\PYG{p}{)} \PYG{p}{)}
+                    \PYG{k}{elif} \PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}} \PYG{o}{==} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{TST.TableModelArchive}\PYG{l+s}{\PYGZdq{}}\PYG{p}{:}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{=} \PYG{n}{Message}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{DataStore}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{m}\PYG{p}{[}\PYG{l+m+mi}{4}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{p}{)}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{table\PYGZus{}id}\PYG{o}{=} \PYG{n+nb}{bytes}\PYG{p}{(}\PYG{n}{m}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{table\PYGZus{}name}\PYG{o}{=} \PYG{n+nb}{bytes}\PYG{p}{(}\PYG{n}{m}\PYG{p}{[}\PYG{l+m+mi}{8}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{decode}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{UTF\PYGZhy{}8}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
+                        \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{} \PYGZob{}2\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{table\PYGZus{}name}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{p}{)} \PYG{p}{)}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{tiles}\PYG{o}{=} \PYG{p}{[}\PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{TileStorage}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{tile}\PYG{p}{)} \PYG{k}{for} \PYG{n}{tile} \PYG{o+ow}{in} \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{]}\PYG{p}{]}
+                        \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}}\PYG{p}{,}\PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{tiles}\PYG{p}{)} \PYG{p}{)}
+                        \PYG{k}{for} \PYG{n}{ts} \PYG{o+ow}{in} \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{tiles}\PYG{p}{:}
+                            \PYG{n}{ts}\PYG{o}{.}\PYG{n}{tiles}\PYG{o}{=} \PYG{p}{[}\PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{TileStorage.Tile}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{tile}\PYG{p}{)} \PYG{k}{for} \PYG{n}{tile} \PYG{o+ow}{in} \PYG{n}{ts}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{]}
+                            \PYG{k}{for} \PYG{n}{tile} \PYG{o+ow}{in} \PYG{n}{ts}\PYG{o}{.}\PYG{n}{tiles}\PYG{p}{:}
+                                \PYG{n}{tile}\PYG{o}{.}\PYG{n}{id}\PYG{o}{=} \PYG{n}{tile}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+                                \PYG{n}{tile}\PYG{o}{.}\PYG{n}{ref}\PYG{o}{=} \PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Reference}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{tile}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}
+                                \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{} \PYGZob{}2\PYGZcb{} \PYGZob{}3\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}}\PYG{p}{,} \PYG{n}{tile}\PYG{p}{,} \PYG{n}{tile}\PYG{o}{.}\PYG{n}{id}\PYG{p}{,} \PYG{n}{tile}\PYG{o}{.}\PYG{n}{ref}\PYG{p}{)} \PYG{p}{)}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{stringTable}\PYG{o}{=} \PYG{p}{[}\PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Reference}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{string}\PYG{p}{)} \PYG{k}{for} \PYG{n}{string} \PYG{o+ow}{in} \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{p}{[}\PYG{l+m+mi}{4}\PYG{p}{]}\PYG{p}{]}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{formulaTable}\PYG{o}{=} \PYG{p}{[}\PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Reference}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{formula}\PYG{p}{)} \PYG{k}{for} \PYG{n}{formula} \PYG{o+ow}{in} \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{p}{[}\PYG{l+m+mi}{6}\PYG{p}{]}\PYG{p}{]}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{formulaErrorTable}\PYG{o}{=} \PYG{p}{[}\PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Reference}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{error}\PYG{p}{)} \PYG{k}{for} \PYG{n}{error} \PYG{o+ow}{in} \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{p}{[}\PYG{l+m+mi}{12}\PYG{p}{]}\PYG{p}{]}
+                        \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{DataStore stringTable \PYGZob{}0\PYGZcb{}, formulaTable \PYGZob{}1\PYGZcb{}, formulaErrorTable \PYGZob{}2\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}
+                            \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{stringTable}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{formulaTable}\PYG{p}{,}
+                            \PYG{n}{m}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{formulaErrorTable}\PYG{p}{)} \PYG{p}{)}
+                    \PYG{k}{elif} \PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}} \PYG{o}{==} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{TST.TableDataList}\PYG{l+s}{\PYGZdq{}}\PYG{p}{:}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{listType}\PYG{o}{=} \PYG{n}{m}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{nextListID}\PYG{o}{=} \PYG{n}{m}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{entries}\PYG{o}{=} \PYG{p}{[}\PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{ListEntry}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{entry}\PYG{p}{)} \PYG{k}{for} \PYG{n}{entry} \PYG{o+ow}{in} \PYG{n}{m}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{]}\PYG{p}{]}
+                        \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{} \PYGZob{}2\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{listType}\PYG{p}{,} \PYG{n}{m}\PYG{o}{.}\PYG{n}{nextListID} \PYG{p}{)} \PYG{p}{)}
+                        \PYG{k}{for} \PYG{n}{entry} \PYG{o+ow}{in} \PYG{n}{m}\PYG{o}{.}\PYG{n}{entries}\PYG{p}{:}
+                            \PYG{n}{entry}\PYG{o}{.}\PYG{n}{key}\PYG{o}{=} \PYG{n}{entry}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+                            \PYG{k}{try}\PYG{p}{:}
+                                \PYG{n}{entry}\PYG{o}{.}\PYG{n}{string}\PYG{o}{=} \PYG{n+nb}{bytes}\PYG{p}{(}\PYG{n}{entry}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}
+                            \PYG{k}{except} \PYG{n+ne}{IndexError}\PYG{p}{:}
+                                \PYG{n}{entry}\PYG{o}{.}\PYG{n}{string}\PYG{o}{=} \PYG{n}{b}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{\PYGZsq{}}
+                            \PYG{k}{try}\PYG{p}{:}
+                                \PYG{n}{entry}\PYG{o}{.}\PYG{n}{formula}\PYG{o}{=} \PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{FormulaArchive}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{entry}\PYG{p}{[}\PYG{l+m+mi}{5}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}
+                                \PYG{n}{entry}\PYG{o}{.}\PYG{n}{formula}\PYG{o}{.}\PYG{n}{AST\PYGZus{}node\PYGZus{}array}\PYG{o}{=} \PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ASTNodeArrayArchive}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{entry}\PYG{o}{.}\PYG{n}{formula}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}
+                                \PYG{n}{entry}\PYG{o}{.}\PYG{n}{formula}\PYG{o}{.}\PYG{n}{AST\PYGZus{}node\PYGZus{}array}\PYG{o}{.}\PYG{n}{AST\PYGZus{}node}\PYG{o}{=} \PYG{p}{[}\PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{AST\PYGZus{}node}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{n}\PYG{p}{)} \PYG{k}{for} \PYG{n}{n} \PYG{o+ow}{in} \PYG{n}{entry}\PYG{o}{.}\PYG{n}{formula}\PYG{o}{.}\PYG{n}{AST\PYGZus{}node\PYGZus{}array}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{]}
+                            \PYG{k}{except} \PYG{n+ne}{IndexError}\PYG{p}{:}
+                                \PYG{n}{entry}\PYG{o}{.}\PYG{n}{formula}\PYG{o}{=} \PYG{n+nb+bp}{None}
+                            \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ListEntry \PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{} \PYGZob{}2\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n}{entry}\PYG{p}{,} \PYG{n}{entry}\PYG{o}{.}\PYG{n}{string}\PYG{p}{,} \PYG{n}{entry}\PYG{o}{.}\PYG{n}{formula} \PYG{p}{)} \PYG{p}{)}
+                    \PYG{k}{elif} \PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}} \PYG{o}{==} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{TST.Tile}\PYG{l+s}{\PYGZdq{}}\PYG{p}{:}
+                        \PYG{n}{m}\PYG{o}{.}\PYG{n}{rowInfos}\PYG{o}{=} \PYG{p}{[} \PYG{n}{Message}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{TileRowInfo}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{row\PYGZus{}info}\PYG{p}{)} \PYG{k}{for} \PYG{n}{row\PYGZus{}info} \PYG{o+ow}{in} \PYG{n}{m}\PYG{p}{[}\PYG{l+m+mi}{5}\PYG{p}{]} \PYG{p}{]}
+                        \PYG{k}{for} \PYG{n}{row\PYGZus{}info} \PYG{o+ow}{in} \PYG{n}{m}\PYG{o}{.}\PYG{n}{rowInfos}\PYG{p}{:}
+                            \PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{tileRowIndex}\PYG{o}{=} \PYG{n}{row\PYGZus{}info}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+                            \PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{cellCount}\PYG{o}{=} \PYG{n}{row\PYGZus{}info}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+                            \PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{cellStorageBuffer}\PYG{o}{=} \PYG{n}{row\PYGZus{}info}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+                            \PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{cellOffsets}\PYG{o}{=} \PYG{n}{row\PYGZus{}info}\PYG{p}{[}\PYG{l+m+mi}{4}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+                            \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{tileRowIndex \PYGZob{}0\PYGZcb{} cellCount \PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{tileRowIndex}\PYG{p}{,} \PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{cellCount}\PYG{p}{)} \PYG{p}{)}
+                            \PYG{n}{format}\PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZlt{}\PYGZob{}0\PYGZcb{}h}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{cellOffsets}\PYG{p}{)}\PYG{o}{/}\PYG{o}{/}\PYG{l+m+mi}{2}\PYG{p}{)}
+                            \PYG{n}{offsets}\PYG{o}{=} \PYG{n}{struct}\PYG{o}{.}\PYG{n}{unpack}\PYG{p}{(} \PYG{n}{format}\PYG{p}{,} \PYG{n+nb}{bytes}\PYG{p}{(}\PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{cellOffsets}\PYG{p}{)} \PYG{p}{)}
+                            \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}}\PYG{p}{,} \PYG{n}{offsets} \PYG{p}{)} \PYG{p}{)}
+                            \PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{cells}\PYG{o}{=} \PYG{n+nb}{dict}\PYG{p}{(}\PYG{p}{)}
+                            \PYG{n}{count}\PYG{o}{=} \PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{cellCount}
+                            \PYG{k}{for} \PYG{n}{col}\PYG{p}{,} \PYG{n}{offset} \PYG{o+ow}{in} \PYG{n+nb}{enumerate}\PYG{p}{(} \PYG{n}{offsets} \PYG{p}{)}\PYG{p}{:}
+                                \PYG{k}{if} \PYG{n}{offset} \PYG{o}{==} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{:}
+                                    \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{} \PYGZob{}2\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}}\PYG{p}{,} \PYG{n}{col}\PYG{p}{,} \PYG{n}{offset} \PYG{p}{)} \PYG{p}{)}
+                                    \PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{cells}\PYG{p}{[}\PYG{n}{col}\PYG{p}{]}\PYG{o}{=} \PYG{p}{(}\PYG{n+nb+bp}{None}\PYG{p}{,}\PYG{n+nb+bp}{None}\PYG{p}{)}
+                                    \PYG{k}{continue}
+                                \PYG{c}{\PYGZsh{} A little needless copying to simplify the elif sequence.}
+                                \PYG{n}{cell\PYGZus{}raw}\PYG{o}{=} \PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{cellStorageBuffer}\PYG{p}{[}\PYG{n}{offset}\PYG{p}{:}\PYG{n}{offset}\PYG{o}{+}\PYG{l+m+mi}{32}\PYG{p}{]}
+                                \PYG{n}{version}\PYG{p}{,} \PYG{n}{celltype} \PYG{o}{=} \PYG{n}{struct}\PYG{o}{.}\PYG{n}{unpack}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZlt{}hbx}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n+nb}{bytes}\PYG{p}{(}\PYG{n}{cell\PYGZus{}raw}\PYG{p}{[}\PYG{p}{:}\PYG{l+m+mi}{4}\PYG{p}{]}\PYG{p}{)} \PYG{p}{)}
+                                \PYG{k}{if} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{2}\PYG{p}{:} \PYG{c}{\PYGZsh{} Number}
+                                    \PYG{n}{data}\PYG{o}{=} \PYG{n}{struct}\PYG{o}{.}\PYG{n}{unpack}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZlt{}IIIdi}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n+nb}{bytes}\PYG{p}{(}\PYG{n}{cell\PYGZus{}raw}\PYG{p}{[}\PYG{l+m+mi}{4}\PYG{p}{:}\PYG{l+m+mi}{28}\PYG{p}{]}\PYG{p}{)} \PYG{p}{)}
+                                \PYG{k}{elif} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{3}\PYG{p}{:} \PYG{c}{\PYGZsh{} Text (in the associated TableDataList)}
+                                    \PYG{n}{data}\PYG{o}{=} \PYG{n}{struct}\PYG{o}{.}\PYG{n}{unpack}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZlt{}IIIi}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n+nb}{bytes}\PYG{p}{(}\PYG{n}{cell\PYGZus{}raw}\PYG{p}{[}\PYG{l+m+mi}{4}\PYG{p}{:}\PYG{l+m+mi}{20}\PYG{p}{]}\PYG{p}{)} \PYG{p}{)}
+                                \PYG{k}{elif} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{5}\PYG{p}{:} \PYG{c}{\PYGZsh{} Date}
+                                    \PYG{n}{data}\PYG{o}{=} \PYG{n}{struct}\PYG{o}{.}\PYG{n}{unpack}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZlt{}IIIdi}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n+nb}{bytes}\PYG{p}{(}\PYG{n}{cell\PYGZus{}raw}\PYG{p}{[}\PYG{l+m+mi}{4}\PYG{p}{:}\PYG{l+m+mi}{28}\PYG{p}{]}\PYG{p}{)} \PYG{p}{)}
+                                \PYG{k}{elif} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{6}\PYG{p}{:} \PYG{c}{\PYGZsh{} Boolean}
+                                    \PYG{n}{data}\PYG{o}{=} \PYG{n}{struct}\PYG{o}{.}\PYG{n}{unpack}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZlt{}IIId}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n+nb}{bytes}\PYG{p}{(}\PYG{n}{cell\PYGZus{}raw}\PYG{p}{[}\PYG{l+m+mi}{4}\PYG{p}{:}\PYG{l+m+mi}{24}\PYG{p}{]}\PYG{p}{)} \PYG{p}{)}
+                                \PYG{k}{elif} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{8}\PYG{p}{:} \PYG{c}{\PYGZsh{} Error}
+                                    \PYG{n}{data}\PYG{o}{=} \PYG{n}{struct}\PYG{o}{.}\PYG{n}{unpack}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZlt{}hhII}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n+nb}{bytes}\PYG{p}{(}\PYG{n}{cell\PYGZus{}raw}\PYG{p}{[}\PYG{l+m+mi}{4}\PYG{p}{:}\PYG{l+m+mi}{16}\PYG{p}{]}\PYG{p}{)} \PYG{p}{)}
+                                \PYG{k}{else}\PYG{p}{:}
+                                    \PYG{k}{raise} \PYG{n+ne}{Exception}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Unsupported \PYGZob{}0\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{celltype}\PYG{p}{)} \PYG{p}{)}
+                                \PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{} \PYGZob{}2\PYGZcb{} \PYGZob{}3\PYGZcb{} \PYGZob{}4\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n}{m}\PYG{o}{.}\PYG{n}{name\PYGZus{}}\PYG{p}{,} \PYG{n}{col}\PYG{p}{,} \PYG{n}{offset}\PYG{p}{,} \PYG{n}{celltype}\PYG{p}{,} \PYG{n}{data} \PYG{p}{)} \PYG{p}{)}
+                                \PYG{n}{row\PYGZus{}info}\PYG{o}{.}\PYG{n}{cells}\PYG{p}{[}\PYG{n}{col}\PYG{p}{]}\PYG{o}{=} \PYG{p}{(}\PYG{n}{celltype}\PYG{p}{,}\PYG{n}{data}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{]}\PYG{p}{)}
+                                \PYG{n}{count} \PYG{o}{\PYGZhy{}}\PYG{o}{=} \PYG{l+m+mi}{1}
+                                \PYG{k}{if} \PYG{n}{count} \PYG{o}{==} \PYG{l+m+mi}{0}\PYG{p}{:} \PYG{k}{break}
+
+    \PYG{k}{return} \PYG{n}{archive}
+\end{Verbatim}
+
+Once we've decoded the archive, we can fetch sheets, tables, rows and cells.
+
+We start with document.iwa and get the message with an id of 1.
+This is the TN.DocumentArchive and it lists the TN.SheetArchive by id.
+
+Each TN.SheetArchive has drawable\_infos references to TST.TableInfoArchive.
+TST.TableInfoArchive has reference to TST.TableModelArchive (and a super reference to SheetArchive.)
+TST.TableModelArchive references a DataStore.
+\begin{description}
+\item[{TST.DataStore.stringTable references a TST.TableDataList. This has string literals}] \leavevmode
+or formulas (or styles) referenced by cells.
+
+\item[{TST.DataStore.tiles references a TST.Tile.}] \leavevmode
+The Tile has some bytes which contain the cells as hard-to-parse raw structures.
+This includes text cells with references to the data lists string literals.
+It includes number, date and boolean cells with numeric-looking data.
+
+\end{description}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{sheets}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
+    \PYG{n}{sheet\PYGZus{}list}\PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
+    \PYG{n}{document} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}
+    \PYG{k}{for} \PYG{n}{sheet\PYGZus{}ref} \PYG{o+ow}{in} \PYG{n}{document}\PYG{o}{.}\PYG{n}{sheets}\PYG{p}{:}
+        \PYG{n}{sheet}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{p}{[}\PYG{n}{sheet\PYGZus{}ref}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{]}
+        \PYG{k}{for} \PYG{n}{table\PYGZus{}ref} \PYG{o+ow}{in} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{drawable\PYGZus{}infos}\PYG{p}{:}
+            \PYG{n}{tableinfo}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{p}{[}\PYG{n}{table\PYGZus{}ref}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{]}
+            \PYG{n}{tablemodel}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{p}{[}\PYG{n}{tableinfo}\PYG{o}{.}\PYG{n}{tableModel}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{]}
+            \PYG{n}{sheet\PYGZus{}list}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}  \PYG{p}{(}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{name}\PYG{p}{,} \PYG{n}{tablemodel}\PYG{o}{.}\PYG{n}{table\PYGZus{}name}\PYG{p}{)} \PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{sheet\PYGZus{}list}
+\end{Verbatim}
+
+The proto files include this.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+enum CellType \PYGZob{}
+  genericCellType = 0;
+  spanCellType = 1;
+  numberCellType = 2;
+  textCellType = 3;
+  formulaCellType = 4;
+  dateCellType = 5;
+  boolCellType = 6;
+  durationCellType = 7;
+  formulaErrorCellType = 8;
+  automaticCellType = 9;
+\PYGZcb{}
+\end{Verbatim}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{\PYGZus{}cell}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{cell}\PYG{p}{,} \PYG{n}{strings}\PYG{p}{,} \PYG{n}{formulae}\PYG{p}{,} \PYG{n}{errors} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Given a decoded row cell message, pluck out the relevant data.}
+\PYG{l+s+sd}{    Look into the collection of strings or formulae for the data object.}
+\PYG{l+s+sd}{    :param cell: cell message}
+\PYG{l+s+sd}{    :param strings: dict of strings}
+\PYG{l+s+sd}{    :param formulae: dict of formulae}
+\PYG{l+s+sd}{    :param errors: dict of errors}
+\PYG{l+s+sd}{    :returns: Cell object}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{celltype}\PYG{p}{,} \PYG{n}{value} \PYG{o}{=} \PYG{n}{cell}
+    \PYG{k}{if} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{0}\PYG{p}{:} \PYG{c}{\PYGZsh{} What does \PYGZdq{}generic\PYGZdq{} mean?}
+        \PYG{n}{v}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{NumberCell}\PYG{p}{(} \PYG{n}{value}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
+    \PYG{k}{elif} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{1} \PYG{o+ow}{or} \PYG{n}{celltype} \PYG{o+ow}{is} \PYG{n+nb+bp}{None}\PYG{p}{:}
+        \PYG{n}{v}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{EmptyCell}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
+    \PYG{k}{elif} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{2}\PYG{p}{:}
+        \PYG{n}{v}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{NumberCell}\PYG{p}{(} \PYG{n}{value}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
+    \PYG{k}{elif} \PYG{n}{celltype} \PYG{o+ow}{in} \PYG{p}{(}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{l+m+mi}{9}\PYG{p}{)}\PYG{p}{:} \PYG{c}{\PYGZsh{} Automatic??}
+        \PYG{n}{v}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{TextCell}\PYG{p}{(} \PYG{n}{strings}\PYG{p}{[}\PYG{n}{value}\PYG{p}{]}\PYG{o}{.}\PYG{n}{decode}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{UTF\PYGZhy{}8}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
+    \PYG{k}{elif} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{5}\PYG{p}{:}
+        \PYG{n}{seconds}\PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{value}\PYG{p}{)}
+        \PYG{n}{epoch}\PYG{o}{=} \PYG{n}{datetime}\PYG{o}{.}\PYG{n}{datetime}\PYG{p}{(}\PYG{l+m+mi}{2001}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{)}
+        \PYG{n}{delta}\PYG{o}{=} \PYG{n}{datetime}\PYG{o}{.}\PYG{n}{timedelta}\PYG{p}{(} \PYG{n}{seconds}\PYG{o}{=}\PYG{n}{seconds} \PYG{p}{)}
+        \PYG{n}{theDate}\PYG{o}{=} \PYG{n}{epoch} \PYG{o}{+} \PYG{n}{delta}
+        \PYG{n}{v}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{DateCell}\PYG{p}{(} \PYG{n}{theDate}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
+    \PYG{k}{elif} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{6}\PYG{p}{:}
+        \PYG{n}{v}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{BooleanCell}\PYG{p}{(} \PYG{n}{value}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
+    \PYG{k}{elif} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{7}\PYG{p}{:} \PYG{c}{\PYGZsh{} Actually a duration}
+        \PYG{n}{v}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{NumberCell}\PYG{p}{(} \PYG{n}{value}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
+    \PYG{k}{elif} \PYG{n}{celltype} \PYG{o+ow}{in} \PYG{p}{(}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{l+m+mi}{8}\PYG{p}{)}\PYG{p}{:}
+        \PYG{n}{ast\PYGZus{}0}\PYG{o}{=} \PYG{n}{formulae}\PYG{p}{[}\PYG{n}{value}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+        \PYG{n}{v}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{ErrorCell}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Formula \PYGZob{}0\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{ast\PYGZus{}0}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{)}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{k}{raise} \PYG{n+ne}{Exception}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Unknown cell type \PYGZob{}0!r\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{cell}\PYG{p}{)} \PYG{p}{)}
+    \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZus{}cell \PYGZob{}0\PYGZcb{} = \PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n}{cell}\PYG{p}{,} \PYG{n}{v}\PYG{p}{)} \PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{v}
+\end{Verbatim}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{rows\PYGZus{}of}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Iterator over rows.}
+
+\PYG{l+s+sd}{    :param sheet: a Sheet object to retrieve rows from.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{rows of \PYGZob{}0\PYGZcb{}: \PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{sheet}\PYG{p}{,} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{name}\PYG{p}{)} \PYG{p}{)}
+    \PYG{n}{document} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}
+    \PYG{k}{for} \PYG{n}{sheet\PYGZus{}ref} \PYG{o+ow}{in} \PYG{n}{document}\PYG{o}{.}\PYG{n}{sheets}\PYG{p}{:}
+        \PYG{n}{sheet\PYGZus{}msg}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{p}{[}\PYG{n}{sheet\PYGZus{}ref}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{]}
+        \PYG{k}{for} \PYG{n}{table\PYGZus{}ref} \PYG{o+ow}{in} \PYG{n}{sheet\PYGZus{}msg}\PYG{o}{.}\PYG{n}{drawable\PYGZus{}infos}\PYG{p}{:}
+            \PYG{n}{tableinfo}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{p}{[}\PYG{n}{table\PYGZus{}ref}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{]}
+            \PYG{n}{tablemodel}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{p}{[}\PYG{n}{tableinfo}\PYG{o}{.}\PYG{n}{tableModel}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{]}
+            \PYG{k}{if} \PYG{p}{(}\PYG{n}{sheet\PYGZus{}msg}\PYG{o}{.}\PYG{n}{name}\PYG{p}{,} \PYG{n}{tablemodel}\PYG{o}{.}\PYG{n}{table\PYGZus{}name}\PYG{p}{)} \PYG{o}{!=} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{name}\PYG{p}{:}
+                \PYG{k}{continue}
+            \PYG{k}{for} \PYG{n}{row} \PYG{o+ow}{in} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}row\PYGZus{}iter}\PYG{p}{(} \PYG{n}{tablemodel} \PYG{p}{)}\PYG{p}{:}
+                \PYG{k}{yield} \PYG{n}{row}
+            \PYG{k}{break}
+\end{Verbatim}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{\PYGZus{}row\PYGZus{}iter}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{tablemodel} \PYG{p}{)}\PYG{p}{:}
+    \PYG{n}{str\PYGZus{}values}\PYG{o}{=} \PYG{n+nb}{dict}\PYG{p}{(}\PYG{p}{)}
+    \PYG{k}{for} \PYG{n}{str\PYGZus{}ref} \PYG{o+ow}{in} \PYG{n}{tablemodel}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{stringTable}\PYG{p}{:}
+        \PYG{n}{strs}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{p}{[}\PYG{n}{str\PYGZus{}ref}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{]}
+        \PYG{k}{for} \PYG{n}{entry} \PYG{o+ow}{in} \PYG{n}{strs}\PYG{o}{.}\PYG{n}{entries}\PYG{p}{:}
+            \PYG{n}{str\PYGZus{}values}\PYG{p}{[}\PYG{n}{entry}\PYG{o}{.}\PYG{n}{key}\PYG{p}{]}\PYG{o}{=} \PYG{n}{entry}\PYG{o}{.}\PYG{n}{string}
+    \PYG{n}{form\PYGZus{}values}\PYG{o}{=} \PYG{n+nb}{dict}\PYG{p}{(}\PYG{p}{)}
+    \PYG{k}{for} \PYG{n}{form\PYGZus{}ref} \PYG{o+ow}{in} \PYG{n}{tablemodel}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{formulaTable}\PYG{p}{:}
+        \PYG{n}{form}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{p}{[}\PYG{n}{form\PYGZus{}ref}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{]}
+        \PYG{k}{for} \PYG{n}{entry} \PYG{o+ow}{in} \PYG{n}{form}\PYG{o}{.}\PYG{n}{entries}\PYG{p}{:}
+            \PYG{n}{form\PYGZus{}values}\PYG{p}{[}\PYG{n}{entry}\PYG{o}{.}\PYG{n}{key}\PYG{p}{]}\PYG{o}{=} \PYG{n}{entry}\PYG{o}{.}\PYG{n}{formula}\PYG{o}{.}\PYG{n}{AST\PYGZus{}node\PYGZus{}array}\PYG{o}{.}\PYG{n}{AST\PYGZus{}node}
+    \PYG{n}{error\PYGZus{}values}\PYG{o}{=} \PYG{n+nb}{dict}\PYG{p}{(}\PYG{p}{)}
+    \PYG{k}{for} \PYG{n}{error\PYGZus{}ref} \PYG{o+ow}{in} \PYG{n}{tablemodel}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{formulaErrorTable}\PYG{p}{:}
+        \PYG{n}{error}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{p}{[}\PYG{n}{error\PYGZus{}ref}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{]}
+        \PYG{c}{\PYGZsh{} TODO:  decode error details}
+        \PYG{c}{\PYGZsh{}for entry in error.entries:}
+        \PYG{c}{\PYGZsh{}    error\PYGZus{}values[entry.key]= entry.formula \PYGZsh{} entry.string?}
+    \PYG{k}{for} \PYG{n}{t} \PYG{o+ow}{in} \PYG{n}{tablemodel}\PYG{o}{.}\PYG{n}{data\PYGZus{}store}\PYG{o}{.}\PYG{n}{tiles}\PYG{p}{:}
+        \PYG{k}{for} \PYG{n}{tt\PYGZus{}ref} \PYG{o+ow}{in} \PYG{n}{t}\PYG{o}{.}\PYG{n}{tiles}\PYG{p}{:}
+            \PYG{n}{tile}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{p}{[}\PYG{n}{tt\PYGZus{}ref}\PYG{o}{.}\PYG{n}{ref}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{]}
+            \PYG{k}{for} \PYG{n}{row} \PYG{o+ow}{in} \PYG{n}{tile}\PYG{o}{.}\PYG{n}{rowInfos}\PYG{p}{:}
+                \PYG{k}{yield} \PYG{p}{[} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}cell}\PYG{p}{(}\PYG{n}{row}\PYG{o}{.}\PYG{n}{cells}\PYG{p}{[}\PYG{n}{col}\PYG{p}{]}\PYG{p}{,} \PYG{n}{str\PYGZus{}values}\PYG{p}{,} \PYG{n}{form\PYGZus{}values}\PYG{p}{,} \PYG{n}{error\PYGZus{}values}\PYG{p}{)}
+                    \PYG{k}{for} \PYG{n}{col} \PYG{o+ow}{in} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cells} \PYG{p}{]}
+\end{Verbatim}
+
+
+\subsection{Fixed-Format Workbook}
+\label{workbook/fixed:workbook-csv}\label{workbook/fixed:fixed-format-workbook}\label{workbook/fixed::doc}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{logging}
+\PYG{k+kn}{import} \PYG{n+nn}{pprint}
+
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.base} \PYG{k+kn}{import} \PYG{n}{Workbook}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
+\PYG{k+kn}{import} \PYG{n+nn}{stingray.cell}
+\end{Verbatim}
+\phantomsection\label{workbook/fixed:module-workbook}\index{workbook (module)}\index{Fixed\_Workbook (class in workbook)}
+
+\begin{fulllineitems}
+\phantomsection\label{workbook/fixed:workbook.Fixed_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{Fixed\_Workbook}}
+\end{fulllineitems}
+
+
+Like a CSV workbook, this is a kind of degenerate case.  We don't have
+a lot of sheets, or a lot of data types.
+
+A subclass might do EBCDIC conversion and possibly even decode
+packed decimal numbers.  To do this, a COBOL-language DDE would be
+required as the schema definition. See {\hyperref[cobol:cobol]{\emph{The COBOL Package}}}.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{class} \PYG{n+nc}{Fixed\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{Workbook} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}A file with fixed\PYGZhy{}sized, no\PYGZhy{}punctuation fields.}
+
+\PYG{l+s+sd}{    A schema is **required** to parse the attributes.}
+
+\PYG{l+s+sd}{    The rows are defined as :py:class:{}`stingray.sheet.LazyRow{}` instances so that}
+\PYG{l+s+sd}{    bad data can be gracefully skipped over.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{row\PYGZus{}class}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{LazyRow}
+
+    \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{n}{schema}\PYG{o}{=}\PYG{n+nb+bp}{None} \PYG{p}{)}\PYG{p}{:}
+        \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Prepare the workbook for reading.}
+
+\PYG{l+s+sd}{        :param name: File name}
+\PYG{l+s+sd}{        :param file\PYGZus{}object: Optional file\PYGZhy{}like object.  If omitted, the named file is opened.}
+\PYG{l+s+sd}{        :param schema: Schema required for processing.}
 \PYG{l+s+sd}{        \PYGZdq{}\PYGZdq{}\PYGZdq{}}
         \PYG{n+nb}{super}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{numbers\PYGZus{}package}\PYG{o}{=} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{join}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{index.zip}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}
-        \PYG{k}{with} \PYG{n}{zipfile}\PYG{o}{.}\PYG{n}{ZipFile}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{numbers\PYGZus{}package} \PYG{p}{)} \PYG{k}{as} \PYG{n}{index}\PYG{p}{:}
-            \PYG{k}{for} \PYG{n}{n} \PYG{o+ow}{in} \PYG{n}{index}\PYG{o}{.}\PYG{n}{namelist}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}
-                \PYG{n}{log}\PYG{o}{.}\PYG{n}{info}\PYG{p}{(} \PYG{n}{n} \PYG{p}{)}
-                \PYG{k}{with} \PYG{n}{index}\PYG{o}{.}\PYG{n}{open}\PYG{p}{(} \PYG{n}{n} \PYG{p}{)} \PYG{k}{as} \PYG{n}{member}\PYG{p}{:}
-                    \PYG{k}{pass}    \PYG{c}{\PYGZsh{} snappy/protobuf reader.}
-\end{Verbatim}
-
-
-\subsubsection{Workbook Factory}
-\label{workbook:workbook-factory}\index{No\_Schema (class in workbook)}
-
-\begin{fulllineitems}
-\phantomsection\label{workbook:workbook.No_Schema}\pysigline{\strong{class }\code{workbook.}\bfcode{No\_Schema}}
-\end{fulllineitems}
-
-
-The {\hyperref[workbook:workbook.No_Schema]{\code{No\_Schema}}} exception is raised if there's a problem
-loading the schema.
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{class} \PYG{n+nc}{No\PYGZus{}Schema}\PYG{p}{(} \PYG{n+ne}{Exception} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}A valid schema could not be loaded.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{k}{pass}
-\end{Verbatim}
-\index{Opener (class in workbook)}
-
-\begin{fulllineitems}
-\phantomsection\label{workbook:workbook.Opener}\pysigline{\strong{class }\code{workbook.}\bfcode{Opener}}
-\end{fulllineitems}
-
-
-An opener \textbf{Factory} class.  A subclass can extend this to handle other file
-extensions and physical formats.
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{class} \PYG{n+nc}{Opener}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}An extensible opener that examines the file extension.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}call\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-        \PYG{n}{schema\PYGZus{}path}\PYG{o}{=}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{schema\PYGZus{}sheet}\PYG{o}{=} \PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{o}{*}\PYG{o}{*}\PYG{n}{kw} \PYG{p}{)}\PYG{p}{:}
-        \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Open a workbook.}
-\PYG{l+s+sd}{        :param name: filename to open.}
-\PYG{l+s+sd}{        :param file\PYGZus{}object: File\PYGZhy{}like object to process.  If not}
-\PYG{l+s+sd}{        provided the named file will be opened.}
-\PYG{l+s+sd}{        :param schema\PYGZus{}path: Directory with external schema files}
-\PYG{l+s+sd}{        :param schema\PYGZus{}sheet: A sheet in an external schema workbook.}
-\PYG{l+s+sd}{        \PYGZdq{}\PYGZdq{}\PYGZdq{}}
-        \PYG{n}{\PYGZus{}}\PYG{p}{,} \PYG{n}{ext} \PYG{o}{=} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{splitext}\PYG{p}{(} \PYG{n}{name} \PYG{p}{)}
-        \PYG{n}{ext} \PYG{o}{=} \PYG{n}{ext}\PYG{o}{.}\PYG{n}{lower}\PYG{p}{(}\PYG{p}{)}
-        \PYG{k}{if} \PYG{n}{ext} \PYG{o}{==} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.xls}\PYG{l+s}{\PYGZdq{}}\PYG{p}{:} \PYG{k}{return} \PYG{n}{XLS\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}
-        \PYG{k}{elif} \PYG{n}{ext} \PYG{o+ow}{in} \PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.xlsx}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.xlsm}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{p}{:}
-            \PYG{k}{return} \PYG{n}{XLSX\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}
-        \PYG{k}{elif} \PYG{n}{ext} \PYG{o+ow}{in} \PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.csv}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{p}{)}\PYG{p}{:}
-            \PYG{k}{return} \PYG{n}{CSV\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{p}{,} \PYG{o}{*}\PYG{o}{*}\PYG{n}{kw} \PYG{p}{)}
-        \PYG{k}{elif} \PYG{n}{ext} \PYG{o+ow}{in} \PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.tab}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{p}{)}\PYG{p}{:}
-            \PYG{k}{return} \PYG{n}{CSV\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{p}{,} \PYG{n}{delimiter}\PYG{o}{=}\PYG{l+s}{\PYGZsq{}}\PYG{l+s+se}{\PYGZbs{}t}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{o}{*}\PYG{o}{*}\PYG{n}{kw} \PYG{p}{)}
-        \PYG{k}{elif} \PYG{n}{ext} \PYG{o+ow}{in} \PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.ods}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{p}{)}\PYG{p}{:}
-            \PYG{k}{return} \PYG{n}{ODS\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}
-        \PYG{k}{elif} \PYG{n}{ext} \PYG{o+ow}{in} \PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.numbers}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{p}{)}\PYG{p}{:}
-            \PYG{c}{\PYGZsh{} Directory? It\PYGZsq{}s Numbers13\PYGZus{}Workbook; Zipfile? It\PYGZsq{}s Numbers09\PYGZus{}Workbook}
-            \PYG{k}{if} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{is\PYGZus{}dir}\PYG{p}{(} \PYG{n}{name} \PYG{p}{)}\PYG{p}{:}
-                \PYG{k}{return} \PYG{n}{Numbers13\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}
-            \PYG{k}{else}\PYG{p}{:}
-                \PYG{k}{return} \PYG{n}{Numbers09\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}
+        \PYG{k}{if} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{file\PYGZus{}obj}\PYG{p}{:}
+            \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{the\PYGZus{}file}\PYG{o}{=} \PYG{n+nb+bp}{None}
+            \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{file\PYGZus{}obj}
         \PYG{k}{else}\PYG{p}{:}
-            \PYG{c}{\PYGZsh{} Ideally somefile.schema is the file}
-            \PYG{c}{\PYGZsh{} and schema.csv can be tracked down.}
-            \PYG{n}{schema\PYGZus{}pat}\PYG{o}{=} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{join}\PYG{p}{(}\PYG{n}{schema\PYGZus{}path}\PYG{p}{,} \PYG{n}{ext}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{p}{]}\PYG{o}{+}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.*}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
-            \PYG{n}{schema\PYGZus{}choices}\PYG{o}{=} \PYG{n}{glob}\PYG{o}{.}\PYG{n}{glob}\PYG{p}{(} \PYG{n}{schema\PYGZus{}pat} \PYG{p}{)}
-            \PYG{k}{if} \PYG{n}{schema\PYGZus{}choices}\PYG{p}{:}
-                \PYG{n}{schema\PYGZus{}name}\PYG{o}{=} \PYG{n}{schema\PYGZus{}choices}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
-                \PYG{n}{schema\PYGZus{}wb}\PYG{o}{=} \PYG{n}{open\PYGZus{}workbook}\PYG{p}{(} \PYG{n}{schema\PYGZus{}name} \PYG{p}{)}
-                \PYG{n}{esl}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{ExternalSchemaLoader}\PYG{p}{(} \PYG{n}{schema\PYGZus{}wb}\PYG{p}{,} \PYG{n}{schema\PYGZus{}sheet} \PYG{p}{)}
-                \PYG{n}{schema}\PYG{o}{=} \PYG{n}{esl}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{(}\PYG{p}{)}
-                \PYG{k}{return} \PYG{n}{Fixed\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{p}{,} \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
-            \PYG{k}{else}\PYG{p}{:}
-                \PYG{k}{raise} \PYG{n}{No\PYGZus{}Schema}\PYG{p}{(} \PYG{n}{schema\PYGZus{}pat} \PYG{p}{)}
+            \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{the\PYGZus{}file} \PYG{o}{=} \PYG{n+nb}{open}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{rt}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+            \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{the\PYGZus{}file}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{=} \PYG{n}{schema}
 \end{Verbatim}
-\index{open\_workbook() (in module workbook)}
+\index{sheet() (workbook.Fixed\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook:workbook.open_workbook}\pysiglinewithargsret{\code{workbook.}\bfcode{open\_workbook}}{\emph{name}, \emph{file\_object}, \emph{schema\_path}, \emph{schema\_sheet}}{}
+\phantomsection\label{workbook/fixed:workbook.Fixed_Workbook.sheet}\pysiglinewithargsret{\code{Fixed\_Workbook.}\bfcode{sheet}}{\emph{sheet}}{}
 \end{fulllineitems}
 
 
-The default {\hyperref[workbook:workbook.open_workbook]{\code{workbook.open\_workbook()}}} is simply an instance
-of the {\hyperref[workbook:workbook.Opener]{\code{workbook.Opener}}}.
-
 \begin{Verbatim}[commandchars=\\\{\}]
-\PYG{n}{open\PYGZus{}workbook}\PYG{o}{=} \PYG{n}{Opener}\PYG{p}{(}\PYG{p}{)}
+\PYG{k}{def} \PYG{n+nf}{sheet}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet\PYGZus{}name} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}sheet\PYGZus{}type is ignored; it must be an external schema.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{return} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{ExternalSchemaSheet}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet\PYGZus{}name}\PYG{p}{,} \PYG{n}{schema}\PYG{o}{=}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{schema} \PYG{p}{)}
 \end{Verbatim}
 
-This allows a user to create subclasses to handle the various other file name extensions.
-Often, there are application-specific rules, or command-line options that
-will determine a mapping bewtween filename and physical format.
+We can build eager {\hyperref[sheet:sheet.Row]{\code{sheet.Row}}} instances for some
+kinds of flat files.  Eager rows, however, don't generalize well to COBOL structures.
 
-Also, an application may require external schema, or there may be an optional
-external schema with application-specific rules for handling this.
+Therefore, we must build  {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}} objects here and defer the
+data type conversion until {\hyperref[workbook/fixed:workbook.Fixed_Workbook.row_get]{\code{workbook.Fixed\_Workbook.row\_get()}}}.
+Or {\hyperref[cobol_init:cobol.COBOL_File.row_get]{\code{cobol.COBOL\_File.row\_get()}}}, which can be more complex still.
+\index{rows\_of() (workbook.Fixed\_Workbook method)}
 
-For fixed format files, we attempt to track down and load the relevant
-schema.  An application might have narrower and more specific rules
-for binding file and schema.  See below for the {\hyperref[schema_loader:schema.loader.ExternalSchemaLoader]{\code{schema.loader.ExternalSchemaLoader}}} class.
+\begin{fulllineitems}
+\phantomsection\label{workbook/fixed:workbook.Fixed_Workbook.rows_of}\pysiglinewithargsret{\code{Fixed\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+\end{fulllineitems}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{rows\PYGZus{}of}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}An iterator over all rows of the named sheet.}
+\PYG{l+s+sd}{    For Fixed files, the sheet.name is simply ignored.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{=} \PYG{n}{sheet}
+    \PYG{k}{for} \PYG{n}{data} \PYG{o+ow}{in} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{p}{:}
+        \PYG{n}{logging}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{n}{pprint}\PYG{o}{.}\PYG{n}{pformat}\PYG{p}{(} \PYG{n}{data}\PYG{p}{,} \PYG{n}{indent}\PYG{o}{=}\PYG{l+m+mi}{4} \PYG{p}{)} \PYG{p}{)}
+        \PYG{n}{row} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{row\PYGZus{}class}\PYG{p}{(} \PYG{n}{sheet}\PYG{p}{,} \PYG{n}{data}\PYG{o}{=}\PYG{n}{data} \PYG{p}{)}
+        \PYG{k}{yield} \PYG{n}{row}
+\end{Verbatim}
+\index{row\_get() (workbook.Fixed\_Workbook method)}
+
+\begin{fulllineitems}
+\phantomsection\label{workbook/fixed:workbook.Fixed_Workbook.row_get}\pysiglinewithargsret{\code{Fixed\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
+\end{fulllineitems}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{row\PYGZus{}get}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{row}\PYG{p}{,} \PYG{n}{attr} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Create a :py:class:{}`cell.Cell{}` from the row\PYGZsq{}s data.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{extract}\PYG{o}{=} \PYG{n}{row}\PYG{o}{.}\PYG{n}{\PYGZus{}state}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{data}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{[}\PYG{n}{attr}\PYG{o}{.}\PYG{n}{offset}\PYG{p}{:}\PYG{n}{attr}\PYG{o}{.}\PYG{n}{offset}\PYG{o}{+}\PYG{n}{attr}\PYG{o}{.}\PYG{n}{size}\PYG{p}{]}
+    \PYG{k}{return} \PYG{n}{attr}\PYG{o}{.}\PYG{n}{create}\PYG{p}{(} \PYG{n}{extract}\PYG{o}{.}\PYG{n}{rstrip}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
+\end{Verbatim}
 
 
 \section{The iWork `13 Numbers Modules}
-\label{iwork13:the-iwork-13-numbers-modules}\label{iwork13:iwork13}\label{iwork13::doc}
+\label{iwork13:iwork13}\label{iwork13:the-iwork-13-numbers-modules}\label{iwork13::doc}
 There are two digressive modules that are part of reading iWork `13 Numbers files.
 We could depend on other implementations. Instead, we've provided our own
 implementation to reduce the dependencies.
@@ -4687,7 +5046,7 @@ Stingray.
 
 
 \subsection{Snappy Module -- Unpacking iWork 13 files.}
-\label{snappy:snappy}\label{snappy:snappy-module-unpacking-iwork-13-files}\label{snappy::doc}
+\label{snappy:snappy-module-unpacking-iwork-13-files}\label{snappy:snappy}\label{snappy::doc}
 This is not a full implementation of the Snappy compression protocol.
 It's a minimal implementation, enough to unpack iWork `13 files.
 \phantomsection\label{snappy:module-snappy}\index{snappy (module)}
@@ -5830,8 +6189,8 @@ to create a schema.
 
 
 \paragraph{Module Overheads}
-\label{cobol_init:module-overheads}\label{cobol_init:module-cobol}\index{cobol (module)}
-We depend on {\hyperref[cell:module-cell]{\code{cell}}}, {\hyperref[schema:module-schema]{\code{schema}}}, and {\hyperref[workbook:module-workbook]{\code{workbook}}}.
+\label{cobol_init:module-cobol}\label{cobol_init:module-overheads}\index{cobol (module)}
+We depend on {\hyperref[cell:module-cell]{\code{cell}}}, {\hyperref[schema:module-schema]{\code{schema}}}, and {\hyperref[workbook/numbers_13:module-workbook]{\code{workbook}}}.
 We'll also import one class definition from {\hyperref[cobol_defs:module-cobol.defs]{\code{cobol.defs}}}.
 
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -5846,8 +6205,9 @@ We'll also import one class definition from {\hyperref[cobol_defs:module-cobol.d
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
 
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.schema}
-\PYG{k+kn}{import} \PYG{n+nn}{stingray.workbook}
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.workbook.fixed} \PYG{k+kn}{import} \PYG{n}{Fixed\PYGZus{}Workbook}
+
 
 \PYG{k+kn}{from} \PYG{n+nn}{stingray.cobol.defs} \PYG{k+kn}{import} \PYG{n}{TextCell}
 \end{Verbatim}
@@ -6177,7 +6537,7 @@ Dump data from a record, driven by the original DDE structure.
 \paragraph{COBOL ``Workbook'' Files}
 \label{cobol_init:cobol-workbook-files}
 A COBOL file is -- in effect -- a single-sheet workbook with an external schema.
-It looks, then, a lot like {\hyperref[workbook:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}}.
+It looks, then, a lot like {\hyperref[workbook/fixed:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}}.
 \begin{itemize}
 \item {} 
 A pure character file, encoded UNICODE characters in some standard encoding
@@ -6260,7 +6620,7 @@ This class introduces the expanded version of \code{row\_get} that honors
 a schema attribute with dimensionality.
 
 \begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{class} \PYG{n+nc}{COBOL\PYGZus{}File}\PYG{p}{(} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{workbook}\PYG{o}{.}\PYG{n}{Fixed\PYGZus{}Workbook} \PYG{p}{)}\PYG{p}{:}
+\PYG{k}{class} \PYG{n+nc}{COBOL\PYGZus{}File}\PYG{p}{(} \PYG{n}{Fixed\PYGZus{}Workbook} \PYG{p}{)}\PYG{p}{:}
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}A COBOL \PYGZdq{}workbook\PYGZdq{} file which uses :py:class:{}`RepeatingAttribute{}` and}
 \PYG{l+s+sd}{    creates COBOL Cell values.  This is an abstraction which}
 \PYG{l+s+sd}{    lacks specific decoding methods.}
@@ -8030,7 +8390,7 @@ to use it.
 
 
 \subsubsection{COBOL Definitions Module -- Handle COBOL DDE's}
-\label{cobol_defs:cobol-definitions-module-handle-cobol-dde-s}\label{cobol_defs:cobol-defs}\label{cobol_defs:module-cobol.defs}\label{cobol_defs::doc}\index{cobol.defs (module)}
+\label{cobol_defs:module-cobol.defs}\label{cobol_defs:cobol-defs}\label{cobol_defs:cobol-definitions-module-handle-cobol-dde-s}\label{cobol_defs::doc}\index{cobol.defs (module)}
 This is a small set of class definitions and functions
 that are used by {\hyperref[cobol_loader:module-cobol.loader]{\code{cobol.loader}}} as well as
 {\hyperref[cobol_init:module-cobol]{\code{cobol}}}.
@@ -9466,7 +9826,7 @@ As noted in {\hyperref[introduction:intro]{\emph{Introduction}}}, there are thre
 \begin{itemize}
 \item {} 
 \textbf{Physical Format}.  We can make this transparent to our applications.
-See {\hyperref[workbook:workbook]{\emph{Workbook Module -- Uniform Wrapper on All Workbooks}}} and {\hyperref[cobol:cobol]{\emph{The COBOL Package}}} for details. Everything is a workbook
+See {\hyperref[workbook/index:workbook]{\emph{Workbook Package -- Uniform Wrappers for Workbooks}}} and {\hyperref[cobol:cobol]{\emph{The COBOL Package}}} for details. Everything is a workbook
 with a fairly limited API.
 
 \item {} 
@@ -9554,7 +9914,7 @@ a usable schema.
 \code{.numbers} describe the physical format.
 
 Our {\hyperref[cell:cell.Cell]{\code{cell.Cell}}}, {\hyperref[sheet:sheet.Sheet]{\code{sheet.Sheet}}}, and
-{\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}} handles many physical format details nicely.
+{\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}} handles many physical format details nicely.
 
 
 \subsection{Data Attribute Mapping -- Using a Schema}
@@ -10545,19 +10905,19 @@ a {\hyperref[sheet:sheet.ExternalSchemaSheet]{\code{sheet.ExternalSchemaSheet}}}
 \PYG{k}{class} \PYG{n+nc}{Test\PYGZus{}Builder\PYGZus{}2}\PYG{p}{(} \PYG{n}{unittest}\PYG{o}{.}\PYG{n}{TestCase} \PYG{p}{)}\PYG{p}{:}
     \PYG{k}{def} \PYG{n+nf}{setUp}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Schema}\PYG{p}{(}
-            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Col 1 \PYGZhy{} int}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{,}
-            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Col 2.0 \PYGZhy{} float}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{,}
-            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Column }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{3}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ \PYGZhy{} string}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{,}
-            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{u\PYGZdq{}}\PYG{l+s}{Column }\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{4}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{ \PYGZhy{} date}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{p}{,}
-            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Column 5 \PYGZhy{} boolean}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{,}
-            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Column 6 \PYGZhy{} empty}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{,}
-            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Column 7 \PYGZhy{} Error}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Col 1 \PYGZhy{} int}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{,}
+            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Col 2.0 \PYGZhy{} float}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{,}
+            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Column }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{3}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ \PYGZhy{} string}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{,}
+            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Column }\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{4}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{ \PYGZhy{} date}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{p}{,}
+            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Column 5 \PYGZhy{} boolean}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{,}
+            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Column 6 \PYGZhy{} empty}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{,}
+            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Column 7 \PYGZhy{} Error}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{=} \PYG{n}{MockWorkbook}\PYG{p}{(}\PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{ExternalSchemaSheet}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Test}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{schema} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{row}\PYG{o}{=} \PYG{p}{[}
             \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{NumberCell}\PYG{p}{(}\PYG{l+m+mf}{42.0}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{p}{)}\PYG{p}{,}
             \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{NumberCell}\PYG{p}{(}\PYG{l+m+mf}{3.1415926}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{p}{)}\PYG{p}{,}
-            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{TextCell}\PYG{p}{(}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{p}{)}\PYG{p}{,}
+            \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{TextCell}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{p}{)}\PYG{p}{,}
             \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{FloatDateCell}\PYG{p}{(}\PYG{l+m+mf}{20708.0}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{p}{)}\PYG{p}{,}
             \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{BooleanCell}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{p}{)}\PYG{p}{,}
             \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{EmptyCell}\PYG{p}{(}\PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{p}{)}\PYG{p}{,}
@@ -10568,7 +10928,7 @@ a {\hyperref[sheet:sheet.ExternalSchemaSheet]{\code{sheet.ExternalSchemaSheet}}}
         \PYG{n}{row}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{n}{dict\PYGZus{}row}\PYG{o}{=} \PYG{n+nb}{dict}\PYG{p}{(} \PYG{p}{(}\PYG{n}{a}\PYG{o}{.}\PYG{n}{name}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{a}\PYG{p}{)}\PYG{p}{)} \PYG{k}{for} \PYG{n}{a} \PYG{o+ow}{in} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{schema} \PYG{p}{)}
         \PYG{n}{result}\PYG{o}{=} \PYG{n}{some\PYGZus{}builder}\PYG{p}{(} \PYG{n}{dict\PYGZus{}row} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{result}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{key}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{result}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{key}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertAlmostEqual}\PYG{p}{(} \PYG{l+m+mf}{3.1415926}\PYG{p}{,} \PYG{n}{result}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{value}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
 \end{Verbatim}
 
@@ -10597,8 +10957,8 @@ to sums, counts, and perhaps even frequency distribution tables.
             \PYG{n}{dict\PYGZus{}row}\PYG{o}{=} \PYG{n+nb}{dict}\PYG{p}{(} \PYG{p}{(}\PYG{n}{a}\PYG{o}{.}\PYG{n}{name}\PYG{p}{,}\PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{a}\PYG{p}{)}\PYG{p}{)} \PYG{k}{for} \PYG{n}{a} \PYG{o+ow}{in} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{schema} \PYG{p}{)}
             \PYG{n}{result}\PYG{o}{=} \PYG{n}{some\PYGZus{}builder}\PYG{p}{(} \PYG{n}{dict\PYGZus{}row} \PYG{p}{)}
             \PYG{n}{summary}\PYG{p}{[}\PYG{n}{result}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{key}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{summary}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{summary}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{data}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{summary}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{summary}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{data}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
 \end{Verbatim}
 
 
@@ -10630,8 +10990,8 @@ For this demo, here's a sample sheet process function:
     \PYG{n}{counts}\PYG{o}{=} \PYG{n}{defaultdict}\PYG{p}{(} \PYG{n+nb}{int} \PYG{p}{)}
     \PYG{k}{for} \PYG{n}{row} \PYG{o+ow}{in} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{rows\PYGZus{}as\PYGZus{}dict\PYGZus{}iter}\PYG{p}{(}\PYG{n}{sheet}\PYG{p}{)}\PYG{p}{:}
         \PYG{n}{row\PYGZus{}dict}\PYG{o}{=} \PYG{n}{some\PYGZus{}builder}\PYG{p}{(} \PYG{n}{row} \PYG{p}{)}
-        \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{key}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,}\PYG{n}{row\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{key}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
-        \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{read}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
+        \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{key}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,}\PYG{n}{row\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{key}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
+        \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{read}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
     \PYG{k}{return} \PYG{n}{counts}
 \end{Verbatim}
 
@@ -10653,18 +11013,18 @@ a frequency table.
             \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Sheet1}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,}
             \PYG{n}{loader\PYGZus{}class}\PYG{o}{=}\PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{HeadingRowSchemaLoader} \PYG{p}{)}
     \PYG{k}{def} \PYG{n+nf}{test\PYGZus{}should\PYGZus{}load\PYGZus{}schema}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Col 1 \PYGZhy{} int}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Col 2.0 \PYGZhy{} float}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Column }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{3}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ \PYGZhy{} string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZdq{}}\PYG{l+s}{Column }\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{4}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{ \PYGZhy{} date}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Column 5 \PYGZhy{} boolean}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{4}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Column 6 \PYGZhy{} empty}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{5}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Column 7 \PYGZhy{} Error}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{6}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Col 1 \PYGZhy{} int}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Col 2.0 \PYGZhy{} float}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Column }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{3}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ \PYGZhy{} string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Column }\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{4}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{ \PYGZhy{} date}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Column 5 \PYGZhy{} boolean}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{4}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Column 6 \PYGZhy{} empty}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{5}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Column 7 \PYGZhy{} Error}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{6}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
     \PYG{k}{def} \PYG{n+nf}{test\PYGZus{}should\PYGZus{}build\PYGZus{}sample\PYGZus{}row}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
         \PYG{n}{counts}\PYG{o}{=} \PYG{n}{process\PYGZus{}some\PYGZus{}sheet}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{read}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{key}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{key}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{data}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{read}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{key}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{key}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{data}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
 \end{Verbatim}
 
 
@@ -10699,7 +11059,7 @@ OK
 
 
 \subsection{Application Level Data Validation Technique}
-\label{demo/validation:demo-validate}\label{demo/validation:application-level-data-validation-technique}\label{demo/validation::doc}
+\label{demo/validation:application-level-data-validation-technique}\label{demo/validation:demo-validate}\label{demo/validation::doc}
 We validate that that a file actually matches a schema through a three-part valiation process.
 We looked at the first two parts in {\hyperref[demo/data_quality:demo-sqa]{\emph{Unit Level Validation for Application and Data}}}.
 \begin{itemize}
@@ -11001,7 +11361,7 @@ This handles all the rows present in a given sheet.
     \PYG{n}{counts}\PYG{o}{=} \PYG{n}{defaultdict}\PYG{p}{(} \PYG{n+nb}{int} \PYG{p}{)}
     \PYG{k}{for} \PYG{n}{source\PYGZus{}row} \PYG{o+ow}{in} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{rows\PYGZus{}as\PYGZus{}dict\PYGZus{}iter}\PYG{p}{(}\PYG{n}{sheet}\PYG{p}{)}\PYG{p}{:}
         \PYG{k}{try}\PYG{p}{:}
-            \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{read}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
+            \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{read}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
             \PYG{n}{row\PYGZus{}dict}\PYG{o}{=} \PYG{n}{builder}\PYG{p}{(} \PYG{n}{source\PYGZus{}row} \PYG{p}{)}
             \PYG{n}{f}\PYG{o}{=} \PYG{n}{ThisForm}\PYG{p}{(} \PYG{o}{*}\PYG{o}{*}\PYG{n}{row\PYGZus{}dict} \PYG{p}{)}
             \PYG{k}{if} \PYG{n}{f}\PYG{o}{.}\PYG{n}{is\PYGZus{}valid}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}
@@ -11015,7 +11375,7 @@ This handles all the rows present in a given sheet.
             \PYG{k}{if} \PYG{n}{persistence}\PYG{o}{.}\PYG{n}{stop\PYGZus{}on\PYGZus{}exception}\PYG{p}{:} \PYG{k}{raise}
             \PYG{n}{summary}\PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} \PYGZob{}1!r\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n}{e}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}class\PYGZus{}\PYGZus{}}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}name\PYGZus{}\PYGZus{}}\PYG{p}{,} \PYG{n}{e}\PYG{o}{.}\PYG{n}{args} \PYG{p}{)}
             \PYG{n}{logger}\PYG{o}{.}\PYG{n}{error}\PYG{p}{(} \PYG{n}{summary} \PYG{p}{)}
-            \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{error}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,}\PYG{n}{summary}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
+            \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{error}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,}\PYG{n}{summary}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
     \PYG{k}{return} \PYG{n}{counts}
 \end{Verbatim}
 
@@ -11073,7 +11433,7 @@ See {\hyperref[demo/data_quality:demo-sqa]{\emph{Unit Level Validation for Appli
             \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{EmbeddedSchemaSheet}\PYG{p}{,}
             \PYG{n}{loader\PYGZus{}class}\PYG{o}{=}\PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{HeadingRowSchemaLoader} \PYG{p}{)}
         \PYG{n}{counts}\PYG{o}{=} \PYG{n}{validate}\PYG{p}{(} \PYG{n}{sheet}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{builder\PYGZus{}func} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{12345}\PYG{p}{,} \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{read}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{12345}\PYG{p}{,} \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{read}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{p}{)}
 \end{Verbatim}
 
 
@@ -11106,7 +11466,7 @@ Argument Processing.  This means looping over the positional arguments.
 
 \item {} 
 Opening Workbooks.  Some applications can't use the default
-{\hyperref[workbook:workbook.Opener]{\code{workbook.Opener}}}.  A subclass of Opener, or more complex logic,
+{\hyperref[workbook/init:workbook.Opener]{\code{workbook.Opener}}}.  A subclass of Opener, or more complex logic,
 may be required.
 
 \item {} 
@@ -11172,7 +11532,7 @@ doesn't match the schema required by the application.
 
 
 \subsection{Data Profiling Demonstration}
-\label{demo/profile:demo-profile}\label{demo/profile:data-profiling-demonstration}\label{demo/profile::doc}
+\label{demo/profile:data-profiling-demonstration}\label{demo/profile:demo-profile}\label{demo/profile::doc}
 This is a simple data profiling application that can be applied
 to workbooks to examine the data prior to creating builders.
 
@@ -11255,15 +11615,15 @@ use the data.
     \PYG{n}{counts}\PYG{o}{=} \PYG{n}{defaultdict}\PYG{p}{(} \PYG{n+nb}{int} \PYG{p}{)}
     \PYG{k}{for} \PYG{n}{source\PYGZus{}row} \PYG{o+ow}{in} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{rows\PYGZus{}as\PYGZus{}dict\PYGZus{}iter}\PYG{p}{(}\PYG{n}{sheet}\PYG{p}{)}\PYG{p}{:}
         \PYG{k}{try}\PYG{p}{:}
-            \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{read}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
+            \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{read}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
             \PYG{k}{for} \PYG{n}{attr} \PYG{o+ow}{in} \PYG{n}{source\PYGZus{}row}\PYG{p}{:}
                 \PYG{n}{persistence}\PYG{o}{.}\PYG{n}{count}\PYG{p}{(} \PYG{n}{attr}\PYG{p}{,} \PYG{n}{source\PYGZus{}row}\PYG{p}{[}\PYG{n}{attr}\PYG{p}{]} \PYG{p}{)}
         \PYG{k}{except} \PYG{n+ne}{Exception} \PYG{k}{as} \PYG{n}{e}\PYG{p}{:}
-            \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{invalid}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
+            \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{invalid}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
             \PYG{k}{if} \PYG{n}{persistence}\PYG{o}{.}\PYG{n}{stop\PYGZus{}on\PYGZus{}exception}\PYG{p}{:} \PYG{k}{raise}
             \PYG{n}{summary}\PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} }\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{\PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n}{e}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}class\PYGZus{}\PYGZus{}}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}name\PYGZus{}\PYGZus{}}\PYG{p}{,} \PYG{n}{e}\PYG{o}{.}\PYG{n}{message} \PYG{p}{)}
             \PYG{n}{logger}\PYG{o}{.}\PYG{n}{error}\PYG{p}{(} \PYG{n}{summary} \PYG{p}{)}
-            \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{error }\PYG{l+s}{\PYGZsq{}}\PYG{o}{+}\PYG{n}{summary}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
+            \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{error }\PYG{l+s}{\PYGZsq{}}\PYG{o}{+}\PYG{n}{summary}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
 
     \PYG{n}{title}\PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} :: \PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{workbook}\PYG{o}{.}\PYG{n}{name}\PYG{p}{,} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
     \PYG{k}{print}\PYG{p}{(} \PYG{n}{title} \PYG{p}{)}
@@ -11360,7 +11720,7 @@ Argument Processing.  This means looping over the positional arguments.
 
 \item {} 
 Opening Workbooks.  Some applications can't use the default
-{\hyperref[workbook:workbook.Opener]{\code{workbook.Opener}}}.  A subclass of Opener, or more complex logic,
+{\hyperref[workbook/init:workbook.Opener]{\code{workbook.Opener}}}.  A subclass of Opener, or more complex logic,
 may be required.
 
 \item {} 
@@ -11509,7 +11869,7 @@ type
 
 
 \subsection{Reading COBOL Files}
-\label{demo/cobol_reader:demo-cobol}\label{demo/cobol_reader:reading-cobol-files}\label{demo/cobol_reader::doc}
+\label{demo/cobol_reader:reading-cobol-files}\label{demo/cobol_reader:demo-cobol}\label{demo/cobol_reader::doc}
 For sample data, we're using data found here:
 \href{http://wonder.cdc.gov/wonder/sci\_data/codes/fips/type\_txt/cntyxref.asp}{http://wonder.cdc.gov/wonder/sci\_data/codes/fips/type\_txt/cntyxref.asp}
 
@@ -11818,11 +12178,13 @@ data which can't be converted. An ErrorCell is created in the (all too common)
 case where the COBOL data is invalid.
 
 \item {} 
-Support iWork `09 Numbers Workbook files.
+Support iWork `09 and iWork `13 Numbers Workbook files.
+This lead to a profound refactoring of the \code{stingray.workbook} module
+into a package.
 
 \item {} 
 Remove \code{\%} string formatting and \code{from \_\_future\_\_}. Correct class
-references.
+references. Replace \code{u'{'}} Unicode string literals with simple string literals.
 \href{https://sourceforge.net/p/stingrayreader/tickets/6/}{https://sourceforge.net/p/stingrayreader/tickets/6/}
 
 \item {} 
@@ -12028,8 +12390,8 @@ A Cell is the unit of data.  These unit tests exercise the classes in the
 \label{testing/cell:cell-tests}
 Mocks for sheet and workbook to test {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} features.
 A {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} belongs to a {\hyperref[sheet:sheet.Sheet]{\code{sheet.Sheet}}} and a {\hyperref[sheet:sheet.Sheet]{\code{sheet.Sheet}}} belongs
-to a {\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}}.  We need a mock for {\hyperref[sheet:sheet.Sheet]{\code{sheet.Sheet}}} and
-{\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}}.
+to a {\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}}.  We need a mock for {\hyperref[sheet:sheet.Sheet]{\code{sheet.Sheet}}} and
+{\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}}.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{CellMockWorkbook}\PYG{p}{:}
@@ -12525,7 +12887,7 @@ based on the physical format.
 
 Fixed and COBOL format files are the prime example of cells that require conversions.  A CSV or TAB file could fall into this category, also.
 
-This is an essential feature of the {\hyperref[workbook:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}}.
+This is an essential feature of the {\hyperref[workbook/fixed:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}}.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{TestAttributeConversion}\PYG{p}{(} \PYG{n}{unittest}\PYG{o}{.}\PYG{n}{TestCase} \PYG{p}{)}\PYG{p}{:}
@@ -12702,7 +13064,7 @@ A {\hyperref[schema_loader:schema.loader.HeadingRowSchemaLoader]{\code{schema.lo
 \subsubsection{ExternalSchemaLoader}
 \label{testing/schema_loader:externalschemaloader}
 An {\hyperref[schema_loader:schema.loader.ExternalSchemaLoader]{\code{schema.loader.ExternalSchemaLoader}}}  builds
-a {\hyperref[schema:schema.Schema]{\code{schema.Schema}}}  from another {\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}}.
+a {\hyperref[schema:schema.Schema]{\code{schema.Schema}}}  from another {\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}}.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{TestExternalSchemaLoader}\PYG{p}{(} \PYG{n}{unittest}\PYG{o}{.}\PYG{n}{TestCase} \PYG{p}{)}\PYG{p}{:}
@@ -12751,7 +13113,7 @@ source, usually another Workbook.
 An external schema can be loaded using an {\hyperref[schema_loader:schema.loader.ExternalSchemaLoader]{\code{schema.loader.ExternalSchemaLoader}}}.
 However, we can also hard-code a Schema.  Or build it some other way.
 
-A {\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}} uses this type to build each individual {\hyperref[sheet:sheet.Sheet]{\code{sheet.Sheet}}},
+A {\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}} uses this type to build each individual {\hyperref[sheet:sheet.Sheet]{\code{sheet.Sheet}}},
 attaching the schema (and column titles, etc.) to each {\hyperref[sheet:sheet.Row]{\code{sheet.Row}}}
 that gets built.
 
@@ -12862,7 +13224,7 @@ any real work unless this is the main module being executed.
 
 \subsection{Workbook Testing}
 \label{testing/workbook:workbook-testing}\label{testing/workbook::doc}
-There are many types of workbooks.  See {\hyperref[workbook:workbook]{\emph{Workbook Module -- Uniform Wrapper on All Workbooks}}} for details.
+There are many types of workbooks.  See {\hyperref[workbook/index:workbook]{\emph{Workbook Package -- Uniform Wrappers for Workbooks}}} for details.
 
 These tests use actual files in the \code{sample} directory.
 \begin{itemize}
@@ -12885,7 +13247,10 @@ These tests use actual files in the \code{sample} directory.
 \code{workbook.simple} used by {\hyperref[testing/workbook:fixed-workbook-tests]{Fixed\_Workbook Tests}}.  \code{simple.csv} is the schema.
 
 \item {} 
-\code{numbers\_workbook.numbers} used by {\hyperref[testing/workbook:numbers-workbook-tests]{Numbers\_Workbook Tests}}.
+\code{numbers\_workbook\_09.numbers} used by {\hyperref[testing/workbook:numbers09-workbook-tests]{Numbers09\_Workbook Tests}}.
+
+\item {} 
+\code{numbers\_workbook\_13.numbers} used by {\hyperref[testing/workbook:numbers13-workbook-tests]{Numbers13\_Workbook Tests}}.
 
 \end{itemize}
 
@@ -12897,6 +13262,7 @@ These tests use actual files in the \code{sample} directory.
 \PYG{k+kn}{import} \PYG{n+nn}{unittest}
 \PYG{k+kn}{import} \PYG{n+nn}{os}
 \PYG{k+kn}{import} \PYG{n+nn}{decimal}
+\PYG{k+kn}{import} \PYG{n+nn}{datetime}
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.schema}
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.schema.loader}
@@ -12906,11 +13272,11 @@ These tests use actual files in the \code{sample} directory.
 
 \subsubsection{CSV\_Workbook Tests}
 \label{testing/workbook:csv-workbook-tests}
-A {\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}}  produces a list of sheet names, is a factory
+A {\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}}  produces a list of sheet names, is a factory
 for individual \code{Sheet} instances and produces the rows of
-a named sheet.  Also, a {\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}} is a context.
+a named sheet.  Also, a {\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}} is a context.
 
-All subclasses of {\hyperref[workbook:workbook.Workbook]{\code{workbook.Workbook}}} must be polymorphic with this
+All subclasses of {\hyperref[workbook/base:workbook.Workbook]{\code{workbook.Workbook}}} must be polymorphic with this
 degenerate special cases.
 This means that the tests are nearly identical.
 
@@ -12950,7 +13316,7 @@ single sheet in the workbook.
         \PYG{n}{row} \PYG{o}{=} \PYG{n}{row\PYGZus{}list}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{42}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}int}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertAlmostEqual}\PYG{p}{(} \PYG{l+m+mf}{3.1415926}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}float}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
     \PYG{k}{def} \PYG{n+nf}{test\PYGZus{}should\PYGZus{}create\PYGZus{}context}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
         \PYG{k}{with} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{theClass}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{theFile} \PYG{p}{)} \PYG{k}{as} \PYG{n}{ctx}\PYG{p}{:}
             \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{n+nb}{set}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{theSheets}\PYG{p}{)}\PYG{p}{,} \PYG{n+nb}{set}\PYG{p}{(}\PYG{n}{ctx}\PYG{o}{.}\PYG{n}{sheets}\PYG{p}{(}\PYG{p}{)}\PYG{p}{)} \PYG{p}{)}
@@ -12977,7 +13343,7 @@ delimiters in the \code{csv} module.
 
 \subsubsection{Fixed\_Workbook Tests}
 \label{testing/workbook:fixed-workbook-tests}
-A {\hyperref[workbook:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}} is similar to a {\hyperref[workbook:workbook.CSV_Workbook]{\code{workbook.CSV\_Workbook}}}.
+A {\hyperref[workbook/fixed:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}} is similar to a {\hyperref[workbook/csv:workbook.CSV_Workbook]{\code{workbook.CSV\_Workbook}}}.
 It always has an external schema and the column contents
 might be different due to encoding or truncation issues.
 
@@ -13032,11 +13398,11 @@ An ODS workbook is the gold standard.
         \PYG{c}{\PYGZsh{} First row (after the heading)}
         \PYG{n}{row} \PYG{o}{=} \PYG{n}{row\PYGZus{}list}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}int}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{data}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{data}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{c}{\PYGZsh{} Headings}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{s}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{)} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Sheet 2 }\PYG{l+s+se}{\PYGZbs{}u2013}\PYG{l+s}{ int}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{s}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{Sheet 2 }\PYG{l+s+se}{\PYGZbs{}u2013}\PYG{l+s}{ string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{s}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Sheet 2 }\PYG{l+s+se}{\PYGZbs{}u2013}\PYG{l+s}{ int}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{s}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Sheet 2 }\PYG{l+s+se}{\PYGZbs{}u2013}\PYG{l+s}{ string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{s}\PYG{o}{.}\PYG{n}{schema}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{name} \PYG{p}{)}
 \end{Verbatim}
 
 
@@ -13068,12 +13434,10 @@ The physical format is remarkably different, but the content must appear identic
 \end{Verbatim}
 
 
-\subsubsection{Numbers\_Workbook Tests}
-\label{testing/workbook:numbers-workbook-tests}
-A Numbers workbook should be functionally similar to an ODS workbook.
-There are two different physical formats each remarkably different, but the content must appear as
-close to identical as practical. There's another layer of meaning here,
-however. Numbers has Worksapces (a/k/a ``Pages'') with Tables. The list of ``sheets'' is (workspace,table) pairs.
+\subsubsection{Numbers09\_Workbook Tests}
+\label{testing/workbook:numbers09-workbook-tests}
+A Numbers `09 workbook should be functionally similar to an ODS workbook.
+Numbers has Workspaces (a/k/a ``Pages'') with Tables. The list of ``sheets'' is (workspace,table) pairs.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{TestNumbers09Workbook}\PYG{p}{(} \PYG{n}{TestCSVWorkbook} \PYG{p}{)}\PYG{p}{:}
@@ -13107,22 +13471,21 @@ however. Numbers has Worksapces (a/k/a ``Pages'') with Tables. The list of ``she
         \PYG{n}{row} \PYG{o}{=} \PYG{n}{row\PYGZus{}list}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{42}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}int}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{c}{\PYGZsh{}print( repr(row[1]) )}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertAlmostEqual}\PYG{p}{(} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{3.1415926}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}decimal}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertAlmostEqual}\PYG{p}{(} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{3.1415926}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}decimal}\PYG{p}{(}\PYG{l+m+mi}{7}\PYG{p}{)} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertAlmostEqual}\PYG{p}{(} \PYG{l+m+mf}{3.1415926}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}float}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)} \PYG{c}{\PYGZsh{} ?}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{u\PYGZsq{}}\PYG{l+s}{string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{string}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{n}{datetime}\PYG{o}{.}\PYG{n}{datetime}\PYG{p}{(}\PYG{l+m+mi}{1956}\PYG{p}{,} \PYG{l+m+mi}{9}\PYG{p}{,} \PYG{l+m+mi}{10}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{)}\PYG{p}{,} \PYG{n}{row}\PYG{p}{[}\PYG{l+m+mi}{3}\PYG{p}{]}\PYG{o}{.}\PYG{n}{to\PYGZus{}datetime}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
 \end{Verbatim}
 
-Also, iWork `13 Numbers
 
-\begin{notice}{note}{Todo}
-
-Implement Numbers13\_Workbook
-
-iWork13 is not implemented at all. We have a technology spike that appears to work.
-\end{notice}
+\subsubsection{Numbers13\_Workbook Tests}
+\label{testing/workbook:numbers13-workbook-tests}
+A Numbers `13 workbook should be functionally similar to an Numbers `09 workbook.
+The format, however, is not XML-based. The content must appear as
+close to identical as practical.
+Numbers has Workspaces (a/k/a ``Pages'') with Tables. The list of ``sheets'' is (workspace,table) pairs.
 
 \begin{Verbatim}[commandchars=\\\{\}]
-\PYG{n+nd}{@unittest.skip}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Not even close to implemented}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
 \PYG{k}{class} \PYG{n+nc}{TestNumbers13Workbook}\PYG{p}{(} \PYG{n}{TestNumbers09Workbook} \PYG{p}{)}\PYG{p}{:}
     \PYG{n}{theClass} \PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{workbook}\PYG{o}{.}\PYG{n}{Numbers13\PYGZus{}Workbook}
     \PYG{n}{theFile} \PYG{o}{=} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{join}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{sample}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{numbers\PYGZus{}workbook\PYGZus{}13.numbers}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}
@@ -13133,7 +13496,7 @@ iWork13 is not implemented at all. We have a technology spike that appears to wo
 
 \subsubsection{Workbook Factory Function}
 \label{testing/workbook:workbook-factory-function}
-The {\hyperref[workbook:workbook.open_workbook]{\code{workbook.open\_workbook()}}} function should provide
+The {\hyperref[workbook/init:workbook.open_workbook]{\code{workbook.open\_workbook()}}} function should provide
 simple, uniform access to a workbook file.
 
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -13367,8 +13730,8 @@ The data access mediated by a DDE-as-schema is a bit more complex than the
 trivial (flat) data access mediated by the  schema representation
 from the {\hyperref[schema:module-schema]{\code{schema}}} package.
 
-Note that we don't test {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}} on {\hyperref[workbook:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}}.  It doesn't work properly because
-the {\hyperref[workbook:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}} doesn't know about the new
+Note that we don't test {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}} on {\hyperref[workbook/fixed:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}}.  It doesn't work properly because
+the {\hyperref[workbook/fixed:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}} doesn't know about the new
 {\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{cobol.RepeatingAttribute}}} that models repeating groups.
 
 The {\hyperref[cobol_init:cobol.Character_File]{\code{cobol.Character\_File}}}, however, can depend on {\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{cobol.RepeatingAttribute}}}.
@@ -13493,7 +13856,7 @@ the \code{open()}.
 \end{Verbatim}
 
 Do we need \code{TestCharacterFile\_Bytes} as a separate test case? Probably not. The
-{\hyperref[cobol_init:cobol.Character_File]{\code{cobol.Character\_File}}} is a {\hyperref[workbook:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}} which is
+{\hyperref[cobol_init:cobol.Character_File]{\code{cobol.Character\_File}}} is a {\hyperref[workbook/fixed:workbook.Fixed_Workbook]{\code{workbook.Fixed\_Workbook}}} which is
 text, not bytes.
 
 Given a schema and some data, pick apart the row of a fake EBCDIC File.
@@ -15901,11 +16264,11 @@ To enable logging.
 
 \section{Stingray Build}
 \label{build:build}\label{build:stingray-build}\label{build::doc}
-The source for \code{stingray} is a Sphinx project that depends on PyLit3.
+The source for \code{stingray} is a Sphinx project that depends on PyLit.
 Yes.  The documentation spawns the code.
 
 \begin{notice}{important}{Important:}
-PyLit3 Feature
+PyLit Feature
 
 The first line of each file should be \code{..    \#!/usr/bin/env python3}.
 
@@ -15915,32 +16278,27 @@ each line of code in the file.
 Four spaces.
 \end{notice}
 
-In addition to Python 3.3, there are two other projects required to build.
+Stingray depends on the following
 \begin{itemize}
 \item {} 
-PyLit3.  \href{https://github.com/slott56/PyLit-3}{https://github.com/slott56/PyLit-3}
+xlrd.  \href{http://www.lexicon.net/sjmachin/xlrd.htm}{http://www.lexicon.net/sjmachin/xlrd.htm}
+
+Version 0.9.2 is Python 3 compatible. \href{https://pypi.python.org/pypi/xlrd/0.9.2}{https://pypi.python.org/pypi/xlrd/0.9.2}
+
+\end{itemize}
+
+In addition to Python 3.3, there are two other projects used to build.
+\begin{itemize}
+\item {} 
+PyLit.  \href{https://github.com/slott56/PyLit-3}{https://github.com/slott56/PyLit-3}
 
 \item {} 
 Sphinx.  \href{http://sphinx.pocoo.org/}{http://sphinx.pocoo.org/}
 
 \end{itemize}
 
-The PyLit3 install is little more than a download and move the \code{pylit.py} file to
+The PyLit install is little more than a download and move the \code{pylit.py} file to
 the Python \code{site-packages} directory.
-
-On most Linux systems, you can wget and install PyLit3 in one step like this:
-
-\begin{Verbatim}[commandchars=\\\{\}]
-sudo wget https://raw.githubusercontent.com/slott56/PyLit\PYGZhy{}3/master/src/pylit.py \PYGZhy{}O /usr/lib/python3/dist\PYGZhy{}packages/pylit.py
-\end{Verbatim}
-
-You can clone PyLit3 with this:
-
-\begin{Verbatim}[commandchars=\\\{\}]
-https://github.com/slott56/PyLit\PYGZhy{}3.git
-\end{Verbatim}
-
-This allows you to use the \code{setup.py} to install PyLit3 in a system-independent manner.
 
 Sphinx and XLRD should be
 installed with \href{http://peak.telecommunity.com/DevCenter/EasyInstall}{easy\_install}.
@@ -15955,22 +16313,14 @@ On most systems, \code{sudo} is also required.
 
 The diagrams are done with YUML. See \href{http://yuml.me}{http://yuml.me}.
 
-Note that XLRD is always required, even if you're not building from scratch.
-\begin{quote}
-
-\href{http://www.lexicon.net/sjmachin/xlrd.htm}{http://www.lexicon.net/sjmachin/xlrd.htm}
-
-Version 0.9.2 is Python 3 compatible. \href{https://pypi.python.org/pypi/xlrd/0.9.2}{https://pypi.python.org/pypi/xlrd/0.9.2}
-\end{quote}
-
 
 \subsection{Build Procedure}
 \label{build:build-procedure}\begin{enumerate}
 \item {} 
-Bootstrap the \code{build.py} script by running PyLit3.
+Bootstrap the \code{build.py} script by running PyLit.
 
 \begin{Verbatim}[commandchars=\\\{\}]
-python3.3 \PYGZhy{}m pylit \PYGZhy{}t \PYG{n+nb}{source}/build.rst build.py
+python3 \PYGZhy{}m pylit \PYGZhy{}t \PYG{n+nb}{source}/build.rst build.py
 \end{Verbatim}
 
 This reports that an extract was written to \code{build.py}.
@@ -15982,7 +16332,7 @@ Build the Sphinx documentation.
 And run the unit test, too.
 
 \begin{Verbatim}[commandchars=\\\{\}]
-python3.3 build.py
+python3 build.py
 \end{Verbatim}
 
 At the end of this step, the directory tree will include the following.
@@ -16035,7 +16385,7 @@ We're going to make use of three ``applications''.
 Sphinx top-level application.
 
 \item {} 
-PyLit3 top-level application.
+PyLit top-level application.
 
 \item {} 
 Unittest top-level test runner.
@@ -16044,6 +16394,7 @@ Unittest top-level test runner.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Platform\PYGZhy{}independent build script\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{k+kn}{from} \PYG{n+nn}{\PYGZus{}\PYGZus{}future\PYGZus{}\PYGZus{}} \PYG{k+kn}{import} \PYG{n}{print\PYGZus{}function}
 \PYG{k+kn}{import} \PYG{n+nn}{os}
 \PYG{k+kn}{import} \PYG{n+nn}{sys}
 \PYG{k+kn}{import} \PYG{n+nn}{errno}
@@ -16051,6 +16402,7 @@ Unittest top-level test runner.
 \PYG{k+kn}{import} \PYG{n+nn}{pylit}
 \PYG{k+kn}{import} \PYG{n+nn}{unittest}
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
+\PYG{k+kn}{import} \PYG{n+nn}{shutil}
 \end{Verbatim}
 
 
@@ -16076,15 +16428,15 @@ This function handles the simple use case for the \code{sphinx-build} script.
 \end{Verbatim}
 
 
-\subsubsection{PyLit3 Build}
-\label{build:pylit3-build}\index{pylit\_build() (built-in function)}
+\subsubsection{PyLit Build}
+\label{build:pylit-build}\index{pylit\_build() (built-in function)}
 
 \begin{fulllineitems}
 \phantomsection\label{build:pylit_build}\pysiglinewithargsret{\bfcode{pylit\_build}}{\emph{srcdir}, \emph{outdir}}{}
 \end{fulllineitems}
 
 
-This function handles the simple use case for PyLit3.
+This function handles the simple use case for PyLit.
 
 This also handles the necessary rewrite to modify standard paths to Windows paths.
 
@@ -16130,6 +16482,23 @@ This also handles a rewrite to modify standard paths to Windows paths.
 \end{Verbatim}
 
 
+\subsubsection{Copy Data File}
+\label{build:copy-data-file}\index{copy\_file() (built-in function)}
+
+\begin{fulllineitems}
+\phantomsection\label{build:copy_file}\pysiglinewithargsret{\bfcode{copy\_file}}{\emph{srcdir}, \emph{outdir}}{}
+\end{fulllineitems}
+
+
+This function handles the simple use case for copying a file
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{copy\PYGZus{}file}\PYG{p}{(} \PYG{n}{srcdir}\PYG{p}{,} \PYG{n}{outdir} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Essentially: {}`{}`cp srcdir outdir{}`{}`\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{shutil}\PYG{o}{.}\PYG{n}{copy2}\PYG{p}{(} \PYG{n}{srcdir}\PYG{p}{,} \PYG{n}{outdir} \PYG{p}{)}
+\end{Verbatim}
+
+
 \subsubsection{Run the Test Script}
 \label{build:run-the-test-script}\index{run\_test() (built-in function)}
 
@@ -16138,7 +16507,7 @@ This also handles a rewrite to modify standard paths to Windows paths.
 \end{fulllineitems}
 
 
-In effect, this does \code{python2.7 test/main.py}
+In effect, this does \code{python3 test/main.py}
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{run\PYGZus{}test}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}
@@ -16155,17 +16524,31 @@ In effect, this does \code{python2.7 test/main.py}
 \PYG{k}{def} \PYG{n+nf}{build}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}
     \PYG{n}{mkdir}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/schema}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
     \PYG{n}{mkdir}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/cobol}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{mkdir}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/workbook}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
 
     \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/stingray\PYGZus{}init.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
     \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/cell.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/cell.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
     \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/sheet.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/sheet.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
-    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/workbook.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/workbook.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/workbook/init.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/workbook/\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/workbook/base.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/workbook/base.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/workbook/csv.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/workbook/csv.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/workbook/xls.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/workbook/xls.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/workbook/xlsx.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/workbook/xlsx.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/workbook/ods.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/workbook/ods.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/workbook/numbers\PYGZus{}09.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/workbook/numbers\PYGZus{}09.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/workbook/numbers\PYGZus{}13.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/workbook/numbers\PYGZus{}13.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/workbook/fixed.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/workbook/fixed.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
     \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/schema.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/schema/\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
     \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/schema\PYGZus{}loader.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/schema/loader.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
-    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/cobol.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/cobol/\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/cobol\PYGZus{}init.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/cobol/\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
     \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/cobol\PYGZus{}loader.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/cobol/loader.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
     \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/cobol\PYGZus{}defs.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/cobol/defs.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/snappy.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/snappy.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/protobuf.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/protobuf.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
     \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/installation.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{setup.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+
+    \PYG{n}{copy\PYGZus{}file}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/Numbers.json}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/Numbers.json}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{copy\PYGZus{}file}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/Common.json}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{stingray/Common.json}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
 
     \PYG{n}{mkdir}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{test}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
 
@@ -16179,6 +16562,7 @@ In effect, this does \code{python2.7 test/main.py}
     \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/testing/cobol.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{test/cobol.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
     \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/testing/cobol\PYGZus{}loader.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{test/cobol\PYGZus{}loader.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
     \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/testing/cobol\PYGZus{}2.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{test/cobol\PYGZus{}2.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
+    \PYG{n}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{source/testing/snappy\PYGZus{}protobuf.rst}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{test/snappy\PYGZus{}protobuf.py}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
 
     \PYG{n}{mkdir}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{demo}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}
 
@@ -16224,7 +16608,19 @@ sphinx\PYGZhy{}build \PYG{n+nv}{\PYGZdl{}*} \PYGZhy{}b latex \PYG{n+nb}{source }
 
 
 \section{Installation via \texttt{setup.py}}
-\label{installation:installation}\label{installation:installation-via-setup-py}\label{installation::doc}
+\label{installation:installation-via-setup-py}\label{installation:installation}\label{installation::doc}
+Use the following link to get the latest code:
+\begin{quote}
+
+\code{git clone git://git.code.sf.net/p/stingrayreader/code stingrayreader-code}
+\end{quote}
+
+It's also possible to get an archive distribution kit. These may be
+slightly out of date.
+
+
+\subsection{Optional Build-from-Scratch}
+\label{installation:optional-build-from-scratch}
 The Stingray distribution kit (minimally) is just the following.
 \begin{itemize}
 \item {} 
@@ -16242,9 +16638,6 @@ to create code and documentation.
 Given these two directories, the build procedure uses PyLit3 to create \code{stingray} package.
 It uses Sphinx to create the documentation.
 
-
-\subsection{Optional Build-from-Scratch}
-\label{installation:optional-build-from-scratch}
 See {\hyperref[build:build]{\emph{Stingray Build}}} for more information on the build procedure.
 This is an optional step to recreate the Python code from the documentation.
 
@@ -16261,10 +16654,6 @@ Sphinx.  \href{http://sphinx.pocoo.org/}{http://sphinx.pocoo.org/}
 Setuptools.  \href{http://pypi.python.org/pypi/setuptools}{http://pypi.python.org/pypi/setuptools}
 
 \end{itemize}
-
-A fresh SVN checkout may have dates and times in an order that baffles PyLit3.
-It's sensible to simply delete the \code{stingray}, \code{demo} and \code{test}
-directories to do a complete rebuild.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 python3 build.py
@@ -16322,6 +16711,7 @@ setup(
         \PYGZsq{}stingray\PYGZsq{},
         \PYGZsq{}stingray.schema\PYGZsq{},
         \PYGZsq{}stingray.cobol\PYGZsq{},
+        \PYGZsq{}stingray.workbook\PYGZsq{},
         ],
     package\PYGZus{}data=\PYGZob{}\PYGZsq{}stingray\PYGZsq{}: [\PYGZsq{}*.json\PYGZsq{}]\PYGZcb{},
 \end{Verbatim}
@@ -16366,13 +16756,6 @@ classifiers=[
 \label{index:the-todo-list}
 \begin{notice}{note}{Todo}
 
-Test hashable interface of Cell
-\end{notice}
-
-(The {\hyperref[cell:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cell.rst, line 214.)
-
-\begin{notice}{note}{Todo}
-
 refactor setSizeAndOffset()
 
 Refactor setSizeAndOffset() into the {\hyperref[index:cobol.defs.Allocation]{\code{Allocation}}} class methods
@@ -16414,12 +16797,10 @@ Test EXTERNAL, GLOBAL as Skipped Words, too.
 
 \begin{notice}{note}{Todo}
 
-Implement Numbers13\_Workbook
-
-iWork13 is not implemented at all. We have a technology spike that appears to work.
+Refactor this, it feels clunky.
 \end{notice}
 
-(The {\hyperref[testing/workbook:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/testing/workbook.rst, line 246.)
+(The {\hyperref[workbook/ods:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/ods.rst, line 120.)
 
 \begin{notice}{note}{Todo}
 
@@ -16429,7 +16810,8 @@ This module needs to be rebuilt into a package which
 imports a number of subsidiary modules. It's too large
 as written.
 
-Adding Numbers `13 will make it even more monstrous.
+Adding Numbers `13 will make this module even more monstrous.
+Adding future spreadsheets will on exacerbate the problem.
 
 It should become (like {\hyperref[cobol_init:module-cobol]{\code{cobol}}}) a high-level package
 that imports top-level classes from modules within the package.
@@ -16445,27 +16827,27 @@ that imports top-level classes from modules within the package.
 This should make a transparent change from module to package.
 
 The top-level definition for \code{cobol.Workbook} must
-to be refactored into a ``defs'' module that can be shared by
-all the modules in the package.
+to be refactored into a \code{base} module that can be shared by
+all the modules in the package that extend this base definition.
 \end{notice}
 
-(The {\hyperref[workbook:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook.rst, line 153.)
+(The {\hyperref[workbook/init:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/init.rst, line 170.)
 
 \begin{notice}{note}{Todo}
 
-Refactor this, it feels clunky.
+Test hashable interface of Cell
 \end{notice}
 
-(The {\hyperref[workbook:index-1]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook.rst, line 940.)
+(The {\hyperref[cell:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cell.rst, line 214.)
 
 \begin{notice}{note}{Todo}
 
-Implement Numbers13\_Workbook
+Additional Numbers13\_Workbook Feature
 
-Use snappy and protobuf to read the IWA members of the archive.
+Translate Formula and Formula error to Text
 \end{notice}
 
-(The {\hyperref[workbook:index-2]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook.rst, line 1363.)
+(The {\hyperref[workbook/numbers_13:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/numbers\_13.rst, line 27.)
 
 
 \chapter{Indices and Tables}
@@ -16504,7 +16886,7 @@ Use snappy and protobuf to read the IWA members of the archive.
 \item {\texttt{snappy}}, \pageref{snappy:module-snappy}
 \indexspace
 \bigletter{w}
-\item {\texttt{workbook}}, \pageref{workbook:module-workbook}
+\item {\texttt{workbook}}, \pageref{workbook/numbers_13:module-workbook}
 \end{theindex}
 
 \renewcommand{\indexname}{Index}

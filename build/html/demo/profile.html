@@ -121,15 +121,15 @@ use the data.</p>
     <span class="n">counts</span><span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span> <span class="nb">int</span> <span class="p">)</span>
     <span class="k">for</span> <span class="n">source_row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">rows_as_dict_iter</span><span class="p">(</span><span class="n">sheet</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">counts</span><span class="p">[</span><span class="s">u&#39;read&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s">&#39;read&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">source_row</span><span class="p">:</span>
                 <span class="n">persistence</span><span class="o">.</span><span class="n">count</span><span class="p">(</span> <span class="n">attr</span><span class="p">,</span> <span class="n">source_row</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">counts</span><span class="p">[</span><span class="s">u&#39;invalid&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s">&#39;invalid&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">persistence</span><span class="o">.</span><span class="n">stop_on_exception</span><span class="p">:</span> <span class="k">raise</span>
             <span class="n">summary</span><span class="o">=</span> <span class="s">&quot;{0} &#39;{1}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">e</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span> <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span> <span class="n">summary</span> <span class="p">)</span>
-            <span class="n">counts</span><span class="p">[</span><span class="s">u&#39;error &#39;</span><span class="o">+</span><span class="n">summary</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s">&#39;error &#39;</span><span class="o">+</span><span class="n">summary</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="n">title</span><span class="o">=</span> <span class="s">&quot;{0} :: {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">sheet</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">sheet</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
     <span class="k">print</span><span class="p">(</span> <span class="n">title</span> <span class="p">)</span>
@@ -206,7 +206,7 @@ or run it as a command-line application.  To run from the command line, we have 
 <li>Parameter Parsing.  This includes interpreting options.</li>
 <li>Argument Processing.  This means looping over the positional arguments.</li>
 <li>Opening Workbooks.  Some applications can&#8217;t use the default
-<a class="reference internal" href="../workbook.html#workbook.Opener" title="workbook.Opener"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Opener</span></tt></a>.  A subclass of Opener, or more complex logic,
+<a class="reference internal" href="../workbook/init.html#workbook.Opener" title="workbook.Opener"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Opener</span></tt></a>.  A subclass of Opener, or more complex logic,
 may be required.</li>
 <li>Gracefully catching and logging exceptions.</li>
 <li>Exit Status to the OS.</li>

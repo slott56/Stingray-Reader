@@ -42,8 +42,9 @@ import warnings
 import pprint
 
 import stingray.schema
-import stingray.workbook
 import stingray.sheet
+from stingray.workbook.fixed import Fixed_Workbook
+
 
 from stingray.cobol.defs import TextCell
 
@@ -410,7 +411,7 @@ def dump( schema, aRow ):
 #
 # ::
 
-class COBOL_File( stingray.workbook.Fixed_Workbook ):
+class COBOL_File( Fixed_Workbook ):
     """A COBOL "workbook" file which uses :py:class:`RepeatingAttribute` and
     creates COBOL Cell values.  This is an abstraction which
     lacks specific decoding methods.

@@ -30,13 +30,13 @@ The **Capture** use case is defined by our physical formats.
     :header: "Type symbol","Type number","Python value"
     :widths: 33, 5, 55
 
-    XL_CELL_EMPTY,0,"empty string u''"
+    XL_CELL_EMPTY,0,"empty string ''"
     XL_CELL_TEXT,1,"a Unicode string"
     XL_CELL_NUMBER,2,"float"
     XL_CELL_DATE,3,"float"
     XL_CELL_BOOLEAN,4,"int; 1 means TRUE, 0 means FALSE"
     XL_CELL_ERROR,5,"int representing internal Excel codes; for a text representation, refer to the supplied dictionary error_text_from_code"
-    XL_CELL_BLANK,6,"empty string u''. Note: this type will appear only when open_workbook(..., formatting_info=True) is used."
+    XL_CELL_BLANK,6,"empty string ''. Note: this type will appear only when open_workbook(..., formatting_info=True) is used."
 
 An XLSX (per ECMA 376, section 18.18.11) or ODS provides a similar list of cell types.  The data is always encoded as a proper string that can be converted (if necessary) based on the type code.
 
@@ -223,7 +223,7 @@ An ``EmptyCell`` implements empty cells.  :py:mod:`xlrd` may report them as a ty
 ::
 
     class EmptyCell( Cell ):
-        """The *value* will be u'', but we ignore that."""
+        """The *value* will be '', but we ignore that."""
         def is_empty( self ): return True
         def to_int( self ): return None
         def to_float( self ): return None

@@ -60,10 +60,12 @@ Change Details:
     data which can't be converted. An ErrorCell is created in the (all too common)
     case where the COBOL data is invalid.
 
--   Support iWork '09 Numbers Workbook files.
+-   Support iWork '09 and iWork '13 Numbers Workbook files.
+    This lead to a profound refactoring of the :py:mod:`stingray.workbook` module
+    into a package.
 
 -   Remove ``%`` string formatting and ``from __future__``. Correct class
-    references. 
+    references. Replace ``u''`` Unicode string literals with simple string literals.
     https://sourceforge.net/p/stingrayreader/tickets/6/
     
 -   Updated documentation. 
@@ -79,7 +81,7 @@ Change Details:
 -   Added RECFM=N to handle variable-length files with NO BDW/RDW words.
     This is the default. 
     https://sourceforge.net/p/stingrayreader/tickets/12/
-
+    
 Version 3
 ==============
 

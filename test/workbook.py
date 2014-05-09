@@ -12,7 +12,8 @@
 # - :file:`ooo_workbook.ods` used by `ODS_Workbook Tests`_.
 # - :file:`tab_workbook.tab` used by `CSV_Workbook with Tab delimiters`_.
 # - :file:`workbook.simple` used by `Fixed_Workbook Tests`_.  :file:`simple.csv` is the schema.
-# - :file:`numbers_workbook.numbers` used by `Numbers_Workbook Tests`_.
+# - :file:`numbers_workbook_09.numbers` used by `Numbers09_Workbook Tests`_.
+# - :file:`numbers_workbook_13.numbers` used by `Numbers13_Workbook Tests`_.
 #
 # Overheads
 # =============
@@ -23,6 +24,7 @@
 import unittest
 import os
 import decimal
+import datetime
 import stingray.sheet
 import stingray.schema
 import stingray.schema.loader
@@ -77,7 +79,7 @@ class TestCSVWorkbook( unittest.TestCase ):
         row = row_list[1]
         self.assertEqual( 42, row[0].to_int() )
         self.assertAlmostEqual( 3.1415926, row[1].to_float() )
-        self.assertEqual( u'string', row[2].to_str() )
+        self.assertEqual( 'string', row[2].to_str() )
     def test_should_create_context( self ):
         with self.theClass( self.theFile ) as ctx:
             self.assertEqual( set(self.theSheets), set(ctx.sheets()) )
@@ -160,11 +162,11 @@ class TestODSWorkbook( TestCSVWorkbook ):
         # First row (after the heading)
         row = row_list[0]
         self.assertEqual( 1, row[0].to_int() )
-        self.assertEqual( u'data', row[1].to_str() )
+        self.assertEqual( 'data', row[1].to_str() )
         # Headings
         self.assertEqual( 2, len(s.schema) )
-        self.assertEqual( u'Sheet 2 \u2013 int', s.schema[0].name )
-        self.assertEqual( u'Sheet 2 \u2013 string', s.schema[1].name )
+        self.assertEqual( 'Sheet 2 \u2013 int', s.schema[0].name )
+        self.assertEqual( 'Sheet 2 \u2013 string', s.schema[1].name )
         
 # XLS_Workbook Tests
 # =====================
@@ -196,13 +198,11 @@ class TestXLSXWorkbook( TestODSWorkbook ):
     theSheets = ['Sheet1','Sheet2','Sheet3']
 
 
-# Numbers_Workbook Tests
-# =======================
+# Numbers09_Workbook Tests
+# =========================
 #
-# A Numbers workbook should be functionally similar to an ODS workbook.
-# There are two different physical formats each remarkably different, but the content must appear as 
-# close to identical as practical. There's another layer of meaning here,
-# however. Numbers has Worksapces (a/k/a "Pages") with Tables. The list of "sheets" is (workspace,table) pairs.
+# A Numbers '09 workbook should be functionally similar to an ODS workbook.
+# Numbers has Workspaces (a/k/a "Pages") with Tables. The list of "sheets" is (workspace,table) pairs.
 #
 # ::
 
@@ -237,19 +237,21 @@ class TestNumbers09Workbook( TestCSVWorkbook ):
         row = row_list[1]
         self.assertEqual( 42, row[0].to_int() )
         #print( repr(row[1]) )
-        self.assertAlmostEqual( decimal.Decimal('3.1415926'), row[1].to_decimal() )
+        self.assertAlmostEqual( decimal.Decimal('3.1415926'), row[1].to_decimal(7) )
         self.assertAlmostEqual( 3.1415926, row[1].to_float() ) # ?
-        self.assertEqual( u'string', row[2].to_str() )
+        self.assertEqual( 'string', row[2].to_str() )
+        self.assertEqual( datetime.datetime(1956, 9, 10, 0, 0), row[3].to_datetime() )
 
-# Also, iWork '13 Numbers
+# Numbers13_Workbook Tests
+# =========================
 #
-# ..  todo:: Implement Numbers13_Workbook 
-#
-#     iWork13 is not implemented at all. We have a technology spike that appears to work.
+# A Numbers '13 workbook should be functionally similar to an Numbers '09 workbook.
+# The format, however, is not XML-based. The content must appear as 
+# close to identical as practical. 
+# Numbers has Workspaces (a/k/a "Pages") with Tables. The list of "sheets" is (workspace,table) pairs.
 #
 # ::
 
-@unittest.skip("Not even close to implemented")
 class TestNumbers13Workbook( TestNumbers09Workbook ):
     theClass = stingray.workbook.Numbers13_Workbook
     theFile = os.path.join('sample', 'numbers_workbook_13.numbers')

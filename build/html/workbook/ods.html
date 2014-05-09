@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>8.6. ODS Workbook &mdash; The Stingray Schema-Based File Reader</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '4.4.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
+    <link rel="up" title="8. Workbook Package – Uniform Wrappers for Workbooks" href="index.html" />
+    <link rel="next" title="9. The iWork ‘13 Numbers Modules" href="../iwork13.html" />
+    <link rel="prev" title="8.5. XLSX or XLSM Workbook" href="xlsx.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../iwork13.html" title="9. The iWork ‘13 Numbers Modules"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="xlsx.html" title="8.5. XLSX or XLSM Workbook"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="ods-workbook">
+<span id="workbook-ods"></span><h1>8.6. ODS Workbook<a class="headerlink" href="#ods-workbook" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="kn">import</span> <span class="nn">xml.etree.cElementTree</span> <span class="kn">as</span> <span class="nn">dom</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">from</span> <span class="nn">stingray.workbook.base</span> <span class="kn">import</span> <span class="n">Workbook</span>
+<span class="kn">import</span> <span class="nn">stingray.sheet</span>
+<span class="kn">import</span> <span class="nn">stingray.cell</span>
+</pre></div>
+</div>
+<span class="target" id="module-workbook"></span><dl class="class">
+<dt id="workbook.ODS_Workbook">
+<em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">ODS_Workbook</tt><a class="headerlink" href="#workbook.ODS_Workbook" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>We should use <tt class="docutils literal"><span class="pre">iterparse</span></tt> rather than simply parsing the entire document.
+If the document is large, then we can&#8217;t hold it all in memory.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ODS_Workbook</span><span class="p">(</span> <span class="n">Workbook</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Standard OOO ODS document.</span>
+<span class="sd">    Locate sheets and rows within a given sheet.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ODS_NS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&quot;office&quot;</span><span class="p">:</span><span class="s">&quot;urn:oasis:names:tc:opendocument:xmlns:office:1.0&quot;</span><span class="p">,</span>
+    <span class="s">&quot;table&quot;</span><span class="p">:</span><span class="s">&quot;urn:oasis:names:tc:opendocument:xmlns:table:1.0&quot;</span><span class="p">,</span>
+    <span class="s">&quot;text&quot;</span><span class="p">:</span><span class="s">&quot;urn:oasis:names:tc:opendocument:xmlns:text:1.0&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">date_format</span> <span class="o">=</span> <span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s">&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">file_object</span><span class="o">=</span><span class="bp">None</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prepare the workbook for reading.</span>
+<span class="sd">        :param name: File name</span>
+<span class="sd">        :param file_object: Optional file-like object.  If omitted, the named file is opened.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span> <span class="n">name</span><span class="p">,</span> <span class="n">file_object</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zip_archive</span><span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span> <span class="n">file_object</span> <span class="ow">or</span> <span class="n">name</span><span class="p">,</span> <span class="s">&quot;r&quot;</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prepare</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>As preparation for reading these files, we locate all the sheet names.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">_prepare</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_locate_sheets</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Locating all the sheets is a matter of doing an XPath search for
+<tt class="samp docutils literal"><span class="pre">body/spreadsheet/table</span></tt> and getting the <em>name</em> attribute
+from the  <tt class="samp docutils literal"><span class="pre">&lt;table</span> <span class="pre">name=&quot;</span><em><span class="pre">name</span></em><span class="pre">&quot;&gt;</span></tt> tags.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">_locate_sheets</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create ``tables`` map from name to table.&quot;&quot;&quot;</span>
+    <span class="n">workbook_zip</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zip_archive</span><span class="o">.</span><span class="n">getinfo</span><span class="p">(</span><span class="s">&quot;content.xml&quot;</span><span class="p">)</span>
+    <span class="n">workbook_doc</span><span class="o">=</span> <span class="n">dom</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">zip_archive</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">workbook_zip</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">name_attr_id</span><span class="o">=</span> <span class="n">dom</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">ODS_NS</span><span class="p">[</span><span class="s">&quot;table&quot;</span><span class="p">],</span> <span class="s">&quot;name&quot;</span> <span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="n">dom</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span> <span class="n">workbook_doc</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="n">name_attr_id</span><span class="p">],</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">workbook_doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;office:body/office:spreadsheet/table:table&quot;</span><span class="p">,</span>
+            <span class="n">namespaces</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ODS_NS</span><span class="p">)</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>An <tt class="docutils literal"><span class="pre">iterparse</span></tt> version to locate sheets
+would look for start of <tt class="docutils literal"><span class="pre">table</span></tt> tags and then get
+the name attribute from that tag.</p>
+<dl class="method">
+<dt id="workbook.ODS_Workbook.sheets">
+<tt class="descclassname">ODS_Workbook.</tt><tt class="descname">sheets</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.ODS_Workbook.sheets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">sheets</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We can build an eager <a class="reference internal" href="../sheet.html#sheet.Row" title="sheet.Row"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Row</span></tt></a> or a <a class="reference internal" href="../sheet.html#sheet.LazyRow" title="sheet.LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">sheet.LazyRow</span></tt></a> from
+the available data.  The eager Row includes the conversions.
+The LazyRow defers the conversions to <a class="reference internal" href="#workbook.ODS_Workbook.row_get" title="workbook.ODS_Workbook.row_get"><tt class="xref py py-meth docutils literal"><span class="pre">ODS_Workbook.row_get()</span></tt></a>.</p>
+<p>In ODS documents, the cell&#8217;s value can be carried in the value attribute or
+it can be a mixed content value of the element.  There are three cases.</p>
+<ul class="simple">
+<li><tt class="samp docutils literal"><span class="pre">&lt;table-cell</span> <span class="pre">value-type=&quot;</span><em><span class="pre">type</span></em><span class="pre">&quot;</span> <span class="pre">value=&quot;</span><em><span class="pre">value</span></em><span class="pre">&quot;&gt;...&lt;/table-cell&gt;</span></tt></li>
+<li><tt class="samp docutils literal"><span class="pre">&lt;table-cell</span> <span class="pre">value-type=&quot;</span><em><span class="pre">type</span></em><span class="pre">&quot;</span> <span class="pre">date-value=&quot;</span><em><span class="pre">value</span></em><span class="pre">&quot;&gt;...&lt;/table-cell&gt;</span></tt></li>
+<li><tt class="samp docutils literal"><span class="pre">&lt;table-cell</span> <span class="pre">value-type=&quot;</span><em><span class="pre">type</span></em><span class="pre">&quot;&gt;</span><em><span class="pre">value</span></em><span class="pre">&lt;/table-cell&gt;</span></tt></li>
+</ul>
+<dl class="method">
+<dt id="workbook.ODS_Workbook.rows_of">
+<tt class="descclassname">ODS_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.ODS_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">rows_of</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Iterator over rows as a list of Cells for a named worksheet.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">row_doc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="p">[</span><span class="n">sheet</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span> <span class="s">&quot;table:table-row&quot;</span><span class="p">,</span> <span class="n">namespaces</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ODS_NS</span> <span class="p">)</span> <span class="p">):</span>
+        <span class="n">row</span><span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">cell_doc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span> <span class="n">row_doc</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span> <span class="s">&quot;table:table-cell&quot;</span><span class="p">,</span> <span class="n">namespaces</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ODS_NS</span> <span class="p">)</span> <span class="p">):</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">cell_doc</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">yield</span> <span class="n">row</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="workbook.ODS_Workbook.row_get">
+<tt class="descclassname">ODS_Workbook.</tt><tt class="descname">row_get</tt><big>(</big><em>row</em>, <em>attribute</em><big>)</big><a class="headerlink" href="#workbook.ODS_Workbook.row_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">row_get</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">attribute</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a Cell from the row&#39;s data.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="n">attribute</span><span class="o">.</span><span class="n">position</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Build a subclass of <a class="reference internal" href="../cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> from the current type name and value.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Refactor this, it feels clunky.</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cell</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">cell_doc</span> <span class="p">):</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="n">dom</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">cell_doc</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">value_attr_id</span><span class="o">=</span> <span class="n">dom</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">ODS_NS</span><span class="p">[</span><span class="s">&#39;office&#39;</span><span class="p">],</span> <span class="s">&#39;value&#39;</span> <span class="p">)</span>
+    <span class="n">date_attr_id</span><span class="o">=</span> <span class="n">dom</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">ODS_NS</span><span class="p">[</span><span class="s">&#39;office&#39;</span><span class="p">],</span> <span class="s">&#39;date-value&#39;</span> <span class="p">)</span>
+    <span class="n">type_attr_id</span><span class="o">=</span> <span class="n">dom</span><span class="o">.</span><span class="n">QName</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">ODS_NS</span><span class="p">[</span><span class="s">&#39;office&#39;</span><span class="p">],</span> <span class="s">&#39;value-type&#39;</span> <span class="p">)</span>
+    <span class="c"># Get the type</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">type_name</span><span class="o">=</span> <span class="n">cell_doc</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="n">type_attr_id</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">EmptyCell</span><span class="p">(</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="bp">self</span> <span class="p">)</span>
+    <span class="n">value</span><span class="o">=</span> <span class="bp">None</span>
+    <span class="c"># Date value as attribute?</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span><span class="o">=</span> <span class="n">cell_doc</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="n">date_attr_id</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="c"># Other value as attribute?</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span><span class="o">=</span> <span class="n">cell_doc</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="n">value_attr_id</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="c"># No value attributes, get *all* the text content.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+        <span class="n">value</span><span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cell_doc</span><span class="o">.</span><span class="n">itertext</span><span class="p">()</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+        <span class="c"># TODO: Proper warning.</span>
+        <span class="n">dom</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span> <span class="n">cell_doc</span> <span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="n">type_name</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s">&quot;string&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span> <span class="n">value</span><span class="p">,</span> <span class="bp">self</span> <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s">&quot;float&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="bp">self</span> <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s">&quot;date&quot;</span><span class="p">:</span>
+        <span class="n">theDate</span><span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+            <span class="n">value</span><span class="p">,</span> <span class="n">ODS_Workbook</span><span class="o">.</span><span class="n">date_format</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">FloatDateCell</span><span class="p">(</span> <span class="n">theDate</span><span class="p">,</span> <span class="bp">self</span> <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s">&quot;boolean&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">BooleanCell</span><span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">==</span><span class="s">&#39;TRUE&#39;</span><span class="p">),</span>  <span class="bp">self</span> <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s">&quot;empty&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">EmptyCell</span><span class="p">(</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="bp">self</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span> <span class="s">&quot;Unknown cell {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">dom</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">cell_doc</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>An <tt class="docutils literal"><span class="pre">iterparse</span></tt> version of building a row
+would look for start of <tt class="docutils literal"><span class="pre">table</span></tt> tags and then get
+the name attribute from that tag just to locate the right sheet.</p>
+<p>Once the sheet was located, then the row and cell tags would be used</p>
+<ul class="simple">
+<li>At <tt class="samp docutils literal"><span class="pre">&lt;table-row</span></tt> start: increment row number, reset buffer</li>
+<li>At <tt class="samp docutils literal"><span class="pre">&lt;table-row</span></tt> end: yield the row</li>
+<li>At <tt class="samp docutils literal"><span class="pre">&lt;table-cell</span></tt> start: check for empty, date, float, boolean types,
+which are available as an attribute at start.
+For strings, start accumulating string values.</li>
+<li>At <tt class="samp docutils literal"><span class="pre">&lt;table-cell</span></tt> end: finalize the accumulated value.</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="xlsx.html"
+                        title="previous chapter">8.5. XLSX or XLSM Workbook</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../iwork13.html"
+                        title="next chapter">9. The iWork &#8216;13 Numbers Modules</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/workbook/ods.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../iwork13.html" title="9. The iWork ‘13 Numbers Modules"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="xlsx.html" title="8.5. XLSX or XLSM Workbook"
+             >previous</a> |</li>
+        <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
+          <li><a href="index.html" >8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, S. Lott.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

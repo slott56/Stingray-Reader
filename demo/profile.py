@@ -89,15 +89,15 @@ def process_sheet( sheet, persistence ):
     counts= defaultdict( int )
     for source_row in sheet.schema.rows_as_dict_iter(sheet):
         try:
-            counts[u'read'] += 1
+            counts['read'] += 1
             for attr in source_row:
                 persistence.count( attr, source_row[attr] )
         except Exception as e:
-            counts[u'invalid'] += 1
+            counts['invalid'] += 1
             if persistence.stop_on_exception: raise
             summary= "{0} '{1}'".format( e.__class__.__name__, e.message )
             logger.error( summary )
-            counts[u'error '+summary] += 1
+            counts['error '+summary] += 1
             
     title= "{0} :: {1}".format( sheet.workbook.name, sheet.name )
     print( title )

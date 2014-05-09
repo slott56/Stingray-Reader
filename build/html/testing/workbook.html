@@ -56,7 +56,7 @@
             
   <div class="section" id="workbook-testing">
 <h1>14.6. Workbook Testing<a class="headerlink" href="#workbook-testing" title="Permalink to this headline">¶</a></h1>
-<p>There are many types of workbooks.  See <a class="reference internal" href="../workbook.html#workbook"><em>Workbook Module &#8211; Uniform Wrapper on All Workbooks</em></a> for details.</p>
+<p>There are many types of workbooks.  See <a class="reference internal" href="../workbook/index.html#workbook"><em>Workbook Package &#8211; Uniform Wrappers for Workbooks</em></a> for details.</p>
 <p>These tests use actual files in the <tt class="file docutils literal"><span class="pre">sample</span></tt> directory.</p>
 <ul class="simple">
 <li><tt class="file docutils literal"><span class="pre">csv_workbook.csv</span></tt> used by <a class="reference internal" href="#csv-workbook-tests">CSV_Workbook Tests</a>.</li>
@@ -65,7 +65,8 @@
 <li><tt class="file docutils literal"><span class="pre">ooo_workbook.ods</span></tt> used by <a class="reference internal" href="#ods-workbook-tests">ODS_Workbook Tests</a>.</li>
 <li><tt class="file docutils literal"><span class="pre">tab_workbook.tab</span></tt> used by <a class="reference internal" href="#csv-workbook-with-tab-delimiters">CSV_Workbook with Tab delimiters</a>.</li>
 <li><tt class="file docutils literal"><span class="pre">workbook.simple</span></tt> used by <a class="reference internal" href="#fixed-workbook-tests">Fixed_Workbook Tests</a>.  <tt class="file docutils literal"><span class="pre">simple.csv</span></tt> is the schema.</li>
-<li><tt class="file docutils literal"><span class="pre">numbers_workbook.numbers</span></tt> used by <a class="reference internal" href="#numbers-workbook-tests">Numbers_Workbook Tests</a>.</li>
+<li><tt class="file docutils literal"><span class="pre">numbers_workbook_09.numbers</span></tt> used by <a class="reference internal" href="#numbers09-workbook-tests">Numbers09_Workbook Tests</a>.</li>
+<li><tt class="file docutils literal"><span class="pre">numbers_workbook_13.numbers</span></tt> used by <a class="reference internal" href="#numbers13-workbook-tests">Numbers13_Workbook Tests</a>.</li>
 </ul>
 <div class="section" id="overheads">
 <h2>14.6.1. Overheads<a class="headerlink" href="#overheads" title="Permalink to this headline">¶</a></h2>
@@ -73,6 +74,7 @@
 <span class="kn">import</span> <span class="nn">unittest</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">decimal</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">stingray.sheet</span>
 <span class="kn">import</span> <span class="nn">stingray.schema</span>
 <span class="kn">import</span> <span class="nn">stingray.schema.loader</span>
@@ -82,10 +84,10 @@
 </div>
 <div class="section" id="csv-workbook-tests">
 <h2>14.6.2. CSV_Workbook Tests<a class="headerlink" href="#csv-workbook-tests" title="Permalink to this headline">¶</a></h2>
-<p>A <a class="reference internal" href="../workbook.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a>  produces a list of sheet names, is a factory
+<p>A <a class="reference internal" href="../workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a>  produces a list of sheet names, is a factory
 for individual <tt class="docutils literal"><span class="pre">Sheet</span></tt> instances and produces the rows of
-a named sheet.  Also, a <a class="reference internal" href="../workbook.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a> is a context.</p>
-<p>All subclasses of <a class="reference internal" href="../workbook.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a> must be polymorphic with this
+a named sheet.  Also, a <a class="reference internal" href="../workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a> is a context.</p>
+<p>All subclasses of <a class="reference internal" href="../workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a> must be polymorphic with this
 degenerate special cases.
 This means that the tests are nearly identical.</p>
 <p>The most important distinction among the various physical formats
@@ -122,7 +124,7 @@ single sheet in the workbook.</p>
         <span class="n">row</span> <span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">42</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span> <span class="mf">3.1415926</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_float</span><span class="p">()</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">u&#39;string&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;string&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
     <span class="k">def</span> <span class="nf">test_should_create_context</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">theClass</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">theFile</span> <span class="p">)</span> <span class="k">as</span> <span class="n">ctx</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theSheets</span><span class="p">),</span> <span class="nb">set</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">sheets</span><span class="p">())</span> <span class="p">)</span>
@@ -147,7 +149,7 @@ delimiters in the <tt class="docutils literal"><span class="pre">csv</span></tt>
 </div>
 <div class="section" id="fixed-workbook-tests">
 <h2>14.6.4. Fixed_Workbook Tests<a class="headerlink" href="#fixed-workbook-tests" title="Permalink to this headline">¶</a></h2>
-<p>A <a class="reference internal" href="../workbook.html#workbook.Fixed_Workbook" title="workbook.Fixed_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Fixed_Workbook</span></tt></a> is similar to a <a class="reference internal" href="../workbook.html#workbook.CSV_Workbook" title="workbook.CSV_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.CSV_Workbook</span></tt></a>.
+<p>A <a class="reference internal" href="../workbook/fixed.html#workbook.Fixed_Workbook" title="workbook.Fixed_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Fixed_Workbook</span></tt></a> is similar to a <a class="reference internal" href="../workbook/csv.html#workbook.CSV_Workbook" title="workbook.CSV_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.CSV_Workbook</span></tt></a>.
 It always has an external schema and the column contents
 might be different due to encoding or truncation issues.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestFixedWorkbook</span><span class="p">(</span> <span class="n">TestCSVWorkbook</span> <span class="p">):</span>
@@ -198,11 +200,11 @@ might be different due to encoding or truncation issues.</p>
         <span class="c"># First row (after the heading)</span>
         <span class="n">row</span> <span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">u&#39;data&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
         <span class="c"># Headings</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">u&#39;Sheet 2 </span><span class="se">\u2013</span><span class="s"> int&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">u&#39;Sheet 2 </span><span class="se">\u2013</span><span class="s"> string&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;Sheet 2 </span><span class="se">\u2013</span><span class="s"> int&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;Sheet 2 </span><span class="se">\u2013</span><span class="s"> string&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -230,12 +232,10 @@ The physical format is remarkably different, but the content must appear identic
 </pre></div>
 </div>
 </div>
-<div class="section" id="numbers-workbook-tests">
-<h2>14.6.8. Numbers_Workbook Tests<a class="headerlink" href="#numbers-workbook-tests" title="Permalink to this headline">¶</a></h2>
-<p>A Numbers workbook should be functionally similar to an ODS workbook.
-There are two different physical formats each remarkably different, but the content must appear as
-close to identical as practical. There&#8217;s another layer of meaning here,
-however. Numbers has Worksapces (a/k/a &#8220;Pages&#8221;) with Tables. The list of &#8220;sheets&#8221; is (workspace,table) pairs.</p>
+<div class="section" id="numbers09-workbook-tests">
+<h2>14.6.8. Numbers09_Workbook Tests<a class="headerlink" href="#numbers09-workbook-tests" title="Permalink to this headline">¶</a></h2>
+<p>A Numbers &#8216;09 workbook should be functionally similar to an ODS workbook.
+Numbers has Workspaces (a/k/a &#8220;Pages&#8221;) with Tables. The list of &#8220;sheets&#8221; is (workspace,table) pairs.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestNumbers09Workbook</span><span class="p">(</span> <span class="n">TestCSVWorkbook</span> <span class="p">):</span>
     <span class="n">theClass</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">Numbers09_Workbook</span>
     <span class="n">theFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;numbers_workbook_09.numbers&#39;</span><span class="p">)</span>
@@ -267,19 +267,20 @@ however. Numbers has Worksapces (a/k/a &#8220;Pages&#8221;) with Tables. The lis
         <span class="n">row</span> <span class="o">=</span> <span class="n">row_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">42</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
         <span class="c">#print( repr(row[1]) )</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span><span class="s">&#39;3.1415926&#39;</span><span class="p">),</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_decimal</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span><span class="s">&#39;3.1415926&#39;</span><span class="p">),</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_decimal</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span> <span class="mf">3.1415926</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_float</span><span class="p">()</span> <span class="p">)</span> <span class="c"># ?</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">u&#39;string&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&#39;string&#39;</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1956</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">()</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>Also, iWork &#8216;13 Numbers</p>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p>Implement Numbers13_Workbook</p>
-<p class="last">iWork13 is not implemented at all. We have a technology spike that appears to work.</p>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span class="nd">@unittest.skip</span><span class="p">(</span><span class="s">&quot;Not even close to implemented&quot;</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">TestNumbers13Workbook</span><span class="p">(</span> <span class="n">TestNumbers09Workbook</span> <span class="p">):</span>
+<div class="section" id="numbers13-workbook-tests">
+<h2>14.6.9. Numbers13_Workbook Tests<a class="headerlink" href="#numbers13-workbook-tests" title="Permalink to this headline">¶</a></h2>
+<p>A Numbers &#8216;13 workbook should be functionally similar to an Numbers &#8216;09 workbook.
+The format, however, is not XML-based. The content must appear as
+close to identical as practical.
+Numbers has Workspaces (a/k/a &#8220;Pages&#8221;) with Tables. The list of &#8220;sheets&#8221; is (workspace,table) pairs.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestNumbers13Workbook</span><span class="p">(</span> <span class="n">TestNumbers09Workbook</span> <span class="p">):</span>
     <span class="n">theClass</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">Numbers13_Workbook</span>
     <span class="n">theFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;sample&#39;</span><span class="p">,</span> <span class="s">&#39;numbers_workbook_13.numbers&#39;</span><span class="p">)</span>
     <span class="n">theName</span> <span class="o">=</span> <span class="s">&quot;numbers_workbook_13&quot;</span>
@@ -288,8 +289,8 @@ however. Numbers has Worksapces (a/k/a &#8220;Pages&#8221;) with Tables. The lis
 </div>
 </div>
 <div class="section" id="workbook-factory-function">
-<h2>14.6.9. Workbook Factory Function<a class="headerlink" href="#workbook-factory-function" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="../workbook.html#workbook.open_workbook" title="workbook.open_workbook"><tt class="xref py py-func docutils literal"><span class="pre">workbook.open_workbook()</span></tt></a> function should provide
+<h2>14.6.10. Workbook Factory Function<a class="headerlink" href="#workbook-factory-function" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../workbook/init.html#workbook.open_workbook" title="workbook.open_workbook"><tt class="xref py py-func docutils literal"><span class="pre">workbook.open_workbook()</span></tt></a> function should provide
 simple, uniform access to a workbook file.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestWBFactory</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
     <span class="k">def</span> <span class="nf">test_should_open_csv</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
@@ -315,7 +316,7 @@ simple, uniform access to a workbook file.</p>
 </div>
 </div>
 <div class="section" id="test-suite-and-runner">
-<h2>14.6.10. Test Suite and Runner<a class="headerlink" href="#test-suite-and-runner" title="Permalink to this headline">¶</a></h2>
+<h2>14.6.11. Test Suite and Runner<a class="headerlink" href="#test-suite-and-runner" title="Permalink to this headline">¶</a></h2>
 <p>In case we want to build up a larger test suite, we avoid doing
 any real work unless this is the main module being executed.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">test</span>
@@ -348,9 +349,10 @@ any real work unless this is the main module being executed.</p>
 <li><a class="reference internal" href="#ods-workbook-tests">14.6.5. ODS_Workbook Tests</a></li>
 <li><a class="reference internal" href="#xls-workbook-tests">14.6.6. XLS_Workbook Tests</a></li>
 <li><a class="reference internal" href="#xlsx-workbook-tests">14.6.7. XLSX_Workbook Tests</a></li>
-<li><a class="reference internal" href="#numbers-workbook-tests">14.6.8. Numbers_Workbook Tests</a></li>
-<li><a class="reference internal" href="#workbook-factory-function">14.6.9. Workbook Factory Function</a></li>
-<li><a class="reference internal" href="#test-suite-and-runner">14.6.10. Test Suite and Runner</a></li>
+<li><a class="reference internal" href="#numbers09-workbook-tests">14.6.8. Numbers09_Workbook Tests</a></li>
+<li><a class="reference internal" href="#numbers13-workbook-tests">14.6.9. Numbers13_Workbook Tests</a></li>
+<li><a class="reference internal" href="#workbook-factory-function">14.6.10. Workbook Factory Function</a></li>
+<li><a class="reference internal" href="#test-suite-and-runner">14.6.11. Test Suite and Runner</a></li>
 </ul>
 </li>
 </ul>

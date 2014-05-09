@@ -296,7 +296,7 @@ This handles all the rows present in a given sheet.</p>
     <span class="n">counts</span><span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span> <span class="nb">int</span> <span class="p">)</span>
     <span class="k">for</span> <span class="n">source_row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">rows_as_dict_iter</span><span class="p">(</span><span class="n">sheet</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">counts</span><span class="p">[</span><span class="s">u&#39;read&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s">&#39;read&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">row_dict</span><span class="o">=</span> <span class="n">builder</span><span class="p">(</span> <span class="n">source_row</span> <span class="p">)</span>
             <span class="n">f</span><span class="o">=</span> <span class="n">ThisForm</span><span class="p">(</span> <span class="o">**</span><span class="n">row_dict</span> <span class="p">)</span>
             <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
@@ -310,7 +310,7 @@ This handles all the rows present in a given sheet.</p>
             <span class="k">if</span> <span class="n">persistence</span><span class="o">.</span><span class="n">stop_on_exception</span><span class="p">:</span> <span class="k">raise</span>
             <span class="n">summary</span><span class="o">=</span> <span class="s">&quot;{0} {1!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">e</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span> <span class="n">summary</span> <span class="p">)</span>
-            <span class="n">counts</span><span class="p">[</span><span class="s">u&#39;error&#39;</span><span class="p">,</span><span class="n">summary</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">,</span><span class="n">summary</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">counts</span>
 </pre></div>
 </div>
@@ -361,7 +361,7 @@ See <a class="reference internal" href="data_quality.html#demo-sqa"><em>Unit Lev
             <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">EmbeddedSchemaSheet</span><span class="p">,</span>
             <span class="n">loader_class</span><span class="o">=</span><span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">HeadingRowSchemaLoader</span> <span class="p">)</span>
         <span class="n">counts</span><span class="o">=</span> <span class="n">validate</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder_func</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">12345</span><span class="p">,</span> <span class="n">counts</span><span class="p">[</span><span class="s">u&#39;read&#39;</span><span class="p">]</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">12345</span><span class="p">,</span> <span class="n">counts</span><span class="p">[</span><span class="s">&#39;read&#39;</span><span class="p">]</span> <span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -385,7 +385,7 @@ common main-program issues.</p>
 <li>Parameter Parsing.  This includes interpreting options.</li>
 <li>Argument Processing.  This means looping over the positional arguments.</li>
 <li>Opening Workbooks.  Some applications can&#8217;t use the default
-<a class="reference internal" href="../workbook.html#workbook.Opener" title="workbook.Opener"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Opener</span></tt></a>.  A subclass of Opener, or more complex logic,
+<a class="reference internal" href="../workbook/init.html#workbook.Opener" title="workbook.Opener"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Opener</span></tt></a>.  A subclass of Opener, or more complex logic,
 may be required.</li>
 <li>Gracefully catching and logging exceptions.</li>
 <li>Exit Status to the OS.</li>

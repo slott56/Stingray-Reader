@@ -98,10 +98,12 @@ and records.</p>
 data which can&#8217;t be converted. An ErrorCell is created in the (all too common)
 case where the COBOL data is invalid.</p>
 </li>
-<li><p class="first">Support iWork &#8216;09 Numbers Workbook files.</p>
+<li><p class="first">Support iWork &#8216;09 and iWork &#8216;13 Numbers Workbook files.
+This lead to a profound refactoring of the <tt class="xref py py-mod docutils literal"><span class="pre">stingray.workbook</span></tt> module
+into a package.</p>
 </li>
 <li><p class="first">Remove <tt class="docutils literal"><span class="pre">%</span></tt> string formatting and <tt class="docutils literal"><span class="pre">from</span> <span class="pre">__future__</span></tt>. Correct class
-references.
+references. Replace <tt class="docutils literal"><span class="pre">u''</span></tt> Unicode string literals with simple string literals.
 <a class="reference external" href="https://sourceforge.net/p/stingrayreader/tickets/6/">https://sourceforge.net/p/stingrayreader/tickets/6/</a></p>
 </li>
 <li><p class="first">Updated documentation.

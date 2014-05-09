@@ -298,7 +298,7 @@ def process_sheet( sheet, builder, persistence ):
     counts= defaultdict( int )
     for source_row in sheet.schema.rows_as_dict_iter(sheet):
         try:
-            counts[u'read'] += 1
+            counts['read'] += 1
             row_dict= builder( source_row )
             f= ThisForm( **row_dict )
             if f.is_valid():
@@ -312,7 +312,7 @@ def process_sheet( sheet, builder, persistence ):
             if persistence.stop_on_exception: raise
             summary= "{0} {1!r}".format( e.__class__.__name__, e.args )
             logger.error( summary )
-            counts[u'error',summary] += 1
+            counts['error',summary] += 1
     return counts
     
 # Some applications will have variant processing for workbooks that
@@ -371,7 +371,7 @@ def process_workbook( source, sheet_func, builder_func ):
 #                 stingray.sheet.EmbeddedSchemaSheet,
 #                 loader_class=stingray.schema.loader.HeadingRowSchemaLoader )
 #             counts= validate( sheet, self.builder_func )
-#             self.assertEqual( 12345, counts[u'read'] )            
+#             self.assertEqual( 12345, counts['read'] )            
 #
 # Command-Line Interface
 # ----------------------

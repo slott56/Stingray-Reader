@@ -120,19 +120,19 @@ class MockWorkbook:
 class Test_Builder_2( unittest.TestCase ):
     def setUp( self ):
         self.schema= stingray.schema.Schema( 
-            stingray.schema.Attribute( name=u'Col 1 - int' ), 
-            stingray.schema.Attribute( name=u'Col 2.0 - float' ), 
-            stingray.schema.Attribute( name=u'Column "3" - string' ), 
-            stingray.schema.Attribute( name=u"Column '4' - date" ), 
-            stingray.schema.Attribute( name=u'Column 5 - boolean' ), 
-            stingray.schema.Attribute( name=u'Column 6 - empty' ), 
-            stingray.schema.Attribute( name=u'Column 7 - Error' ), )
+            stingray.schema.Attribute( name='Col 1 - int' ), 
+            stingray.schema.Attribute( name='Col 2.0 - float' ), 
+            stingray.schema.Attribute( name='Column "3" - string' ), 
+            stingray.schema.Attribute( name="Column '4' - date" ), 
+            stingray.schema.Attribute( name='Column 5 - boolean' ), 
+            stingray.schema.Attribute( name='Column 6 - empty' ), 
+            stingray.schema.Attribute( name='Column 7 - Error' ), )
         self.wb= MockWorkbook()
         self.sheet= stingray.sheet.ExternalSchemaSheet( self.wb, "Test", self.schema )
         self.row= [
             stingray.cell.NumberCell(42.0, self.wb), 
             stingray.cell.NumberCell(3.1415926, self.wb), 
-            stingray.cell.TextCell(u'string', self.wb), 
+            stingray.cell.TextCell('string', self.wb), 
             stingray.cell.FloatDateCell(20708.0, self.wb), 
             stingray.cell.BooleanCell(1, self.wb),
             stingray.cell.EmptyCell(None, self.wb),
@@ -143,7 +143,7 @@ class Test_Builder_2( unittest.TestCase ):
         row= next( self.sheet.rows() )
         dict_row= dict( (a.name, row.cell(a)) for a in self.schema )
         result= some_builder( dict_row )
-        self.assertEqual( u'string', result['key'] )
+        self.assertEqual( 'string', result['key'] )
         self.assertAlmostEqual( 3.1415926, result['value'] )
 
 # Live Data Test The Builder Function
@@ -172,8 +172,8 @@ class Test_Builder_2_Live( unittest.TestCase ):
             dict_row= dict( (a.name,row.cell(a)) for a in self.schema )
             result= some_builder( dict_row )
             summary[result['key']] += 1
-        self.assertEqual( 1, summary[u'string'] )
-        self.assertEqual( 1, summary[u'data'] )
+        self.assertEqual( 1, summary['string'] )
+        self.assertEqual( 1, summary['data'] )
 
 # Sheet-Level Testing
 # ========================
@@ -201,8 +201,8 @@ def process_some_sheet( sheet ):
     counts= defaultdict( int )
     for row in sheet.schema.rows_as_dict_iter(sheet):
         row_dict= some_builder( row )
-        counts[u'key',row_dict['key']] += 1
-        counts[u'read'] += 1
+        counts['key',row_dict['key']] += 1
+        counts['read'] += 1
     return counts
 
 # The unit test checks the embedded schema and the overall row counts
@@ -224,18 +224,18 @@ class Test_Sheet_Builder_2_Live( unittest.TestCase ):
             self.wb, 'Sheet1', 
             loader_class=stingray.schema.loader.HeadingRowSchemaLoader )
     def test_should_load_schema( self ):
-        self.assertEqual( u'Col 1 - int', self.sheet.schema[0].name )
-        self.assertEqual( u'Col 2.0 - float', self.sheet.schema[1].name )
-        self.assertEqual( u'Column "3" - string', self.sheet.schema[2].name )
-        self.assertEqual( u"Column '4' - date", self.sheet.schema[3].name )
-        self.assertEqual( u'Column 5 - boolean', self.sheet.schema[4].name )
-        self.assertEqual( u'Column 6 - empty', self.sheet.schema[5].name )
-        self.assertEqual( u'Column 7 - Error', self.sheet.schema[6].name )
+        self.assertEqual( 'Col 1 - int', self.sheet.schema[0].name )
+        self.assertEqual( 'Col 2.0 - float', self.sheet.schema[1].name )
+        self.assertEqual( 'Column "3" - string', self.sheet.schema[2].name )
+        self.assertEqual( "Column '4' - date", self.sheet.schema[3].name )
+        self.assertEqual( 'Column 5 - boolean', self.sheet.schema[4].name )
+        self.assertEqual( 'Column 6 - empty', self.sheet.schema[5].name )
+        self.assertEqual( 'Column 7 - Error', self.sheet.schema[6].name )
     def test_should_build_sample_row( self ):
         counts= process_some_sheet( self.sheet )
-        self.assertEqual( 2, counts[u'read'] )
-        self.assertEqual( 1, counts[u'key',u'string'] )
-        self.assertEqual( 1, counts[u'key',u'data'] )
+        self.assertEqual( 2, counts['read'] )
+        self.assertEqual( 1, counts['key','string'] )
+        self.assertEqual( 1, counts['key','data'] )
 
 # Main Program Switch
 # ====================

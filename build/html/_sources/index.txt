@@ -54,7 +54,7 @@ Contents
    sheet
    schema
    schema_loader
-   workbook
+   workbook/index
    iwork13
    cobol
    developer

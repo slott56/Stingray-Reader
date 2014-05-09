@@ -69,7 +69,7 @@ more sophisticated COBOL-based workbooks.</li>
 to create a schema.</p>
 <div class="section" id="module-cobol">
 <span id="module-overheads"></span><h2>10.2.1.1. Module Overheads<a class="headerlink" href="#module-cobol" title="Permalink to this headline">¶</a></h2>
-<p>We depend on <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>, <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>, and <a class="reference internal" href="workbook.html#module-workbook" title="workbook"><tt class="xref py py-mod docutils literal"><span class="pre">workbook</span></tt></a>.
+<p>We depend on <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>, <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>, and <a class="reference internal" href="workbook/init.html#module-workbook" title="workbook"><tt class="xref py py-mod docutils literal"><span class="pre">workbook</span></tt></a>.
 We&#8217;ll also import one class definition from <a class="reference internal" href="cobol_defs.html#module-cobol.defs" title="cobol.defs"><tt class="xref py py-mod docutils literal"><span class="pre">cobol.defs</span></tt></a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;stingray.cobol -- Extend the core Stingray definitions to handle COBOL</span>
 <span class="sd">DDE&#39;s and COBOL files, including packed decimal and EBCDIC data.</span>
@@ -82,8 +82,9 @@ We&#8217;ll also import one class definition from <a class="reference internal" 
 <span class="kn">import</span> <span class="nn">pprint</span>
 
 <span class="kn">import</span> <span class="nn">stingray.schema</span>
-<span class="kn">import</span> <span class="nn">stingray.workbook</span>
 <span class="kn">import</span> <span class="nn">stingray.sheet</span>
+<span class="kn">from</span> <span class="nn">stingray.workbook.fixed</span> <span class="kn">import</span> <span class="n">Fixed_Workbook</span>
+
 
 <span class="kn">from</span> <span class="nn">stingray.cobol.defs</span> <span class="kn">import</span> <span class="n">TextCell</span>
 </pre></div>
@@ -379,7 +380,7 @@ may turn out to be a lot of combinations.</p>
 <div class="section" id="cobol-workbook-files">
 <h2>10.2.1.5. COBOL &#8220;Workbook&#8221; Files<a class="headerlink" href="#cobol-workbook-files" title="Permalink to this headline">¶</a></h2>
 <p>A COBOL file is &#8211; in effect &#8211; a single-sheet workbook with an external schema.
-It looks, then, a lot like <a class="reference internal" href="workbook.html#workbook.Fixed_Workbook" title="workbook.Fixed_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Fixed_Workbook</span></tt></a>.</p>
+It looks, then, a lot like <a class="reference internal" href="workbook/fixed.html#workbook.Fixed_Workbook" title="workbook.Fixed_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Fixed_Workbook</span></tt></a>.</p>
 <ul class="simple">
 <li>A pure character file, encoded UNICODE characters in some standard encoding
 like UTF-8 or UTF-16.  This cannot include COMP or COMP-3 fields because
@@ -433,7 +434,7 @@ can refer to the proper conversion methods.</li>
 
 <p>This class introduces the expanded version of <tt class="docutils literal"><span class="pre">row_get</span></tt> that honors
 a schema attribute with dimensionality.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">COBOL_File</span><span class="p">(</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">Fixed_Workbook</span> <span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">COBOL_File</span><span class="p">(</span> <span class="n">Fixed_Workbook</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A COBOL &quot;workbook&quot; file which uses :py:class:`RepeatingAttribute` and</span>
 <span class="sd">    creates COBOL Cell values.  This is an abstraction which</span>
 <span class="sd">    lacks specific decoding methods.</span>
