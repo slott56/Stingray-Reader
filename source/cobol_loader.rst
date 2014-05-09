@@ -616,19 +616,22 @@ The picture clauses are parsed separately by the DDE during its initialization.
             "USAGE","DISPLAY","COMP-3",
             "VALUE","."}
         
+        redefines_class= stingray.cobol.defs.Redefines
+        successor_class= stingray.cobol.defs.Successor
+        group_class= stingray.cobol.defs.Group
+        display_class= stingray.cobol.defs.UsageDisplay
+        comp_class= stingray.cobol.defs.UsageComp
+        comp3_class= stingray.cobol.defs.UsageComp3
+        occurs_class= stingray.cobol.defs.Occurs
+        occurs_fixed_class= stingray.cobol.defs.OccursFixed
+        
+        # May want to use stingray.cobol.defs.OccursDependingOnLimit
+        occurs_dependingon_class= stingray.cobol.defs.OccursDependingOn
+
         def __init__( self ):
             self.lex= None
             self.token= None
             self.context= []
-            self.redefines_class= stingray.cobol.defs.Redefines
-            self.successor_class= stingray.cobol.defs.Successor
-            self.group_class= stingray.cobol.defs.Group
-            self.display_class= stingray.cobol.defs.UsageDisplay
-            self.comp_class= stingray.cobol.defs.UsageComp
-            self.comp3_class= stingray.cobol.defs.UsageComp3
-            self.occurs_class= stingray.cobol.defs.Occurs
-            self.occurs_fixed_class= stingray.cobol.defs.OccursFixed
-            self.occurs_dependingon_class= stingray.cobol.defs.OccursDependingOn
             self.log= logging.getLogger( self.__class__.__qualname__ )
             
 Each of these parsing functions has a precondition of the last examined token
@@ -707,7 +710,8 @@ token in ``self.token``.
         def occurs2( self, lower ):
             """Parse the [Occurs n TO] m Times Depending On name"""
             self.token= next(self.lex)
-            upper= self.token
+            upper= self.token # May be significant as a default size.
+            default_size= int(upper)
             self.token= next(self.lex)
             if self.token == "TIMES":
                 self.token= next(self.lex)
@@ -719,7 +723,7 @@ token in ``self.token``.
             self.token= next(self.lex)
             self.occurs_cruft()
             
-            return self.occurs_dependingon_class( name )
+            return self.occurs_dependingon_class( name, default_size )
             #raise stingray.cobol.defs.UnsupportedError( "Occurs depending on" )
 
 ::
@@ -1064,10 +1068,11 @@ to break this down into separate steps.
         parsing.
         """
         lexer_class= Lexer 
+        record_factory_class= RecordFactory
         def __init__( self, source, replacing=None ):
             self.source= source
             self.lexer= self.lexer_class( replacing )
-            self.parser= RecordFactory()
+            self.parser= self.record_factory_class()
             
 ..  py:method:: COBOLSchemaLoader.load()
 
@@ -1106,16 +1111,51 @@ tweaked.
         schema= make_schema( dde_list )
         return dde_list, schema
         
-This allows us to do something like the following:
+Typical Usage
+==============
+
+This module allows us to do something like the following:
 
 ..  parsed-literal::
 
     with open("xyzzy.cob") as source:
-        dde_list, schema = COBOL_schema( source )
+        dde_list, schema = COBOLSchemaLoader( source )
     with stingray.cobol.Character_File( filename, schema=schema ) as wb:
         sheet= wb.sheet( filename )
         for row in sheet.rows():
             dump( dde_list[0], row )
 
-We can produce a pretty report of the COBOL layout even though we're not going
-to use it.
+This will use the default parsing to create a schema from a DDA and process a
+file, dumping each record.
+
+Extensions and Special Cases
+============================
+
+There are two common extension: new lexical scanner and different ODO handling.
+
+To change lexical scanners, we create a new subclass of the parser.
+
+We use this by subclassing :py:class:`cobol.COBOLSchemaLoader`.
+
+..  parsed-literal::
+
+    class MySchemaLoader( cobol.COBOLSchemaLoader ):
+        lexer_class= cobol.loader.Lexer_Long_Lines
+
+This will use a different lexical scanner when parsing a DDE file.
+
+We may also need to change the record factory. This involves two separate extensions.
+We must extend the :py:class:`cobol.loader.RecordFactory` to change the features.
+Then we can extend :py:class:`cobol.loader.COBOLSchemaLoader` to use this record
+factory.
+
+..  parsed-literal::
+
+    class ExtendedRecordFactory( cobol.loader.RecordFactory ):
+        occurs_dependingon_class= stingray.cobol.defs.OccursDependingOnLimit
+        #Default is occurs_dependingon_class= stingray.cobol.defs.OccursDependingOn
+        
+    class MySchemaLoader( cobol.loader.COBOLSchemaLoader ):
+        record_factory_class= ExtendedRecordFactory
+
+This will use a different record factory to elaborate the details of the DDE.

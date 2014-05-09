@@ -613,19 +613,22 @@ individual clauses.</p>
         <span class="s">&quot;USAGE&quot;</span><span class="p">,</span><span class="s">&quot;DISPLAY&quot;</span><span class="p">,</span><span class="s">&quot;COMP-3&quot;</span><span class="p">,</span>
         <span class="s">&quot;VALUE&quot;</span><span class="p">,</span><span class="s">&quot;.&quot;</span><span class="p">}</span>
 
+    <span class="n">redefines_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">Redefines</span>
+    <span class="n">successor_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">Successor</span>
+    <span class="n">group_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">Group</span>
+    <span class="n">display_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">UsageDisplay</span>
+    <span class="n">comp_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">UsageComp</span>
+    <span class="n">comp3_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">UsageComp3</span>
+    <span class="n">occurs_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">Occurs</span>
+    <span class="n">occurs_fixed_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">OccursFixed</span>
+
+    <span class="c"># May want to use stingray.cobol.defs.OccursDependingOnLimit</span>
+    <span class="n">occurs_dependingon_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">OccursDependingOn</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">redefines_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">Redefines</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">successor_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">Successor</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">group_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">Group</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">display_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">UsageDisplay</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">comp_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">UsageComp</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">comp3_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">UsageComp3</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">occurs_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">Occurs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">occurs_fixed_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">OccursFixed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">occurs_dependingon_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">OccursDependingOn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__qualname__</span> <span class="p">)</span>
 </pre></div>
 </div>
@@ -697,7 +700,8 @@ token in <tt class="docutils literal"><span class="pre">self.token</span></tt>.<
 <span class="k">def</span> <span class="nf">occurs2</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">lower</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Parse the [Occurs n TO] m Times Depending On name&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="p">)</span>
-    <span class="n">upper</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span>
+    <span class="n">upper</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="c"># May be significant as a default size.</span>
+    <span class="n">default_size</span><span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">upper</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="p">)</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">==</span> <span class="s">&quot;TIMES&quot;</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="p">)</span>
@@ -709,7 +713,7 @@ token in <tt class="docutils literal"><span class="pre">self.token</span></tt>.<
     <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">occurs_cruft</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">occurs_dependingon_class</span><span class="p">(</span> <span class="n">name</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">occurs_dependingon_class</span><span class="p">(</span> <span class="n">name</span><span class="p">,</span> <span class="n">default_size</span> <span class="p">)</span>
     <span class="c">#raise stingray.cobol.defs.UnsupportedError( &quot;Occurs depending on&quot; )</span>
 </pre></div>
 </div>
@@ -1041,10 +1045,11 @@ to break this down into separate steps.</p>
 <span class="sd">    parsing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">lexer_class</span><span class="o">=</span> <span class="n">Lexer</span>
+    <span class="n">record_factory_class</span><span class="o">=</span> <span class="n">RecordFactory</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">replacing</span><span class="o">=</span><span class="bp">None</span> <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">=</span> <span class="n">source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer_class</span><span class="p">(</span> <span class="n">replacing</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">=</span> <span class="n">RecordFactory</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_factory_class</span><span class="p">()</span>
 </pre></div>
 </div>
 <dl class="method">
@@ -1083,17 +1088,44 @@ tweaked.</p>
     <span class="k">return</span> <span class="n">dde_list</span><span class="p">,</span> <span class="n">schema</span>
 </pre></div>
 </div>
-<p>This allows us to do something like the following:</p>
+</div>
+<div class="section" id="typical-usage">
+<h2>10.2.2.10. Typical Usage<a class="headerlink" href="#typical-usage" title="Permalink to this headline">¶</a></h2>
+<p>This module allows us to do something like the following:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;xyzzy.cob&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
-    <span class="n">dde_list</span><span class="p">,</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">COBOL_schema</span><span class="p">(</span> <span class="n">source</span> <span class="p">)</span>
+    <span class="n">dde_list</span><span class="p">,</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">COBOLSchemaLoader</span><span class="p">(</span> <span class="n">source</span> <span class="p">)</span>
 <span class="k">with</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">filename</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span> <span class="k">as</span> <span class="n">wb</span><span class="p">:</span>
     <span class="n">sheet</span><span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="n">filename</span> <span class="p">)</span>
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
         <span class="n">dump</span><span class="p">(</span> <span class="n">dde_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">row</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>We can produce a pretty report of the COBOL layout even though we&#8217;re not going
-to use it.</p>
+<p>This will use the default parsing to create a schema from a DDA and process a
+file, dumping each record.</p>
+</div>
+<div class="section" id="extensions-and-special-cases">
+<h2>10.2.2.11. Extensions and Special Cases<a class="headerlink" href="#extensions-and-special-cases" title="Permalink to this headline">¶</a></h2>
+<p>There are two common extension: new lexical scanner and different ODO handling.</p>
+<p>To change lexical scanners, we create a new subclass of the parser.</p>
+<p>We use this by subclassing <tt class="xref py py-class docutils literal"><span class="pre">cobol.COBOLSchemaLoader</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MySchemaLoader</span><span class="p">(</span> <span class="n">cobol</span><span class="o">.</span><span class="n">COBOLSchemaLoader</span> <span class="p">):</span>
+    <span class="n">lexer_class</span><span class="o">=</span> <span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">Lexer_Long_Lines</span>
+</pre></div>
+</div>
+<p>This will use a different lexical scanner when parsing a DDE file.</p>
+<p>We may also need to change the record factory. This involves two separate extensions.
+We must extend the <a class="reference internal" href="#cobol.loader.RecordFactory" title="cobol.loader.RecordFactory"><tt class="xref py py-class docutils literal"><span class="pre">cobol.loader.RecordFactory</span></tt></a> to change the features.
+Then we can extend <a class="reference internal" href="#cobol.loader.COBOLSchemaLoader" title="cobol.loader.COBOLSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">cobol.loader.COBOLSchemaLoader</span></tt></a> to use this record
+factory.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ExtendedRecordFactory</span><span class="p">(</span> <span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">RecordFactory</span> <span class="p">):</span>
+    <span class="n">occurs_dependingon_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">OccursDependingOnLimit</span>
+    <span class="c">#Default is occurs_dependingon_class= stingray.cobol.defs.OccursDependingOn</span>
+
+<span class="k">class</span> <span class="nc">MySchemaLoader</span><span class="p">(</span> <span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">COBOLSchemaLoader</span> <span class="p">):</span>
+    <span class="n">record_factory_class</span><span class="o">=</span> <span class="n">ExtendedRecordFactory</span>
+</pre></div>
+</div>
+<p>This will use a different record factory to elaborate the details of the DDE.</p>
 </div>
 </div>
 
@@ -1126,6 +1158,8 @@ to use it.</p>
 <li><a class="reference internal" href="#lexical-scanning">10.2.2.7. Lexical Scanning</a></li>
 <li><a class="reference internal" href="#parsing">10.2.2.8. Parsing</a></li>
 <li><a class="reference internal" href="#cobol-schema-loader">10.2.2.9. COBOL Schema Loader</a></li>
+<li><a class="reference internal" href="#typical-usage">10.2.2.10. Typical Usage</a></li>
+<li><a class="reference internal" href="#extensions-and-special-cases">10.2.2.11. Extensions and Special Cases</a></li>
 </ul>
 </li>
 </ul>

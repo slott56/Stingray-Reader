@@ -760,12 +760,13 @@ The overall top-most parent DDE associated with this object is ``self.dde().top(
         """OCCURS TO n TIMES DEPENDING ON name. Data is required."""
         default= False
         static= False
-        def __init__( self, name ):
+        def __init__( self, name, limit ):
             self.name= name
+            self.limit= limit
             self.refers_to= None
             self.attr= None
         def __str__( self ):
-            return "OCCURS DEPENDING ON {0}".format(self.name)
+            return "OCCURS TO {0} DEPENDING ON {1}".format(self.limit, self.name)
         def resolve( self, aDDE ):
             super().resolve(aDDE)
             self.refers_to= aDDE.top().get( self.name )
@@ -776,8 +777,37 @@ The overall top-most parent DDE associated with this object is ``self.dde().top(
                 self.attr= schema_dict[self.name]
             logger.debug( "Getting {0} from {1}".format(self.attr,aRow) )
             value= aRow.cell( self.attr ).to_int()
+            # ???? if value > self.limit: return self.limit # ???? 
             return value
-            #raise UnsupportedError( "Occurs Depending On" )
+            
+..  py:class:: OccursDependingOnLimit
+
+This is an extension to OccursDependingOn. It limits the ODO clause to the defined
+upper bound. 
+
+If we have ``05 SOMETHING OCCURS 1 TO 5 TIMES DEPENDING ON X`` and
+the value of ``X`` is greater than 5, the maximum defined value, 5, is used.
+
+See http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.jsp?topic=%2Fcom.ibm.ent.cbl.zos.doc%2Ftopics%2FMG%2Figymch1027.htm
+
+    "When the maximum length is used, it is not necessary to initialize the ODO object before the table receives data."
+    
+    "When TABLE-GROUP-1 is a receiving item, Enterprise COBOL moves the maximum number of character positions for it (450 bytes for TABLE-1 plus two bytes for ODO-KEY-1). Therefore, you need not initialize the length of TABLE-1 before moving the SEND-ITEM-1 data into the table."
+
+Based on this (and bad data seen in the wild) we deduce that this upper limit
+clamping **may** be a language  feature.
+
+::
+
+    class OccursDependingOnLimit( OccursDependingOn ):
+        """OCCURS TO n TIMES DEPENDING ON name. Data is required.
+        This will clamp the result at the given upper limit.
+        """
+        def number( self, aRow ):
+            value= super().number( aRow )
+            if value > self.limit: 
+                return self.limit
+            return value
  
 DDE Class
 --------------

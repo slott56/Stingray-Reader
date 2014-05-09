@@ -756,12 +756,13 @@ from that DDE.</p>
     <span class="sd">&quot;&quot;&quot;OCCURS TO n TIMES DEPENDING ON name. Data is required.&quot;&quot;&quot;</span>
     <span class="n">default</span><span class="o">=</span> <span class="bp">False</span>
     <span class="n">static</span><span class="o">=</span> <span class="bp">False</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">name</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">limit</span> <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="o">=</span> <span class="n">limit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refers_to</span><span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="o">=</span> <span class="bp">None</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
-        <span class="k">return</span> <span class="s">&quot;OCCURS DEPENDING ON {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s">&quot;OCCURS TO {0} DEPENDING ON {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">aDDE</span> <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">aDDE</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refers_to</span><span class="o">=</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">top</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
@@ -772,8 +773,35 @@ from that DDE.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="o">=</span> <span class="n">schema_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;Getting {0} from {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">,</span><span class="n">aRow</span><span class="p">)</span> <span class="p">)</span>
         <span class="n">value</span><span class="o">=</span> <span class="n">aRow</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="p">)</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span>
+        <span class="c"># ???? if value &gt; self.limit: return self.limit # ????</span>
         <span class="k">return</span> <span class="n">value</span>
-        <span class="c">#raise UnsupportedError( &quot;Occurs Depending On&quot; )</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="cobol.defs.OccursDependingOnLimit">
+<em class="property">class </em><tt class="descclassname">cobol.defs.</tt><tt class="descname">OccursDependingOnLimit</tt><a class="headerlink" href="#cobol.defs.OccursDependingOnLimit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>This is an extension to OccursDependingOn. It limits the ODO clause to the defined
+upper bound.</p>
+<p>If we have <tt class="docutils literal"><span class="pre">05</span> <span class="pre">SOMETHING</span> <span class="pre">OCCURS</span> <span class="pre">1</span> <span class="pre">TO</span> <span class="pre">5</span> <span class="pre">TIMES</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span> <span class="pre">X</span></tt> and
+the value of <tt class="docutils literal"><span class="pre">X</span></tt> is greater than 5, the maximum defined value, 5, is used.</p>
+<p>See <a class="reference external" href="http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.jsp?topic=%2Fcom.ibm.ent.cbl.zos.doc%2Ftopics%2FMG%2Figymch1027.htm">http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.jsp?topic=%2Fcom.ibm.ent.cbl.zos.doc%2Ftopics%2FMG%2Figymch1027.htm</a></p>
+<blockquote>
+<div><p>&#8220;When the maximum length is used, it is not necessary to initialize the ODO object before the table receives data.&#8221;</p>
+<p>&#8220;When TABLE-GROUP-1 is a receiving item, Enterprise COBOL moves the maximum number of character positions for it (450 bytes for TABLE-1 plus two bytes for ODO-KEY-1). Therefore, you need not initialize the length of TABLE-1 before moving the SEND-ITEM-1 data into the table.&#8221;</p>
+</div></blockquote>
+<p>Based on this (and bad data seen in the wild) we deduce that this upper limit
+clamping <strong>may</strong> be a language  feature.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">OccursDependingOnLimit</span><span class="p">(</span> <span class="n">OccursDependingOn</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;OCCURS TO n TIMES DEPENDING ON name. Data is required.</span>
+<span class="sd">    This will clamp the result at the given upper limit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">number</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">aRow</span> <span class="p">):</span>
+        <span class="n">value</span><span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">number</span><span class="p">(</span> <span class="n">aRow</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span>
+        <span class="k">return</span> <span class="n">value</span>
 </pre></div>
 </div>
 </div>
