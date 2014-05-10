@@ -115,7 +115,7 @@ with stingray.cobol.Character_File( filename, schema=schema ) as wb:
     sheet= wb.sheet( filename )
     for row in sheet.rows():
         <strong>cobol.loader.setSizeAndOffset( dde_list[0] )</strong>
-        dump( dde_list[0], row )
+        dump( schema, row )
 </pre>
 </div>
 <div class="section" id="the-module-dependency-problem">
@@ -786,6 +786,8 @@ from that DDE.</p>
 upper bound.</p>
 <p>If we have <tt class="docutils literal"><span class="pre">05</span> <span class="pre">SOMETHING</span> <span class="pre">OCCURS</span> <span class="pre">1</span> <span class="pre">TO</span> <span class="pre">5</span> <span class="pre">TIMES</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span> <span class="pre">X</span></tt> and
 the value of <tt class="docutils literal"><span class="pre">X</span></tt> is greater than 5, the maximum defined value, 5, is used.</p>
+<p>This entirely hypothetical as a possible fix to a problem. It&#8217;s probably a
+Very Bad Idea, and should be removed.</p>
 <p>See <a class="reference external" href="http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.jsp?topic=%2Fcom.ibm.ent.cbl.zos.doc%2Ftopics%2FMG%2Figymch1027.htm">http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.jsp?topic=%2Fcom.ibm.ent.cbl.zos.doc%2Ftopics%2FMG%2Figymch1027.htm</a></p>
 <blockquote>
 <div><p>&#8220;When the maximum length is used, it is not necessary to initialize the ODO object before the table receives data.&#8221;</p>
@@ -1175,6 +1177,11 @@ It must be used with a row for the case of OCCURS Depending On.</p>
     <span class="sd">&quot;&quot;&quot;Given a top-level DDE, a Row of data (or None),</span>
 <span class="sd">    assign offset, size, totalSize.</span>
 <span class="sd">    Also, the case of an 88-level item, copy the parent USAGE to the child.</span>
+
+<span class="sd">    size is the instance size. For non-group items, it comes from the</span>
+<span class="sd">    PIC and OCCURS. For group items it&#39;s the sum of the children&#39;s sizes.</span>
+
+<span class="sd">    totalSize = size * occurs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c"># Pre-order: handle this item first.</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aDDE</span><span class="o">.</span><span class="n">allocation</span><span class="p">,</span> <span class="n">Redefines</span><span class="p">):</span>
@@ -1188,6 +1195,8 @@ It must be used with a row for the case of OCCURS Depending On.</p>
         <span class="c"># base= aDDE.offset= allocation.offset( base )</span>
         <span class="n">aDDE</span><span class="o">.</span><span class="n">offset</span><span class="o">=</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">allocation</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
         <span class="n">aDDE</span><span class="o">.</span><span class="n">totalSize</span><span class="o">=</span> <span class="mi">0</span>
+    <span class="c"># Initialize the size -- it may get updated below for group-level items.</span>
+    <span class="n">aDDE</span><span class="o">.</span><span class="n">size</span><span class="o">=</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;{0} Enter {1} offset={2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;&gt;&quot;</span><span class="o">*</span><span class="n">aDDE</span><span class="o">.</span><span class="n">indent</span><span class="p">,</span> <span class="n">aDDE</span><span class="p">,</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span> <span class="p">)</span>
 
@@ -1196,7 +1205,7 @@ It must be used with a row for the case of OCCURS Depending On.</p>
         <span class="n">setSizeAndOffset</span><span class="p">(</span> <span class="n">child</span><span class="p">,</span> <span class="n">aRow</span><span class="p">,</span> <span class="n">base</span> <span class="p">)</span>
         <span class="n">base</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">child</span><span class="o">.</span><span class="n">totalSize</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">allocation</span><span class="p">,</span> <span class="n">Redefines</span><span class="p">):</span>
-            <span class="c"># TODO: Push into Redefines</span>
+            <span class="c"># TODO: Push into Redefines: does nothing.</span>
             <span class="c"># aDDE.size+= allocation.size()</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>

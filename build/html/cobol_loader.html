@@ -160,7 +160,7 @@ which differentiates headers, body and trailers.</p>
 <li>Convert the <tt class="docutils literal"><span class="pre">Cell</span></tt> to our target type via <tt class="docutils literal"><span class="pre">...to_str()</span></tt>.</li>
 </ol>
 <p>We <strong>must</strong> do this in steps because the COBOL records may have invalid fields,
-or REDEFINES or OCCURS DEPENDS ON clauses.</p>
+or <tt class="docutils literal"><span class="pre">REDEFINES</span></tt> or <tt class="docutils literal"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></tt> clauses.</p>
 <p>If we want to build higher-level, pure Python objects associated with some
 application, we&#8217;ll do this.</p>
 <pre class="literal-block">
@@ -173,31 +173,70 @@ our application class definitions.</p>
 will be a list-of-list structure, and we apply the indexes in the order from the original
 DDE definition to pick apart the lists.</p>
 </div>
+<div class="section" id="extensions-and-special-cases">
+<h2>10.2.2.3. Extensions and Special Cases<a class="headerlink" href="#extensions-and-special-cases" title="Permalink to this headline">¶</a></h2>
+<p>The typical use cases is something like the following:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;sample/zipcty.cob&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cobol</span><span class="p">:</span>
+    <span class="n">schema</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">COBOLSchemaLoader</span><span class="p">(</span> <span class="n">cobol</span> <span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">filename</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span> <span class="k">as</span> <span class="n">wb</span><span class="p">:</span>
+    <span class="n">sheet</span><span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="n">filename</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
+        <span class="n">dump</span><span class="p">(</span> <span class="n">schema</span><span class="p">,</span> <span class="n">row</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>This will use the default parsing to create a schema from a DDA and process a
+file, dumping each record.</p>
+<p>There are two common extension:</p>
+<ul class="simple">
+<li>new lexical scanner, and</li>
+<li>different ODO handling.</li>
+</ul>
+<p>To change lexical scanners, we create a new subclass of the parser.</p>
+<p>We use this by subclassing <tt class="xref py py-class docutils literal"><span class="pre">cobol.COBOLSchemaLoader</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MySchemaLoader</span><span class="p">(</span> <span class="n">cobol</span><span class="o">.</span><span class="n">COBOLSchemaLoader</span> <span class="p">):</span>
+    <span class="n">lexer_class</span><span class="o">=</span> <span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">Lexer_Long_Lines</span>
+</pre></div>
+</div>
+<p>This will use a different lexical scanner when parsing a DDE file.</p>
+<p>We may also need to change the record factory. This involves two separate extensions.
+We must extend the <a class="reference internal" href="#cobol.loader.RecordFactory" title="cobol.loader.RecordFactory"><tt class="xref py py-class docutils literal"><span class="pre">cobol.loader.RecordFactory</span></tt></a> to change the features.
+Then we can extend <a class="reference internal" href="#cobol.loader.COBOLSchemaLoader" title="cobol.loader.COBOLSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">cobol.loader.COBOLSchemaLoader</span></tt></a> to use this record
+factory.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ExtendedRecordFactory</span><span class="p">(</span> <span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">RecordFactory</span> <span class="p">):</span>
+    <span class="n">occurs_dependingon_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">OccursDependingOnLimit</span>
+    <span class="c">#Default is occurs_dependingon_class= stingray.cobol.defs.OccursDependingOn</span>
+
+<span class="k">class</span> <span class="nc">MySchemaLoader</span><span class="p">(</span> <span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">COBOLSchemaLoader</span> <span class="p">):</span>
+    <span class="n">record_factory_class</span><span class="o">=</span> <span class="n">ExtendedRecordFactory</span>
+</pre></div>
+</div>
+<p>This will use a different record factory to elaborate the details of the DDE.</p>
+</div>
 <div class="section" id="design">
-<h2>10.2.2.3. Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h2>
+<h2>10.2.2.4. Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h2>
 <p>A DDE contains a recursive definition of a COBOL group-level DDE.
-There are two basic species of COBOL DDE&#8217;s: elemetary items, which have a PICTURE clause,
+There are two basic species of COBOL DDE&#8217;s: elemetary items, which have a <tt class="docutils literal"><span class="pre">PICTURE</span></tt> clause,
 and group-level items, which contain lower-level items.  There are several optional
-features of every DDE, including an OCCURS clause and a REDEFINES clause.
-In addition to the required picture clause, elementary items have an optional USAGE clause,
-and optional SIGN clause.</p>
-<p>The <strong>picture</strong> clause specifies how to interpret a sequence of bytes.  The picture
-clause interacts with the optional <strong>usage</strong> clause, <strong>sign</strong> clause and <strong>synchronized</strong> clause
+features of every DDE, including an <tt class="docutils literal"><span class="pre">OCCURS</span></tt> clause and a <tt class="docutils literal"><span class="pre">REDEFINES</span></tt> clause.
+In addition to the required picture clause, elementary items have an optional <tt class="docutils literal"><span class="pre">USAGE</span></tt> clause,
+and optional <tt class="docutils literal"><span class="pre">SIGN</span></tt> clause.</p>
+<p>The <tt class="docutils literal"><span class="pre">PICTURE</span></tt> clause specifies how to interpret a sequence of bytes.  The picture
+clause interacts with the optional <tt class="docutils literal"><span class="pre">USAGE</span></tt> clause, <tt class="docutils literal"><span class="pre">SIGN</span></tt> clause and <tt class="docutils literal"><span class="pre">SYNCHRONIZED</span></tt> clause
 to fully define the encoding.  The picture clause uses a complex format of code characters
 to define either individual character bytes (when the usage is display) or pairs of decimal digit bytes
-(when the usage is COMP-3).</p>
-<p>The <strong>occurs</strong> clause specifies an array of elements.  If the occurs clause appears
+(when the usage is <tt class="docutils literal"><span class="pre">COMP-3</span></tt>).</p>
+<p>The <tt class="docutils literal"><span class="pre">OCCURS</span></tt> clause specifies an array of elements.  If the occurs clause appears
 on a group level item, the sub-record is repeated.  If the occurs clause appears
 on an elementary item, that item is repeated.</p>
 <p>An <strong>occurs depending on</strong> (ODO) makes the positions of each field dependent on actual
 data present in the record. This is a rare, but necessary complication.</p>
-<p>The <strong>redefines</strong> clause defines an alias for input bytes.  When some field <em>R</em> redefines
+<p>The <tt class="docutils literal"><span class="pre">REDEFINES</span></tt> clause defines an alias for input bytes.  When some field <em>R</em> redefines
 a previously defined field <em>F</em>, the storage bytes are used for both <em>R</em> and <em>F</em>.
 The record structure itself does not provide a way to disambiguate the interpretation of the bytes.
 Program logic must be examined to determine the conditions under which each interpretation is valid.
 It&#8217;s entirely possible either interpretation has invalid fields.</p>
 <div class="section" id="dde-class">
-<h3>10.2.2.3.1. DDE Class<a class="headerlink" href="#dde-class" title="Permalink to this headline">¶</a></h3>
+<h3>10.2.2.4.1. DDE Class<a class="headerlink" href="#dde-class" title="Permalink to this headline">¶</a></h3>
 <p>The parent class, <tt class="xref py py-class docutils literal"><span class="pre">DDE</span></tt>, defines the features of a group-level item.  It supports
 the occurs and redefines features.  It can contain a number of DDE items.
 The leaves of the tree define the features of an elementary item.</p>
@@ -221,7 +260,7 @@ which cannot be done statically or eagerly, but must be done dynamically and laz
 live data.</p>
 </div>
 <div class="section" id="dde-post-processing">
-<h3>10.2.2.3.2. DDE Post-processing<a class="headerlink" href="#dde-post-processing" title="Permalink to this headline">¶</a></h3>
+<h3>10.2.2.4.2. DDE Post-processing<a class="headerlink" href="#dde-post-processing" title="Permalink to this headline">¶</a></h3>
 <p>We have a number of functions to traverse a DDE structure to write
 reports on the structure. The DDE has an <tt class="docutils literal"><span class="pre">__iter__()</span></tt> method which
 provides a complete pre-order depth-first traversal of the record
@@ -244,7 +283,7 @@ the net occurrences based on all parent OCCURS clauses.</li>
 It needs to manage subtotals based on ascent and descent in the hierarchy.</p>
 </div>
 <div class="section" id="dde-parser">
-<h3>10.2.2.3.3. DDE Parser<a class="headerlink" href="#dde-parser" title="Permalink to this headline">¶</a></h3>
+<h3>10.2.2.4.3. DDE Parser<a class="headerlink" href="#dde-parser" title="Permalink to this headline">¶</a></h3>
 <p>A <a class="reference internal" href="#cobol.loader.RecordFactory" title="cobol.loader.RecordFactory"><tt class="xref py py-class docutils literal"><span class="pre">cobol.loader.RecordFactory</span></tt></a> object reads a file of text and either creates a
 DDE or raises an exception. If the text is a valid COBOL record
 definition, a DDE is created.  If there are syntax errors, an exception
@@ -266,7 +305,7 @@ offset information for each element.</p>
 This is confusing and potentially complicated, but it occurs IRL.</p>
 </div>
 <div class="section" id="field-values">
-<h3>10.2.2.3.4. Field Values<a class="headerlink" href="#field-values" title="Permalink to this headline">¶</a></h3>
+<h3>10.2.2.4.4. Field Values<a class="headerlink" href="#field-values" title="Permalink to this headline">¶</a></h3>
 <p>The COBOL language, and IBM&#8217;s extensions,
 provide for a number of usage options.  In this application, three basic types
 of usage strategies are supported:</p>
@@ -283,7 +322,7 @@ there are two digits packed into each byte, with an extra half-byte for a sign.<
 They&#8217;re rare enough that we ignore them.</p>
 </div>
 <div class="section" id="additional-requirements">
-<h3>10.2.2.3.5. Additional Requirements<a class="headerlink" href="#additional-requirements" title="Permalink to this headline">¶</a></h3>
+<h3>10.2.2.4.5. Additional Requirements<a class="headerlink" href="#additional-requirements" title="Permalink to this headline">¶</a></h3>
 <p>Support for Occurs Depending On is based several features of COBOL.</p>
 <p>The syntax for ODO is more complex: <tt class="docutils literal"><span class="pre">OCCURS</span> <span class="pre">[int</span> <span class="pre">TO]</span> <span class="pre">int</span> <span class="pre">[TIMES]</span> <span class="pre">DEPENDING</span> <span class="pre">[ON]</span> <span class="pre">name</span></tt>.
 Compare this with simple <tt class="docutils literal"><span class="pre">OCCURS</span> <span class="pre">int</span> <span class="pre">[TIMES]</span></tt>.</p>
@@ -335,7 +374,7 @@ turn, may be based on ODO data.</p>
 </div>
 </div>
 <div class="section" id="model">
-<h3>10.2.2.3.6. Model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h3>
+<h3>10.2.2.4.6. Model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-none"><div class="highlight"><pre>http://yuml.me/diagram/scruffy;/class/
 #cobol_loader,
 [Schema]&lt;&gt;-[RepeatingAttribute],
@@ -350,7 +389,7 @@ turn, may be based on ODO data.</p>
 </div>
 </div>
 <div class="section" id="overheads">
-<h2>10.2.2.4. Overheads<a class="headerlink" href="#overheads" title="Permalink to this headline">¶</a></h2>
+<h2>10.2.2.5. Overheads<a class="headerlink" href="#overheads" title="Permalink to this headline">¶</a></h2>
 <p>Ultimately, we&#8217;re writing a new <a class="reference internal" href="schema_loader.html#schema.loader.ExternalSchemaLoader" title="schema.loader.ExternalSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.ExternalSchemaLoader</span></tt></a>.
 The purpose of this is to build a <a class="reference internal" href="schema.html#schema.Schema" title="schema.Schema"><tt class="xref py py-class docutils literal"><span class="pre">schema.Schema</span></tt></a> instance
 from COBOL source instead of some other source.</p>
@@ -372,7 +411,7 @@ from COBOL source instead of some other source.</p>
 </div>
 </div>
 <div class="section" id="parsing-exceptions">
-<h2>10.2.2.5. Parsing Exceptions<a class="headerlink" href="#parsing-exceptions" title="Permalink to this headline">¶</a></h2>
+<h2>10.2.2.6. Parsing Exceptions<a class="headerlink" href="#parsing-exceptions" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cobol.loader.SyntaxError">
 <em class="property">class </em><tt class="descclassname">cobol.loader.</tt><tt class="descname">SyntaxError</tt><a class="headerlink" href="#cobol.loader.SyntaxError" title="Permalink to this definition">¶</a></dt>
@@ -387,7 +426,7 @@ is utterly baffling.</p>
 </div>
 </div>
 <div class="section" id="picture-clause-parsing">
-<h2>10.2.2.6. Picture Clause Parsing<a class="headerlink" href="#picture-clause-parsing" title="Permalink to this headline">¶</a></h2>
+<h2>10.2.2.7. Picture Clause Parsing<a class="headerlink" href="#picture-clause-parsing" title="Permalink to this headline">¶</a></h2>
 <p>Picture clause parsing is done as the DDE element is created.  Not for a great
 reason.  It&#8217;s derived data from the source picture clause.</p>
 <p>It could be done in the parser, also.</p>
@@ -483,7 +522,7 @@ reason.  It&#8217;s derived data from the source picture clause.</p>
 </div>
 </div>
 <div class="section" id="lexical-scanning">
-<h2>10.2.2.7. Lexical Scanning<a class="headerlink" href="#lexical-scanning" title="Permalink to this headline">¶</a></h2>
+<h2>10.2.2.8. Lexical Scanning<a class="headerlink" href="#lexical-scanning" title="Permalink to this headline">¶</a></h2>
 <p>The lexical scanner can be subclassed to extend its capability.  The default
 lexical scanner provides a <a class="reference internal" href="#cobol.loader.Lexer.clean" title="cobol.loader.Lexer.clean"><tt class="xref py py-meth docutils literal"><span class="pre">Lexer.clean()</span></tt></a> method that simply removes comments.
 This may need to be overridden to remove line numbers (from positions 72-80),
@@ -582,7 +621,7 @@ Since it&#8217;s an extension to <a class="reference internal" href="#cobol.load
 </div>
 </div>
 <div class="section" id="parsing">
-<h2>10.2.2.8. Parsing<a class="headerlink" href="#parsing" title="Permalink to this headline">¶</a></h2>
+<h2>10.2.2.9. Parsing<a class="headerlink" href="#parsing" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="#cobol.loader.RecordFactory" title="cobol.loader.RecordFactory"><tt class="xref py py-class docutils literal"><span class="pre">cobol.loader.RecordFactory</span></tt></a> class is the parser for record definitions.
 The parser has three basic sets of methods:</p>
 <ol class="arabic simple">
@@ -621,8 +660,6 @@ individual clauses.</p>
     <span class="n">comp3_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">UsageComp3</span>
     <span class="n">occurs_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">Occurs</span>
     <span class="n">occurs_fixed_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">OccursFixed</span>
-
-    <span class="c"># May want to use stingray.cobol.defs.OccursDependingOnLimit</span>
     <span class="n">occurs_dependingon_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">OccursDependingOn</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
@@ -724,7 +761,7 @@ token in <tt class="docutils literal"><span class="pre">self.token</span></tt>.<
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">redefines_class</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">redef</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>A RENAMES creates an alternative group-level name for some elementary items.
+<p>A <tt class="docutils literal"><span class="pre">RENAMES</span></tt> creates an alternative group-level name for some elementary items.
 It&#8217;s considered bad practice.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">renames</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Raise an exception on a RENAMES clause.&quot;&quot;&quot;</span>
@@ -736,7 +773,7 @@ It&#8217;s considered bad practice.</p>
     <span class="k">raise</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">UnsupportedError</span><span class="p">(</span> <span class="s">&quot;Renames clause&quot;</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>There are two variations on the SIGN clause syntax.</p>
+<p>There are two variations on the <tt class="docutils literal"><span class="pre">SIGN</span></tt> clause syntax.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">sign1</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Raise an exception on a SIGN clause.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="p">)</span>
@@ -766,7 +803,7 @@ It&#8217;s considered bad practice.</p>
     <span class="k">raise</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">UnsupportedError</span><span class="p">(</span> <span class="s">&quot;Synchronized clause&quot;</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>There are two variations on the USAGE clause syntax.</p>
+<p>There are two variations on the <tt class="docutils literal"><span class="pre">USAGE</span></tt> clause syntax.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">usage</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Parse a USAGE clause.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="p">)</span>
@@ -889,7 +926,7 @@ definition, below.</p>
         <span class="k">yield</span> <span class="n">dde</span>
 </pre></div>
 </div>
-<p>Note that some clauses (like REDEFINES) occupy a special place in COBOL syntax.
+<p>Note that some clauses (like <tt class="docutils literal"><span class="pre">REDEFINES</span></tt>) occupy a special place in COBOL syntax.
 We&#8217;re not fastidious about enforcing COBOL semantic rules. Presumably the
 source is proper COBOL and was actually used to create the source file.</p>
 <p>The overall parsing method, <a class="reference internal" href="#cobol.loader.RecordFactory.makeRecord" title="cobol.loader.RecordFactory.makeRecord"><tt class="xref py py-meth docutils literal"><span class="pre">RecordFactory.makeRecord()</span></tt></a> is an iterator
@@ -949,7 +986,7 @@ hierarchy of individual DDE instances.</p>
 
 <p>The final stages of compilation:</p>
 <ul>
-<li><p class="first">Resolve REDEFINES names using <a class="reference internal" href="cobol_defs.html#cobol.defs.resolver" title="cobol.defs.resolver"><tt class="xref py py-func docutils literal"><span class="pre">cobol.defs.resolver()</span></tt></a>.</p>
+<li><p class="first">Resolve <tt class="docutils literal"><span class="pre">REDEFINES</span></tt> names using <a class="reference internal" href="cobol_defs.html#cobol.defs.resolver" title="cobol.defs.resolver"><tt class="xref py py-func docutils literal"><span class="pre">cobol.defs.resolver()</span></tt></a>.</p>
 </li>
 <li><p class="first">Push dimensionality down to each elementary item using <a class="reference internal" href="cobol_defs.html#cobol.defs.setDimensionality" title="cobol.defs.setDimensionality"><tt class="xref py py-func docutils literal"><span class="pre">cobol.defs.setDimensionality()</span></tt></a>.</p>
 </li>
@@ -975,7 +1012,7 @@ Occurs Depending On.</p>
 </div>
 </div>
 <div class="section" id="cobol-schema-loader">
-<h2>10.2.2.9. COBOL Schema Loader<a class="headerlink" href="#cobol-schema-loader" title="Permalink to this headline">¶</a></h2>
+<h2>10.2.2.10. COBOL Schema Loader<a class="headerlink" href="#cobol-schema-loader" title="Permalink to this headline">¶</a></h2>
 <p>Given a DDE, create a proper <a class="reference internal" href="schema.html#schema.Schema" title="schema.Schema"><tt class="xref py py-class docutils literal"><span class="pre">schema.Schema</span></tt></a> object which contains
 proper <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a> objects for each group and elementary item
 in the DDE.</p>
@@ -1089,44 +1126,6 @@ tweaked.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="typical-usage">
-<h2>10.2.2.10. Typical Usage<a class="headerlink" href="#typical-usage" title="Permalink to this headline">¶</a></h2>
-<p>This module allows us to do something like the following:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;xyzzy.cob&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
-    <span class="n">dde_list</span><span class="p">,</span> <span class="n">schema</span> <span class="o">=</span> <span class="n">COBOLSchemaLoader</span><span class="p">(</span> <span class="n">source</span> <span class="p">)</span>
-<span class="k">with</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">Character_File</span><span class="p">(</span> <span class="n">filename</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span> <span class="p">)</span> <span class="k">as</span> <span class="n">wb</span><span class="p">:</span>
-    <span class="n">sheet</span><span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span> <span class="n">filename</span> <span class="p">)</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
-        <span class="n">dump</span><span class="p">(</span> <span class="n">dde_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">row</span> <span class="p">)</span>
-</pre></div>
-</div>
-<p>This will use the default parsing to create a schema from a DDA and process a
-file, dumping each record.</p>
-</div>
-<div class="section" id="extensions-and-special-cases">
-<h2>10.2.2.11. Extensions and Special Cases<a class="headerlink" href="#extensions-and-special-cases" title="Permalink to this headline">¶</a></h2>
-<p>There are two common extension: new lexical scanner and different ODO handling.</p>
-<p>To change lexical scanners, we create a new subclass of the parser.</p>
-<p>We use this by subclassing <tt class="xref py py-class docutils literal"><span class="pre">cobol.COBOLSchemaLoader</span></tt>.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MySchemaLoader</span><span class="p">(</span> <span class="n">cobol</span><span class="o">.</span><span class="n">COBOLSchemaLoader</span> <span class="p">):</span>
-    <span class="n">lexer_class</span><span class="o">=</span> <span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">Lexer_Long_Lines</span>
-</pre></div>
-</div>
-<p>This will use a different lexical scanner when parsing a DDE file.</p>
-<p>We may also need to change the record factory. This involves two separate extensions.
-We must extend the <a class="reference internal" href="#cobol.loader.RecordFactory" title="cobol.loader.RecordFactory"><tt class="xref py py-class docutils literal"><span class="pre">cobol.loader.RecordFactory</span></tt></a> to change the features.
-Then we can extend <a class="reference internal" href="#cobol.loader.COBOLSchemaLoader" title="cobol.loader.COBOLSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">cobol.loader.COBOLSchemaLoader</span></tt></a> to use this record
-factory.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ExtendedRecordFactory</span><span class="p">(</span> <span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">RecordFactory</span> <span class="p">):</span>
-    <span class="n">occurs_dependingon_class</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">OccursDependingOnLimit</span>
-    <span class="c">#Default is occurs_dependingon_class= stingray.cobol.defs.OccursDependingOn</span>
-
-<span class="k">class</span> <span class="nc">MySchemaLoader</span><span class="p">(</span> <span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">COBOLSchemaLoader</span> <span class="p">):</span>
-    <span class="n">record_factory_class</span><span class="o">=</span> <span class="n">ExtendedRecordFactory</span>
-</pre></div>
-</div>
-<p>This will use a different record factory to elaborate the details of the DDE.</p>
-</div>
 </div>
 
 
@@ -1143,23 +1142,22 @@ factory.</p>
 <li><a class="reference internal" href="#">10.2.2. COBOL Loader Module &#8211; Parse COBOL Source to Load a Schema</a><ul>
 <li><a class="reference internal" href="#load-a-schema-use-case">10.2.2.1. Load A Schema Use Case</a></li>
 <li><a class="reference internal" href="#use-a-schema-use-case">10.2.2.2. Use A Schema Use Case</a></li>
-<li><a class="reference internal" href="#design">10.2.2.3. Design</a><ul>
-<li><a class="reference internal" href="#dde-class">10.2.2.3.1. DDE Class</a></li>
-<li><a class="reference internal" href="#dde-post-processing">10.2.2.3.2. DDE Post-processing</a></li>
-<li><a class="reference internal" href="#dde-parser">10.2.2.3.3. DDE Parser</a></li>
-<li><a class="reference internal" href="#field-values">10.2.2.3.4. Field Values</a></li>
-<li><a class="reference internal" href="#additional-requirements">10.2.2.3.5. Additional Requirements</a></li>
-<li><a class="reference internal" href="#model">10.2.2.3.6. Model</a></li>
+<li><a class="reference internal" href="#extensions-and-special-cases">10.2.2.3. Extensions and Special Cases</a></li>
+<li><a class="reference internal" href="#design">10.2.2.4. Design</a><ul>
+<li><a class="reference internal" href="#dde-class">10.2.2.4.1. DDE Class</a></li>
+<li><a class="reference internal" href="#dde-post-processing">10.2.2.4.2. DDE Post-processing</a></li>
+<li><a class="reference internal" href="#dde-parser">10.2.2.4.3. DDE Parser</a></li>
+<li><a class="reference internal" href="#field-values">10.2.2.4.4. Field Values</a></li>
+<li><a class="reference internal" href="#additional-requirements">10.2.2.4.5. Additional Requirements</a></li>
+<li><a class="reference internal" href="#model">10.2.2.4.6. Model</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#overheads">10.2.2.4. Overheads</a></li>
-<li><a class="reference internal" href="#parsing-exceptions">10.2.2.5. Parsing Exceptions</a></li>
-<li><a class="reference internal" href="#picture-clause-parsing">10.2.2.6. Picture Clause Parsing</a></li>
-<li><a class="reference internal" href="#lexical-scanning">10.2.2.7. Lexical Scanning</a></li>
-<li><a class="reference internal" href="#parsing">10.2.2.8. Parsing</a></li>
-<li><a class="reference internal" href="#cobol-schema-loader">10.2.2.9. COBOL Schema Loader</a></li>
-<li><a class="reference internal" href="#typical-usage">10.2.2.10. Typical Usage</a></li>
-<li><a class="reference internal" href="#extensions-and-special-cases">10.2.2.11. Extensions and Special Cases</a></li>
+<li><a class="reference internal" href="#overheads">10.2.2.5. Overheads</a></li>
+<li><a class="reference internal" href="#parsing-exceptions">10.2.2.6. Parsing Exceptions</a></li>
+<li><a class="reference internal" href="#picture-clause-parsing">10.2.2.7. Picture Clause Parsing</a></li>
+<li><a class="reference internal" href="#lexical-scanning">10.2.2.8. Lexical Scanning</a></li>
+<li><a class="reference internal" href="#parsing">10.2.2.9. Parsing</a></li>
+<li><a class="reference internal" href="#cobol-schema-loader">10.2.2.10. COBOL Schema Loader</a></li>
 </ul>
 </li>
 </ul>

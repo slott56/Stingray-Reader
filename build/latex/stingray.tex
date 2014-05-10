@@ -14,7 +14,7 @@
 
 
 \title{The Stingray Schema-Based File Reader}
-\date{May 09, 2014}
+\date{May 10, 2014}
 \release{4.4.1}
 \author{S. Lott}
 \newcommand{\sphinxlogo}{}
@@ -32,66 +32,66 @@
     \PYG@it{\PYG@bf{\PYG@ff{#1}}}}}}}
 \def\PYG#1#2{\PYG@reset\PYG@toks#1+\relax+\PYG@do{#2}}
 
-\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
-\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
-\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
 \expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
+\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
+\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
+\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
+\expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@si\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.44,0.63,0.82}{##1}}}
+\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
+\expandafter\def\csname PYG@tok@no\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.38,0.68,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
 \expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
+\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
-\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
-\expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
-\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
-\expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
-\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@si\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.44,0.63,0.82}{##1}}}
-\expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@no\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.38,0.68,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
-\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@gs\endcsname{\let\PYG@bf=\textbf}
-\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
-\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
-\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
 \expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
+\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
+\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
+\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
 \expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
-\expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@gt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
-\expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
+\expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@gs\endcsname{\let\PYG@bf=\textbf}
+\expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
+\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
+\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
 
 \def\PYGZbs{\char`\\}
 \def\PYGZus{\char`\_}
@@ -912,7 +912,7 @@ using protobuf.
 
 
 \subsection{stingray \texttt{\_\_init\_\_.py}}
-\label{stingray_init::doc}\label{stingray_init:stingray-init}\label{stingray_init:stingray-init-py}
+\label{stingray_init::doc}\label{stingray_init:stingray-init-py}\label{stingray_init:stingray-init}
 This is approximately pure overhead required to make a Python package.
 \phantomsection\label{stingray_init:module-__init__}\index{\_\_init\_\_ (module)}
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -926,7 +926,7 @@ This is approximately pure overhead required to make a Python package.
 
 
 \section{Cell Module -- Data Element Containers and Conversions}
-\label{cell:cell-module-data-element-containers-and-conversions}\label{cell::doc}\label{cell:cells}\label{cell:module-cell}\index{cell (module)}
+\label{cell::doc}\label{cell:module-cell}\label{cell:cell-module-data-element-containers-and-conversions}\label{cell:cells}\index{cell (module)}
 The point of a {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} is two-fold.
 \begin{itemize}
 \item {} 
@@ -2588,7 +2588,7 @@ Attribute( name= ``mm-dd-yy'', size= \emph{n}, offset= \emph{m},
 
 
 \section{Schema Loader Module -- Load Embedded or External Schema}
-\label{schema_loader::doc}\label{schema_loader:schema-loader-module-load-embedded-or-external-schema}\label{schema_loader:schema-loader}\label{schema_loader:module-schema.loader}\index{schema.loader (module)}
+\label{schema_loader::doc}\label{schema_loader:module-schema.loader}\label{schema_loader:schema-loader-module-load-embedded-or-external-schema}\label{schema_loader:schema-loader}\index{schema.loader (module)}
 A \emph{Schema Loader} loads the attributes of a schema from a source document.
 There are a variety of sources.
 \begin{itemize}
@@ -3028,13 +3028,13 @@ more complex than simply loading rows from a sheet of a workbook.
 
 
 \section{Workbook Package -- Uniform Wrappers for Workbooks}
-\label{workbook/index::doc}\label{workbook/index:workbook-package-uniform-wrappers-for-workbooks}\label{workbook/index:workbook}
+\label{workbook/index::doc}\label{workbook/index:workbook}\label{workbook/index:workbook-package-uniform-wrappers-for-workbooks}
 This package includes a base definition module plus a module for
 each physical format.
 
 
 \subsection{Workbook \_\_init\_\_ Module -- Wrapper for all implementations}
-\label{workbook/init:module-workbook}\label{workbook/init::doc}\label{workbook/init:workbook-init}\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}\index{workbook (module)}
+\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}\label{workbook/init::doc}\label{workbook/init:module-workbook}\label{workbook/init:workbook-init}\index{workbook (module)}
 A \emph{Workbook} is a collection of \emph{Sheets}.  It's also a set of decoding
 rules required to translate bytes (or XML text) into meaningful \emph{Cell} instances.
 
@@ -3442,7 +3442,7 @@ for binding file and schema.  See below for the {\hyperref[schema_loader:schema.
 
 
 \subsection{Workbook Base Definition}
-\label{workbook/base::doc}\label{workbook/base:workbook-base}\label{workbook/base:workbook-base-definition}
+\label{workbook/base:workbook-base}\label{workbook/base::doc}\label{workbook/base:workbook-base-definition}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{os}
@@ -4046,7 +4046,7 @@ containing cell type information.
 
 
 \subsection{ODS Workbook}
-\label{workbook/ods:ods-workbook}\label{workbook/ods::doc}\label{workbook/ods:workbook-ods}
+\label{workbook/ods::doc}\label{workbook/ods:ods-workbook}\label{workbook/ods:workbook-ods}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4254,7 +4254,7 @@ At \code{\textless{}table-cell} end: finalize the accumulated value.
 
 
 \subsection{Numbers 09 Workbook}
-\label{workbook/numbers_09:numbers-09-workbook}\label{workbook/numbers_09::doc}\label{workbook/numbers_09:workbook-number09}
+\label{workbook/numbers_09::doc}\label{workbook/numbers_09:numbers-09-workbook}\label{workbook/numbers_09:workbook-number09}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4612,7 +4612,7 @@ Picking a sheet involves matching a two-part name: (workspace, table).
 
 
 \subsection{Numbers 13 Workbook}
-\label{workbook/numbers_13::doc}\label{workbook/numbers_13:numbers-13-workbook}\label{workbook/numbers_13:workbook-number13}
+\label{workbook/numbers_13:workbook-number13}\label{workbook/numbers_13::doc}\label{workbook/numbers_13:numbers-13-workbook}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -5030,7 +5030,7 @@ Or {\hyperref[cobol_init:cobol.COBOL_File.row_get]{\code{cobol.COBOL\_File.row\_
 
 
 \section{The iWork `13 Numbers Modules}
-\label{iwork13::doc}\label{iwork13:iwork13}\label{iwork13:the-iwork-13-numbers-modules}
+\label{iwork13::doc}\label{iwork13:the-iwork-13-numbers-modules}\label{iwork13:iwork13}
 There are two digressive modules that are part of reading iWork `13 Numbers files.
 We could depend on other implementations. Instead, we've provided our own
 implementation to reduce the dependencies.
@@ -5688,7 +5688,7 @@ that's associated with the ID in the ArchiveInfo.
 
 
 \section{The COBOL Package}
-\label{cobol::doc}\label{cobol:the-cobol-package}\label{cobol:cobol}
+\label{cobol::doc}\label{cobol:cobol}\label{cobol:the-cobol-package}
 Or.  ``How do I access COBOL-defined data from Python''?
 
 We have three problems to solve to get COBOL data into Python applications.
@@ -6189,7 +6189,7 @@ to create a schema.
 
 
 \paragraph{Module Overheads}
-\label{cobol_init:module-cobol}\label{cobol_init:module-overheads}\index{cobol (module)}
+\label{cobol_init:module-overheads}\label{cobol_init:module-cobol}\index{cobol (module)}
 We depend on {\hyperref[cell:module-cell]{\code{cell}}}, {\hyperref[schema:module-schema]{\code{schema}}}, and {\hyperref[workbook/numbers_13:module-workbook]{\code{workbook}}}.
 We'll also import one class definition from {\hyperref[cobol_defs:module-cobol.defs]{\code{cobol.defs}}}.
 
@@ -6203,6 +6203,7 @@ We'll also import one class definition from {\hyperref[cobol_defs:module-cobol.d
 \PYG{k+kn}{import} \PYG{n+nn}{copy}
 \PYG{k+kn}{import} \PYG{n+nn}{warnings}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
+\PYG{k+kn}{import} \PYG{n+nn}{logging}
 
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.schema}
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
@@ -6526,10 +6527,11 @@ Dump data from a record, driven by the original DDE structure.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{dump}\PYG{p}{(} \PYG{n}{schema}\PYG{p}{,} \PYG{n}{aRow} \PYG{p}{)}\PYG{p}{:}
+    \PYG{k}{print}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}:45s\PYGZcb{} \PYGZob{}:3s\PYGZcb{} \PYGZob{}:3s\PYGZcb{} \PYGZob{}!s\PYGZcb{} \PYGZob{}!s\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Field}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Pos}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Sz}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Raw}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Cell}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)} \PYG{p}{)}
     \PYG{k}{for} \PYG{n}{record} \PYG{o+ow}{in} \PYG{n}{schema}\PYG{o}{.}\PYG{n}{info}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{dde}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{:}
         \PYG{k}{for} \PYG{n}{aDDE}\PYG{p}{,} \PYG{n}{attr}\PYG{p}{,} \PYG{n}{indices}\PYG{p}{,} \PYG{n}{raw\PYGZus{}bytes}\PYG{p}{,} \PYG{n}{cell} \PYG{o+ow}{in} \PYG{n}{dump\PYGZus{}iter}\PYG{p}{(}\PYG{n}{record}\PYG{p}{,} \PYG{n}{aRow}\PYG{p}{)}\PYG{p}{:}
-            \PYG{k}{print}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}:45s\PYGZcb{} \PYGZob{}:3d\PYGZcb{} \PYGZob{}!r\PYGZcb{} \PYGZob{}!s\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}
-                \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{indent}\PYG{o}{*}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{  }\PYG{l+s}{\PYGZsq{}}\PYG{o}{+}\PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{aDDE}\PYG{p}{)}\PYG{p}{,} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{size}\PYG{p}{,}
+            \PYG{k}{print}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}:45s\PYGZcb{} \PYGZob{}:3d\PYGZcb{} \PYGZob{}:3d\PYGZcb{} \PYGZob{}!r\PYGZcb{} \PYGZob{}!s\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}
+                \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{indent}\PYG{o}{*}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{  }\PYG{l+s}{\PYGZsq{}}\PYG{o}{+}\PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{aDDE}\PYG{p}{)}\PYG{p}{,} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{offset}\PYG{p}{,} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{size}\PYG{p}{,}
                 \PYG{n}{raw\PYGZus{}bytes}\PYG{p}{,} \PYG{n}{cell}\PYG{p}{)} \PYG{p}{)}
 \end{Verbatim}
 
@@ -6772,7 +6774,7 @@ Numeric data with usage \code{DISPLAY} requires handling implicit decimal points
             \PYG{n}{display}\PYG{o}{=} \PYG{n+nb}{buffer}
             \PYG{k}{return} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(} \PYG{n+nb}{buffer} \PYG{p}{)}
     \PYG{k}{except} \PYG{n+ne}{Exception}\PYG{p}{:}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Can}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{t process \PYGZob{}0!r\PYGZcb{} from \PYGZob{}1!r\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{display}\PYG{p}{,}\PYG{n+nb}{buffer}\PYG{p}{)} \PYG{p}{)}
+        \PYG{n}{Character\PYGZus{}File}\PYG{o}{.}\PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Can}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{t process \PYGZob{}0!r\PYGZcb{} from \PYGZob{}1!r\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{display}\PYG{p}{,}\PYG{n+nb}{buffer}\PYG{p}{)} \PYG{p}{)}
         \PYG{k}{raise}
 \end{Verbatim}
 
@@ -6804,7 +6806,7 @@ A codec would make a hash of the bit patterns required.
     \PYG{k}{try}\PYG{p}{:}
         \PYG{k}{return} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(} \PYG{n}{display} \PYG{p}{)}
     \PYG{k}{except} \PYG{n+ne}{Exception}\PYG{p}{:}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Can}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{t process \PYGZob{}0!r\PYGZcb{} from \PYGZob{}1!r\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{display}\PYG{p}{,}\PYG{n+nb}{buffer}\PYG{p}{)} \PYG{p}{)}
+        \PYG{n}{Character\PYGZus{}File}\PYG{o}{.}\PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Can}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{t process \PYGZob{}0!r\PYGZcb{} from \PYGZob{}1!r\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{display}\PYG{p}{,}\PYG{n+nb}{buffer}\PYG{p}{)} \PYG{p}{)}
         \PYG{k}{raise}
 \end{Verbatim}
 
@@ -6824,6 +6826,12 @@ A codec would make a hash of the bit patterns required.
         \PYG{n}{sc}\PYG{p}{,} \PYG{n+nb}{bytes} \PYG{o}{=} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{\PYGZgt{}q}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{l+m+mi}{8}
     \PYG{n}{n}\PYG{o}{=} \PYG{n}{struct}\PYG{o}{.}\PYG{n}{unpack}\PYG{p}{(} \PYG{n}{sc}\PYG{p}{,} \PYG{n+nb}{buffer} \PYG{p}{)}
     \PYG{k}{return} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(} \PYG{n}{n}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{p}{)}
+\end{Verbatim}
+
+Class-level logger
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{Character\PYGZus{}File}\PYG{o}{.}\PYG{n}{log}\PYG{o}{=} \PYG{n}{logging}\PYG{o}{.}\PYG{n}{getLogger}\PYG{p}{(} \PYG{n}{Character\PYGZus{}File}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}qualname\PYGZus{}\PYGZus{}} \PYG{p}{)}
 \end{Verbatim}
 
 
@@ -7290,7 +7298,7 @@ Convert the \code{Cell} to our target type via \code{...to\_str()}.
 \end{enumerate}
 
 We \textbf{must} do this in steps because the COBOL records may have invalid fields,
-or REDEFINES or OCCURS DEPENDS ON clauses.
+or \code{REDEFINES} or \code{OCCURS DEPENDING ON} clauses.
 
 If we want to build higher-level, pure Python objects associated with some
 application, we'll do this.
@@ -7307,29 +7315,83 @@ will be a list-of-list structure, and we apply the indexes in the order from the
 DDE definition to pick apart the lists.
 
 
+\paragraph{Extensions and Special Cases}
+\label{cobol_loader:extensions-and-special-cases}
+The typical use cases is something like the following:
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{with} \PYG{n+nb}{open}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{sample/zipcty.cob}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{r}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{k}{as} \PYG{n}{cobol}\PYG{p}{:}
+    \PYG{n}{schema}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{COBOLSchemaLoader}\PYG{p}{(} \PYG{n}{cobol} \PYG{p}{)}\PYG{o}{.}\PYG{n}{load}\PYG{p}{(}\PYG{p}{)}
+\PYG{k}{with} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{Character\PYGZus{}File}\PYG{p}{(} \PYG{n}{filename}\PYG{p}{,} \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)} \PYG{k}{as} \PYG{n}{wb}\PYG{p}{:}
+    \PYG{n}{sheet}\PYG{o}{=} \PYG{n}{wb}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{n}{filename} \PYG{p}{)}
+    \PYG{k}{for} \PYG{n}{row} \PYG{o+ow}{in} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}
+        \PYG{n}{dump}\PYG{p}{(} \PYG{n}{schema}\PYG{p}{,} \PYG{n}{row} \PYG{p}{)}
+\end{Verbatim}
+
+This will use the default parsing to create a schema from a DDA and process a
+file, dumping each record.
+
+There are two common extension:
+\begin{itemize}
+\item {} 
+new lexical scanner, and
+
+\item {} 
+different ODO handling.
+
+\end{itemize}
+
+To change lexical scanners, we create a new subclass of the parser.
+
+We use this by subclassing \code{cobol.COBOLSchemaLoader}.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{class} \PYG{n+nc}{MySchemaLoader}\PYG{p}{(} \PYG{n}{cobol}\PYG{o}{.}\PYG{n}{COBOLSchemaLoader} \PYG{p}{)}\PYG{p}{:}
+    \PYG{n}{lexer\PYGZus{}class}\PYG{o}{=} \PYG{n}{cobol}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{Lexer\PYGZus{}Long\PYGZus{}Lines}
+\end{Verbatim}
+
+This will use a different lexical scanner when parsing a DDE file.
+
+We may also need to change the record factory. This involves two separate extensions.
+We must extend the {\hyperref[cobol_loader:cobol.loader.RecordFactory]{\code{cobol.loader.RecordFactory}}} to change the features.
+Then we can extend {\hyperref[cobol_loader:cobol.loader.COBOLSchemaLoader]{\code{cobol.loader.COBOLSchemaLoader}}} to use this record
+factory.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{class} \PYG{n+nc}{ExtendedRecordFactory}\PYG{p}{(} \PYG{n}{cobol}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{RecordFactory} \PYG{p}{)}\PYG{p}{:}
+    \PYG{n}{occurs\PYGZus{}dependingon\PYGZus{}class}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{OccursDependingOnLimit}
+    \PYG{c}{\PYGZsh{}Default is occurs\PYGZus{}dependingon\PYGZus{}class= stingray.cobol.defs.OccursDependingOn}
+
+\PYG{k}{class} \PYG{n+nc}{MySchemaLoader}\PYG{p}{(} \PYG{n}{cobol}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{COBOLSchemaLoader} \PYG{p}{)}\PYG{p}{:}
+    \PYG{n}{record\PYGZus{}factory\PYGZus{}class}\PYG{o}{=} \PYG{n}{ExtendedRecordFactory}
+\end{Verbatim}
+
+This will use a different record factory to elaborate the details of the DDE.
+
+
 \paragraph{Design}
 \label{cobol_loader:design}
 A DDE contains a recursive definition of a COBOL group-level DDE.
-There are two basic species of COBOL DDE's: elemetary items, which have a PICTURE clause,
+There are two basic species of COBOL DDE's: elemetary items, which have a \code{PICTURE} clause,
 and group-level items, which contain lower-level items.  There are several optional
-features of every DDE, including an OCCURS clause and a REDEFINES clause.
-In addition to the required picture clause, elementary items have an optional USAGE clause,
-and optional SIGN clause.
+features of every DDE, including an \code{OCCURS} clause and a \code{REDEFINES} clause.
+In addition to the required picture clause, elementary items have an optional \code{USAGE} clause,
+and optional \code{SIGN} clause.
 
-The \textbf{picture} clause specifies how to interpret a sequence of bytes.  The picture
-clause interacts with the optional \textbf{usage} clause, \textbf{sign} clause and \textbf{synchronized} clause
+The \code{PICTURE} clause specifies how to interpret a sequence of bytes.  The picture
+clause interacts with the optional \code{USAGE} clause, \code{SIGN} clause and \code{SYNCHRONIZED} clause
 to fully define the encoding.  The picture clause uses a complex format of code characters
 to define either individual character bytes (when the usage is display) or pairs of decimal digit bytes
-(when the usage is COMP-3).
+(when the usage is \code{COMP-3}).
 
-The \textbf{occurs} clause specifies an array of elements.  If the occurs clause appears
+The \code{OCCURS} clause specifies an array of elements.  If the occurs clause appears
 on a group level item, the sub-record is repeated.  If the occurs clause appears
 on an elementary item, that item is repeated.
 
 An \textbf{occurs depending on} (ODO) makes the positions of each field dependent on actual
 data present in the record. This is a rare, but necessary complication.
 
-The \textbf{redefines} clause defines an alias for input bytes.  When some field \emph{R} redefines
+The \code{REDEFINES} clause defines an alias for input bytes.  When some field \emph{R} redefines
 a previously defined field \emph{F}, the storage bytes are used for both \emph{R} and \emph{F}.
 The record structure itself does not provide a way to disambiguate the interpretation of the bytes.
 Program logic must be examined to determine the conditions under which each interpretation is valid.
@@ -7859,8 +7921,6 @@ The picture clauses are parsed separately by the DDE during its initialization.
     \PYG{n}{comp3\PYGZus{}class}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{UsageComp3}
     \PYG{n}{occurs\PYGZus{}class}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{Occurs}
     \PYG{n}{occurs\PYGZus{}fixed\PYGZus{}class}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{OccursFixed}
-
-    \PYG{c}{\PYGZsh{} May want to use stingray.cobol.defs.OccursDependingOnLimit}
     \PYG{n}{occurs\PYGZus{}dependingon\PYGZus{}class}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{OccursDependingOn}
 
     \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
@@ -7968,7 +8028,7 @@ token in \code{self.token}.
     \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{redefines\PYGZus{}class}\PYG{p}{(}\PYG{n}{name}\PYG{o}{=}\PYG{n}{redef}\PYG{p}{)}
 \end{Verbatim}
 
-A RENAMES creates an alternative group-level name for some elementary items.
+A \code{RENAMES} creates an alternative group-level name for some elementary items.
 It's considered bad practice.
 
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -7982,7 +8042,7 @@ It's considered bad practice.
     \PYG{k}{raise} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{UnsupportedError}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Renames clause}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}
 \end{Verbatim}
 
-There are two variations on the SIGN clause syntax.
+There are two variations on the \code{SIGN} clause syntax.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{sign1}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
@@ -8015,7 +8075,7 @@ There are two variations on the SIGN clause syntax.
     \PYG{k}{raise} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{UnsupportedError}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Synchronized clause}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}
 \end{Verbatim}
 
-There are two variations on the USAGE clause syntax.
+There are two variations on the \code{USAGE} clause syntax.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{usage}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
@@ -8145,7 +8205,7 @@ definition, below.
         \PYG{k}{yield} \PYG{n}{dde}
 \end{Verbatim}
 
-Note that some clauses (like REDEFINES) occupy a special place in COBOL syntax.
+Note that some clauses (like \code{REDEFINES}) occupy a special place in COBOL syntax.
 We're not fastidious about enforcing COBOL semantic rules. Presumably the
 source is proper COBOL and was actually used to create the source file.
 
@@ -8212,7 +8272,7 @@ This will yield the \code{01}-level records. Generally, there's only one.
 The final stages of compilation:
 \begin{itemize}
 \item {} 
-Resolve REDEFINES names using {\hyperref[cobol_defs:cobol.defs.resolver]{\code{cobol.defs.resolver()}}}.
+Resolve \code{REDEFINES} names using {\hyperref[cobol_defs:cobol.defs.resolver]{\code{cobol.defs.resolver()}}}.
 
 \item {} 
 Push dimensionality down to each elementary item using {\hyperref[cobol_defs:cobol.defs.setDimensionality]{\code{cobol.defs.setDimensionality()}}}.
@@ -8380,57 +8440,8 @@ tweaked.
 \end{Verbatim}
 
 
-\paragraph{Typical Usage}
-\label{cobol_loader:typical-usage}
-This module allows us to do something like the following:
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{with} \PYG{n+nb}{open}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{xyzzy.cob}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{k}{as} \PYG{n}{source}\PYG{p}{:}
-    \PYG{n}{dde\PYGZus{}list}\PYG{p}{,} \PYG{n}{schema} \PYG{o}{=} \PYG{n}{COBOLSchemaLoader}\PYG{p}{(} \PYG{n}{source} \PYG{p}{)}
-\PYG{k}{with} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{Character\PYGZus{}File}\PYG{p}{(} \PYG{n}{filename}\PYG{p}{,} \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)} \PYG{k}{as} \PYG{n}{wb}\PYG{p}{:}
-    \PYG{n}{sheet}\PYG{o}{=} \PYG{n}{wb}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{n}{filename} \PYG{p}{)}
-    \PYG{k}{for} \PYG{n}{row} \PYG{o+ow}{in} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}
-        \PYG{n}{dump}\PYG{p}{(} \PYG{n}{dde\PYGZus{}list}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{,} \PYG{n}{row} \PYG{p}{)}
-\end{Verbatim}
-
-This will use the default parsing to create a schema from a DDA and process a
-file, dumping each record.
-
-
-\paragraph{Extensions and Special Cases}
-\label{cobol_loader:extensions-and-special-cases}
-There are two common extension: new lexical scanner and different ODO handling.
-
-To change lexical scanners, we create a new subclass of the parser.
-
-We use this by subclassing \code{cobol.COBOLSchemaLoader}.
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{class} \PYG{n+nc}{MySchemaLoader}\PYG{p}{(} \PYG{n}{cobol}\PYG{o}{.}\PYG{n}{COBOLSchemaLoader} \PYG{p}{)}\PYG{p}{:}
-    \PYG{n}{lexer\PYGZus{}class}\PYG{o}{=} \PYG{n}{cobol}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{Lexer\PYGZus{}Long\PYGZus{}Lines}
-\end{Verbatim}
-
-This will use a different lexical scanner when parsing a DDE file.
-
-We may also need to change the record factory. This involves two separate extensions.
-We must extend the {\hyperref[cobol_loader:cobol.loader.RecordFactory]{\code{cobol.loader.RecordFactory}}} to change the features.
-Then we can extend {\hyperref[cobol_loader:cobol.loader.COBOLSchemaLoader]{\code{cobol.loader.COBOLSchemaLoader}}} to use this record
-factory.
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{class} \PYG{n+nc}{ExtendedRecordFactory}\PYG{p}{(} \PYG{n}{cobol}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{RecordFactory} \PYG{p}{)}\PYG{p}{:}
-    \PYG{n}{occurs\PYGZus{}dependingon\PYGZus{}class}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{OccursDependingOnLimit}
-    \PYG{c}{\PYGZsh{}Default is occurs\PYGZus{}dependingon\PYGZus{}class= stingray.cobol.defs.OccursDependingOn}
-
-\PYG{k}{class} \PYG{n+nc}{MySchemaLoader}\PYG{p}{(} \PYG{n}{cobol}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{COBOLSchemaLoader} \PYG{p}{)}\PYG{p}{:}
-    \PYG{n}{record\PYGZus{}factory\PYGZus{}class}\PYG{o}{=} \PYG{n}{ExtendedRecordFactory}
-\end{Verbatim}
-
-This will use a different record factory to elaborate the details of the DDE.
-
-
 \subsubsection{COBOL Definitions Module -- Handle COBOL DDE's}
-\label{cobol_defs::doc}\label{cobol_defs:module-cobol.defs}\label{cobol_defs:cobol-defs}\label{cobol_defs:cobol-definitions-module-handle-cobol-dde-s}\index{cobol.defs (module)}
+\label{cobol_defs:cobol-definitions-module-handle-cobol-dde-s}\label{cobol_defs::doc}\label{cobol_defs:module-cobol.defs}\label{cobol_defs:cobol-defs}\index{cobol.defs (module)}
 This is a small set of class definitions and functions
 that are used by {\hyperref[cobol_loader:module-cobol.loader]{\code{cobol.loader}}} as well as
 {\hyperref[cobol_init:module-cobol]{\code{cobol}}}.
@@ -8516,7 +8527,7 @@ with stingray.cobol.Character\_File( filename, schema=schema ) as wb:
     sheet= wb.sheet( filename )
     for row in sheet.rows():
         \textbf{cobol.loader.setSizeAndOffset( dde\_list{[}0{]} )}
-        dump( dde\_list{[}0{]}, row )
+        dump( schema, row )
 \end{alltt}
 
 
@@ -9346,6 +9357,9 @@ upper bound.
 If we have \code{05 SOMETHING OCCURS 1 TO 5 TIMES DEPENDING ON X} and
 the value of \code{X} is greater than 5, the maximum defined value, 5, is used.
 
+This entirely hypothetical as a possible fix to a problem. It's probably a
+Very Bad Idea, and should be removed.
+
 See \href{http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.jsp?topic=\%2Fcom.ibm.ent.cbl.zos.doc\%2Ftopics\%2FMG\%2Figymch1027.htm}{http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.jsp?topic=\%2Fcom.ibm.ent.cbl.zos.doc\%2Ftopics\%2FMG\%2Figymch1027.htm}
 \begin{quote}
 
@@ -9806,6 +9820,11 @@ It must be used with a row for the case of OCCURS Depending On.
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Given a top\PYGZhy{}level DDE, a Row of data (or None),}
 \PYG{l+s+sd}{    assign offset, size, totalSize.}
 \PYG{l+s+sd}{    Also, the case of an 88\PYGZhy{}level item, copy the parent USAGE to the child.}
+
+\PYG{l+s+sd}{    size is the instance size. For non\PYGZhy{}group items, it comes from the}
+\PYG{l+s+sd}{    PIC and OCCURS. For group items it\PYGZsq{}s the sum of the children\PYGZsq{}s sizes.}
+
+\PYG{l+s+sd}{    totalSize = size * occurs.}
 \PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{c}{\PYGZsh{} Pre\PYGZhy{}order: handle this item first.}
     \PYG{k}{if} \PYG{n+nb}{isinstance}\PYG{p}{(}\PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{allocation}\PYG{p}{,} \PYG{n}{Redefines}\PYG{p}{)}\PYG{p}{:}
@@ -9819,6 +9838,8 @@ It must be used with a row for the case of OCCURS Depending On.
         \PYG{c}{\PYGZsh{} base= aDDE.offset= allocation.offset( base )}
         \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{offset}\PYG{o}{=} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{allocation}\PYG{o}{.}\PYG{n}{offset}\PYG{p}{(}\PYG{n}{base}\PYG{p}{)}
         \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{totalSize}\PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{c}{\PYGZsh{} Initialize the size \PYGZhy{}\PYGZhy{} it may get updated below for group\PYGZhy{}level items.}
+    \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{size}\PYG{o}{=} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{usage}\PYG{o}{.}\PYG{n}{size}\PYG{p}{(}\PYG{p}{)}
 
     \PYG{n}{logger}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} Enter \PYGZob{}1\PYGZcb{} offset=\PYGZob{}2\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZgt{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{*}\PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{indent}\PYG{p}{,} \PYG{n}{aDDE}\PYG{p}{,} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{offset}\PYG{p}{)} \PYG{p}{)}
 
@@ -9827,7 +9848,7 @@ It must be used with a row for the case of OCCURS Depending On.
         \PYG{n}{setSizeAndOffset}\PYG{p}{(} \PYG{n}{child}\PYG{p}{,} \PYG{n}{aRow}\PYG{p}{,} \PYG{n}{base} \PYG{p}{)}
         \PYG{n}{base} \PYG{o}{=} \PYG{n}{child}\PYG{o}{.}\PYG{n}{offset} \PYG{o}{+} \PYG{n}{child}\PYG{o}{.}\PYG{n}{totalSize}
         \PYG{k}{if} \PYG{n+nb}{isinstance}\PYG{p}{(}\PYG{n}{child}\PYG{o}{.}\PYG{n}{allocation}\PYG{p}{,} \PYG{n}{Redefines}\PYG{p}{)}\PYG{p}{:}
-            \PYG{c}{\PYGZsh{} TODO: Push into Redefines}
+            \PYG{c}{\PYGZsh{} TODO: Push into Redefines: does nothing.}
             \PYG{c}{\PYGZsh{} aDDE.size+= allocation.size()}
             \PYG{k}{pass}
         \PYG{k}{else}\PYG{p}{:}
@@ -11135,7 +11156,7 @@ OK
 
 
 \subsection{Application Level Data Validation Technique}
-\label{demo/validation:demo-validate}\label{demo/validation::doc}\label{demo/validation:application-level-data-validation-technique}
+\label{demo/validation::doc}\label{demo/validation:demo-validate}\label{demo/validation:application-level-data-validation-technique}
 We validate that that a file actually matches a schema through a three-part valiation process.
 We looked at the first two parts in {\hyperref[demo/data_quality:demo-sqa]{\emph{Unit Level Validation for Application and Data}}}.
 \begin{itemize}
@@ -11608,7 +11629,7 @@ doesn't match the schema required by the application.
 
 
 \subsection{Data Profiling Demonstration}
-\label{demo/profile::doc}\label{demo/profile:demo-profile}\label{demo/profile:data-profiling-demonstration}
+\label{demo/profile:demo-profile}\label{demo/profile::doc}\label{demo/profile:data-profiling-demonstration}
 This is a simple data profiling application that can be applied
 to workbooks to examine the data prior to creating builders.
 
@@ -11945,7 +11966,7 @@ type
 
 
 \subsection{Reading COBOL Files}
-\label{demo/cobol_reader::doc}\label{demo/cobol_reader:demo-cobol}\label{demo/cobol_reader:reading-cobol-files}
+\label{demo/cobol_reader:demo-cobol}\label{demo/cobol_reader::doc}\label{demo/cobol_reader:reading-cobol-files}
 For sample data, we're using data found here:
 \href{http://wonder.cdc.gov/wonder/sci\_data/codes/fips/type\_txt/cntyxref.asp}{http://wonder.cdc.gov/wonder/sci\_data/codes/fips/type\_txt/cntyxref.asp}
 
@@ -12190,7 +12211,7 @@ we can pass the file object created by \code{ZipFile.open()} as the second argum
 
 
 \section{History}
-\label{history::doc}\label{history:id1}\label{history:history}
+\label{history:history}\label{history::doc}\label{history:id1}
 Latest release is 4.4.1.
 
 
@@ -12280,6 +12301,10 @@ junk in positions 72:80 of each line.
 Added RECFM=N to handle variable-length files with NO BDW/RDW words.
 This is the default.
 \href{https://sourceforge.net/p/stingrayreader/tickets/12/}{https://sourceforge.net/p/stingrayreader/tickets/12/}
+
+\item {} 
+Fixed Occurs Depending On Calculation initialization error.
+\href{https://sourceforge.net/p/stingrayreader/tickets/15/}{https://sourceforge.net/p/stingrayreader/tickets/15/}
 
 \end{itemize}
 
@@ -12446,7 +12471,7 @@ and easy-to-use \code{suite()} function that returns the module's suite.
 
 
 \subsection{Cell Module Tests}
-\label{testing/cell::doc}\label{testing/cell:test-cells}\label{testing/cell:cell-module-tests}
+\label{testing/cell::doc}\label{testing/cell:cell-module-tests}\label{testing/cell:test-cells}
 A Cell is the unit of data.  These unit tests exercise the classes in the
 {\hyperref[cell:module-cell]{\code{cell}}} module.  For more information, see {\hyperref[cell:cells]{\emph{Cell Module -- Data Element Containers and Conversions}}}.
 
@@ -13032,7 +13057,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Schema Loader Testing}
-\label{testing/schema_loader:schema-loader-testing}\label{testing/schema_loader::doc}
+\label{testing/schema_loader::doc}\label{testing/schema_loader:schema-loader-testing}
 A Schema Loader will build a schema from a variety of sources.
 \begin{itemize}
 \item {} 
@@ -14834,6 +14859,13 @@ Exercise the size and offset function with a number of cases.
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{35}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{top}\PYG{o}{.}\PYG{n}{children}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{children}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{totalSize} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{top}\PYG{o}{.}\PYG{n}{children}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{children}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{size} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{7}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{top}\PYG{o}{.}\PYG{n}{children}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{.}\PYG{n}{children}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{.}\PYG{n}{occurs}\PYG{o}{.}\PYG{n}{number}\PYG{p}{(}\PYG{n+nb+bp}{None}\PYG{p}{)} \PYG{p}{)}
+    \PYG{k}{def} \PYG{n+nf}{test\PYGZus{}should\PYGZus{}be\PYGZus{}repeatable}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
+        \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{setSizeAndOffset}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{top} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{7}\PYG{o}{*}\PYG{l+m+mi}{4}\PYG{o}{*}\PYG{l+m+mi}{5}\PYG{o}{+}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{top}\PYG{o}{.}\PYG{n}{totalSize} \PYG{p}{)}
+        \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{setSizeAndOffset}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{top} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{7}\PYG{o}{*}\PYG{l+m+mi}{4}\PYG{o}{*}\PYG{l+m+mi}{5}\PYG{o}{+}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{top}\PYG{o}{.}\PYG{n}{totalSize} \PYG{p}{)}
+        \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{setSizeAndOffset}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{top} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{7}\PYG{o}{*}\PYG{l+m+mi}{4}\PYG{o}{*}\PYG{l+m+mi}{5}\PYG{o}{+}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{top}\PYG{o}{.}\PYG{n}{totalSize} \PYG{p}{)}
 \end{Verbatim}
 
 
@@ -15485,7 +15517,7 @@ Be sure it parses.  Be sure we can extract data.
             \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
 
         \PYG{n}{row}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n}{data}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
-        \PYG{c}{\PYGZsh{}stingray.cobol.loader.dump( self.dde1, row )}
+        \PYG{c}{\PYGZsh{}stingray.cobol.dump( schema, row )}
 
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{QUESTION}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{PRINT\PYGZhy{}YES}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}int}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
@@ -15531,10 +15563,10 @@ Be sure it parses.  Be sure we can extract data.
         \PYG{n}{schema\PYGZus{}dict}\PYG{o}{=} \PYG{n+nb}{dict}\PYG{p}{(} \PYG{p}{(}\PYG{n}{a}\PYG{o}{.}\PYG{n}{name}\PYG{p}{,} \PYG{n}{a}\PYG{p}{)} \PYG{k}{for} \PYG{n}{a} \PYG{o+ow}{in} \PYG{n}{schema} \PYG{p}{)}
         \PYG{n}{data}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{Character\PYGZus{}File}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}
             \PYG{n}{file\PYGZus{}object}\PYG{o}{=} \PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NO 4567}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{p}{]}\PYG{p}{,}
-            \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
+            \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema}\PYG{p}{,} \PYG{p}{)}
 
         \PYG{n}{row}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n}{data}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
-        \PYG{c}{\PYGZsh{}stingray.cobol.loader.dump( self.dde2, row )}
+        \PYG{c}{\PYGZsh{}stingray.cobol.dump( schema, row )}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NO}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ARE\PYGZhy{}THERE\PYGZhy{}MORE\PYGZhy{}RECORDS}\PYG{l+s}{\PYGZdq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NO}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NO\PYGZhy{}MORE\PYGZhy{}RECORDS}\PYG{l+s}{\PYGZdq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
 \end{Verbatim}
@@ -15570,7 +15602,7 @@ Be sure that the various access methods (via Attribute and via Python tuple-of-t
             \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
 
         \PYG{n}{row}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n}{data}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
-        \PYG{c}{\PYGZsh{}stingray.cobol.loader.dump( self.dde3, row )}
+        \PYG{c}{\PYGZsh{}stingray.cobol.dump( schema, row )}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{12}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{o}{.}\PYG{n}{get}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{ANSWER}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}\PYG{o}{.}\PYG{n}{index}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}int}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{21}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(} \PYG{n}{schema\PYGZus{}dict}\PYG{o}{.}\PYG{n}{get}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{ANSWER}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}\PYG{o}{.}\PYG{n}{index}\PYG{p}{(}\PYG{l+m+mi}{2}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}int}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{21}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(} \PYG{n}{schema\PYGZus{}dict}\PYG{o}{.}\PYG{n}{get}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{ANSWER}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}\PYG{o}{.}\PYG{n}{index}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{l+m+mi}{4}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}int}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
@@ -15676,7 +15708,7 @@ Be sure it parses.  Be sure we can extract data.
             \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
 
         \PYG{n}{row}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n}{data}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
-        \PYG{c}{\PYGZsh{}stingray.cobol.loader.dump( self.dde5, row )}
+        \PYG{c}{\PYGZsh{}stingray.cobol.dump( schema, row )}
 
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{AB1234}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{A}\PYG{l+s}{\PYGZdq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{AB1234}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{B}\PYG{l+s}{\PYGZdq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
@@ -15734,7 +15766,7 @@ Be sure it parses.  Be sure we can extract data.
             \PYG{n}{file\PYGZus{}object}\PYG{o}{=} \PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ABC123456789DE}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{p}{]}\PYG{p}{,}
             \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
         \PYG{n}{row}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n}{data1}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
-        \PYG{c}{\PYGZsh{}stingray.cobol.loader.dump( self.dde6, row )}
+        \PYG{c}{\PYGZsh{}stingray.cobol.dump( schema, row )}
 
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ABC}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{SALARY}\PYG{l+s}{\PYGZdq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{123456789}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{SO\PYGZhy{}SEC\PYGZhy{}NO}\PYG{l+s}{\PYGZdq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
@@ -15747,7 +15779,7 @@ Be sure it parses.  Be sure we can extract data.
             \PYG{n}{file\PYGZus{}object}\PYG{o}{=} \PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{123456ABCDEF78}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{p}{]}\PYG{p}{,}
             \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
         \PYG{n}{row}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n}{data2}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
-        \PYG{c}{\PYGZsh{}stingray.cobol.loader.dump( self.dde6, row )}
+        \PYG{c}{\PYGZsh{}stingray.cobol.dump( schema, row )}
 
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertAlmostEquals}\PYG{p}{(} \PYG{l+m+mf}{123.456}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{WAGE}\PYG{l+s}{\PYGZdq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}float}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ABCDEF}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{EMP\PYGZhy{}NO}\PYG{l+s}{\PYGZdq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
@@ -15796,7 +15828,7 @@ Be sure it parses.  Be sure we can extract data.
             \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
         \PYG{n}{row}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n}{data1}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{c}{\PYGZsh{} Can\PYGZsq{}t dump with TEMPORARY\PYGZhy{}EMPLOYEE}
-        \PYG{c}{\PYGZsh{}stingray.cobol.loader.dump( self.dde7.get(\PYGZdq{}REGULAR\PYGZhy{}EMPLOYEE\PYGZdq{}), row )}
+        \PYG{c}{\PYGZsh{}stingray.cobol.dump( schema, row )}
 
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{1234.56}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{SEMI\PYGZhy{}MONTHLY\PYGZhy{}PAY}\PYG{l+s}{\PYGZdq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
 
@@ -15808,7 +15840,7 @@ Be sure it parses.  Be sure we can extract data.
             \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
         \PYG{n}{row}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n}{data2}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{c}{\PYGZsh{} Can\PYGZsq{}t dump with REGULAR\PYGZhy{}EMPLOYEE}
-        \PYG{c}{\PYGZsh{}stingray.cobol.loader.dump( self.dde7.get(\PYGZdq{}TEMPORARY\PYGZhy{}EMPLOYEE\PYGZdq{}), row )}
+        \PYG{c}{\PYGZsh{}stingray.cobol.dump( schema, row )}
 
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{12.34}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{HOURLY\PYGZhy{}PAY}\PYG{l+s}{\PYGZdq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
 \end{Verbatim}
@@ -15855,7 +15887,7 @@ Be sure it parses.  Be sure we can extract data.
             \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
 
         \PYG{n}{row}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n}{data1}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
-        \PYG{c}{\PYGZsh{}stingray.cobol.loader.dump( self.dde8, row )}
+        \PYG{c}{\PYGZsh{}stingray.cobol.dump( schema, row )}
         \PYG{c}{\PYGZsh{}print( \PYGZdq{}SEMI\PYGZhy{}MONTHLY\PYGZhy{}PAY\PYGZdq{}, schema\PYGZus{}path\PYGZus{}dict[\PYGZsq{}REDEFINES\PYGZhy{}RECORD.REGULAR\PYGZhy{}EMPLOYEE.SEMI\PYGZhy{}MONTHLY\PYGZhy{}PAY\PYGZsq{}] )}
         \PYG{c}{\PYGZsh{}print( \PYGZdq{}row.cell(...)\PYGZdq{}, row.cell(schema\PYGZus{}path\PYGZus{}dict[\PYGZsq{}REDEFINES\PYGZhy{}RECORD.REGULAR\PYGZhy{}EMPLOYEE.SEMI\PYGZhy{}MONTHLY\PYGZhy{}PAY\PYGZsq{}]) )}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertAlmostEquals}\PYG{p}{(} \PYG{l+m+mf}{123.456}\PYG{p}{,}
@@ -15870,7 +15902,7 @@ Be sure it parses.  Be sure we can extract data.
             \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
 
         \PYG{n}{row}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n}{data2}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
-        \PYG{c}{\PYGZsh{}stingray.cobol.loader.dump( self.dde8, row )}
+        \PYG{c}{\PYGZsh{}stingray.cobol.dump( schema, row )}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mf}{12.34}\PYG{p}{,}
             \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}path\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{REDEFINES\PYGZhy{}RECORD.TEMPORARY\PYGZhy{}EMPLOYEE.HOURLY\PYGZhy{}PAY}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}float}\PYG{p}{(}\PYG{p}{)}
         \PYG{p}{)}
@@ -15941,8 +15973,7 @@ Be sure it parses.  Be sure we can extract data.
             \PYG{n}{schema}\PYG{o}{=}\PYG{n}{schema} \PYG{p}{)}
 
         \PYG{n}{row}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n}{data}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}\PYG{o}{.}\PYG{n}{rows}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
-        \PYG{c}{\PYGZsh{}stingray.cobol.loader.dump( self.dde9a, row )}
-        \PYG{c}{\PYGZsh{}stingray.cobol.loader.dump( self.dde9b, row )}
+        \PYG{c}{\PYGZsh{}stingray..dump( schema, row )}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{QUESTION}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{PRINT\PYGZhy{}YES}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}int}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{row}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(}\PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{PRINT\PYGZhy{}NO}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}float}\PYG{p}{(}\PYG{p}{)} \PYG{p}{)}
@@ -16116,7 +16147,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Test Snappy and Protobuf}
-\label{testing/snappy_protobuf:test-snappy-and-protobuf}\label{testing/snappy_protobuf::doc}\label{testing/snappy_protobuf:test-snappy-protobuf}
+\label{testing/snappy_protobuf::doc}\label{testing/snappy_protobuf:test-snappy-protobuf}\label{testing/snappy_protobuf:test-snappy-and-protobuf}
 These are tests for the snappy decompression and the protobuf object encoding.
 
 
@@ -16339,7 +16370,7 @@ To enable logging.
 
 
 \section{Stingray Build}
-\label{build::doc}\label{build:build}\label{build:stingray-build}
+\label{build::doc}\label{build:stingray-build}\label{build:build}
 The source for \code{stingray} is a Sphinx project that depends on PyLit.
 Yes.  The documentation spawns the code.
 
@@ -16684,7 +16715,7 @@ sphinx\PYGZhy{}build \PYG{n+nv}{\PYGZdl{}*} \PYGZhy{}b latex \PYG{n+nb}{source }
 
 
 \section{Installation via \texttt{setup.py}}
-\label{installation::doc}\label{installation:installation}\label{installation:installation-via-setup-py}
+\label{installation::doc}\label{installation:installation-via-setup-py}\label{installation:installation}
 Use the following link to get the latest code:
 \begin{quote}
 
@@ -16849,13 +16880,6 @@ EBCDIC File V format with Occurs Depending On to show the combination.
 
 \begin{notice}{note}{Todo}
 
-Test EXTERNAL, GLOBAL as Skipped Words, too.
-\end{notice}
-
-(The {\hyperref[testing/cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/testing/cobol\_loader.rst, line 983.)
-
-\begin{notice}{note}{Todo}
-
 Refactor this, it feels clunky.
 \end{notice}
 
@@ -16910,20 +16934,27 @@ Translate Formula and Formula error to Text
 
 \begin{notice}{note}{Todo}
 
+Test EXTERNAL, GLOBAL as Skipped Words, too.
+\end{notice}
+
+(The {\hyperref[testing/cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/testing/cobol\_loader.rst, line 990.)
+
+\begin{notice}{note}{Todo}
+
 refactor setSizeAndOffset()
 
 Refactor setSizeAndOffset() into the {\hyperref[index:cobol.defs.Allocation]{\code{Allocation}}} class methods
 to remove isinstance() nonsense.
 \end{notice}
 
-(The {\hyperref[cobol_defs:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_defs.rst, line 1166.)
+(The {\hyperref[cobol_defs:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_defs.rst, line 1169.)
 
 \begin{notice}{note}{Todo}
 
 88-level items could create boolean-valued properties.
 \end{notice}
 
-(The {\hyperref[cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_loader.rst, line 344.)
+(The {\hyperref[cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_loader.rst, line 397.)
 
 
 \chapter{Indices and Tables}

@@ -82,6 +82,9 @@ Change Details:
     This is the default. 
     https://sourceforge.net/p/stingrayreader/tickets/12/
     
+-   Fixed Occurs Depending On Calculation initialization error.
+    https://sourceforge.net/p/stingrayreader/tickets/15/
+    
 Version 3
 ==============
 

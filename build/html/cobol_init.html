@@ -69,7 +69,7 @@ more sophisticated COBOL-based workbooks.</li>
 to create a schema.</p>
 <div class="section" id="module-cobol">
 <span id="module-overheads"></span><h2>10.2.1.1. Module Overheads<a class="headerlink" href="#module-cobol" title="Permalink to this headline">¶</a></h2>
-<p>We depend on <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>, <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>, and <a class="reference internal" href="workbook/init.html#module-workbook" title="workbook"><tt class="xref py py-mod docutils literal"><span class="pre">workbook</span></tt></a>.
+<p>We depend on <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>, <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>, and <a class="reference internal" href="workbook/numbers_13.html#module-workbook" title="workbook"><tt class="xref py py-mod docutils literal"><span class="pre">workbook</span></tt></a>.
 We&#8217;ll also import one class definition from <a class="reference internal" href="cobol_defs.html#module-cobol.defs" title="cobol.defs"><tt class="xref py py-mod docutils literal"><span class="pre">cobol.defs</span></tt></a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;stingray.cobol -- Extend the core Stingray definitions to handle COBOL</span>
 <span class="sd">DDE&#39;s and COBOL files, including packed decimal and EBCDIC data.</span>
@@ -80,6 +80,7 @@ We&#8217;ll also import one class definition from <a class="reference internal" 
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">pprint</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">import</span> <span class="nn">stingray.schema</span>
 <span class="kn">import</span> <span class="nn">stingray.sheet</span>
@@ -369,10 +370,11 @@ may turn out to be a lot of combinations.</p>
 
 <p>Dump data from a record, driven by the original DDE structure.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">dump</span><span class="p">(</span> <span class="n">schema</span><span class="p">,</span> <span class="n">aRow</span> <span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span> <span class="s">&quot;{:45s} {:3s} {:3s} {!s} {!s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;Field&quot;</span><span class="p">,</span> <span class="s">&quot;Pos&quot;</span><span class="p">,</span> <span class="s">&quot;Sz&quot;</span><span class="p">,</span> <span class="s">&quot;Raw&quot;</span><span class="p">,</span> <span class="s">&quot;Cell&quot;</span> <span class="p">)</span> <span class="p">)</span>
     <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;dde&#39;</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">aDDE</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">raw_bytes</span><span class="p">,</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">dump_iter</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">aRow</span><span class="p">):</span>
-            <span class="k">print</span><span class="p">(</span> <span class="s">&quot;{:45s} {:3d} {!r} {!s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">aDDE</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="s">&#39;  &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">aDDE</span><span class="p">),</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+            <span class="k">print</span><span class="p">(</span> <span class="s">&quot;{:45s} {:3d} {:3d} {!r} {!s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">aDDE</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="s">&#39;  &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">aDDE</span><span class="p">),</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
                 <span class="n">raw_bytes</span><span class="p">,</span> <span class="n">cell</span><span class="p">)</span> <span class="p">)</span>
 </pre></div>
 </div>
@@ -566,7 +568,7 @@ Text is easy, Python&#8217;s <tt class="docutils literal"><span class="pre">io.o
             <span class="n">display</span><span class="o">=</span> <span class="nb">buffer</span>
             <span class="k">return</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span> <span class="nb">buffer</span> <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;Can&#39;t process {0!r} from {1!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">display</span><span class="p">,</span><span class="nb">buffer</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">Character_File</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;Can&#39;t process {0!r} from {1!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">display</span><span class="p">,</span><span class="nb">buffer</span><span class="p">)</span> <span class="p">)</span>
         <span class="k">raise</span>
 </pre></div>
 </div>
@@ -596,7 +598,7 @@ A codec would make a hash of the bit patterns required.</p>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span> <span class="n">display</span> <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;Can&#39;t process {0!r} from {1!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">display</span><span class="p">,</span><span class="nb">buffer</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">Character_File</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;Can&#39;t process {0!r} from {1!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">display</span><span class="p">,</span><span class="nb">buffer</span><span class="p">)</span> <span class="p">)</span>
         <span class="k">raise</span>
 </pre></div>
 </div>
@@ -614,6 +616,10 @@ A codec would make a hash of the bit patterns required.</p>
         <span class="n">sc</span><span class="p">,</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="s">&#39;&gt;q&#39;</span><span class="p">,</span> <span class="mi">8</span>
     <span class="n">n</span><span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span> <span class="n">sc</span><span class="p">,</span> <span class="nb">buffer</span> <span class="p">)</span>
     <span class="k">return</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>Class-level logger</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Character_File</span><span class="o">.</span><span class="n">log</span><span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span> <span class="n">Character_File</span><span class="o">.</span><span class="n">__qualname__</span> <span class="p">)</span>
 </pre></div>
 </div>
 </div>

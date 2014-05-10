@@ -40,6 +40,7 @@ import decimal
 import copy
 import warnings
 import pprint
+import logging
 
 import stingray.schema
 import stingray.sheet
@@ -336,10 +337,11 @@ def dump_iter( aDDE, aRow ):
 # ::
 
 def dump( schema, aRow ):
+    print( "{:45s} {:3s} {:3s} {!s} {!s}".format("Field", "Pos", "Sz", "Raw", "Cell" ) )
     for record in schema.info['dde']:
         for aDDE, attr, indices, raw_bytes, cell in dump_iter(record, aRow):
-            print( "{:45s} {:3d} {!r} {!s}".format(
-                aDDE.indent*'  '+str(aDDE), aDDE.size, 
+            print( "{:45s} {:3d} {:3d} {!r} {!s}".format(
+                aDDE.indent*'  '+str(aDDE), aDDE.offset, aDDE.size, 
                 raw_bytes, cell) )
     
 
@@ -551,7 +553,7 @@ class Character_File( COBOL_File ):
                 display= buffer
                 return decimal.Decimal( buffer )
         except Exception:
-            self.log.debug( "Can't process {0!r} from {1!r}".format(display,buffer) )
+            Character_File.log.debug( "Can't process {0!r} from {1!r}".format(display,buffer) )
             raise
 
 # COMP-3 in proper character files may not make any sense at all.  
@@ -583,7 +585,7 @@ class Character_File( COBOL_File ):
         try:
             return decimal.Decimal( display )
         except Exception:
-            self.log.debug( "Can't process {0!r} from {1!r}".format(display,buffer) )
+            Character_File.log.debug( "Can't process {0!r} from {1!r}".format(display,buffer) )
             raise
 
 # COMP in proper character files may not make any sense, either. 
@@ -604,6 +606,12 @@ class Character_File( COBOL_File ):
         n= struct.unpack( sc, buffer )
         return decimal.Decimal( n[0] )
     
+# Class-level logger
+#
+# ::
+
+Character_File.log= logging.getLogger( Character_File.__qualname__ )
+
 # EBCDIC File
 # ---------------
 #

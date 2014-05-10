@@ -112,200 +112,201 @@
 \contentsline {subsubsection}{COBOL Loader Module -- Parse COBOL Source to Load a Schema}{95}{subsubsection*.125}
 \contentsline {paragraph}{Load A Schema Use Case}{95}{paragraph*.126}
 \contentsline {paragraph}{Use A Schema Use Case}{96}{paragraph*.127}
-\contentsline {paragraph}{Design}{97}{paragraph*.128}
-\contentsline {subparagraph}{DDE Class}{97}{subparagraph*.129}
-\contentsline {subparagraph}{DDE Post-processing}{98}{subparagraph*.130}
-\contentsline {subparagraph}{DDE Parser}{98}{subparagraph*.131}
-\contentsline {subparagraph}{Field Values}{98}{subparagraph*.132}
-\contentsline {subparagraph}{Additional Requirements}{99}{subparagraph*.133}
-\contentsline {subparagraph}{Model}{99}{subparagraph*.134}
-\contentsline {paragraph}{Overheads}{100}{paragraph*.135}
-\contentsline {paragraph}{Parsing Exceptions}{101}{paragraph*.136}
-\contentsline {paragraph}{Picture Clause Parsing}{101}{paragraph*.138}
-\contentsline {paragraph}{Lexical Scanning}{102}{paragraph*.141}
-\contentsline {paragraph}{Parsing}{104}{paragraph*.146}
-\contentsline {paragraph}{COBOL Schema Loader}{110}{paragraph*.151}
-\contentsline {subsubsection}{COBOL Definitions Module -- Handle COBOL DDE's}{113}{subsubsection*.157}
-\contentsline {paragraph}{The Architecture Problem}{113}{paragraph*.158}
-\contentsline {subparagraph}{Where To Recompute}{113}{subparagraph*.159}
-\contentsline {subparagraph}{The Module Dependency Problem}{114}{subparagraph*.160}
-\contentsline {subparagraph}{Resolution}{114}{subparagraph*.161}
-\contentsline {paragraph}{Overheads}{114}{paragraph*.162}
-\contentsline {paragraph}{Exception}{114}{paragraph*.163}
-\contentsline {paragraph}{Cell Subclasses and Conversions}{115}{paragraph*.165}
-\contentsline {paragraph}{Essential Class Definitions}{116}{paragraph*.172}
-\contentsline {subparagraph}{Usage Strategy Hierarchy}{117}{subparagraph*.173}
-\contentsline {subparagraph}{Allocation Strategy Hierarchy}{120}{subparagraph*.180}
-\contentsline {subparagraph}{Occurs Strategy Hierarchy}{124}{subparagraph*.192}
-\contentsline {subparagraph}{DDE Class}{125}{subparagraph*.196}
-\contentsline {paragraph}{DDE Preparation Processing}{128}{paragraph*.199}
-\contentsline {paragraph}{Set Size and Offset}{130}{paragraph*.205}
-\contentsline {section}{\numberline {1.11}The \textbf {Stingray} Developer's Guide}{131}{section.1.11}
-\contentsline {subsection}{\numberline {1.11.1}Concepts}{131}{subsection.1.11.1}
-\contentsline {subsection}{\numberline {1.11.2}Binding a Schema to a File}{132}{subsection.1.11.2}
-\contentsline {subsection}{\numberline {1.11.3}Data Attribute Mapping -- Using a Schema}{132}{subsection.1.11.3}
-\contentsline {subsubsection}{Adding Fluency}{134}{subsubsection*.208}
-\contentsline {subsection}{\numberline {1.11.4}Data Transformation}{134}{subsection.1.11.4}
-\contentsline {subsection}{\numberline {1.11.5}\textbf {Stingray} Application Design}{134}{subsection.1.11.5}
-\contentsline {subsubsection}{Row-Level Processing}{135}{subsubsection*.209}
-\contentsline {subsubsection}{Configuration Options}{136}{subsubsection*.210}
-\contentsline {subsubsection}{Sheet-Level Processing}{136}{subsubsection*.211}
-\contentsline {subsubsection}{Workbook Processing}{137}{subsubsection*.213}
-\contentsline {subsubsection}{Command-Line Interface}{137}{subsubsection*.215}
-\contentsline {subsection}{\numberline {1.11.6}Variant Records and COBOL REDEFINES}{138}{subsection.1.11.6}
-\contentsline {subsubsection}{Trivial Filtering}{138}{subsubsection*.216}
-\contentsline {subsubsection}{Multiple Passes and Filters}{138}{subsubsection*.217}
-\contentsline {subsubsection}{One Pass and Switch}{139}{subsubsection*.218}
-\contentsline {subsubsection}{Lazy Switch Processing}{140}{subsubsection*.219}
-\contentsline {subsection}{\numberline {1.11.7}Big Data Performance}{141}{subsection.1.11.7}
-\contentsline {subsection}{\numberline {1.11.8}File Naming and External Schema}{141}{subsection.1.11.8}
-\contentsline {subsubsection}{Well Known Formats}{141}{subsubsection*.220}
-\contentsline {subsubsection}{Fixed Formats and COBOL}{141}{subsubsection*.221}
-\contentsline {subsubsection}{External Schema Workbooks}{142}{subsubsection*.222}
-\contentsline {subsection}{\numberline {1.11.9}Binding a Schema to an Application}{142}{subsection.1.11.9}
-\contentsline {subsection}{\numberline {1.11.10}Schema Version Numbering}{143}{subsection.1.11.10}
-\contentsline {subsection}{\numberline {1.11.11}Frequently Asked Questions}{143}{subsection.1.11.11}
-\contentsline {subsubsection}{Junk Data}{143}{subsubsection*.223}
-\contentsline {section}{\numberline {1.12}\textbf {Stingray} Demo Applications}{143}{section.1.12}
-\contentsline {subsection}{\numberline {1.12.1}Unit Level Validation for Application and Data}{144}{subsection.1.12.1}
-\contentsline {subsubsection}{Overheads}{144}{subsubsection*.224}
-\contentsline {subsubsection}{Builder Functions}{144}{subsubsection*.225}
-\contentsline {subsubsection}{Mock Workbook}{145}{subsubsection*.227}
-\contentsline {subsubsection}{Unit Test The Builder Function}{145}{subsubsection*.228}
-\contentsline {subsubsection}{Live Data Test The Builder Function}{146}{subsubsection*.229}
-\contentsline {subsubsection}{Sheet-Level Testing}{146}{subsubsection*.230}
-\contentsline {subsubsection}{Main Program Switch}{147}{subsubsection*.232}
-\contentsline {subsubsection}{Running the Demo}{147}{subsubsection*.233}
-\contentsline {subsection}{\numberline {1.12.2}Application Level Data Validation Technique}{147}{subsection.1.12.2}
-\contentsline {subsubsection}{State Change Commands}{148}{subsubsection*.234}
-\contentsline {subsubsection}{Persistence Context Manager}{148}{subsubsection*.235}
-\contentsline {subsubsection}{Example Application}{149}{subsubsection*.236}
-\contentsline {paragraph}{ORM Layer}{150}{paragraph*.237}
-\contentsline {paragraph}{Persistence Context Manager}{150}{paragraph*.238}
-\contentsline {paragraph}{Builder Functions}{151}{paragraph*.239}
-\contentsline {paragraph}{Processing}{151}{paragraph*.240}
-\contentsline {paragraph}{High-Level Interfaces}{152}{paragraph*.241}
-\contentsline {paragraph}{Command-Line Interface}{153}{paragraph*.242}
-\contentsline {subsubsection}{Running the Demo}{153}{subsubsection*.243}
-\contentsline {subsection}{\numberline {1.12.3}Data Profiling Demonstration}{154}{subsection.1.12.3}
-\contentsline {subsubsection}{Overheads}{154}{subsubsection*.244}
-\contentsline {subsubsection}{Processing Context}{154}{subsubsection*.245}
-\contentsline {subsubsection}{Processing}{155}{subsubsection*.246}
-\contentsline {subsubsection}{High-Level Interfaces}{156}{subsubsection*.247}
-\contentsline {subsubsection}{Command-Line Interface}{156}{subsubsection*.248}
-\contentsline {paragraph}{Running the Demo}{157}{paragraph*.249}
-\contentsline {subsection}{\numberline {1.12.4}Reading COBOL Files}{159}{subsection.1.12.4}
-\contentsline {subsubsection}{Implementation}{160}{subsubsection*.250}
-\contentsline {subsubsection}{Running the demo}{162}{subsubsection*.251}
-\contentsline {subsubsection}{Working with Archives}{162}{subsubsection*.252}
-\contentsline {section}{\numberline {1.13}History}{162}{section.1.13}
-\contentsline {subsection}{\numberline {1.13.1}Version 4}{162}{subsection.1.13.1}
-\contentsline {subsection}{\numberline {1.13.2}Version 3}{163}{subsection.1.13.2}
-\contentsline {subsection}{\numberline {1.13.3}Version 2}{163}{subsection.1.13.3}
-\contentsline {subsection}{\numberline {1.13.4}Version 1}{164}{subsection.1.13.4}
-\contentsline {subsection}{\numberline {1.13.5}Version 0}{164}{subsection.1.13.5}
-\contentsline {section}{\numberline {1.14}Testing}{165}{section.1.14}
-\contentsline {subsection}{\numberline {1.14.1}Main Test Script}{165}{subsection.1.14.1}
-\contentsline {subsection}{\numberline {1.14.2}Cell Module Tests}{166}{subsection.1.14.2}
-\contentsline {subsubsection}{Overheads}{166}{subsubsection*.253}
-\contentsline {subsubsection}{Cell Tests}{166}{subsubsection*.254}
-\contentsline {subsubsection}{Other Conversions}{169}{subsubsection*.255}
-\contentsline {subsubsection}{Test Suite and Runner}{169}{subsubsection*.256}
-\contentsline {subsection}{\numberline {1.14.3}Sheet Module Tests}{169}{subsection.1.14.3}
-\contentsline {subsubsection}{Overheads}{170}{subsubsection*.257}
-\contentsline {subsubsection}{Sheet Tests}{170}{subsubsection*.258}
-\contentsline {subsubsection}{Eager Row Tests}{170}{subsubsection*.259}
-\contentsline {subsubsection}{Lazy Row Tests}{171}{subsubsection*.260}
-\contentsline {subsubsection}{Test Suite and Runner}{172}{subsubsection*.261}
-\contentsline {subsection}{\numberline {1.14.4}Schema Module Tests}{172}{subsection.1.14.4}
-\contentsline {subsubsection}{Overheads}{172}{subsubsection*.262}
-\contentsline {subsubsection}{Mocks}{173}{subsubsection*.263}
-\contentsline {subsubsection}{Attribute Features}{173}{subsubsection*.264}
-\contentsline {subsubsection}{Baseline Attribute Conversion}{173}{subsubsection*.265}
-\contentsline {subsubsection}{Schema}{174}{subsubsection*.266}
-\contentsline {subsubsection}{Test Suite and Runner}{174}{subsubsection*.267}
-\contentsline {subsection}{\numberline {1.14.5}Schema Loader Testing}{175}{subsection.1.14.5}
-\contentsline {subsubsection}{Overheads}{175}{subsubsection*.268}
-\contentsline {subsubsection}{HeadingRowSchemaLoader Tests}{176}{subsubsection*.269}
-\contentsline {subsubsection}{ExternalSchemaLoader}{176}{subsubsection*.270}
-\contentsline {subsubsection}{ExternalSchemaSheet Tests}{177}{subsubsection*.271}
-\contentsline {subsubsection}{EmbeddedSchemaSheet Tests}{177}{subsubsection*.272}
-\contentsline {subsubsection}{Test Suite and Runner}{178}{subsubsection*.273}
-\contentsline {subsection}{\numberline {1.14.6}Workbook Testing}{179}{subsection.1.14.6}
-\contentsline {subsubsection}{Overheads}{179}{subsubsection*.274}
-\contentsline {subsubsection}{CSV\_Workbook Tests}{179}{subsubsection*.275}
-\contentsline {subsubsection}{CSV\_Workbook with Tab delimiters}{180}{subsubsection*.276}
-\contentsline {subsubsection}{Fixed\_Workbook Tests}{180}{subsubsection*.277}
-\contentsline {subsubsection}{ODS\_Workbook Tests}{181}{subsubsection*.278}
-\contentsline {subsubsection}{XLS\_Workbook Tests}{181}{subsubsection*.279}
-\contentsline {subsubsection}{XLSX\_Workbook Tests}{181}{subsubsection*.280}
-\contentsline {subsubsection}{Numbers09\_Workbook Tests}{182}{subsubsection*.281}
-\contentsline {subsubsection}{Numbers13\_Workbook Tests}{182}{subsubsection*.282}
-\contentsline {subsubsection}{Workbook Factory Function}{183}{subsubsection*.283}
-\contentsline {subsubsection}{Test Suite and Runner}{183}{subsubsection*.284}
-\contentsline {subsection}{\numberline {1.14.7}COBOL Schema Testing}{183}{subsection.1.14.7}
-\contentsline {subsubsection}{Overheads}{183}{subsubsection*.285}
-\contentsline {subsubsection}{Handy Mocks}{184}{subsubsection*.286}
-\contentsline {subsubsection}{Repeating Attribute}{184}{subsubsection*.287}
-\contentsline {subsubsection}{DDE Data Access}{186}{subsubsection*.288}
-\contentsline {subsubsection}{Workbook File Access}{187}{subsubsection*.289}
-\contentsline {subsubsection}{Test Conversions}{191}{subsubsection*.290}
-\contentsline {subsubsection}{Test Suite and Runner}{192}{subsubsection*.291}
-\contentsline {subsection}{\numberline {1.14.8}COBOL Schema Loader Unit Tests}{192}{subsection.1.14.8}
-\contentsline {subsubsection}{Overheads}{192}{subsubsection*.292}
-\contentsline {subsubsection}{Lexical Scanner}{193}{subsubsection*.293}
-\contentsline {subsubsection}{Long Lexical Scanner}{194}{subsubsection*.294}
-\contentsline {subsubsection}{Picture Parsing}{194}{subsubsection*.295}
-\contentsline {subsubsection}{Usage}{196}{subsubsection*.296}
-\contentsline {subsubsection}{Allocation}{197}{subsubsection*.297}
-\contentsline {subsubsection}{Size And Offset Function}{198}{subsubsection*.298}
-\contentsline {paragraph}{Size and Offset Mocks}{198}{paragraph*.299}
-\contentsline {paragraph}{Size and Offset Cases}{199}{paragraph*.300}
-\contentsline {subsubsection}{Resolve Redefines}{202}{subsubsection*.301}
-\contentsline {subsubsection}{Set Dimensionality}{203}{subsubsection*.302}
-\contentsline {subsubsection}{DDE Construction Methods}{204}{subsubsection*.303}
-\contentsline {subsubsection}{Parsing Single DDE}{204}{subsubsection*.304}
-\contentsline {subsubsection}{Parsing Complete DDE}{209}{subsubsection*.305}
-\contentsline {subsubsection}{Schema Maker}{210}{subsubsection*.306}
-\contentsline {subsubsection}{Test Suite and Runner}{211}{subsubsection*.307}
-\contentsline {subsection}{\numberline {1.14.9}COBOL Integration Tests}{211}{subsection.1.14.9}
-\contentsline {subsubsection}{Overheads}{211}{subsubsection*.308}
-\contentsline {subsubsection}{Superclass For Tests}{212}{subsubsection*.309}
-\contentsline {subsubsection}{DDE Test copybook 1 with basic features}{212}{subsubsection*.310}
-\contentsline {subsubsection}{DDE Test copybook 2 with 88-level item}{213}{subsubsection*.311}
-\contentsline {subsubsection}{DDE Test copybook 3 with nested occurs level}{213}{subsubsection*.312}
-\contentsline {subsubsection}{DDE Test copybook 4 from page 174 with nested occurs level}{214}{subsubsection*.313}
-\contentsline {subsubsection}{DDE Test copybook 5 from page 195 with simple redefines}{215}{subsubsection*.314}
-\contentsline {subsubsection}{DDE Test copybook 6 from page 197 with another redefines}{216}{subsubsection*.315}
-\contentsline {subsubsection}{DDE Test copybook 7 from page 198, example ``A''}{217}{subsubsection*.316}
-\contentsline {subsubsection}{DDE Test copybook 8 from page 198, example ``B''}{218}{subsubsection*.317}
-\contentsline {subsubsection}{Test Copybook 9, Multiple 01 Levels}{219}{subsubsection*.318}
-\contentsline {subsubsection}{Test Copybook 10, Occurs Depending On}{220}{subsubsection*.319}
-\contentsline {subsubsection}{Test Copybook 11, Complex Occurs Depending On}{221}{subsubsection*.320}
-\contentsline {subsubsection}{Test Suite and Runner}{222}{subsubsection*.321}
-\contentsline {subsection}{\numberline {1.14.10}Test Snappy and Protobuf}{223}{subsection.1.14.10}
-\contentsline {subsubsection}{Overheads}{223}{subsubsection*.322}
-\contentsline {subsubsection}{Snappy Reader}{223}{subsubsection*.323}
-\contentsline {subsubsection}{Protobuf Decoder}{223}{subsubsection*.324}
-\contentsline {subsubsection}{Test Suite and Runner}{225}{subsubsection*.325}
-\contentsline {subsection}{\numberline {1.14.11}stingray.test \texttt {\_\_init\_\_.py}}{225}{subsection.1.14.11}
-\contentsline {section}{\numberline {1.15}Stingray Build}{226}{section.1.15}
-\contentsline {subsection}{\numberline {1.15.1}Build Procedure}{226}{subsection.1.15.1}
-\contentsline {subsection}{\numberline {1.15.2}Build Script Design}{227}{subsection.1.15.2}
-\contentsline {subsubsection}{Overheads}{227}{subsubsection*.326}
-\contentsline {subsubsection}{Sphinx Build}{227}{subsubsection*.327}
-\contentsline {subsubsection}{PyLit Build}{228}{subsubsection*.329}
-\contentsline {subsubsection}{Make Directories}{228}{subsubsection*.331}
-\contentsline {subsubsection}{Copy Data File}{228}{subsubsection*.333}
-\contentsline {subsubsection}{Run the Test Script}{229}{subsubsection*.335}
-\contentsline {subsubsection}{The Build Sequence}{229}{subsubsection*.337}
-\contentsline {subsubsection}{Main Program Switch}{230}{subsubsection*.338}
-\contentsline {subsection}{\numberline {1.15.3}Additional Builds}{230}{subsection.1.15.3}
-\contentsline {section}{\numberline {1.16}Installation via \texttt {setup.py}}{230}{section.1.16}
-\contentsline {subsection}{\numberline {1.16.1}Optional Build-from-Scratch}{230}{subsection.1.16.1}
-\contentsline {subsection}{\numberline {1.16.2}Installation via Distutils}{231}{subsection.1.16.2}
-\contentsline {subsection}{\numberline {1.16.3}The \texttt {setup.py} File}{231}{subsection.1.16.3}
-\contentsline {chapter}{\numberline {2}License}{233}{chapter.2}
-\contentsline {chapter}{\numberline {3}The TODO List}{235}{chapter.3}
-\contentsline {chapter}{\numberline {4}Indices and Tables}{237}{chapter.4}
-\contentsline {chapter}{Python Module Index}{239}{section*.339}
+\contentsline {paragraph}{Extensions and Special Cases}{97}{paragraph*.128}
+\contentsline {paragraph}{Design}{98}{paragraph*.129}
+\contentsline {subparagraph}{DDE Class}{98}{subparagraph*.130}
+\contentsline {subparagraph}{DDE Post-processing}{98}{subparagraph*.131}
+\contentsline {subparagraph}{DDE Parser}{99}{subparagraph*.132}
+\contentsline {subparagraph}{Field Values}{99}{subparagraph*.133}
+\contentsline {subparagraph}{Additional Requirements}{99}{subparagraph*.134}
+\contentsline {subparagraph}{Model}{100}{subparagraph*.135}
+\contentsline {paragraph}{Overheads}{101}{paragraph*.136}
+\contentsline {paragraph}{Parsing Exceptions}{102}{paragraph*.137}
+\contentsline {paragraph}{Picture Clause Parsing}{102}{paragraph*.139}
+\contentsline {paragraph}{Lexical Scanning}{103}{paragraph*.142}
+\contentsline {paragraph}{Parsing}{105}{paragraph*.147}
+\contentsline {paragraph}{COBOL Schema Loader}{111}{paragraph*.152}
+\contentsline {subsubsection}{COBOL Definitions Module -- Handle COBOL DDE's}{113}{subsubsection*.158}
+\contentsline {paragraph}{The Architecture Problem}{113}{paragraph*.159}
+\contentsline {subparagraph}{Where To Recompute}{114}{subparagraph*.160}
+\contentsline {subparagraph}{The Module Dependency Problem}{115}{subparagraph*.161}
+\contentsline {subparagraph}{Resolution}{115}{subparagraph*.162}
+\contentsline {paragraph}{Overheads}{115}{paragraph*.163}
+\contentsline {paragraph}{Exception}{115}{paragraph*.164}
+\contentsline {paragraph}{Cell Subclasses and Conversions}{116}{paragraph*.166}
+\contentsline {paragraph}{Essential Class Definitions}{117}{paragraph*.173}
+\contentsline {subparagraph}{Usage Strategy Hierarchy}{118}{subparagraph*.174}
+\contentsline {subparagraph}{Allocation Strategy Hierarchy}{121}{subparagraph*.181}
+\contentsline {subparagraph}{Occurs Strategy Hierarchy}{125}{subparagraph*.193}
+\contentsline {subparagraph}{DDE Class}{126}{subparagraph*.198}
+\contentsline {paragraph}{DDE Preparation Processing}{130}{paragraph*.201}
+\contentsline {paragraph}{Set Size and Offset}{131}{paragraph*.207}
+\contentsline {section}{\numberline {1.11}The \textbf {Stingray} Developer's Guide}{132}{section.1.11}
+\contentsline {subsection}{\numberline {1.11.1}Concepts}{133}{subsection.1.11.1}
+\contentsline {subsection}{\numberline {1.11.2}Binding a Schema to a File}{134}{subsection.1.11.2}
+\contentsline {subsection}{\numberline {1.11.3}Data Attribute Mapping -- Using a Schema}{134}{subsection.1.11.3}
+\contentsline {subsubsection}{Adding Fluency}{135}{subsubsection*.210}
+\contentsline {subsection}{\numberline {1.11.4}Data Transformation}{135}{subsection.1.11.4}
+\contentsline {subsection}{\numberline {1.11.5}\textbf {Stingray} Application Design}{136}{subsection.1.11.5}
+\contentsline {subsubsection}{Row-Level Processing}{136}{subsubsection*.211}
+\contentsline {subsubsection}{Configuration Options}{137}{subsubsection*.212}
+\contentsline {subsubsection}{Sheet-Level Processing}{138}{subsubsection*.213}
+\contentsline {subsubsection}{Workbook Processing}{138}{subsubsection*.215}
+\contentsline {subsubsection}{Command-Line Interface}{139}{subsubsection*.217}
+\contentsline {subsection}{\numberline {1.11.6}Variant Records and COBOL REDEFINES}{140}{subsection.1.11.6}
+\contentsline {subsubsection}{Trivial Filtering}{140}{subsubsection*.218}
+\contentsline {subsubsection}{Multiple Passes and Filters}{140}{subsubsection*.219}
+\contentsline {subsubsection}{One Pass and Switch}{141}{subsubsection*.220}
+\contentsline {subsubsection}{Lazy Switch Processing}{142}{subsubsection*.221}
+\contentsline {subsection}{\numberline {1.11.7}Big Data Performance}{142}{subsection.1.11.7}
+\contentsline {subsection}{\numberline {1.11.8}File Naming and External Schema}{143}{subsection.1.11.8}
+\contentsline {subsubsection}{Well Known Formats}{143}{subsubsection*.222}
+\contentsline {subsubsection}{Fixed Formats and COBOL}{143}{subsubsection*.223}
+\contentsline {subsubsection}{External Schema Workbooks}{143}{subsubsection*.224}
+\contentsline {subsection}{\numberline {1.11.9}Binding a Schema to an Application}{144}{subsection.1.11.9}
+\contentsline {subsection}{\numberline {1.11.10}Schema Version Numbering}{144}{subsection.1.11.10}
+\contentsline {subsection}{\numberline {1.11.11}Frequently Asked Questions}{145}{subsection.1.11.11}
+\contentsline {subsubsection}{Junk Data}{145}{subsubsection*.225}
+\contentsline {section}{\numberline {1.12}\textbf {Stingray} Demo Applications}{145}{section.1.12}
+\contentsline {subsection}{\numberline {1.12.1}Unit Level Validation for Application and Data}{145}{subsection.1.12.1}
+\contentsline {subsubsection}{Overheads}{146}{subsubsection*.226}
+\contentsline {subsubsection}{Builder Functions}{146}{subsubsection*.227}
+\contentsline {subsubsection}{Mock Workbook}{146}{subsubsection*.229}
+\contentsline {subsubsection}{Unit Test The Builder Function}{147}{subsubsection*.230}
+\contentsline {subsubsection}{Live Data Test The Builder Function}{147}{subsubsection*.231}
+\contentsline {subsubsection}{Sheet-Level Testing}{148}{subsubsection*.232}
+\contentsline {subsubsection}{Main Program Switch}{148}{subsubsection*.234}
+\contentsline {subsubsection}{Running the Demo}{149}{subsubsection*.235}
+\contentsline {subsection}{\numberline {1.12.2}Application Level Data Validation Technique}{149}{subsection.1.12.2}
+\contentsline {subsubsection}{State Change Commands}{149}{subsubsection*.236}
+\contentsline {subsubsection}{Persistence Context Manager}{150}{subsubsection*.237}
+\contentsline {subsubsection}{Example Application}{151}{subsubsection*.238}
+\contentsline {paragraph}{ORM Layer}{151}{paragraph*.239}
+\contentsline {paragraph}{Persistence Context Manager}{152}{paragraph*.240}
+\contentsline {paragraph}{Builder Functions}{152}{paragraph*.241}
+\contentsline {paragraph}{Processing}{153}{paragraph*.242}
+\contentsline {paragraph}{High-Level Interfaces}{153}{paragraph*.243}
+\contentsline {paragraph}{Command-Line Interface}{154}{paragraph*.244}
+\contentsline {subsubsection}{Running the Demo}{155}{subsubsection*.245}
+\contentsline {subsection}{\numberline {1.12.3}Data Profiling Demonstration}{155}{subsection.1.12.3}
+\contentsline {subsubsection}{Overheads}{156}{subsubsection*.246}
+\contentsline {subsubsection}{Processing Context}{156}{subsubsection*.247}
+\contentsline {subsubsection}{Processing}{156}{subsubsection*.248}
+\contentsline {subsubsection}{High-Level Interfaces}{157}{subsubsection*.249}
+\contentsline {subsubsection}{Command-Line Interface}{158}{subsubsection*.250}
+\contentsline {paragraph}{Running the Demo}{158}{paragraph*.251}
+\contentsline {subsection}{\numberline {1.12.4}Reading COBOL Files}{160}{subsection.1.12.4}
+\contentsline {subsubsection}{Implementation}{161}{subsubsection*.252}
+\contentsline {subsubsection}{Running the demo}{163}{subsubsection*.253}
+\contentsline {subsubsection}{Working with Archives}{164}{subsubsection*.254}
+\contentsline {section}{\numberline {1.13}History}{164}{section.1.13}
+\contentsline {subsection}{\numberline {1.13.1}Version 4}{164}{subsection.1.13.1}
+\contentsline {subsection}{\numberline {1.13.2}Version 3}{165}{subsection.1.13.2}
+\contentsline {subsection}{\numberline {1.13.3}Version 2}{165}{subsection.1.13.3}
+\contentsline {subsection}{\numberline {1.13.4}Version 1}{166}{subsection.1.13.4}
+\contentsline {subsection}{\numberline {1.13.5}Version 0}{166}{subsection.1.13.5}
+\contentsline {section}{\numberline {1.14}Testing}{166}{section.1.14}
+\contentsline {subsection}{\numberline {1.14.1}Main Test Script}{167}{subsection.1.14.1}
+\contentsline {subsection}{\numberline {1.14.2}Cell Module Tests}{167}{subsection.1.14.2}
+\contentsline {subsubsection}{Overheads}{167}{subsubsection*.255}
+\contentsline {subsubsection}{Cell Tests}{167}{subsubsection*.256}
+\contentsline {subsubsection}{Other Conversions}{171}{subsubsection*.257}
+\contentsline {subsubsection}{Test Suite and Runner}{171}{subsubsection*.258}
+\contentsline {subsection}{\numberline {1.14.3}Sheet Module Tests}{171}{subsection.1.14.3}
+\contentsline {subsubsection}{Overheads}{171}{subsubsection*.259}
+\contentsline {subsubsection}{Sheet Tests}{171}{subsubsection*.260}
+\contentsline {subsubsection}{Eager Row Tests}{172}{subsubsection*.261}
+\contentsline {subsubsection}{Lazy Row Tests}{173}{subsubsection*.262}
+\contentsline {subsubsection}{Test Suite and Runner}{174}{subsubsection*.263}
+\contentsline {subsection}{\numberline {1.14.4}Schema Module Tests}{174}{subsection.1.14.4}
+\contentsline {subsubsection}{Overheads}{174}{subsubsection*.264}
+\contentsline {subsubsection}{Mocks}{174}{subsubsection*.265}
+\contentsline {subsubsection}{Attribute Features}{175}{subsubsection*.266}
+\contentsline {subsubsection}{Baseline Attribute Conversion}{175}{subsubsection*.267}
+\contentsline {subsubsection}{Schema}{176}{subsubsection*.268}
+\contentsline {subsubsection}{Test Suite and Runner}{176}{subsubsection*.269}
+\contentsline {subsection}{\numberline {1.14.5}Schema Loader Testing}{176}{subsection.1.14.5}
+\contentsline {subsubsection}{Overheads}{176}{subsubsection*.270}
+\contentsline {subsubsection}{HeadingRowSchemaLoader Tests}{177}{subsubsection*.271}
+\contentsline {subsubsection}{ExternalSchemaLoader}{178}{subsubsection*.272}
+\contentsline {subsubsection}{ExternalSchemaSheet Tests}{178}{subsubsection*.273}
+\contentsline {subsubsection}{EmbeddedSchemaSheet Tests}{179}{subsubsection*.274}
+\contentsline {subsubsection}{Test Suite and Runner}{180}{subsubsection*.275}
+\contentsline {subsection}{\numberline {1.14.6}Workbook Testing}{180}{subsection.1.14.6}
+\contentsline {subsubsection}{Overheads}{181}{subsubsection*.276}
+\contentsline {subsubsection}{CSV\_Workbook Tests}{181}{subsubsection*.277}
+\contentsline {subsubsection}{CSV\_Workbook with Tab delimiters}{182}{subsubsection*.278}
+\contentsline {subsubsection}{Fixed\_Workbook Tests}{182}{subsubsection*.279}
+\contentsline {subsubsection}{ODS\_Workbook Tests}{182}{subsubsection*.280}
+\contentsline {subsubsection}{XLS\_Workbook Tests}{183}{subsubsection*.281}
+\contentsline {subsubsection}{XLSX\_Workbook Tests}{183}{subsubsection*.282}
+\contentsline {subsubsection}{Numbers09\_Workbook Tests}{183}{subsubsection*.283}
+\contentsline {subsubsection}{Numbers13\_Workbook Tests}{184}{subsubsection*.284}
+\contentsline {subsubsection}{Workbook Factory Function}{184}{subsubsection*.285}
+\contentsline {subsubsection}{Test Suite and Runner}{185}{subsubsection*.286}
+\contentsline {subsection}{\numberline {1.14.7}COBOL Schema Testing}{185}{subsection.1.14.7}
+\contentsline {subsubsection}{Overheads}{185}{subsubsection*.287}
+\contentsline {subsubsection}{Handy Mocks}{185}{subsubsection*.288}
+\contentsline {subsubsection}{Repeating Attribute}{186}{subsubsection*.289}
+\contentsline {subsubsection}{DDE Data Access}{188}{subsubsection*.290}
+\contentsline {subsubsection}{Workbook File Access}{189}{subsubsection*.291}
+\contentsline {subsubsection}{Test Conversions}{193}{subsubsection*.292}
+\contentsline {subsubsection}{Test Suite and Runner}{194}{subsubsection*.293}
+\contentsline {subsection}{\numberline {1.14.8}COBOL Schema Loader Unit Tests}{194}{subsection.1.14.8}
+\contentsline {subsubsection}{Overheads}{194}{subsubsection*.294}
+\contentsline {subsubsection}{Lexical Scanner}{194}{subsubsection*.295}
+\contentsline {subsubsection}{Long Lexical Scanner}{196}{subsubsection*.296}
+\contentsline {subsubsection}{Picture Parsing}{196}{subsubsection*.297}
+\contentsline {subsubsection}{Usage}{198}{subsubsection*.298}
+\contentsline {subsubsection}{Allocation}{198}{subsubsection*.299}
+\contentsline {subsubsection}{Size And Offset Function}{200}{subsubsection*.300}
+\contentsline {paragraph}{Size and Offset Mocks}{200}{paragraph*.301}
+\contentsline {paragraph}{Size and Offset Cases}{201}{paragraph*.302}
+\contentsline {subsubsection}{Resolve Redefines}{204}{subsubsection*.303}
+\contentsline {subsubsection}{Set Dimensionality}{205}{subsubsection*.304}
+\contentsline {subsubsection}{DDE Construction Methods}{206}{subsubsection*.305}
+\contentsline {subsubsection}{Parsing Single DDE}{206}{subsubsection*.306}
+\contentsline {subsubsection}{Parsing Complete DDE}{211}{subsubsection*.307}
+\contentsline {subsubsection}{Schema Maker}{212}{subsubsection*.308}
+\contentsline {subsubsection}{Test Suite and Runner}{213}{subsubsection*.309}
+\contentsline {subsection}{\numberline {1.14.9}COBOL Integration Tests}{213}{subsection.1.14.9}
+\contentsline {subsubsection}{Overheads}{213}{subsubsection*.310}
+\contentsline {subsubsection}{Superclass For Tests}{213}{subsubsection*.311}
+\contentsline {subsubsection}{DDE Test copybook 1 with basic features}{214}{subsubsection*.312}
+\contentsline {subsubsection}{DDE Test copybook 2 with 88-level item}{215}{subsubsection*.313}
+\contentsline {subsubsection}{DDE Test copybook 3 with nested occurs level}{215}{subsubsection*.314}
+\contentsline {subsubsection}{DDE Test copybook 4 from page 174 with nested occurs level}{216}{subsubsection*.315}
+\contentsline {subsubsection}{DDE Test copybook 5 from page 195 with simple redefines}{217}{subsubsection*.316}
+\contentsline {subsubsection}{DDE Test copybook 6 from page 197 with another redefines}{218}{subsubsection*.317}
+\contentsline {subsubsection}{DDE Test copybook 7 from page 198, example ``A''}{219}{subsubsection*.318}
+\contentsline {subsubsection}{DDE Test copybook 8 from page 198, example ``B''}{220}{subsubsection*.319}
+\contentsline {subsubsection}{Test Copybook 9, Multiple 01 Levels}{221}{subsubsection*.320}
+\contentsline {subsubsection}{Test Copybook 10, Occurs Depending On}{222}{subsubsection*.321}
+\contentsline {subsubsection}{Test Copybook 11, Complex Occurs Depending On}{223}{subsubsection*.322}
+\contentsline {subsubsection}{Test Suite and Runner}{224}{subsubsection*.323}
+\contentsline {subsection}{\numberline {1.14.10}Test Snappy and Protobuf}{224}{subsection.1.14.10}
+\contentsline {subsubsection}{Overheads}{224}{subsubsection*.324}
+\contentsline {subsubsection}{Snappy Reader}{225}{subsubsection*.325}
+\contentsline {subsubsection}{Protobuf Decoder}{225}{subsubsection*.326}
+\contentsline {subsubsection}{Test Suite and Runner}{227}{subsubsection*.327}
+\contentsline {subsection}{\numberline {1.14.11}stingray.test \texttt {\_\_init\_\_.py}}{227}{subsection.1.14.11}
+\contentsline {section}{\numberline {1.15}Stingray Build}{227}{section.1.15}
+\contentsline {subsection}{\numberline {1.15.1}Build Procedure}{228}{subsection.1.15.1}
+\contentsline {subsection}{\numberline {1.15.2}Build Script Design}{229}{subsection.1.15.2}
+\contentsline {subsubsection}{Overheads}{229}{subsubsection*.328}
+\contentsline {subsubsection}{Sphinx Build}{229}{subsubsection*.329}
+\contentsline {subsubsection}{PyLit Build}{229}{subsubsection*.331}
+\contentsline {subsubsection}{Make Directories}{230}{subsubsection*.333}
+\contentsline {subsubsection}{Copy Data File}{230}{subsubsection*.335}
+\contentsline {subsubsection}{Run the Test Script}{230}{subsubsection*.337}
+\contentsline {subsubsection}{The Build Sequence}{230}{subsubsection*.339}
+\contentsline {subsubsection}{Main Program Switch}{232}{subsubsection*.340}
+\contentsline {subsection}{\numberline {1.15.3}Additional Builds}{232}{subsection.1.15.3}
+\contentsline {section}{\numberline {1.16}Installation via \texttt {setup.py}}{232}{section.1.16}
+\contentsline {subsection}{\numberline {1.16.1}Optional Build-from-Scratch}{232}{subsection.1.16.1}
+\contentsline {subsection}{\numberline {1.16.2}Installation via Distutils}{233}{subsection.1.16.2}
+\contentsline {subsection}{\numberline {1.16.3}The \texttt {setup.py} File}{233}{subsection.1.16.3}
+\contentsline {chapter}{\numberline {2}License}{235}{chapter.2}
+\contentsline {chapter}{\numberline {3}The TODO List}{237}{chapter.3}
+\contentsline {chapter}{\numberline {4}Indices and Tables}{239}{chapter.4}
+\contentsline {chapter}{Python Module Index}{241}{section*.341}

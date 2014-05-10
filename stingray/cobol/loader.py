@@ -136,7 +136,7 @@
 # 3.  Convert the ``Cell`` to our target type via ``...to_str()``.
 #
 # We **must** do this in steps because the COBOL records may have invalid fields,
-# or REDEFINES or OCCURS DEPENDS ON clauses.
+# or ``REDEFINES`` or ``OCCURS DEPENDING ON`` clauses.
 #
 # If we want to build higher-level, pure Python objects associated with some
 # application, we'll do this.
@@ -153,30 +153,81 @@
 # will be a list-of-list structure, and we apply the indexes in the order from the original
 # DDE definition to pick apart the lists.
 #
+#
+# Extensions and Special Cases
+# ============================
+#
+# The typical use cases is something like the following:
+#
+# ..  parsed-literal::
+#
+#     with open("sample/zipcty.cob", "r") as cobol:
+#         schema= stingray.cobol.loader.COBOLSchemaLoader( cobol ).load()
+#     with stingray.cobol.Character_File( filename, schema=schema ) as wb:
+#         sheet= wb.sheet( filename )
+#         for row in sheet.rows():
+#             dump( schema, row )
+#
+# This will use the default parsing to create a schema from a DDA and process a
+# file, dumping each record.
+#
+# There are two common extension: 
+#
+# -   new lexical scanner, and
+#
+# -   different ODO handling.
+#
+# To change lexical scanners, we create a new subclass of the parser.
+#
+# We use this by subclassing :py:class:`cobol.COBOLSchemaLoader`.
+#
+# ..  parsed-literal::
+#
+#     class MySchemaLoader( cobol.COBOLSchemaLoader ):
+#         lexer_class= cobol.loader.Lexer_Long_Lines
+#
+# This will use a different lexical scanner when parsing a DDE file.
+#
+# We may also need to change the record factory. This involves two separate extensions.
+# We must extend the :py:class:`cobol.loader.RecordFactory` to change the features.
+# Then we can extend :py:class:`cobol.loader.COBOLSchemaLoader` to use this record
+# factory.
+#
+# ..  parsed-literal::
+#
+#     class ExtendedRecordFactory( cobol.loader.RecordFactory ):
+#         occurs_dependingon_class= stingray.cobol.defs.OccursDependingOnLimit
+#         #Default is occurs_dependingon_class= stingray.cobol.defs.OccursDependingOn
+#        
+#     class MySchemaLoader( cobol.loader.COBOLSchemaLoader ):
+#         record_factory_class= ExtendedRecordFactory
+#
+# This will use a different record factory to elaborate the details of the DDE.
+#
 # Design
 # =================
 #
 # A DDE contains a recursive definition of a COBOL group-level DDE.
-# There are two basic species of COBOL DDE's: elemetary items, which have a PICTURE clause,
+# There are two basic species of COBOL DDE's: elemetary items, which have a ``PICTURE`` clause,
 # and group-level items, which contain lower-level items.  There are several optional
-# features of every DDE, including an OCCURS clause and a REDEFINES clause.
-# In addition to the required picture clause, elementary items have an optional USAGE clause,
-# and optional SIGN clause.
+# features of every DDE, including an ``OCCURS`` clause and a ``REDEFINES`` clause.
+# In addition to the required picture clause, elementary items have an optional ``USAGE`` clause,
+# and optional ``SIGN`` clause.
 #
-# The **picture** clause specifies how to interpret a sequence of bytes.  The picture
-# clause interacts with the optional **usage** clause, **sign** clause and **synchronized** clause
+# The ``PICTURE`` clause specifies how to interpret a sequence of bytes.  The picture
+# clause interacts with the optional ``USAGE`` clause, ``SIGN`` clause and ``SYNCHRONIZED`` clause
 # to fully define the encoding.  The picture clause uses a complex format of code characters
 # to define either individual character bytes (when the usage is display) or pairs of decimal digit bytes
-# (when the usage is COMP-3).
+# (when the usage is ``COMP-3``).
 #
-# The **occurs** clause specifies an array of elements.  If the occurs clause appears
+# The ``OCCURS`` clause specifies an array of elements.  If the occurs clause appears
 # on a group level item, the sub-record is repeated.  If the occurs clause appears
 # on an elementary item, that item is repeated.
 #
 # An **occurs depending on** (ODO) makes the positions of each field dependent on actual
 # data present in the record. This is a rare, but necessary complication.
 #
-# The **redefines** clause defines an alias for input bytes.  When some field *R* redefines
+# The ``REDEFINES`` clause defines an alias for input bytes.  When some field *R* redefines
 # a previously defined field *F*, the storage bytes are used for both *R* and *F*.
 # The record structure itself does not provide a way to disambiguate the interpretation of the bytes.
 # Program logic must be examined to determine the conditions under which each interpretation is valid.
@@ -340,6 +391,8 @@
 # The "size" of a elementary items is still simply based on the picture.
 # For group items, however, size becomes based on total size which in
 # turn, may be based on ODO data.
+#
+#
 #
 # ..  todo::  88-level items could create boolean-valued properties.
 #
@@ -624,8 +677,6 @@ class RecordFactory:
     comp3_class= stingray.cobol.defs.UsageComp3
     occurs_class= stingray.cobol.defs.Occurs
     occurs_fixed_class= stingray.cobol.defs.OccursFixed
-    
-    # May want to use stingray.cobol.defs.OccursDependingOnLimit
     occurs_dependingon_class= stingray.cobol.defs.OccursDependingOn
 
     def __init__( self ):
@@ -734,7 +785,7 @@ class RecordFactory:
         self.token= next(self.lex)
         return self.redefines_class(name=redef)
 
-# A RENAMES creates an alternative group-level name for some elementary items.
+# A ``RENAMES`` creates an alternative group-level name for some elementary items.
 # It's considered bad practice. 
 #
 # ::
@@ -748,7 +799,7 @@ class RecordFactory:
             self.token= next(self.lex)
         raise stingray.cobol.defs.UnsupportedError( "Renames clause" )
 
-# There are two variations on the SIGN clause syntax.
+# There are two variations on the ``SIGN`` clause syntax.
 #
 # ::
 
@@ -783,7 +834,7 @@ class RecordFactory:
         raise stingray.cobol.defs.UnsupportedError( "Synchronized clause" )
 
 
-# There are two variations on the USAGE clause syntax.
+# There are two variations on the ``USAGE`` clause syntax.
 #
 # ::
 
@@ -909,7 +960,7 @@ class RecordFactory:
                     
             yield dde
 
-# Note that some clauses (like REDEFINES) occupy a special place in COBOL syntax.
+# Note that some clauses (like ``REDEFINES``) occupy a special place in COBOL syntax.
 # We're not fastidious about enforcing COBOL semantic rules. Presumably the 
 # source is proper COBOL and was actually used to create the source file. 
 #
@@ -967,7 +1018,7 @@ class RecordFactory:
 #
 # The final stages of compilation:
 #
-# -   Resolve REDEFINES names using :py:func:`cobol.defs.resolver`.
+# -   Resolve ``REDEFINES`` names using :py:func:`cobol.defs.resolver`.
 #
 # -   Push dimensionality down to each elementary item using :py:func:`cobol.defs.setDimensionality`.
 #
@@ -1110,52 +1161,3 @@ def COBOL_schema( source, replacing=None ):
     dde_list= list( parser.makeRecord( lexer.scan(source) ) )
     schema= make_schema( dde_list )
     return dde_list, schema
-    
-# Typical Usage
-# ==============
-#
-# This module allows us to do something like the following:
-#
-# ..  parsed-literal::
-#
-#     with open("xyzzy.cob") as source:
-#         dde_list, schema = COBOLSchemaLoader( source )
-#     with stingray.cobol.Character_File( filename, schema=schema ) as wb:
-#         sheet= wb.sheet( filename )
-#         for row in sheet.rows():
-#             dump( dde_list[0], row )
-#
-# This will use the default parsing to create a schema from a DDA and process a
-# file, dumping each record.
-#
-# Extensions and Special Cases
-# ============================
-#
-# There are two common extension: new lexical scanner and different ODO handling.
-#
-# To change lexical scanners, we create a new subclass of the parser.
-#
-# We use this by subclassing :py:class:`cobol.COBOLSchemaLoader`.
-#
-# ..  parsed-literal::
-#
-#     class MySchemaLoader( cobol.COBOLSchemaLoader ):
-#         lexer_class= cobol.loader.Lexer_Long_Lines
-#
-# This will use a different lexical scanner when parsing a DDE file.
-#
-# We may also need to change the record factory. This involves two separate extensions.
-# We must extend the :py:class:`cobol.loader.RecordFactory` to change the features.
-# Then we can extend :py:class:`cobol.loader.COBOLSchemaLoader` to use this record
-# factory.
-#
-# ..  parsed-literal::
-#
-#     class ExtendedRecordFactory( cobol.loader.RecordFactory ):
-#         occurs_dependingon_class= stingray.cobol.defs.OccursDependingOnLimit
-#         #Default is occurs_dependingon_class= stingray.cobol.defs.OccursDependingOn
-#        
-#     class MySchemaLoader( cobol.loader.COBOLSchemaLoader ):
-#         record_factory_class= ExtendedRecordFactory
-#
-# This will use a different record factory to elaborate the details of the DDE.

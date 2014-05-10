@@ -88,7 +88,7 @@ Be sure it parses.  Be sure we can extract data.
                 schema=schema )
 
             row= next( data.sheet( "" ).rows() )
-            #stingray.cobol.loader.dump( self.dde1, row )
+            #stingray.cobol.dump( schema, row )
             
             self.assertEqual( "1", row.cell(schema_dict['QUESTION']).to_str() )
             self.assertEqual( 2, row.cell(schema_dict['PRINT-YES']).to_int() )
@@ -136,10 +136,10 @@ Be sure it parses.  Be sure we can extract data.
             schema_dict= dict( (a.name, a) for a in schema )
             data= stingray.cobol.Character_File( name="", 
                 file_object= ["NO 4567",], 
-                schema=schema )
+                schema=schema, )
             
             row= next( data.sheet( "" ).rows() )
-            #stingray.cobol.loader.dump( self.dde2, row )
+            #stingray.cobol.dump( schema, row )
             self.assertEqual( "NO", row.cell(schema_dict["ARE-THERE-MORE-RECORDS"]).to_str() )
             self.assertEqual( "NO", row.cell(schema_dict["NO-MORE-RECORDS"]).to_str() )
 
@@ -175,7 +175,7 @@ Be sure that the various access methods (via Attribute and via Python tuple-of-t
                 schema=schema )
             
             row= next( data.sheet( "" ).rows() )
-            #stingray.cobol.loader.dump( self.dde3, row )
+            #stingray.cobol.dump( schema, row )
             self.assertEqual( 12, row.cell(schema_dict.get('ANSWER').index(1-1,2-1)).to_int() )
             self.assertEqual( 21, row.cell( schema_dict.get('ANSWER').index(2-1,1-1)).to_int() )
             self.assertEqual( 21, row.cell( schema_dict.get('ANSWER').index(1-1,4-1)).to_int() )
@@ -282,7 +282,7 @@ Be sure it parses.  Be sure we can extract data.
                 schema=schema )
             
             row= next( data.sheet( "" ).rows() )
-            #stingray.cobol.loader.dump( self.dde5, row )
+            #stingray.cobol.dump( schema, row )
 
             self.assertEqual( "AB1234", row.cell(schema_dict["A"]).to_str() ) 
             self.assertEqual( "AB1234", row.cell(schema_dict["B"]).to_str() ) 
@@ -341,7 +341,7 @@ Be sure it parses.  Be sure we can extract data.
                 file_object= ["ABC123456789DE",], 
                 schema=schema )
             row= next( data1.sheet( "" ).rows() )
-            #stingray.cobol.loader.dump( self.dde6, row )
+            #stingray.cobol.dump( schema, row )
             
             self.assertEqual( "ABC", row.cell(schema_dict["SALARY"]).to_str() )
             self.assertEqual( "123456789", row.cell(schema_dict["SO-SEC-NO"]).to_str() )
@@ -354,7 +354,7 @@ Be sure it parses.  Be sure we can extract data.
                 file_object= ["123456ABCDEF78",],
                 schema=schema )
             row= next( data2.sheet( "" ).rows() )
-            #stingray.cobol.loader.dump( self.dde6, row )
+            #stingray.cobol.dump( schema, row )
             
             self.assertAlmostEquals( 123.456, row.cell(schema_dict["WAGE"]).to_float() )
             self.assertEqual( "ABCDEF", row.cell(schema_dict["EMP-NO"]).to_str() )
@@ -404,7 +404,7 @@ Be sure it parses.  Be sure we can extract data.
                 schema=schema )
             row= next( data1.sheet( "" ).rows() )
             # Can't dump with TEMPORARY-EMPLOYEE
-            #stingray.cobol.loader.dump( self.dde7.get("REGULAR-EMPLOYEE"), row )
+            #stingray.cobol.dump( schema, row )
             
             self.assertEqual( '1234.56', row.cell(schema_dict["SEMI-MONTHLY-PAY"]).to_str() )
             
@@ -416,7 +416,7 @@ Be sure it parses.  Be sure we can extract data.
                 schema=schema )
             row= next( data2.sheet( "" ).rows() )
             # Can't dump with REGULAR-EMPLOYEE
-            #stingray.cobol.loader.dump( self.dde7.get("TEMPORARY-EMPLOYEE"), row ) 
+            #stingray.cobol.dump( schema, row ) 
             
             self.assertEqual( '12.34', row.cell(schema_dict["HOURLY-PAY"]).to_str() )
 
@@ -464,7 +464,7 @@ Be sure it parses.  Be sure we can extract data.
                 schema=schema )
             
             row= next( data1.sheet( "" ).rows() )
-            #stingray.cobol.loader.dump( self.dde8, row )
+            #stingray.cobol.dump( schema, row )
             #print( "SEMI-MONTHLY-PAY", schema_path_dict['REDEFINES-RECORD.REGULAR-EMPLOYEE.SEMI-MONTHLY-PAY'] )
             #print( "row.cell(...)", row.cell(schema_path_dict['REDEFINES-RECORD.REGULAR-EMPLOYEE.SEMI-MONTHLY-PAY']) )
             self.assertAlmostEquals( 123.456, 
@@ -479,7 +479,7 @@ Be sure it parses.  Be sure we can extract data.
                 schema=schema )
             
             row= next( data2.sheet( "" ).rows() )
-            #stingray.cobol.loader.dump( self.dde8, row )
+            #stingray.cobol.dump( schema, row )
             self.assertEqual( 12.34, 
                 row.cell(schema_path_dict['REDEFINES-RECORD.TEMPORARY-EMPLOYEE.HOURLY-PAY']).to_float()
             )
@@ -550,8 +550,7 @@ Be sure it parses.  Be sure we can extract data.
                 schema=schema )
 
             row= next( data.sheet( "" ).rows() )
-            #stingray.cobol.loader.dump( self.dde9a, row )
-            #stingray.cobol.loader.dump( self.dde9b, row )
+            #stingray..dump( schema, row )
             self.assertEqual( "1", row.cell(schema_dict['QUESTION']).to_str() )
             self.assertEqual( 2, row.cell(schema_dict['PRINT-YES']).to_int() )
             self.assertEqual( 3, row.cell(schema_dict['PRINT-NO']).to_float() )

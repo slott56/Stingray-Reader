@@ -93,7 +93,7 @@ The choices for computing the offsets are these:
         sheet= wb.sheet( filename )
         for row in sheet.rows():
             **cobol.loader.setSizeAndOffset( dde_list[0] )**
-            dump( dde_list[0], row )
+            dump( schema, row )
             
 The Module Dependency Problem
 -------------------------------
@@ -788,6 +788,9 @@ upper bound.
 If we have ``05 SOMETHING OCCURS 1 TO 5 TIMES DEPENDING ON X`` and
 the value of ``X`` is greater than 5, the maximum defined value, 5, is used.
 
+This entirely hypothetical as a possible fix to a problem. It's probably a 
+Very Bad Idea, and should be removed.
+
 See http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.jsp?topic=%2Fcom.ibm.ent.cbl.zos.doc%2Ftopics%2FMG%2Figymch1027.htm
 
     "When the maximum length is used, it is not necessary to initialize the ODO object before the table receives data."
@@ -1180,6 +1183,11 @@ It must be used with a row for the case of OCCURS Depending On.
         """Given a top-level DDE, a Row of data (or None), 
         assign offset, size, totalSize.
         Also, the case of an 88-level item, copy the parent USAGE to the child.
+        
+        size is the instance size. For non-group items, it comes from the
+        PIC and OCCURS. For group items it's the sum of the children's sizes.
+        
+        totalSize = size * occurs.
         """
         # Pre-order: handle this item first.
         if isinstance(aDDE.allocation, Redefines):
@@ -1193,6 +1201,8 @@ It must be used with a row for the case of OCCURS Depending On.
             # base= aDDE.offset= allocation.offset( base )
             aDDE.offset= aDDE.allocation.offset(base)
             aDDE.totalSize= 0
+        # Initialize the size -- it may get updated below for group-level items.
+        aDDE.size= aDDE.usage.size()            
                 
         logger.debug( "{0} Enter {1} offset={2}".format(">"*aDDE.indent, aDDE, aDDE.offset) )
         
@@ -1201,7 +1211,7 @@ It must be used with a row for the case of OCCURS Depending On.
             setSizeAndOffset( child, aRow, base )
             base = child.offset + child.totalSize
             if isinstance(child.allocation, Redefines):
-                # TODO: Push into Redefines
+                # TODO: Push into Redefines: does nothing.
                 # aDDE.size+= allocation.size()
                 pass
             else:

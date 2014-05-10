@@ -622,6 +622,13 @@ class TestGroupOccursSizeOffset( unittest.TestCase ):
         self.assertEqual( 35, self.top.children[1].children[0].totalSize )
         self.assertEqual( 5, self.top.children[1].children[0].size )
         self.assertEqual( 7, self.top.children[1].children[0].occurs.number(None) )
+    def test_should_be_repeatable( self ):
+        stingray.cobol.defs.setSizeAndOffset( self.top )
+        self.assertEqual( 7*4*5+3, self.top.totalSize )
+        stingray.cobol.defs.setSizeAndOffset( self.top )
+        self.assertEqual( 7*4*5+3, self.top.totalSize )
+        stingray.cobol.defs.setSizeAndOffset( self.top )
+        self.assertEqual( 7*4*5+3, self.top.totalSize )
 
 # Resolve Redefines
 # ===========================
