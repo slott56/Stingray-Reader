@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.1',
+        VERSION:     '4.4.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -85,7 +85,7 @@ This is the data quality assurance question.</li>
 <p>As noted in <a class="reference internal" href="introduction.html#intro"><em>Introduction</em></a>, there are three levels of schema that need to be bound to a file.</p>
 <ul>
 <li><p class="first"><strong>Physical Format</strong>.  We can make this transparent to our applications.
-See <a class="reference internal" href="workbook_init.html#workbook"><em>Workbook Module &#8211; Uniform Wrapper on All Workbooks</em></a> and <a class="reference internal" href="cobol.html#cobol"><em>The COBOL Package</em></a> for details. Everything is a workbook
+See <a class="reference internal" href="workbook/index.html#workbook"><em>Workbook Package &#8211; Uniform Wrappers for Workbooks</em></a> and <a class="reference internal" href="cobol.html#cobol"><em>The COBOL Package</em></a> for details. Everything is a workbook
 with a fairly limited API.</p>
 </li>
 <li><p class="first"><strong>Logical Layout</strong>.  This is how an application program will make use
@@ -148,7 +148,7 @@ a usable schema.</li>
 <tt class="file docutils literal"><span class="pre">.csv</span></tt>, <tt class="file docutils literal"><span class="pre">.xls</span></tt>, <tt class="file docutils literal"><span class="pre">.xlsx</span></tt>, <tt class="file docutils literal"><span class="pre">.xlsm</span></tt>, <tt class="file docutils literal"><span class="pre">.ods</span></tt>,
 <tt class="file docutils literal"><span class="pre">.numbers</span></tt> describe the physical format.</p>
 <p>Our <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a>, <a class="reference internal" href="sheet.html#sheet.Sheet" title="sheet.Sheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Sheet</span></tt></a>, and
-<tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt> handles many physical format details nicely.</p>
+<a class="reference internal" href="workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a> handles many physical format details nicely.</p>
 </div>
 <div class="section" id="data-attribute-mapping-using-a-schema">
 <h2>11.3. Data Attribute Mapping &#8211; Using a Schema<a class="headerlink" href="#data-attribute-mapping-using-a-schema" title="Permalink to this headline">¶</a></h2>

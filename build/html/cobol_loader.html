@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.1',
+        VERSION:     '4.4.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -63,7 +63,7 @@ What remains is parsing the COBOL source to extract a schema.</p>
 <p>A new <a class="reference internal" href="schema_loader.html#schema.loader.ExternalSchemaLoader" title="schema.loader.ExternalSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.ExternalSchemaLoader</span></tt></a> subclass is required
 to parse the DDE sublanguage of COBOL.   This loader will build the hierarchical
 DDE from the COBOL source, decorate this with size and offset information,
-then flatten it into a simple <a class="reference internal" href="schema.html#schema.Schema" title="schema.Schema"><tt class="xref py py-class docutils literal"><span class="pre">schema.Schema</span></tt></a> instance.`</p>
+then flatten it into a simple <a class="reference internal" href="schema.html#schema.Schema" title="schema.Schema"><tt class="xref py py-class docutils literal"><span class="pre">schema.Schema</span></tt></a> instance.</p>
 <div class="section" id="load-a-schema-use-case">
 <h2>10.2.2.1. Load A Schema Use Case<a class="headerlink" href="#load-a-schema-use-case" title="Permalink to this headline">¶</a></h2>
 <p>The goal of use case is to load a schema encoded in COBOL.  This breaks down
@@ -439,17 +439,17 @@ reason.  It&#8217;s derived data from the source picture clause.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Final:</th><td class="field-body">the final picture</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Alpha:</th><td class="field-body">boolean alpha/numeric</td>
+<tr class="field-even field"><th class="field-name">Alpha:</th><td class="field-body">boolean; True if any <tt class="docutils literal"><span class="pre">&quot;X&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;A&quot;</span></tt>; False if all <tt class="docutils literal"><span class="pre">&quot;9&quot;</span></tt> and related</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Length:</th><td class="field-body">length of the final picture (just being lazy, really)</td>
+<tr class="field-odd field"><th class="field-name">Length:</th><td class="field-body">length of the final picture</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Scale:</th><td class="field-body">count of &#8220;P&#8221; positions</td>
+<tr class="field-even field"><th class="field-name">Scale:</th><td class="field-body">count of <tt class="docutils literal"><span class="pre">&quot;P&quot;</span></tt> positions, often zero</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Precision:</th><td class="field-body">digits to the right of the decimal point</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Signed:</th><td class="field-body">boolean</td>
+<tr class="field-even field"><th class="field-name">Signed:</th><td class="field-body">boolean; True if any <tt class="docutils literal"><span class="pre">&quot;S&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;-&quot;</span></tt> or related</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Decimal:</th><td class="field-body">&#8221;.&#8221; or &#8220;V&#8221; or None</td>
+<tr class="field-odd field"><th class="field-name">Decimal:</th><td class="field-body"><tt class="docutils literal"><span class="pre">&quot;.&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;V&quot;</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></td>
 </tr>
 </tbody>
 </table>

@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.4.1',
+        VERSION:     '4.4.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -120,7 +120,7 @@ attributes  are generally ignored except for COBOL and Fixed format files.</p>
 to create a given type of <a class="reference internal" href="../cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> from input that&#8217;s not easily decoded.
 based on the physical format.</p>
 <p>Fixed and COBOL format files are the prime example of cells that require conversions.  A CSV or TAB file could fall into this category, also.</p>
-<p>This is an essential feature of the <a class="reference internal" href="../workbook_init.html#workbook.Fixed_Workbook" title="workbook.Fixed_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Fixed_Workbook</span></tt></a>.</p>
+<p>This is an essential feature of the <a class="reference internal" href="../workbook/fixed.html#workbook.Fixed_Workbook" title="workbook.Fixed_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Fixed_Workbook</span></tt></a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestAttributeConversion</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
     <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simple</span><span class="o">=</span> <span class="n">AttributeFixture</span><span class="p">(</span>

@@ -94,36 +94,36 @@
 \contentsline {subsubsection}{High-Level Processing}{76}{subsubsection*.91}
 \contentsline {subsubsection}{Access Elements Via Schema}{76}{subsubsection*.92}
 \contentsline {subsubsection}{Possible Added Fluency}{77}{subsubsection*.93}
-\contentsline {subsubsection}{Low-Level Processing}{77}{subsubsection*.94}
+\contentsline {subsubsection}{Low-Level Processing}{78}{subsubsection*.94}
 \contentsline {subsubsection}{The Occurs Depending On Problem}{78}{subsubsection*.95}
 \contentsline {subsubsection}{Variable-Length COBOL Records}{79}{subsubsection*.96}
 \contentsline {subsubsection}{The Bad Data Problem}{81}{subsubsection*.97}
 \contentsline {subsection}{\numberline {1.10.2}Implementation}{81}{subsection.1.10.2}
 \contentsline {subsubsection}{COBOL Package -- Extend Schema to Handle EBCDIC}{81}{subsubsection*.98}
 \contentsline {paragraph}{Module Overheads}{82}{paragraph*.99}
-\contentsline {paragraph}{RepeatingAttribute Subclass of Attribute}{82}{paragraph*.100}
+\contentsline {paragraph}{RepeatingAttribute Subclasses of Attribute}{82}{paragraph*.100}
 \contentsline {paragraph}{COBOL LazyRow}{86}{paragraph*.103}
 \contentsline {paragraph}{Dump a Record}{86}{paragraph*.105}
 \contentsline {paragraph}{COBOL ``Workbook'' Files}{87}{paragraph*.108}
 \contentsline {subparagraph}{COBOL File}{88}{subparagraph*.109}
-\contentsline {subparagraph}{Character File}{89}{subparagraph*.113}
+\contentsline {subparagraph}{Character File}{90}{subparagraph*.113}
 \contentsline {subparagraph}{EBCDIC File}{91}{subparagraph*.115}
 \contentsline {subparagraph}{ASCII File}{95}{subparagraph*.124}
 \contentsline {subsubsection}{COBOL Loader Module -- Parse COBOL Source to Load a Schema}{95}{subsubsection*.125}
-\contentsline {paragraph}{Load A Schema Use Case}{95}{paragraph*.126}
-\contentsline {paragraph}{Use A Schema Use Case}{96}{paragraph*.127}
+\contentsline {paragraph}{Load A Schema Use Case}{96}{paragraph*.126}
+\contentsline {paragraph}{Use A Schema Use Case}{97}{paragraph*.127}
 \contentsline {paragraph}{Extensions and Special Cases}{97}{paragraph*.128}
 \contentsline {paragraph}{Design}{98}{paragraph*.129}
-\contentsline {subparagraph}{DDE Class}{98}{subparagraph*.130}
-\contentsline {subparagraph}{DDE Post-processing}{98}{subparagraph*.131}
+\contentsline {subparagraph}{DDE Class}{99}{subparagraph*.130}
+\contentsline {subparagraph}{DDE Post-processing}{99}{subparagraph*.131}
 \contentsline {subparagraph}{DDE Parser}{99}{subparagraph*.132}
-\contentsline {subparagraph}{Field Values}{99}{subparagraph*.133}
-\contentsline {subparagraph}{Additional Requirements}{99}{subparagraph*.134}
-\contentsline {subparagraph}{Model}{100}{subparagraph*.135}
-\contentsline {paragraph}{Overheads}{101}{paragraph*.136}
+\contentsline {subparagraph}{Field Values}{100}{subparagraph*.133}
+\contentsline {subparagraph}{Additional Requirements}{100}{subparagraph*.134}
+\contentsline {subparagraph}{Model}{101}{subparagraph*.135}
+\contentsline {paragraph}{Overheads}{102}{paragraph*.136}
 \contentsline {paragraph}{Parsing Exceptions}{102}{paragraph*.137}
 \contentsline {paragraph}{Picture Clause Parsing}{102}{paragraph*.139}
-\contentsline {paragraph}{Lexical Scanning}{103}{paragraph*.142}
+\contentsline {paragraph}{Lexical Scanning}{104}{paragraph*.142}
 \contentsline {paragraph}{Parsing}{105}{paragraph*.147}
 \contentsline {paragraph}{COBOL Schema Loader}{111}{paragraph*.152}
 \contentsline {subsubsection}{COBOL Definitions Module -- Handle COBOL DDE's}{113}{subsubsection*.158}
@@ -141,12 +141,12 @@
 \contentsline {subparagraph}{DDE Class}{126}{subparagraph*.198}
 \contentsline {paragraph}{DDE Preparation Processing}{130}{paragraph*.201}
 \contentsline {paragraph}{Set Size and Offset}{131}{paragraph*.207}
-\contentsline {section}{\numberline {1.11}The \textbf {Stingray} Developer's Guide}{132}{section.1.11}
+\contentsline {section}{\numberline {1.11}The \textbf {Stingray} Developer's Guide}{133}{section.1.11}
 \contentsline {subsection}{\numberline {1.11.1}Concepts}{133}{subsection.1.11.1}
 \contentsline {subsection}{\numberline {1.11.2}Binding a Schema to a File}{134}{subsection.1.11.2}
 \contentsline {subsection}{\numberline {1.11.3}Data Attribute Mapping -- Using a Schema}{134}{subsection.1.11.3}
 \contentsline {subsubsection}{Adding Fluency}{135}{subsubsection*.210}
-\contentsline {subsection}{\numberline {1.11.4}Data Transformation}{135}{subsection.1.11.4}
+\contentsline {subsection}{\numberline {1.11.4}Data Transformation}{136}{subsection.1.11.4}
 \contentsline {subsection}{\numberline {1.11.5}\textbf {Stingray} Application Design}{136}{subsection.1.11.5}
 \contentsline {subsubsection}{Row-Level Processing}{136}{subsubsection*.211}
 \contentsline {subsubsection}{Configuration Options}{137}{subsubsection*.212}
@@ -162,7 +162,7 @@
 \contentsline {subsection}{\numberline {1.11.8}File Naming and External Schema}{143}{subsection.1.11.8}
 \contentsline {subsubsection}{Well Known Formats}{143}{subsubsection*.222}
 \contentsline {subsubsection}{Fixed Formats and COBOL}{143}{subsubsection*.223}
-\contentsline {subsubsection}{External Schema Workbooks}{143}{subsubsection*.224}
+\contentsline {subsubsection}{External Schema Workbooks}{144}{subsubsection*.224}
 \contentsline {subsection}{\numberline {1.11.9}Binding a Schema to an Application}{144}{subsection.1.11.9}
 \contentsline {subsection}{\numberline {1.11.10}Schema Version Numbering}{144}{subsection.1.11.10}
 \contentsline {subsection}{\numberline {1.11.11}Frequently Asked Questions}{145}{subsection.1.11.11}
@@ -171,11 +171,11 @@
 \contentsline {subsection}{\numberline {1.12.1}Unit Level Validation for Application and Data}{145}{subsection.1.12.1}
 \contentsline {subsubsection}{Overheads}{146}{subsubsection*.226}
 \contentsline {subsubsection}{Builder Functions}{146}{subsubsection*.227}
-\contentsline {subsubsection}{Mock Workbook}{146}{subsubsection*.229}
+\contentsline {subsubsection}{Mock Workbook}{147}{subsubsection*.229}
 \contentsline {subsubsection}{Unit Test The Builder Function}{147}{subsubsection*.230}
 \contentsline {subsubsection}{Live Data Test The Builder Function}{147}{subsubsection*.231}
 \contentsline {subsubsection}{Sheet-Level Testing}{148}{subsubsection*.232}
-\contentsline {subsubsection}{Main Program Switch}{148}{subsubsection*.234}
+\contentsline {subsubsection}{Main Program Switch}{149}{subsubsection*.234}
 \contentsline {subsubsection}{Running the Demo}{149}{subsubsection*.235}
 \contentsline {subsection}{\numberline {1.12.2}Application Level Data Validation Technique}{149}{subsection.1.12.2}
 \contentsline {subsubsection}{State Change Commands}{149}{subsubsection*.236}
@@ -185,18 +185,18 @@
 \contentsline {paragraph}{Persistence Context Manager}{152}{paragraph*.240}
 \contentsline {paragraph}{Builder Functions}{152}{paragraph*.241}
 \contentsline {paragraph}{Processing}{153}{paragraph*.242}
-\contentsline {paragraph}{High-Level Interfaces}{153}{paragraph*.243}
+\contentsline {paragraph}{High-Level Interfaces}{154}{paragraph*.243}
 \contentsline {paragraph}{Command-Line Interface}{154}{paragraph*.244}
 \contentsline {subsubsection}{Running the Demo}{155}{subsubsection*.245}
-\contentsline {subsection}{\numberline {1.12.3}Data Profiling Demonstration}{155}{subsection.1.12.3}
+\contentsline {subsection}{\numberline {1.12.3}Data Profiling Demonstration}{156}{subsection.1.12.3}
 \contentsline {subsubsection}{Overheads}{156}{subsubsection*.246}
 \contentsline {subsubsection}{Processing Context}{156}{subsubsection*.247}
 \contentsline {subsubsection}{Processing}{156}{subsubsection*.248}
 \contentsline {subsubsection}{High-Level Interfaces}{157}{subsubsection*.249}
 \contentsline {subsubsection}{Command-Line Interface}{158}{subsubsection*.250}
-\contentsline {paragraph}{Running the Demo}{158}{paragraph*.251}
-\contentsline {subsection}{\numberline {1.12.4}Reading COBOL Files}{160}{subsection.1.12.4}
-\contentsline {subsubsection}{Implementation}{161}{subsubsection*.252}
+\contentsline {paragraph}{Running the Demo}{159}{paragraph*.251}
+\contentsline {subsection}{\numberline {1.12.4}Reading COBOL Files}{161}{subsection.1.12.4}
+\contentsline {subsubsection}{Implementation}{162}{subsubsection*.252}
 \contentsline {subsubsection}{Running the demo}{163}{subsubsection*.253}
 \contentsline {subsubsection}{Working with Archives}{164}{subsubsection*.254}
 \contentsline {section}{\numberline {1.13}History}{164}{section.1.13}
@@ -205,11 +205,11 @@
 \contentsline {subsection}{\numberline {1.13.3}Version 2}{165}{subsection.1.13.3}
 \contentsline {subsection}{\numberline {1.13.4}Version 1}{166}{subsection.1.13.4}
 \contentsline {subsection}{\numberline {1.13.5}Version 0}{166}{subsection.1.13.5}
-\contentsline {section}{\numberline {1.14}Testing}{166}{section.1.14}
+\contentsline {section}{\numberline {1.14}Testing}{167}{section.1.14}
 \contentsline {subsection}{\numberline {1.14.1}Main Test Script}{167}{subsection.1.14.1}
 \contentsline {subsection}{\numberline {1.14.2}Cell Module Tests}{167}{subsection.1.14.2}
 \contentsline {subsubsection}{Overheads}{167}{subsubsection*.255}
-\contentsline {subsubsection}{Cell Tests}{167}{subsubsection*.256}
+\contentsline {subsubsection}{Cell Tests}{168}{subsubsection*.256}
 \contentsline {subsubsection}{Other Conversions}{171}{subsubsection*.257}
 \contentsline {subsubsection}{Test Suite and Runner}{171}{subsubsection*.258}
 \contentsline {subsection}{\numberline {1.14.3}Sheet Module Tests}{171}{subsection.1.14.3}
@@ -226,7 +226,7 @@
 \contentsline {subsubsection}{Schema}{176}{subsubsection*.268}
 \contentsline {subsubsection}{Test Suite and Runner}{176}{subsubsection*.269}
 \contentsline {subsection}{\numberline {1.14.5}Schema Loader Testing}{176}{subsection.1.14.5}
-\contentsline {subsubsection}{Overheads}{176}{subsubsection*.270}
+\contentsline {subsubsection}{Overheads}{177}{subsubsection*.270}
 \contentsline {subsubsection}{HeadingRowSchemaLoader Tests}{177}{subsubsection*.271}
 \contentsline {subsubsection}{ExternalSchemaLoader}{178}{subsubsection*.272}
 \contentsline {subsubsection}{ExternalSchemaSheet Tests}{178}{subsubsection*.273}

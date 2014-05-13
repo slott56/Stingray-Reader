@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.1',
+        VERSION:     '4.4.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -209,7 +209,7 @@ workspace (&#8220;sheet&#8221;) and table name.</li>
 </pre></div>
 </div>
 <p>There are two &#8220;implicit&#8221; dependencies, also.
-A row depends on details of an <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a> and a <a class="reference internal" href="workbook.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a>.
+A row depends on details of an <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a> and a <a class="reference internal" href="workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a>.
 However, there&#8217;s no real need to present a formal import for this.
 The Attribute and Workbook are simply opaque
 objects passed around as arguments.</p>
@@ -252,7 +252,7 @@ Subclasses implement different bindings for the sheet&#8217;s schema information
 <p>A Sheet produces this simple row-as-list.  A Schema can transform this
 into row-as-dict or some even more elaborate structure.</p>
 <p>A row depends on details of an <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a>
-and a <a class="reference internal" href="workbook.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a>.
+and a <a class="reference internal" href="workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a>.
 This feels circular, but doesn&#8217;t present any real problems.</p>
 <p>The <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> conversions are handled by the Workbook.
 Some Workbooks have cell content identified by position.

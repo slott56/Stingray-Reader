@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.1',
+        VERSION:     '4.4.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -150,16 +150,21 @@ We use this information to build a <tt class="docutils literal"><span class="pre
 <p>We also need to handle repeating groups.
 In the case of repeating elements,  the repeating collection of elements
 creates a tuple-of-tuples structure which we can index.</p>
-<p>This gives us two ways to provide an OCCURS index values.  The first is
-to associate the index with the <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a>, as follows.</p>
-<p>While the following is weird, it parallels COBOL usage of indexing and element naming.  The idea is to provide the lowest level of name and all the indexes
-above it in one construct.</p>
+<p>This gives us two possible ways to provide an OCCURS index values.  The first
+possibility is to associate the index with the <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a>.</p>
 <pre class="literal-block">
 def process_sheet( sheet ):
     for row in sheet.rows():
         foo= row.cell(schema[<em>n</em>]).to_str()
         bar= row.cell(schema[<em>m</em>].index(<em>i</em>, <em>j</em>)).to_str()
 </pre>
+<p>While the above is weird, it parallels COBOL usage of indexing and element naming.
+The idea is to provide the lowest level of name and all the indexes
+above it in one construct.</p>
+<p>This is appealing because we can use the existing <tt class="xref py py-meth docutils literal"><span class="pre">sheet.Row.cell()</span></tt> method without
+any modification. The downside of this is that we&#8217;re creating a tweaked attribute
+definition, which is a terrible idea.
+On balance, the use of <tt class="xref py py-meth docutils literal"><span class="pre">schema.Attribute.index()</span></tt> has to be rejected.</p>
 <p>The second way to provide an index is provide a subset of the indexes and get a kind of slice.
 This is like the positional version, shown above.</p>
 <pre class="literal-block">
@@ -180,7 +185,7 @@ mapping in addition to a sequenmce.</p>
 foo= row.cell(schema_dict.get_name('bar'))
 baz_i_j= row.cell(schema_dict.get_name('baz').index(<em>i</em>, <em>j</em>))
 </pre>
-<p>This doesn&#8217;t works for unique names.</p>
+<p>This doesn&#8217;t work for non-unique names.</p>
 <p>The COBOL <tt class="docutils literal"><span class="pre">OF</span></tt> syntax <em>could</em> be modeled using a fluent <tt class="docutils literal"><span class="pre">of()</span></tt> method.</p>
 <pre class="literal-block">
 foo= row.cell(schema_dict.get('foo').of('bar'))
@@ -188,6 +193,21 @@ baz_i_j= row.cell(schema_dict.get('baz').index(<em>i</em>, <em>j</em>))
 baz_i_quux_j = row.cell(schema_dict.get('baz').index(<em>i</em>).of('quux').index(<em>j</em>))
 </pre>
 <p>This is all potentially useful for hyper-complex COBOL record layouts.</p>
+<p>Incremental index calculation involves creating an interim, stateful Attribute definition.
+The &#8220;cloning&#8221; and &#8220;tweaking&#8221; of an <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a> definition is a bad design.
+The index processing is stateful, and we would need to accumulate
+index information somehow along the path of fluent methods.</p>
+<p>This works out better if the
+<tt class="xref py py-class docutils literal"><span class="pre">sheet.Row.cell</span></tt> method handles the index calculations entirely separate
+from the attribute navigation. The following seems like a more sensible way to handle this.</p>
+<pre class="literal-block">
+foo= row.cell(schema_dict.get('foo').of('bar'))
+baz_i_j= row.cell(schema_dict.get('baz'), <em>i</em>)
+baz_i_quux_j = row.cell(schema_dict.get('baz').of('quux'), (<em>i</em>, <em>j</em>))
+</pre>
+<p>The first example provides no index, a multi-dimensional sequence of <cite>Cell</cite> objects is returned.</p>
+<p>The second example provides too few indices, a sequence of <cite>Cell</cite> objects is returned.</p>
+<p>The third example provides all indices, an individual <cite>Cell</cite> is returned.</p>
 </div>
 <div class="section" id="low-level-processing">
 <h3>10.1.4. Low-Level Processing<a class="headerlink" href="#low-level-processing" title="Permalink to this headline">¶</a></h3>

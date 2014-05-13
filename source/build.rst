@@ -74,7 +74,7 @@ Build Procedure
     -   :file:`stingray`.  The Python library, ready for installation.
     -   :file:`test`.  The unit test script.
 
-    This reports, also, that 139 tests were run.
+    This reports, also, that 174 tests were run.
    
 In general (i.e., any OS except Windows), it's sensible to do this:
 

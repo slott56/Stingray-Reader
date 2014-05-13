@@ -37,7 +37,6 @@ We'll also import one class definition from :py:mod:`cobol.defs`.
     import codecs
     import struct
     import decimal
-    import copy
     import warnings
     import pprint
     import logging
@@ -49,15 +48,25 @@ We'll also import one class definition from :py:mod:`cobol.defs`.
 
     from stingray.cobol.defs import TextCell
 
-RepeatingAttribute Subclass of Attribute
-=========================================
+RepeatingAttribute Subclasses of Attribute
+===========================================
 
-A new :py:class:`schema.Attribute` subclass is required to carry all the 
+Two new :py:class:`schema.Attribute` subclasses are required to carry all the 
 additional attribute information developed during COBOL DDE parsing.  
 
-An attribute that has an occurs clause (or who's parent has an occurs clause)
+An attribute that has an ``OCCURS`` clause (or who's parent has an ``OCCURS`` clause)
 can accept an :py:meth:`cobol.RepeatingAttribute.index` method to provide index values used to compute
 effective offsets.
+
+There are two variants.
+
+-   The initial, immutable, :py:class:`cobol.RepeatingAttribute` as parsed.
+
+-   A working :py:class:`cobol.IndexedAttribute`. This is a subclass of 
+    :py:class:`cobol.RepeatingAttribute` and it contains partial or complete
+    indexing. Partial indexing means that a tuple is built by 
+    :py:meth:`cobol.COBOL_File.row_get`. Full indexing means that a single
+    ``Cell`` can be built.
 
 ..  code-block:: none
 
@@ -71,12 +80,10 @@ effective offsets.
 
 ..  image:: cobol_attribute.png
 
-In order to fetch data for ODO, the attribute offsets and sizes
-cannot **all** be computed in advance during parsing.
-
-They must be computed lazily during data fetching. See the :py:class:`ODO_LazyRow` 
-definition for how the attributes sizes and offsets are computed lazily 
-when there's an Occurs Depending On.
+In order to fetch data for an ODO ``OCCURS`` element, the attribute offsets and sizes
+cannot **all** be computed during parsing. 
+They must be computed lazily during data fetching. The :py:class:`ODO_LazyRow` 
+class handles the Occurs Depending On situation.
 
 Here are the attributes inherited from :py:class:`schema.Attribute`.
 
@@ -99,18 +106,21 @@ clearly changed based on the ODO issues.
     Size within the buffer.
 
 These two properties can be tweaked by the :py:meth:`index` method. If left alone, they simply
-a delegation to the DDE. If :py:meth:`index` is used, these may be modified based on the index arguments.
+a delegation to the DDE. If :py:meth:`index` is used, a subclass object is built
+where these values come from the ``index`` method results.
 
 :dimensionality:
     A tuple of DDE's that defines the dimensionality pushed down to this
     item through the COBOL DDE hierarchy.
+
+    This meay be set by the :py:meth:`index` method.
 
 :offset: 
     Optional offset into a buffer. This may be statically defined,
     or it may be dynamic because of variably-located data supporting
     the Occurs Depends On.
     
-    This meay be tweaked by the :py:meth:`index` method.
+    This meay be set by the :py:meth:`index` method.
      
 This subclass introduces yet more attribute-like properties that simply
 delegate to the DDE.
@@ -135,16 +145,16 @@ delegate to the DDE.
     from the picture.
 
 
-
 ..  py:class:: RepeatingAttribute
 
 ::
 
 
     class RepeatingAttribute( stingray.schema.Attribute ):
-        """An attribute with dimensionality.  A potential "OCCURS" clause
-        may define repeating values. A potential "OCCURS DEPENDING ON"
-        clause may define variably located values. 
+        """An attribute with dimensionality. Not all COBOL items repeat.
+        
+        An "OCCURS" clause will define repeating values. 
+        An "OCCURS DEPENDING ON" clause may define variably located values. 
         """
         default_cell= TextCell
         def __init__(self, name, dde, offset=None, size=None, create=None, position=None, **kw):
@@ -175,10 +185,10 @@ Note that py:meth:`index` is applied incrementally when the application supplies
 of the indices.
 
 -   First, the application supplies some of the indices, creating
-    a tweaked :py:class:`RepeatingAttribute` with an initial offset.
+    a tweaked :py:class:`cobol.RepeatingAttribute` with an initial offset.
 
 -   Second, the :py:class:`COBOL_File` supplies the remaining indices,
-    creating yet more temporary :py:class:`RepeatingAttribute` based on the initial offset.
+    creating yet more temporary  :py:class:`cobol.RepeatingAttribute` based on the initial offset.
  
 ::    
 
@@ -189,7 +199,7 @@ of the indices.
             
             :param values: 0-based index values.  Yes, legacy COBOL language is 1-based.
                 For Python applications, zero-based makes more sense.
-            :returns: A clone of this attribute with modified offset
+            :returns: A :py:class:`cobol.IndexedAttribute` copy, with modified offset
             and dimensionality that can be used with :py:meth:`COBOL_File.row_get`.
             """
             assert values, "Missing index values"
@@ -202,20 +212,19 @@ of the indices.
                 index= val_list.pop(0)
                 dim= dim_list.pop(0)
                 offset += dim.size * index
-            # Build resulting clone version with indexes applied.
-            cloned= copy.copy( self )
-            cloned._offset= offset
-            cloned._dimensionality= dim_list # any left-over dimensions.
-            return cloned
+            # Build new subclass object with indexes applied.
+            clone= IndexedAttribute( self, offset, dim_list )
+            return clone
 
 With this, a ``row.cell(schema.get('name').index(i))`` will compute a proper offset.
 
-We clone the attribute to assure that each time we apply (or don't apply)
-the index, nothing stateful will have happened to the original attribute.
+We "clone" the attribute to assure that each time we apply (or don't apply)
+the index, nothing stateful will have happened to the original immutable attribute
+definition. 
 
 Note that an incomplete set of index values forces the underlying 
 workbook to create a Python tuple (or tuple of tuples) structure to
-contain all the requested values.
+contain all the requested values. See :py:meth:`cobol.COBOL_File.row_get`.
 
 The additional properties which are simply shortcuts so that a 
 generic :py:class:`cobol.RepeatingAttribute` has access to the DDE details.
@@ -224,20 +233,12 @@ generic :py:class:`cobol.RepeatingAttribute` has access to the DDE details.
 
         @property
         def dimensionality(self):
-            """tuple of DDE's"""
-            try:
-                # Tweaked by ``attribute.index()``
-                return self._dimensionality
-            except AttributeError:
-                return self.dde().dimensionality
+            """tuple of parent DDE's. Baseline value; no indexes applied."""
+            return self.dde().dimensionality
         @property
         def offset(self):
-            """Influenced by index as well as occurs depending on"""
-            try:
-                # Tweaked by ``attribute.index()``
-                return self._offset
-            except AttributeError as e:
-                return self.dde().offset
+            """Baseline value; no indexes applied."""
+            return self.dde().offset
         @property
         def path(self):
             return self.dde().pathTo()
@@ -253,6 +254,34 @@ generic :py:class:`cobol.RepeatingAttribute` has access to the DDE details.
         @property
         def size_scale_precision(self):
             return self.dde().sizeScalePrecision
+
+This is a subclass with (some) indices applied. Since this inherits the :py:meth:`cobol.RepeatingAttribute.index`
+method, we can apply indices incrementally.
+
+This is not built directly, but only created by :py:meth:`cobol.RepeatingAttribute.index`
+with some (or all) indices applied.
+
+::
+
+    class IndexedAttribute( RepeatingAttribute ):
+        """An attribute with dimensionality and indexes applied.
+        This must be built from a :py:class:`cobol.RepeatingAttribute`. It will copy
+        some attributes in an effort to somewhat improve efficiency.
+        """
+        default_cell= TextCell
+        def __init__(self, base, offset, dimensionality ):
+            self.dde= base.dde
+            self.name, self.size, self.create, self.position = base.name, base.size, base.create, base.position
+            self._offset= offset
+            self._dimensionality= dimensionality
+        @property
+        def dimensionality(self):
+            """tuple of DDE's; Set by ``attribute.index()``."""
+            return self._dimensionality
+        @property
+        def offset(self):
+            """Set by ``attribute.index()``."""
+            return self._offset
 
 COBOL LazyRow
 ==============
@@ -414,7 +443,7 @@ a schema attribute with dimensionality.
 ::
 
     class COBOL_File( Fixed_Workbook ):
-        """A COBOL "workbook" file which uses :py:class:`RepeatingAttribute` and
+        """A COBOL "workbook" file which uses  :py:class:`cobol.RepeatingAttribute` and
         creates COBOL Cell values.  This is an abstraction which
         lacks specific decoding methods.
         
@@ -443,12 +472,18 @@ If too few index values are provided, a tuple of results is built around the mis
 
 If enough values are provided, a single result object will be built.
 
+..  important:: Performance
+
+    This is the most-used method. Removing the if-statement would be
+    a huge improvement.
+
+
 ::
 
         def row_get_index( self, row, attr, *index ):
             """Emit a nested-tuple structure of Cell values using the given index values.
             :param row: the source Row.
-            :param attr: the :py:class:`RepeatingAttribute`; possibly tweaked to 
+            :param attr: the  :py:class:`cobol.RepeatingAttribute`; possibly tweaked to 
                 have an offset and partial dimensions. Or possibly the original tuple
                 of dimensions.
             :param index: optional tuple of index values to use.
@@ -479,12 +514,15 @@ If enough values are provided, a single result object will be built.
 
 The API method will get data from a row described by an attribute.
 If the attribute has dimensions, then indices are used or multiple values are returned
-by :py:meth:`COBOL_File.row_get_index`.
+by :py:meth:`cobol.COBOL_File.row_get_index`.
 
 If the attribute is has no dimensions, then it's simply pulled from the source row.
 
-There's a subtlety here: what if the row isn't big enough?
+..  important:: Performance
 
+    This is the most-used method. Removing the if-statement would be
+    a huge improvement.
+    
 :: 
 
         def row_get( self, row, attr ):
@@ -558,38 +596,56 @@ Numeric data with usage ``DISPLAY`` requires handling implicit decimal points.
 
 COMP-3 in proper character files may not make any sense at all.  
 A codec would make a hash of the bit patterns required.  
+However, we've defined the method here so that it can be used by the EBCDIC subclass
+trivially.
+
+We're going to build an ASCII version of the number by decoding the bytes into
+a mutable bytearray and decorating them with decimal point and sign. This is 
+demonstrably faster and avoids object creation to the extent possible.
+
 
 ::
 
         @staticmethod
+        def unpack( buffer ):
+            """Include ' ' position for leading sign character.
+            Trailing sign field will be 48+0xd for negative.
+            48+0xf is "unsigned" and 48+0xc is positive.
+            """
+            yield 32 # ord(b' ')
+            for n in buffer:
+                yield 48+(n>>4) # ord(b'0')
+                yield 48+(n&0x0f)
+
+        @staticmethod
         def number_comp3( buffer, attr ):
             """Decode comp-3, packed decimal values.
-            
+    
             Each byte is two decimal digits.
-            
-            Last byte has a digit plus sign information: 'd' is <0, 'f' is unsigned, and 'c' >=0.
+    
+            Last byte has a digit plus sign information: 0xd is <0, 0xf is unsigned, and 0xc >=0.
             """
             final, alpha, length, scale, precision, signed, dec_sign = attr.size_scale_precision
-            digits= []
-            for n in buffer:
-                digits.append( n//16 )
-                digits.append( n%16 )
             #print( repr(buffer), "from", repr(display) )
-            sign= "-" if digits[-1]==13 else " "
-            text= "".join( map(str,digits[:-1]) )
-            # Adjust to include Precision.
+            digits = bytearray( Character_File.unpack( buffer ) )
+            # Proper sign in front; replace trailing sign with space.
+            digits[0]= 45 if digits[-1]==48+0xd else 32 # ord(b'-'), ord(b' ')
+            digits[-1]= 32 # ord(' ') 
+            # Add decimal place if needed.
             if precision:
-                display= sign + text[:-precision]+"."+text[-precision:]
-            else:
-                display= sign + text
+                digits[-precision:]= digits[-precision-1:-1] # Shift digits to right.
+                digits[-precision-1]= 46 # Insert ord(b'.')
             try:
-                return decimal.Decimal( display )
+                return decimal.Decimal( digits.decode("ASCII") )
             except Exception:
-                Character_File.log.debug( "Can't process {0!r} from {1!r}".format(display,buffer) )
+                Character_File.log.debug( "Can't process {0!r} from {1!r}".format(digits,buffer) )
                 raise
-
+        
 COMP in proper character files may not make any sense, either. 
 A codec would make a hash of the bit patterns required.  
+Gagin, we've defined it here because that's relatively simple to extend.
+
+We're simply going to unpack big-ending bytes.
 
 ::
 

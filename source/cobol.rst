@@ -122,11 +122,8 @@ We also need to handle repeating groups.
 In the case of repeating elements,  the repeating collection of elements
 creates a tuple-of-tuples structure which we can index.
 
-This gives us two ways to provide an OCCURS index values.  The first is
-to associate the index with the :py:class:`schema.Attribute`, as follows.
-
-While the following is weird, it parallels COBOL usage of indexing and element naming.  The idea is to provide the lowest level of name and all the indexes
-above it in one construct.
+This gives us two possible ways to provide an OCCURS index values.  The first 
+possibility is to associate the index with the :py:class:`schema.Attribute`.
 
 ..  parsed-literal::
 
@@ -134,6 +131,15 @@ above it in one construct.
         for row in sheet.rows():
             foo= row.cell(schema[*n*]).to_str()
             bar= row.cell(schema[*m*].index(*i*, *j*)).to_str()
+
+While the above is weird, it parallels COBOL usage of indexing and element naming.  
+The idea is to provide the lowest level of name and all the indexes
+above it in one construct.
+
+This is appealing because we can use the existing :py:meth:`sheet.Row.cell` method without
+any modification. The downside of this is that we're creating a tweaked attribute
+definition, which is a terrible idea. 
+On balance, the use of :py:meth:`schema.Attribute.index` has to be rejected.
 
 The second way to provide an index is provide a subset of the indexes and get a kind of slice.
 This is like the positional version, shown above.
@@ -160,7 +166,7 @@ mapping in addition to a sequenmce.
             foo= row.cell(schema_dict.get_name('bar'))
             baz_i_j= row.cell(schema_dict.get_name('baz').index(*i*, *j*))
 
-This doesn't works for unique names.
+This doesn't work for non-unique names. 
 
 The COBOL ``OF`` syntax *could* be modeled using a fluent ``of()`` method.
 
@@ -172,6 +178,26 @@ The COBOL ``OF`` syntax *could* be modeled using a fluent ``of()`` method.
 
 This is all potentially useful for hyper-complex COBOL record layouts.
 
+Incremental index calculation involves creating an interim, stateful Attribute definition.
+The "cloning" and "tweaking" of an :py:class:`schema.Attribute` definition is a bad design.
+The index processing is stateful, and we would need to accumulate
+index information somehow along the path of fluent methods.
+
+This works out better if the
+:py:class:`sheet.Row.cell` method handles the index calculations entirely separate
+from the attribute navigation. The following seems like a more sensible way to handle this.
+
+..  parsed-literal::
+
+            foo= row.cell(schema_dict.get('foo').of('bar'))
+            baz_i_j= row.cell(schema_dict.get('baz'), *i*)
+            baz_i_quux_j = row.cell(schema_dict.get('baz').of('quux'), (*i*, *j*))
+            
+The first example provides no index, a multi-dimensional sequence of `Cell` objects is returned.
+
+The second example provides too few indices, a sequence of `Cell` objects is returned.
+
+The third example provides all indices, an individual `Cell` is returned.
 
 Low-Level Processing
 ---------------------

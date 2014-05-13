@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.1',
+        VERSION:     '4.4.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -717,7 +717,7 @@ from that DDE.</p>
 <dd></dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Occurs</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;No OCCURS clause present. Data is irrelevant.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;No OCCURS clause present. Data from a row is irrelevant.&quot;&quot;&quot;</span>
     <span class="n">default</span><span class="o">=</span> <span class="bp">True</span>
     <span class="n">static</span><span class="o">=</span> <span class="bp">True</span>
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
@@ -734,7 +734,7 @@ from that DDE.</p>
 <dd></dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">OccursFixed</span><span class="p">(</span> <span class="n">Occurs</span> <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;OCCURS n TIMES. Data is irrelevant.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;OCCURS n TIMES. Data from a row is irrelevant.&quot;&quot;&quot;</span>
     <span class="n">default</span><span class="o">=</span> <span class="bp">False</span>
     <span class="n">static</span><span class="o">=</span> <span class="bp">True</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">number</span> <span class="p">):</span>
@@ -753,7 +753,7 @@ from that DDE.</p>
 <dd></dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">OccursDependingOn</span><span class="p">(</span> <span class="n">Occurs</span> <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;OCCURS TO n TIMES DEPENDING ON name. Data is required.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;OCCURS TO n TIMES DEPENDING ON name. Data from a row is required.&quot;&quot;&quot;</span>
     <span class="n">default</span><span class="o">=</span> <span class="bp">False</span>
     <span class="n">static</span><span class="o">=</span> <span class="bp">False</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">limit</span> <span class="p">):</span>
@@ -771,9 +771,8 @@ from that DDE.</p>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">schema_dict</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">aRow</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">schema</span> <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="o">=</span> <span class="n">schema_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;Getting {0} from {1}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">,</span><span class="n">aRow</span><span class="p">)</span> <span class="p">)</span>
+        <span class="c">## logger.debug( &quot;Getting {0} from {1}&quot;.format(self.attr,aRow) )</span>
         <span class="n">value</span><span class="o">=</span> <span class="n">aRow</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="p">)</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span>
-        <span class="c"># ???? if value &gt; self.limit: return self.limit # ????</span>
         <span class="k">return</span> <span class="n">value</span>
 </pre></div>
 </div>
@@ -1173,6 +1172,12 @@ to remove isinstance() nonsense.</p>
 <p>This can be used with or without a row. The common case of all statically
 located items does not require a row.
 It must be used with a row for the case of OCCURS Depending On.</p>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p>Fix performance.</p>
+<p class="last">This is called once per row: it needs to be simpler and
+faster. Some refactoring can eliminate the if statements.</p>
+</div>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">setSizeAndOffset</span><span class="p">(</span> <span class="n">aDDE</span><span class="p">,</span> <span class="n">aRow</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">0</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Given a top-level DDE, a Row of data (or None),</span>
 <span class="sd">    assign offset, size, totalSize.</span>
@@ -1198,7 +1203,7 @@ It must be used with a row for the case of OCCURS Depending On.</p>
     <span class="c"># Initialize the size -- it may get updated below for group-level items.</span>
     <span class="n">aDDE</span><span class="o">.</span><span class="n">size</span><span class="o">=</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;{0} Enter {1} offset={2}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;&gt;&quot;</span><span class="o">*</span><span class="n">aDDE</span><span class="o">.</span><span class="n">indent</span><span class="p">,</span> <span class="n">aDDE</span><span class="p">,</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span> <span class="p">)</span>
+    <span class="c">## logger.debug( &quot;{0} Enter {1} offset={2}&quot;.format(&quot;&gt;&quot;*aDDE.indent, aDDE, aDDE.offset) )</span>
 
     <span class="c"># For non-picture group-level, handle all of the children.</span>
     <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
@@ -1219,8 +1224,8 @@ It must be used with a row for the case of OCCURS Depending On.</p>
     <span class="c"># Collect final results from handling the children.</span>
     <span class="n">aDDE</span><span class="o">.</span><span class="n">totalSize</span> <span class="o">=</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">occurs</span><span class="o">.</span><span class="n">number</span><span class="p">(</span><span class="n">aRow</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;{0} Exit  {1} size={2}*{3}={4}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-        <span class="s">&quot;&lt;&quot;</span><span class="o">*</span><span class="n">aDDE</span><span class="o">.</span><span class="n">indent</span><span class="p">,</span> <span class="n">aDDE</span><span class="p">,</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">occurs</span><span class="o">.</span><span class="n">number</span><span class="p">(</span><span class="n">aRow</span><span class="p">),</span> <span class="n">aDDE</span><span class="o">.</span><span class="n">totalSize</span><span class="p">)</span> <span class="p">)</span>
+    <span class="c">## logger.debug( &quot;{0} Exit  {1} size={2}*{3}={4}&quot;.format(</span>
+    <span class="c">##     &quot;&lt;&quot;*aDDE.indent, aDDE, aDDE.size, aDDE.occurs.number(aRow), aDDE.totalSize) )</span>
 </pre></div>
 </div>
 <p>This function can be used during DDE load time if there are no Occurs Depending On.

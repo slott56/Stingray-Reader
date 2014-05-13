@@ -82,27 +82,27 @@
 \indexentry{COBOL\_File (class in cobol)|hyperpage}{88}
 \indexentry{row\_get\_index() (cobol.COBOL\_File method)|hyperpage}{88}
 \indexentry{row\_get() (cobol.COBOL\_File method)|hyperpage}{89}
-\indexentry{Character\_File (class in cobol)|hyperpage}{89}
-\indexentry{RECFM\_Parser (class in cobol)|hyperpage}{91}
-\indexentry{RECFM\_F (class in cobol)|hyperpage}{91}
+\indexentry{Character\_File (class in cobol)|hyperpage}{90}
+\indexentry{RECFM\_Parser (class in cobol)|hyperpage}{92}
+\indexentry{RECFM\_F (class in cobol)|hyperpage}{92}
 \indexentry{RECFM\_FB (class in cobol)|hyperpage}{92}
 \indexentry{RECFM\_V (class in cobol)|hyperpage}{92}
-\indexentry{RECFM\_VB (class in cobol)|hyperpage}{92}
+\indexentry{RECFM\_VB (class in cobol)|hyperpage}{93}
 \indexentry{RECFM\_N (class in cobol)|hyperpage}{93}
-\indexentry{EBCDIC\_File (class in cobol)|hyperpage}{93}
+\indexentry{EBCDIC\_File (class in cobol)|hyperpage}{94}
 \indexentry{rows\_of() (cobol.EBCDIC\_File method)|hyperpage}{94}
 \indexentry{cobol.loader (module)|hyperpage}{95}
 \indexentry{SyntaxError (class in cobol.loader)|hyperpage}{102}
 \indexentry{Picture (class in cobol.loader)|hyperpage}{102}
 \indexentry{picture\_parser() (in module cobol.loader)|hyperpage}{102}
-\indexentry{Lexer (class in cobol.loader)|hyperpage}{103}
+\indexentry{Lexer (class in cobol.loader)|hyperpage}{104}
 \indexentry{clean() (cobol.loader.Lexer method)|hyperpage}{104}
 \indexentry{scan() (cobol.loader.Lexer method)|hyperpage}{104}
-\indexentry{Lexer\_Long\_Lines (class in cobol.loader)|hyperpage}{104}
+\indexentry{Lexer\_Long\_Lines (class in cobol.loader)|hyperpage}{105}
 \indexentry{RecordFactory (class in cobol.loader)|hyperpage}{105}
 \indexentry{dde\_iter() (cobol.loader.RecordFactory method)|hyperpage}{108}
 \indexentry{makeRecord() (cobol.loader.RecordFactory method)|hyperpage}{110}
-\indexentry{decorate() (cobol.loader.RecordFactory method)|hyperpage}{110}
+\indexentry{decorate() (cobol.loader.RecordFactory method)|hyperpage}{111}
 \indexentry{make\_attr() (in module cobol.loader)|hyperpage}{112}
 \indexentry{make\_schema() (in module cobol.loader)|hyperpage}{112}
 \indexentry{COBOLSchemaLoader (class in cobol.loader)|hyperpage}{112}

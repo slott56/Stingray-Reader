@@ -725,7 +725,7 @@ class Group(Allocation):
 # ::
 
 class Occurs:
-    """No OCCURS clause present. Data is irrelevant."""
+    """No OCCURS clause present. Data from a row is irrelevant."""
     default= True
     static= True
     def __str__( self ):
@@ -740,7 +740,7 @@ class Occurs:
 # ::
 
 class OccursFixed( Occurs ):
-    """OCCURS n TIMES. Data is irrelevant."""
+    """OCCURS n TIMES. Data from a row is irrelevant."""
     default= False
     static= True
     def __init__( self, number ):
@@ -757,7 +757,7 @@ class OccursFixed( Occurs ):
 # ::
 
 class OccursDependingOn( Occurs ):
-    """OCCURS TO n TIMES DEPENDING ON name. Data is required."""
+    """OCCURS TO n TIMES DEPENDING ON name. Data from a row is required."""
     default= False
     static= False
     def __init__( self, name, limit ):
@@ -775,9 +775,8 @@ class OccursDependingOn( Occurs ):
         if self.attr is None:
             schema_dict= dict( (a.name, a) for a in aRow.sheet.schema )
             self.attr= schema_dict[self.name]
-        logger.debug( "Getting {0} from {1}".format(self.attr,aRow) )
+        ## logger.debug( "Getting {0} from {1}".format(self.attr,aRow) )
         value= aRow.cell( self.attr ).to_int()
-        # ???? if value > self.limit: return self.limit # ???? 
         return value
         
 # ..  py:class:: OccursDependingOnLimit
@@ -1177,6 +1176,12 @@ def setDimensionality( top ):
 # located items does not require a row. 
 # It must be used with a row for the case of OCCURS Depending On.
 #
+#
+# ..  todo:: Fix performance.
+#
+#     This is called once per row: it needs to be simpler and 
+#     faster. Some refactoring can eliminate the if statements.
+#
 # ::  
 
 def setSizeAndOffset( aDDE, aRow=None, base=0 ):
@@ -1204,7 +1209,7 @@ def setSizeAndOffset( aDDE, aRow=None, base=0 ):
     # Initialize the size -- it may get updated below for group-level items.
     aDDE.size= aDDE.usage.size()            
             
-    logger.debug( "{0} Enter {1} offset={2}".format(">"*aDDE.indent, aDDE, aDDE.offset) )
+    ## logger.debug( "{0} Enter {1} offset={2}".format(">"*aDDE.indent, aDDE, aDDE.offset) )
     
     # For non-picture group-level, handle all of the children.
     for child in aDDE.children:
@@ -1225,8 +1230,8 @@ def setSizeAndOffset( aDDE, aRow=None, base=0 ):
     # Collect final results from handling the children.
     aDDE.totalSize = aDDE.size * aDDE.occurs.number(aRow)
     
-    logger.debug( "{0} Exit  {1} size={2}*{3}={4}".format(
-        "<"*aDDE.indent, aDDE, aDDE.size, aDDE.occurs.number(aRow), aDDE.totalSize) )
+    ## logger.debug( "{0} Exit  {1} size={2}*{3}={4}".format(
+    ##     "<"*aDDE.indent, aDDE, aDDE.size, aDDE.occurs.number(aRow), aDDE.totalSize) )
    
 # This function can be used during DDE load time if there are no Occurs Depending On.
 # Otherwise, it must be used for each individual row which is read.

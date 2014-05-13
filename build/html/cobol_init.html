@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.1',
+        VERSION:     '4.4.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -69,7 +69,7 @@ more sophisticated COBOL-based workbooks.</li>
 to create a schema.</p>
 <div class="section" id="module-cobol">
 <span id="module-overheads"></span><h2>10.2.1.1. Module Overheads<a class="headerlink" href="#module-cobol" title="Permalink to this headline">¶</a></h2>
-<p>We depend on <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>, <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>, and <a class="reference internal" href="workbook/numbers_13.html#module-workbook" title="workbook"><tt class="xref py py-mod docutils literal"><span class="pre">workbook</span></tt></a>.
+<p>We depend on <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>, <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>, and <a class="reference internal" href="workbook/xlsx.html#module-workbook" title="workbook"><tt class="xref py py-mod docutils literal"><span class="pre">workbook</span></tt></a>.
 We&#8217;ll also import one class definition from <a class="reference internal" href="cobol_defs.html#module-cobol.defs" title="cobol.defs"><tt class="xref py py-mod docutils literal"><span class="pre">cobol.defs</span></tt></a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;stingray.cobol -- Extend the core Stingray definitions to handle COBOL</span>
 <span class="sd">DDE&#39;s and COBOL files, including packed decimal and EBCDIC data.</span>
@@ -77,7 +77,6 @@ We&#8217;ll also import one class definition from <a class="reference internal" 
 <span class="kn">import</span> <span class="nn">codecs</span>
 <span class="kn">import</span> <span class="nn">struct</span>
 <span class="kn">import</span> <span class="nn">decimal</span>
-<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">pprint</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -91,13 +90,22 @@ We&#8217;ll also import one class definition from <a class="reference internal" 
 </pre></div>
 </div>
 </div>
-<div class="section" id="repeatingattribute-subclass-of-attribute">
-<h2>10.2.1.2. RepeatingAttribute Subclass of Attribute<a class="headerlink" href="#repeatingattribute-subclass-of-attribute" title="Permalink to this headline">¶</a></h2>
-<p>A new <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a> subclass is required to carry all the
+<div class="section" id="repeatingattribute-subclasses-of-attribute">
+<h2>10.2.1.2. RepeatingAttribute Subclasses of Attribute<a class="headerlink" href="#repeatingattribute-subclasses-of-attribute" title="Permalink to this headline">¶</a></h2>
+<p>Two new <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a> subclasses are required to carry all the
 additional attribute information developed during COBOL DDE parsing.</p>
-<p>An attribute that has an occurs clause (or who&#8217;s parent has an occurs clause)
+<p>An attribute that has an <tt class="docutils literal"><span class="pre">OCCURS</span></tt> clause (or who&#8217;s parent has an <tt class="docutils literal"><span class="pre">OCCURS</span></tt> clause)
 can accept an <a class="reference internal" href="#cobol.RepeatingAttribute.index" title="cobol.RepeatingAttribute.index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.RepeatingAttribute.index()</span></tt></a> method to provide index values used to compute
 effective offsets.</p>
+<p>There are two variants.</p>
+<ul class="simple">
+<li>The initial, immutable, <a class="reference internal" href="#cobol.RepeatingAttribute" title="cobol.RepeatingAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.RepeatingAttribute</span></tt></a> as parsed.</li>
+<li>A working <tt class="xref py py-class docutils literal"><span class="pre">cobol.IndexedAttribute</span></tt>. This is a subclass of
+<a class="reference internal" href="#cobol.RepeatingAttribute" title="cobol.RepeatingAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.RepeatingAttribute</span></tt></a> and it contains partial or complete
+indexing. Partial indexing means that a tuple is built by
+<a class="reference internal" href="#cobol.COBOL_File.row_get" title="cobol.COBOL_File.row_get"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.COBOL_File.row_get()</span></tt></a>. Full indexing means that a single
+<tt class="docutils literal"><span class="pre">Cell</span></tt> can be built.</li>
+</ul>
 <div class="highlight-none"><div class="highlight"><pre>http://yuml.me/diagram/scruffy;/class/
 #cobol.attribute,
 [Attribute]^[RepeatingAttribute],
@@ -108,11 +116,10 @@ effective offsets.</p>
 </pre></div>
 </div>
 <img alt="_images/cobol_attribute.png" src="_images/cobol_attribute.png" />
-<p>In order to fetch data for ODO, the attribute offsets and sizes
-cannot <strong>all</strong> be computed in advance during parsing.</p>
-<p>They must be computed lazily during data fetching. See the <a class="reference internal" href="#cobol.ODO_LazyRow" title="cobol.ODO_LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">ODO_LazyRow</span></tt></a>
-definition for how the attributes sizes and offsets are computed lazily
-when there&#8217;s an Occurs Depending On.</p>
+<p>In order to fetch data for an ODO <tt class="docutils literal"><span class="pre">OCCURS</span></tt> element, the attribute offsets and sizes
+cannot <strong>all</strong> be computed during parsing.
+They must be computed lazily during data fetching. The <a class="reference internal" href="#cobol.ODO_LazyRow" title="cobol.ODO_LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">ODO_LazyRow</span></tt></a>
+class handles the Occurs Depending On situation.</p>
 <p>Here are the attributes inherited from <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -141,19 +148,21 @@ clearly changed based on the ODO issues.</p>
 </tbody>
 </table>
 <p>These two properties can be tweaked by the <tt class="xref py py-meth docutils literal"><span class="pre">index()</span></tt> method. If left alone, they simply
-a delegation to the DDE. If <tt class="xref py py-meth docutils literal"><span class="pre">index()</span></tt> is used, these may be modified based on the index arguments.</p>
+a delegation to the DDE. If <tt class="xref py py-meth docutils literal"><span class="pre">index()</span></tt> is used, a subclass object is built
+where these values come from the <tt class="docutils literal"><span class="pre">index</span></tt> method results.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">dimensionality:</th><td class="field-body"><p class="first">A tuple of DDE&#8217;s that defines the dimensionality pushed down to this
 item through the COBOL DDE hierarchy.</p>
+<p>This meay be set by the <tt class="xref py py-meth docutils literal"><span class="pre">index()</span></tt> method.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">offset:</th><td class="field-body"><p class="first">Optional offset into a buffer. This may be statically defined,
 or it may be dynamic because of variably-located data supporting
 the Occurs Depends On.</p>
-<p class="last">This meay be tweaked by the <tt class="xref py py-meth docutils literal"><span class="pre">index()</span></tt> method.</p>
+<p class="last">This meay be set by the <tt class="xref py py-meth docutils literal"><span class="pre">index()</span></tt> method.</p>
 </td>
 </tr>
 </tbody>
@@ -186,9 +195,10 @@ from the picture.</td>
 <dd></dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">RepeatingAttribute</span><span class="p">(</span> <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span> <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;An attribute with dimensionality.  A potential &quot;OCCURS&quot; clause</span>
-<span class="sd">    may define repeating values. A potential &quot;OCCURS DEPENDING ON&quot;</span>
-<span class="sd">    clause may define variably located values.</span>
+    <span class="sd">&quot;&quot;&quot;An attribute with dimensionality. Not all COBOL items repeat.</span>
+
+<span class="sd">    An &quot;OCCURS&quot; clause will define repeating values.</span>
+<span class="sd">    An &quot;OCCURS DEPENDING ON&quot; clause may define variably located values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">default_cell</span><span class="o">=</span> <span class="n">TextCell</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dde</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">create</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
@@ -220,9 +230,9 @@ list.</p>
 of the indices.</p>
 <ul class="simple">
 <li>First, the application supplies some of the indices, creating
-a tweaked <a class="reference internal" href="#cobol.RepeatingAttribute" title="cobol.RepeatingAttribute"><tt class="xref py py-class docutils literal"><span class="pre">RepeatingAttribute</span></tt></a> with an initial offset.</li>
+a tweaked <a class="reference internal" href="#cobol.RepeatingAttribute" title="cobol.RepeatingAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.RepeatingAttribute</span></tt></a> with an initial offset.</li>
 <li>Second, the <a class="reference internal" href="#cobol.COBOL_File" title="cobol.COBOL_File"><tt class="xref py py-class docutils literal"><span class="pre">COBOL_File</span></tt></a> supplies the remaining indices,
-creating yet more temporary <a class="reference internal" href="#cobol.RepeatingAttribute" title="cobol.RepeatingAttribute"><tt class="xref py py-class docutils literal"><span class="pre">RepeatingAttribute</span></tt></a> based on the initial offset.</li>
+creating yet more temporary  <a class="reference internal" href="#cobol.RepeatingAttribute" title="cobol.RepeatingAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.RepeatingAttribute</span></tt></a> based on the initial offset.</li>
 </ul>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">index</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;&quot;Apply possibly incomplete index values to an attribute.</span>
@@ -231,7 +241,7 @@ creating yet more temporary <a class="reference internal" href="#cobol.Repeating
 
 <span class="sd">    :param values: 0-based index values.  Yes, legacy COBOL language is 1-based.</span>
 <span class="sd">        For Python applications, zero-based makes more sense.</span>
-<span class="sd">    :returns: A clone of this attribute with modified offset</span>
+<span class="sd">    :returns: A :py:class:`cobol.IndexedAttribute` copy, with modified offset</span>
 <span class="sd">    and dimensionality that can be used with :py:meth:`COBOL_File.row_get`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">values</span><span class="p">,</span> <span class="s">&quot;Missing index values&quot;</span>
@@ -244,37 +254,28 @@ creating yet more temporary <a class="reference internal" href="#cobol.Repeating
         <span class="n">index</span><span class="o">=</span> <span class="n">val_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">dim</span><span class="o">=</span> <span class="n">dim_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">offset</span> <span class="o">+=</span> <span class="n">dim</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="n">index</span>
-    <span class="c"># Build resulting clone version with indexes applied.</span>
-    <span class="n">cloned</span><span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span> <span class="bp">self</span> <span class="p">)</span>
-    <span class="n">cloned</span><span class="o">.</span><span class="n">_offset</span><span class="o">=</span> <span class="n">offset</span>
-    <span class="n">cloned</span><span class="o">.</span><span class="n">_dimensionality</span><span class="o">=</span> <span class="n">dim_list</span> <span class="c"># any left-over dimensions.</span>
-    <span class="k">return</span> <span class="n">cloned</span>
+    <span class="c"># Build new subclass object with indexes applied.</span>
+    <span class="n">clone</span><span class="o">=</span> <span class="n">IndexedAttribute</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">dim_list</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">clone</span>
 </pre></div>
 </div>
 <p>With this, a <tt class="docutils literal"><span class="pre">row.cell(schema.get('name').index(i))</span></tt> will compute a proper offset.</p>
-<p>We clone the attribute to assure that each time we apply (or don&#8217;t apply)
-the index, nothing stateful will have happened to the original attribute.</p>
+<p>We &#8220;clone&#8221; the attribute to assure that each time we apply (or don&#8217;t apply)
+the index, nothing stateful will have happened to the original immutable attribute
+definition.</p>
 <p>Note that an incomplete set of index values forces the underlying
 workbook to create a Python tuple (or tuple of tuples) structure to
-contain all the requested values.</p>
+contain all the requested values. See <a class="reference internal" href="#cobol.COBOL_File.row_get" title="cobol.COBOL_File.row_get"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.COBOL_File.row_get()</span></tt></a>.</p>
 <p>The additional properties which are simply shortcuts so that a
 generic <a class="reference internal" href="#cobol.RepeatingAttribute" title="cobol.RepeatingAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.RepeatingAttribute</span></tt></a> has access to the DDE details.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">dimensionality</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;tuple of DDE&#39;s&quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c"># Tweaked by ``attribute.index()``</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dimensionality</span>
-    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde</span><span class="p">()</span><span class="o">.</span><span class="n">dimensionality</span>
+    <span class="sd">&quot;&quot;&quot;tuple of parent DDE&#39;s. Baseline value; no indexes applied.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde</span><span class="p">()</span><span class="o">.</span><span class="n">dimensionality</span>
 <span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">offset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Influenced by index as well as occurs depending on&quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c"># Tweaked by ``attribute.index()``</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset</span>
-    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde</span><span class="p">()</span><span class="o">.</span><span class="n">offset</span>
+    <span class="sd">&quot;&quot;&quot;Baseline value; no indexes applied.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde</span><span class="p">()</span><span class="o">.</span><span class="n">offset</span>
 <span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde</span><span class="p">()</span><span class="o">.</span><span class="n">pathTo</span><span class="p">()</span>
@@ -290,6 +291,31 @@ generic <a class="reference internal" href="#cobol.RepeatingAttribute" title="co
 <span class="nd">@property</span>
 <span class="k">def</span> <span class="nf">size_scale_precision</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde</span><span class="p">()</span><span class="o">.</span><span class="n">sizeScalePrecision</span>
+</pre></div>
+</div>
+<p>This is a subclass with (some) indices applied. Since this inherits the <a class="reference internal" href="#cobol.RepeatingAttribute.index" title="cobol.RepeatingAttribute.index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.RepeatingAttribute.index()</span></tt></a>
+method, we can apply indices incrementally.</p>
+<p>This is not built directly, but only created by <a class="reference internal" href="#cobol.RepeatingAttribute.index" title="cobol.RepeatingAttribute.index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.RepeatingAttribute.index()</span></tt></a>
+with some (or all) indices applied.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">IndexedAttribute</span><span class="p">(</span> <span class="n">RepeatingAttribute</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An attribute with dimensionality and indexes applied.</span>
+<span class="sd">    This must be built from a :py:class:`cobol.RepeatingAttribute`. It will copy</span>
+<span class="sd">    some attributes in an effort to somewhat improve efficiency.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">default_cell</span><span class="o">=</span> <span class="n">TextCell</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">dimensionality</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dde</span><span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">dde</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">create</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">create</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_offset</span><span class="o">=</span> <span class="n">offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dimensionality</span><span class="o">=</span> <span class="n">dimensionality</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dimensionality</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;tuple of DDE&#39;s; Set by ``attribute.index()``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dimensionality</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">offset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set by ``attribute.index()``.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset</span>
 </pre></div>
 </div>
 </div>
@@ -437,7 +463,7 @@ can refer to the proper conversion methods.</li>
 <p>This class introduces the expanded version of <tt class="docutils literal"><span class="pre">row_get</span></tt> that honors
 a schema attribute with dimensionality.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">COBOL_File</span><span class="p">(</span> <span class="n">Fixed_Workbook</span> <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A COBOL &quot;workbook&quot; file which uses :py:class:`RepeatingAttribute` and</span>
+    <span class="sd">&quot;&quot;&quot;A COBOL &quot;workbook&quot; file which uses  :py:class:`cobol.RepeatingAttribute` and</span>
 <span class="sd">    creates COBOL Cell values.  This is an abstraction which</span>
 <span class="sd">    lacks specific decoding methods.</span>
 
@@ -465,10 +491,16 @@ use it as an iterator to fetch data based on the rest of the dimensions (<tt cla
 of dimensionality.</p>
 <p>If too few index values are provided, a tuple of results is built around the missing values.</p>
 <p>If enough values are provided, a single result object will be built.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p>Performance</p>
+<p class="last">This is the most-used method. Removing the if-statement would be
+a huge improvement.</p>
+</div>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">row_get_index</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="o">*</span><span class="n">index</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Emit a nested-tuple structure of Cell values using the given index values.</span>
 <span class="sd">    :param row: the source Row.</span>
-<span class="sd">    :param attr: the :py:class:`RepeatingAttribute`; possibly tweaked to</span>
+<span class="sd">    :param attr: the  :py:class:`cobol.RepeatingAttribute`; possibly tweaked to</span>
 <span class="sd">        have an offset and partial dimensions. Or possibly the original tuple</span>
 <span class="sd">        of dimensions.</span>
 <span class="sd">    :param index: optional tuple of index values to use.</span>
@@ -503,9 +535,14 @@ of dimensionality.</p>
 
 <p>The API method will get data from a row described by an attribute.
 If the attribute has dimensions, then indices are used or multiple values are returned
-by <a class="reference internal" href="#cobol.COBOL_File.row_get_index" title="cobol.COBOL_File.row_get_index"><tt class="xref py py-meth docutils literal"><span class="pre">COBOL_File.row_get_index()</span></tt></a>.</p>
+by <a class="reference internal" href="#cobol.COBOL_File.row_get_index" title="cobol.COBOL_File.row_get_index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.COBOL_File.row_get_index()</span></tt></a>.</p>
 <p>If the attribute is has no dimensions, then it&#8217;s simply pulled from the source row.</p>
-<p>There&#8217;s a subtlety here: what if the row isn&#8217;t big enough?</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p>Performance</p>
+<p class="last">This is the most-used method. Removing the if-statement would be
+a huge improvement.</p>
+</div>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">row_get</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">attr</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a Cell(s) from the row&#39;s data.</span>
 <span class="sd">    :param row: The current Row</span>
@@ -573,37 +610,52 @@ Text is easy, Python&#8217;s <tt class="docutils literal"><span class="pre">io.o
 </pre></div>
 </div>
 <p>COMP-3 in proper character files may not make any sense at all.
-A codec would make a hash of the bit patterns required.</p>
+A codec would make a hash of the bit patterns required.
+However, we&#8217;ve defined the method here so that it can be used by the EBCDIC subclass
+trivially.</p>
+<p>We&#8217;re going to build an ASCII version of the number by decoding the bytes into
+a mutable bytearray and decorating them with decimal point and sign. This is
+demonstrably faster and avoids object creation to the extent possible.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@staticmethod</span>
+<span class="k">def</span> <span class="nf">unpack</span><span class="p">(</span> <span class="nb">buffer</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Include &#39; &#39; position for leading sign character.</span>
+<span class="sd">    Trailing sign field will be 48+0xd for negative.</span>
+<span class="sd">    48+0xf is &quot;unsigned&quot; and 48+0xc is positive.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">yield</span> <span class="mi">32</span> <span class="c"># ord(b&#39; &#39;)</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">buffer</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="mi">48</span><span class="o">+</span><span class="p">(</span><span class="n">n</span><span class="o">&gt;&gt;</span><span class="mi">4</span><span class="p">)</span> <span class="c"># ord(b&#39;0&#39;)</span>
+        <span class="k">yield</span> <span class="mi">48</span><span class="o">+</span><span class="p">(</span><span class="n">n</span><span class="o">&amp;</span><span class="mh">0x0f</span><span class="p">)</span>
+
+<span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">number_comp3</span><span class="p">(</span> <span class="nb">buffer</span><span class="p">,</span> <span class="n">attr</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Decode comp-3, packed decimal values.</span>
 
 <span class="sd">    Each byte is two decimal digits.</span>
 
-<span class="sd">    Last byte has a digit plus sign information: &#39;d&#39; is &lt;0, &#39;f&#39; is unsigned, and &#39;c&#39; &gt;=0.</span>
+<span class="sd">    Last byte has a digit plus sign information: 0xd is &lt;0, 0xf is unsigned, and 0xc &gt;=0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">final</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">signed</span><span class="p">,</span> <span class="n">dec_sign</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">size_scale_precision</span>
-    <span class="n">digits</span><span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">buffer</span><span class="p">:</span>
-        <span class="n">digits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">n</span><span class="o">//</span><span class="mi">16</span> <span class="p">)</span>
-        <span class="n">digits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">n</span><span class="o">%</span><span class="mi">16</span> <span class="p">)</span>
     <span class="c">#print( repr(buffer), &quot;from&quot;, repr(display) )</span>
-    <span class="n">sign</span><span class="o">=</span> <span class="s">&quot;-&quot;</span> <span class="k">if</span> <span class="n">digits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">13</span> <span class="k">else</span> <span class="s">&quot; &quot;</span>
-    <span class="n">text</span><span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">digits</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
-    <span class="c"># Adjust to include Precision.</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span> <span class="n">Character_File</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span> <span class="nb">buffer</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="c"># Proper sign in front; replace trailing sign with space.</span>
+    <span class="n">digits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span> <span class="mi">45</span> <span class="k">if</span> <span class="n">digits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">48</span><span class="o">+</span><span class="mh">0xd</span> <span class="k">else</span> <span class="mi">32</span> <span class="c"># ord(b&#39;-&#39;), ord(b&#39; &#39;)</span>
+    <span class="n">digits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span> <span class="mi">32</span> <span class="c"># ord(&#39; &#39;)</span>
+    <span class="c"># Add decimal place if needed.</span>
     <span class="k">if</span> <span class="n">precision</span><span class="p">:</span>
-        <span class="n">display</span><span class="o">=</span> <span class="n">sign</span> <span class="o">+</span> <span class="n">text</span><span class="p">[:</span><span class="o">-</span><span class="n">precision</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;.&quot;</span><span class="o">+</span><span class="n">text</span><span class="p">[</span><span class="o">-</span><span class="n">precision</span><span class="p">:]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">display</span><span class="o">=</span> <span class="n">sign</span> <span class="o">+</span> <span class="n">text</span>
+        <span class="n">digits</span><span class="p">[</span><span class="o">-</span><span class="n">precision</span><span class="p">:]</span><span class="o">=</span> <span class="n">digits</span><span class="p">[</span><span class="o">-</span><span class="n">precision</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Shift digits to right.</span>
+        <span class="n">digits</span><span class="p">[</span><span class="o">-</span><span class="n">precision</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span> <span class="mi">46</span> <span class="c"># Insert ord(b&#39;.&#39;)</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span> <span class="n">display</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span> <span class="n">digits</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;ASCII&quot;</span><span class="p">)</span> <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="n">Character_File</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;Can&#39;t process {0!r} from {1!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">display</span><span class="p">,</span><span class="nb">buffer</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">Character_File</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;Can&#39;t process {0!r} from {1!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">digits</span><span class="p">,</span><span class="nb">buffer</span><span class="p">)</span> <span class="p">)</span>
         <span class="k">raise</span>
 </pre></div>
 </div>
 <p>COMP in proper character files may not make any sense, either.
-A codec would make a hash of the bit patterns required.</p>
+A codec would make a hash of the bit patterns required.
+Gagin, we&#8217;ve defined it here because that&#8217;s relatively simple to extend.</p>
+<p>We&#8217;re simply going to unpack big-ending bytes.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">number_comp</span><span class="p">(</span> <span class="nb">buffer</span><span class="p">,</span> <span class="n">attr</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Decode comp, binary values.&quot;&quot;&quot;</span>
@@ -906,7 +958,7 @@ Text requires using a codec to translate EBCDIC-encoded characters.</p>
   <ul>
 <li><a class="reference internal" href="#">10.2.1. COBOL Package &#8211; Extend Schema to Handle EBCDIC</a><ul>
 <li><a class="reference internal" href="#module-cobol">10.2.1.1. Module Overheads</a></li>
-<li><a class="reference internal" href="#repeatingattribute-subclass-of-attribute">10.2.1.2. RepeatingAttribute Subclass of Attribute</a></li>
+<li><a class="reference internal" href="#repeatingattribute-subclasses-of-attribute">10.2.1.2. RepeatingAttribute Subclasses of Attribute</a></li>
 <li><a class="reference internal" href="#cobol-lazyrow">10.2.1.3. COBOL LazyRow</a></li>
 <li><a class="reference internal" href="#dump-a-record">10.2.1.4. Dump a Record</a></li>
 <li><a class="reference internal" href="#cobol-workbook-files">10.2.1.5. COBOL &#8220;Workbook&#8221; Files</a><ul>

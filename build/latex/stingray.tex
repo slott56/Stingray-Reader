@@ -14,8 +14,8 @@
 
 
 \title{The Stingray Schema-Based File Reader}
-\date{May 10, 2014}
-\release{4.4.1}
+\date{May 13, 2014}
+\release{4.4.2}
 \author{S. Lott}
 \newcommand{\sphinxlogo}{}
 \renewcommand{\releasename}{Release}
@@ -32,66 +32,66 @@
     \PYG@it{\PYG@bf{\PYG@ff{#1}}}}}}}
 \def\PYG#1#2{\PYG@reset\PYG@toks#1+\relax+\PYG@do{#2}}
 
-\expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
-\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
-\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
-\expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@si\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.44,0.63,0.82}{##1}}}
-\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
-\expandafter\def\csname PYG@tok@no\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.38,0.68,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
-\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
-\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
-\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
-\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
-\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@gt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
 \expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
 \expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
 \expandafter\def\csname PYG@tok@gs\endcsname{\let\PYG@bf=\textbf}
-\expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
-\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
-\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
+\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
+\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
+\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
+\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
+\expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
+\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@si\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.44,0.63,0.82}{##1}}}
+\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
+\expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
+\expandafter\def\csname PYG@tok@no\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.38,0.68,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
+\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
+\expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
+\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
+\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
 
 \def\PYGZbs{\char`\\}
 \def\PYGZus{\char`\_}
@@ -169,7 +169,7 @@ schema.
 
 
 \chapter{Contents}
-\label{index:the-stingray-schema-based-file-reader}\label{index:contents}
+\label{index:contents}\label{index:the-stingray-schema-based-file-reader}
 
 \section{Introduction}
 \label{introduction::doc}\label{introduction:intro}\label{introduction:introduction}
@@ -817,7 +817,7 @@ Commercial use will involve a proper licensing fee and a different license.
 
 
 \section{The \texttt{stingray} Package}
-\label{package::doc}\label{package:the-stingray-package}
+\label{package:the-stingray-package}\label{package::doc}
 The \code{stingray} package implements a Schema-based File Reader.
 This allows us to use flat-file and workbook data from Python without having
 to clone an application for each physical file format or logical layout.
@@ -912,7 +912,7 @@ using protobuf.
 
 
 \subsection{stingray \texttt{\_\_init\_\_.py}}
-\label{stingray_init::doc}\label{stingray_init:stingray-init-py}\label{stingray_init:stingray-init}
+\label{stingray_init::doc}\label{stingray_init:stingray-init}\label{stingray_init:stingray-init-py}
 This is approximately pure overhead required to make a Python package.
 \phantomsection\label{stingray_init:module-__init__}\index{\_\_init\_\_ (module)}
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -921,12 +921,12 @@ This is approximately pure overhead required to make a Python package.
 
 \PYG{l+s+sd}{Requires Python 3.3, xlrd 0.9.2}
 \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-\PYG{n}{\PYGZus{}\PYGZus{}version\PYGZus{}\PYGZus{}} \PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{4.4.1}\PYG{l+s}{\PYGZdq{}}
+\PYG{n}{\PYGZus{}\PYGZus{}version\PYGZus{}\PYGZus{}} \PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{4.4.2}\PYG{l+s}{\PYGZdq{}}
 \end{Verbatim}
 
 
 \section{Cell Module -- Data Element Containers and Conversions}
-\label{cell::doc}\label{cell:module-cell}\label{cell:cell-module-data-element-containers-and-conversions}\label{cell:cells}\index{cell (module)}
+\label{cell:cells}\label{cell::doc}\label{cell:cell-module-data-element-containers-and-conversions}\label{cell:module-cell}\index{cell (module)}
 The point of a {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} is two-fold.
 \begin{itemize}
 \item {} 
@@ -1593,7 +1593,7 @@ this to {\hyperref[cobol:cobol]{\emph{The COBOL Package}}}.
 
 
 \section{Sheet Module -- Sheet and Row Access}
-\label{sheet::doc}\label{sheet:module-sheet}\label{sheet:sheet-module-sheet-and-row-access}\label{sheet:sheets}\index{sheet (module)}
+\label{sheet::doc}\label{sheet:sheets}\label{sheet:sheet-module-sheet-and-row-access}\label{sheet:module-sheet}\index{sheet (module)}
 A \emph{Sheet} is a generator
 of \emph{Row} objects.  A \emph{Row} is a sequence of {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} instances, identified by position.
 
@@ -2137,7 +2137,7 @@ This assures proper packed decimal conversion of redefined fields.
 
 
 \section{Schema Package -- Schema and Attribute Definitions}
-\label{schema::doc}\label{schema:schema-package-schema-and-attribute-definitions}\label{schema:module-schema}\label{schema:schema}\index{schema (module)}
+\label{schema:module-schema}\label{schema::doc}\label{schema:schema}\label{schema:schema-package-schema-and-attribute-definitions}\index{schema (module)}
 A \emph{Schema} contains data descriptions.  It's a collection of \emph{Attribute} specifications.
 
 For our purposes, we're trying to cover the following bases:
@@ -2588,7 +2588,7 @@ Attribute( name= ``mm-dd-yy'', size= \emph{n}, offset= \emph{m},
 
 
 \section{Schema Loader Module -- Load Embedded or External Schema}
-\label{schema_loader::doc}\label{schema_loader:module-schema.loader}\label{schema_loader:schema-loader-module-load-embedded-or-external-schema}\label{schema_loader:schema-loader}\index{schema.loader (module)}
+\label{schema_loader:module-schema.loader}\label{schema_loader::doc}\label{schema_loader:schema-loader-module-load-embedded-or-external-schema}\label{schema_loader:schema-loader}\index{schema.loader (module)}
 A \emph{Schema Loader} loads the attributes of a schema from a source document.
 There are a variety of sources.
 \begin{itemize}
@@ -3028,13 +3028,13 @@ more complex than simply loading rows from a sheet of a workbook.
 
 
 \section{Workbook Package -- Uniform Wrappers for Workbooks}
-\label{workbook/index::doc}\label{workbook/index:workbook}\label{workbook/index:workbook-package-uniform-wrappers-for-workbooks}
+\label{workbook/index::doc}\label{workbook/index:workbook-package-uniform-wrappers-for-workbooks}\label{workbook/index:workbook}
 This package includes a base definition module plus a module for
 each physical format.
 
 
 \subsection{Workbook \_\_init\_\_ Module -- Wrapper for all implementations}
-\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}\label{workbook/init::doc}\label{workbook/init:module-workbook}\label{workbook/init:workbook-init}\index{workbook (module)}
+\label{workbook/init:workbook-init}\label{workbook/init::doc}\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}\label{workbook/init:module-workbook}\index{workbook (module)}
 A \emph{Workbook} is a collection of \emph{Sheets}.  It's also a set of decoding
 rules required to translate bytes (or XML text) into meaningful \emph{Cell} instances.
 
@@ -3553,7 +3553,7 @@ each line into cells.
 
 
 \subsection{CSV Workbook}
-\label{workbook/csv::doc}\label{workbook/csv:csv-workbook}\label{workbook/csv:workbook-csv}
+\label{workbook/csv::doc}\label{workbook/csv:workbook-csv}\label{workbook/csv:csv-workbook}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{csv}
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
@@ -3634,7 +3634,7 @@ is easy.
 
 
 \subsection{XLS Workbook}
-\label{workbook/xls::doc}\label{workbook/xls:xls-workbook}\label{workbook/xls:workbook-xls}
+\label{workbook/xls::doc}\label{workbook/xls:workbook-xls}\label{workbook/xls:xls-workbook}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{xlrd}
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
@@ -3745,7 +3745,7 @@ Convert a single \code{xlrd.Cell} to a proper subclass of {\hyperref[cell:cell.C
 
 
 \subsection{XLSX or XLSM Workbook}
-\label{workbook/xlsx::doc}\label{workbook/xlsx:workbook-xlsx}\label{workbook/xlsx:xlsx-or-xlsm-workbook}
+\label{workbook/xlsx:workbook-xlsx}\label{workbook/xlsx::doc}\label{workbook/xlsx:xlsx-or-xlsm-workbook}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4046,7 +4046,7 @@ containing cell type information.
 
 
 \subsection{ODS Workbook}
-\label{workbook/ods::doc}\label{workbook/ods:ods-workbook}\label{workbook/ods:workbook-ods}
+\label{workbook/ods::doc}\label{workbook/ods:workbook-ods}\label{workbook/ods:ods-workbook}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4254,7 +4254,7 @@ At \code{\textless{}table-cell} end: finalize the accumulated value.
 
 
 \subsection{Numbers 09 Workbook}
-\label{workbook/numbers_09::doc}\label{workbook/numbers_09:numbers-09-workbook}\label{workbook/numbers_09:workbook-number09}
+\label{workbook/numbers_09:numbers-09-workbook}\label{workbook/numbers_09::doc}\label{workbook/numbers_09:workbook-number09}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4927,7 +4927,7 @@ enum CellType \PYGZob{}
 
 
 \subsection{Fixed-Format Workbook}
-\label{workbook/fixed::doc}\label{workbook/fixed:fixed-format-workbook}\label{workbook/fixed:workbook-csv}
+\label{workbook/fixed:workbook-fixed}\label{workbook/fixed::doc}\label{workbook/fixed:fixed-format-workbook}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -5030,7 +5030,7 @@ Or {\hyperref[cobol_init:cobol.COBOL_File.row_get]{\code{cobol.COBOL\_File.row\_
 
 
 \section{The iWork `13 Numbers Modules}
-\label{iwork13::doc}\label{iwork13:the-iwork-13-numbers-modules}\label{iwork13:iwork13}
+\label{iwork13::doc}\label{iwork13:iwork13}\label{iwork13:the-iwork-13-numbers-modules}
 There are two digressive modules that are part of reading iWork `13 Numbers files.
 We could depend on other implementations. Instead, we've provided our own
 implementation to reduce the dependencies.
@@ -5046,7 +5046,7 @@ Stingray.
 
 
 \subsection{Snappy Module -- Unpacking iWork 13 files.}
-\label{snappy::doc}\label{snappy:snappy}\label{snappy:snappy-module-unpacking-iwork-13-files}
+\label{snappy:snappy}\label{snappy:snappy-module-unpacking-iwork-13-files}\label{snappy::doc}
 This is not a full implementation of the Snappy compression protocol.
 It's a minimal implementation, enough to unpack iWork `13 files.
 \phantomsection\label{snappy:module-snappy}\index{snappy (module)}
@@ -5688,7 +5688,7 @@ that's associated with the ID in the ArchiveInfo.
 
 
 \section{The COBOL Package}
-\label{cobol::doc}\label{cobol:cobol}\label{cobol:the-cobol-package}
+\label{cobol:cobol}\label{cobol::doc}\label{cobol:the-cobol-package}
 Or.  ``How do I access COBOL-defined data from Python''?
 
 We have three problems to solve to get COBOL data into Python applications.
@@ -5822,17 +5822,23 @@ We also need to handle repeating groups.
 In the case of repeating elements,  the repeating collection of elements
 creates a tuple-of-tuples structure which we can index.
 
-This gives us two ways to provide an OCCURS index values.  The first is
-to associate the index with the {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}}, as follows.
-
-While the following is weird, it parallels COBOL usage of indexing and element naming.  The idea is to provide the lowest level of name and all the indexes
-above it in one construct.
+This gives us two possible ways to provide an OCCURS index values.  The first
+possibility is to associate the index with the {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}}.
 \begin{alltt}
 def process\_sheet( sheet ):
     for row in sheet.rows():
         foo= row.cell(schema{[}\emph{n}{]}).to\_str()
         bar= row.cell(schema{[}\emph{m}{]}.index(\emph{i}, \emph{j})).to\_str()
 \end{alltt}
+
+While the above is weird, it parallels COBOL usage of indexing and element naming.
+The idea is to provide the lowest level of name and all the indexes
+above it in one construct.
+
+This is appealing because we can use the existing \code{sheet.Row.cell()} method without
+any modification. The downside of this is that we're creating a tweaked attribute
+definition, which is a terrible idea.
+On balance, the use of \code{schema.Attribute.index()} has to be rejected.
 
 The second way to provide an index is provide a subset of the indexes and get a kind of slice.
 This is like the positional version, shown above.
@@ -5857,7 +5863,7 @@ foo= row.cell(schema\_dict.get\_name(`bar'))
 baz\_i\_j= row.cell(schema\_dict.get\_name(`baz').index(\emph{i}, \emph{j}))
 \end{alltt}
 
-This doesn't works for unique names.
+This doesn't work for non-unique names.
 
 The COBOL \code{OF} syntax \emph{could} be modeled using a fluent \code{of()} method.
 \begin{alltt}
@@ -5867,6 +5873,26 @@ baz\_i\_quux\_j = row.cell(schema\_dict.get(`baz').index(\emph{i}).of(`quux').in
 \end{alltt}
 
 This is all potentially useful for hyper-complex COBOL record layouts.
+
+Incremental index calculation involves creating an interim, stateful Attribute definition.
+The ``cloning'' and ``tweaking'' of an {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} definition is a bad design.
+The index processing is stateful, and we would need to accumulate
+index information somehow along the path of fluent methods.
+
+This works out better if the
+\code{sheet.Row.cell} method handles the index calculations entirely separate
+from the attribute navigation. The following seems like a more sensible way to handle this.
+\begin{alltt}
+foo= row.cell(schema\_dict.get(`foo').of(`bar'))
+baz\_i\_j= row.cell(schema\_dict.get(`baz'), \emph{i})
+baz\_i\_quux\_j = row.cell(schema\_dict.get(`baz').of(`quux'), (\emph{i}, \emph{j}))
+\end{alltt}
+
+The first example provides no index, a multi-dimensional sequence of \emph{Cell} objects is returned.
+
+The second example provides too few indices, a sequence of \emph{Cell} objects is returned.
+
+The third example provides all indices, an individual \emph{Cell} is returned.
 
 
 \subsubsection{Low-Level Processing}
@@ -6189,8 +6215,8 @@ to create a schema.
 
 
 \paragraph{Module Overheads}
-\label{cobol_init:module-overheads}\label{cobol_init:module-cobol}\index{cobol (module)}
-We depend on {\hyperref[cell:module-cell]{\code{cell}}}, {\hyperref[schema:module-schema]{\code{schema}}}, and {\hyperref[workbook/numbers_13:module-workbook]{\code{workbook}}}.
+\label{cobol_init:module-cobol}\label{cobol_init:module-overheads}\index{cobol (module)}
+We depend on {\hyperref[cell:module-cell]{\code{cell}}}, {\hyperref[schema:module-schema]{\code{schema}}}, and {\hyperref[workbook/fixed:module-workbook]{\code{workbook}}}.
 We'll also import one class definition from {\hyperref[cobol_defs:module-cobol.defs]{\code{cobol.defs}}}.
 
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -6200,7 +6226,6 @@ We'll also import one class definition from {\hyperref[cobol_defs:module-cobol.d
 \PYG{k+kn}{import} \PYG{n+nn}{codecs}
 \PYG{k+kn}{import} \PYG{n+nn}{struct}
 \PYG{k+kn}{import} \PYG{n+nn}{decimal}
-\PYG{k+kn}{import} \PYG{n+nn}{copy}
 \PYG{k+kn}{import} \PYG{n+nn}{warnings}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
@@ -6214,14 +6239,28 @@ We'll also import one class definition from {\hyperref[cobol_defs:module-cobol.d
 \end{Verbatim}
 
 
-\paragraph{RepeatingAttribute Subclass of Attribute}
-\label{cobol_init:repeatingattribute-subclass-of-attribute}
-A new {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} subclass is required to carry all the
+\paragraph{RepeatingAttribute Subclasses of Attribute}
+\label{cobol_init:repeatingattribute-subclasses-of-attribute}
+Two new {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} subclasses are required to carry all the
 additional attribute information developed during COBOL DDE parsing.
 
-An attribute that has an occurs clause (or who's parent has an occurs clause)
+An attribute that has an \code{OCCURS} clause (or who's parent has an \code{OCCURS} clause)
 can accept an {\hyperref[cobol_init:cobol.RepeatingAttribute.index]{\code{cobol.RepeatingAttribute.index()}}} method to provide index values used to compute
 effective offsets.
+
+There are two variants.
+\begin{itemize}
+\item {} 
+The initial, immutable, {\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{cobol.RepeatingAttribute}}} as parsed.
+
+\item {} 
+A working \code{cobol.IndexedAttribute}. This is a subclass of
+{\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{cobol.RepeatingAttribute}}} and it contains partial or complete
+indexing. Partial indexing means that a tuple is built by
+{\hyperref[cobol_init:cobol.COBOL_File.row_get]{\code{cobol.COBOL\_File.row\_get()}}}. Full indexing means that a single
+\code{Cell} can be built.
+
+\end{itemize}
 
 \begin{Verbatim}[commandchars=\\\{\}]
 http://yuml.me/diagram/scruffy;/class/
@@ -6235,12 +6274,10 @@ http://yuml.me/diagram/scruffy;/class/
 
 \includegraphics{cobol_attribute.png}
 
-In order to fetch data for ODO, the attribute offsets and sizes
-cannot \textbf{all} be computed in advance during parsing.
-
-They must be computed lazily during data fetching. See the {\hyperref[cobol_init:cobol.ODO_LazyRow]{\code{ODO\_LazyRow}}}
-definition for how the attributes sizes and offsets are computed lazily
-when there's an Occurs Depending On.
+In order to fetch data for an ODO \code{OCCURS} element, the attribute offsets and sizes
+cannot \textbf{all} be computed during parsing.
+They must be computed lazily during data fetching. The {\hyperref[cobol_init:cobol.ODO_LazyRow]{\code{ODO\_LazyRow}}}
+class handles the Occurs Depending On situation.
 
 Here are the attributes inherited from {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}}.
 \begin{quote}\begin{description}
@@ -6268,18 +6305,21 @@ Size within the buffer.
 \end{description}\end{quote}
 
 These two properties can be tweaked by the \code{index()} method. If left alone, they simply
-a delegation to the DDE. If \code{index()} is used, these may be modified based on the index arguments.
+a delegation to the DDE. If \code{index()} is used, a subclass object is built
+where these values come from the \code{index} method results.
 \begin{quote}\begin{description}
 \item[{dimensionality}] \leavevmode
 A tuple of DDE's that defines the dimensionality pushed down to this
 item through the COBOL DDE hierarchy.
+
+This meay be set by the \code{index()} method.
 
 \item[{offset}] \leavevmode
 Optional offset into a buffer. This may be statically defined,
 or it may be dynamic because of variably-located data supporting
 the Occurs Depends On.
 
-This meay be tweaked by the \code{index()} method.
+This meay be set by the \code{index()} method.
 
 \end{description}\end{quote}
 
@@ -6315,9 +6355,10 @@ from the picture.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{RepeatingAttribute}\PYG{p}{(} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{Attribute} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}An attribute with dimensionality.  A potential \PYGZdq{}OCCURS\PYGZdq{} clause}
-\PYG{l+s+sd}{    may define repeating values. A potential \PYGZdq{}OCCURS DEPENDING ON\PYGZdq{}}
-\PYG{l+s+sd}{    clause may define variably located values.}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}An attribute with dimensionality. Not all COBOL items repeat.}
+
+\PYG{l+s+sd}{    An \PYGZdq{}OCCURS\PYGZdq{} clause will define repeating values.}
+\PYG{l+s+sd}{    An \PYGZdq{}OCCURS DEPENDING ON\PYGZdq{} clause may define variably located values.}
 \PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{n}{default\PYGZus{}cell}\PYG{o}{=} \PYG{n}{TextCell}
     \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{dde}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{n}{position}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{o}{*}\PYG{o}{*}\PYG{n}{kw}\PYG{p}{)}\PYG{p}{:}
@@ -6354,11 +6395,11 @@ of the indices.
 \begin{itemize}
 \item {} 
 First, the application supplies some of the indices, creating
-a tweaked {\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{RepeatingAttribute}}} with an initial offset.
+a tweaked {\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{cobol.RepeatingAttribute}}} with an initial offset.
 
 \item {} 
 Second, the {\hyperref[cobol_init:cobol.COBOL_File]{\code{COBOL\_File}}} supplies the remaining indices,
-creating yet more temporary {\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{RepeatingAttribute}}} based on the initial offset.
+creating yet more temporary  {\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{cobol.RepeatingAttribute}}} based on the initial offset.
 
 \end{itemize}
 
@@ -6370,7 +6411,7 @@ creating yet more temporary {\hyperref[cobol_init:cobol.RepeatingAttribute]{\cod
 
 \PYG{l+s+sd}{    :param values: 0\PYGZhy{}based index values.  Yes, legacy COBOL language is 1\PYGZhy{}based.}
 \PYG{l+s+sd}{        For Python applications, zero\PYGZhy{}based makes more sense.}
-\PYG{l+s+sd}{    :returns: A clone of this attribute with modified offset}
+\PYG{l+s+sd}{    :returns: A :py:class:{}`cobol.IndexedAttribute{}` copy, with modified offset}
 \PYG{l+s+sd}{    and dimensionality that can be used with :py:meth:{}`COBOL\PYGZus{}File.row\PYGZus{}get{}`.}
 \PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{k}{assert} \PYG{n}{values}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Missing index values}\PYG{l+s}{\PYGZdq{}}
@@ -6383,21 +6424,20 @@ creating yet more temporary {\hyperref[cobol_init:cobol.RepeatingAttribute]{\cod
         \PYG{n}{index}\PYG{o}{=} \PYG{n}{val\PYGZus{}list}\PYG{o}{.}\PYG{n}{pop}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{)}
         \PYG{n}{dim}\PYG{o}{=} \PYG{n}{dim\PYGZus{}list}\PYG{o}{.}\PYG{n}{pop}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{)}
         \PYG{n}{offset} \PYG{o}{+}\PYG{o}{=} \PYG{n}{dim}\PYG{o}{.}\PYG{n}{size} \PYG{o}{*} \PYG{n}{index}
-    \PYG{c}{\PYGZsh{} Build resulting clone version with indexes applied.}
-    \PYG{n}{cloned}\PYG{o}{=} \PYG{n}{copy}\PYG{o}{.}\PYG{n}{copy}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}
-    \PYG{n}{cloned}\PYG{o}{.}\PYG{n}{\PYGZus{}offset}\PYG{o}{=} \PYG{n}{offset}
-    \PYG{n}{cloned}\PYG{o}{.}\PYG{n}{\PYGZus{}dimensionality}\PYG{o}{=} \PYG{n}{dim\PYGZus{}list} \PYG{c}{\PYGZsh{} any left\PYGZhy{}over dimensions.}
-    \PYG{k}{return} \PYG{n}{cloned}
+    \PYG{c}{\PYGZsh{} Build new subclass object with indexes applied.}
+    \PYG{n}{clone}\PYG{o}{=} \PYG{n}{IndexedAttribute}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{offset}\PYG{p}{,} \PYG{n}{dim\PYGZus{}list} \PYG{p}{)}
+    \PYG{k}{return} \PYG{n}{clone}
 \end{Verbatim}
 
 With this, a \code{row.cell(schema.get('name').index(i))} will compute a proper offset.
 
-We clone the attribute to assure that each time we apply (or don't apply)
-the index, nothing stateful will have happened to the original attribute.
+We ``clone'' the attribute to assure that each time we apply (or don't apply)
+the index, nothing stateful will have happened to the original immutable attribute
+definition.
 
 Note that an incomplete set of index values forces the underlying
 workbook to create a Python tuple (or tuple of tuples) structure to
-contain all the requested values.
+contain all the requested values. See {\hyperref[cobol_init:cobol.COBOL_File.row_get]{\code{cobol.COBOL\_File.row\_get()}}}.
 
 The additional properties which are simply shortcuts so that a
 generic {\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{cobol.RepeatingAttribute}}} has access to the DDE details.
@@ -6405,20 +6445,12 @@ generic {\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{cobol.RepeatingAtt
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n+nd}{@property}
 \PYG{k}{def} \PYG{n+nf}{dimensionality}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}tuple of DDE\PYGZsq{}s\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{k}{try}\PYG{p}{:}
-        \PYG{c}{\PYGZsh{} Tweaked by {}`{}`attribute.index(){}`{}`}
-        \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}dimensionality}
-    \PYG{k}{except} \PYG{n+ne}{AttributeError}\PYG{p}{:}
-        \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{dde}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{dimensionality}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}tuple of parent DDE\PYGZsq{}s. Baseline value; no indexes applied.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{dde}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{dimensionality}
 \PYG{n+nd}{@property}
 \PYG{k}{def} \PYG{n+nf}{offset}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Influenced by index as well as occurs depending on\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{k}{try}\PYG{p}{:}
-        \PYG{c}{\PYGZsh{} Tweaked by {}`{}`attribute.index(){}`{}`}
-        \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}offset}
-    \PYG{k}{except} \PYG{n+ne}{AttributeError} \PYG{k}{as} \PYG{n}{e}\PYG{p}{:}
-        \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{dde}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{offset}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Baseline value; no indexes applied.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{dde}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{offset}
 \PYG{n+nd}{@property}
 \PYG{k}{def} \PYG{n+nf}{path}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{)}\PYG{p}{:}
     \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{dde}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{pathTo}\PYG{p}{(}\PYG{p}{)}
@@ -6434,6 +6466,34 @@ generic {\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{cobol.RepeatingAtt
 \PYG{n+nd}{@property}
 \PYG{k}{def} \PYG{n+nf}{size\PYGZus{}scale\PYGZus{}precision}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{)}\PYG{p}{:}
     \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{dde}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{sizeScalePrecision}
+\end{Verbatim}
+
+This is a subclass with (some) indices applied. Since this inherits the {\hyperref[cobol_init:cobol.RepeatingAttribute.index]{\code{cobol.RepeatingAttribute.index()}}}
+method, we can apply indices incrementally.
+
+This is not built directly, but only created by {\hyperref[cobol_init:cobol.RepeatingAttribute.index]{\code{cobol.RepeatingAttribute.index()}}}
+with some (or all) indices applied.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{class} \PYG{n+nc}{IndexedAttribute}\PYG{p}{(} \PYG{n}{RepeatingAttribute} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}An attribute with dimensionality and indexes applied.}
+\PYG{l+s+sd}{    This must be built from a :py:class:{}`cobol.RepeatingAttribute{}`. It will copy}
+\PYG{l+s+sd}{    some attributes in an effort to somewhat improve efficiency.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{n}{default\PYGZus{}cell}\PYG{o}{=} \PYG{n}{TextCell}
+    \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{base}\PYG{p}{,} \PYG{n}{offset}\PYG{p}{,} \PYG{n}{dimensionality} \PYG{p}{)}\PYG{p}{:}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{dde}\PYG{o}{=} \PYG{n}{base}\PYG{o}{.}\PYG{n}{dde}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{name}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{size}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{create}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{position} \PYG{o}{=} \PYG{n}{base}\PYG{o}{.}\PYG{n}{name}\PYG{p}{,} \PYG{n}{base}\PYG{o}{.}\PYG{n}{size}\PYG{p}{,} \PYG{n}{base}\PYG{o}{.}\PYG{n}{create}\PYG{p}{,} \PYG{n}{base}\PYG{o}{.}\PYG{n}{position}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}offset}\PYG{o}{=} \PYG{n}{offset}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}dimensionality}\PYG{o}{=} \PYG{n}{dimensionality}
+    \PYG{n+nd}{@property}
+    \PYG{k}{def} \PYG{n+nf}{dimensionality}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{)}\PYG{p}{:}
+        \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}tuple of DDE\PYGZsq{}s; Set by {}`{}`attribute.index(){}`{}`.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+        \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}dimensionality}
+    \PYG{n+nd}{@property}
+    \PYG{k}{def} \PYG{n+nf}{offset}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{)}\PYG{p}{:}
+        \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Set by {}`{}`attribute.index(){}`{}`.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+        \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}offset}
 \end{Verbatim}
 
 
@@ -6623,7 +6683,7 @@ a schema attribute with dimensionality.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{COBOL\PYGZus{}File}\PYG{p}{(} \PYG{n}{Fixed\PYGZus{}Workbook} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}A COBOL \PYGZdq{}workbook\PYGZdq{} file which uses :py:class:{}`RepeatingAttribute{}` and}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}A COBOL \PYGZdq{}workbook\PYGZdq{} file which uses  :py:class:{}`cobol.RepeatingAttribute{}` and}
 \PYG{l+s+sd}{    creates COBOL Cell values.  This is an abstraction which}
 \PYG{l+s+sd}{    lacks specific decoding methods.}
 
@@ -6657,11 +6717,18 @@ If too few index values are provided, a tuple of results is built around the mis
 
 If enough values are provided, a single result object will be built.
 
+\begin{notice}{important}{Important:}
+Performance
+
+This is the most-used method. Removing the if-statement would be
+a huge improvement.
+\end{notice}
+
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{row\PYGZus{}get\PYGZus{}index}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{row}\PYG{p}{,} \PYG{n}{attr}\PYG{p}{,} \PYG{o}{*}\PYG{n}{index} \PYG{p}{)}\PYG{p}{:}
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Emit a nested\PYGZhy{}tuple structure of Cell values using the given index values.}
 \PYG{l+s+sd}{    :param row: the source Row.}
-\PYG{l+s+sd}{    :param attr: the :py:class:{}`RepeatingAttribute{}`; possibly tweaked to}
+\PYG{l+s+sd}{    :param attr: the  :py:class:{}`cobol.RepeatingAttribute{}`; possibly tweaked to}
 \PYG{l+s+sd}{        have an offset and partial dimensions. Or possibly the original tuple}
 \PYG{l+s+sd}{        of dimensions.}
 \PYG{l+s+sd}{    :param index: optional tuple of index values to use.}
@@ -6697,11 +6764,16 @@ If enough values are provided, a single result object will be built.
 
 The API method will get data from a row described by an attribute.
 If the attribute has dimensions, then indices are used or multiple values are returned
-by {\hyperref[cobol_init:cobol.COBOL_File.row_get_index]{\code{COBOL\_File.row\_get\_index()}}}.
+by {\hyperref[cobol_init:cobol.COBOL_File.row_get_index]{\code{cobol.COBOL\_File.row\_get\_index()}}}.
 
 If the attribute is has no dimensions, then it's simply pulled from the source row.
 
-There's a subtlety here: what if the row isn't big enough?
+\begin{notice}{important}{Important:}
+Performance
+
+This is the most-used method. Removing the if-statement would be
+a huge improvement.
+\end{notice}
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{row\PYGZus{}get}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{row}\PYG{p}{,} \PYG{n}{attr} \PYG{p}{)}\PYG{p}{:}
@@ -6780,38 +6852,55 @@ Numeric data with usage \code{DISPLAY} requires handling implicit decimal points
 
 COMP-3 in proper character files may not make any sense at all.
 A codec would make a hash of the bit patterns required.
+However, we've defined the method here so that it can be used by the EBCDIC subclass
+trivially.
+
+We're going to build an ASCII version of the number by decoding the bytes into
+a mutable bytearray and decorating them with decimal point and sign. This is
+demonstrably faster and avoids object creation to the extent possible.
 
 \begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nd}{@staticmethod}
+\PYG{k}{def} \PYG{n+nf}{unpack}\PYG{p}{(} \PYG{n+nb}{buffer} \PYG{p}{)}\PYG{p}{:}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Include \PYGZsq{} \PYGZsq{} position for leading sign character.}
+\PYG{l+s+sd}{    Trailing sign field will be 48+0xd for negative.}
+\PYG{l+s+sd}{    48+0xf is \PYGZdq{}unsigned\PYGZdq{} and 48+0xc is positive.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{k}{yield} \PYG{l+m+mi}{32} \PYG{c}{\PYGZsh{} ord(b\PYGZsq{} \PYGZsq{})}
+    \PYG{k}{for} \PYG{n}{n} \PYG{o+ow}{in} \PYG{n+nb}{buffer}\PYG{p}{:}
+        \PYG{k}{yield} \PYG{l+m+mi}{48}\PYG{o}{+}\PYG{p}{(}\PYG{n}{n}\PYG{o}{\PYGZgt{}\PYGZgt{}}\PYG{l+m+mi}{4}\PYG{p}{)} \PYG{c}{\PYGZsh{} ord(b\PYGZsq{}0\PYGZsq{})}
+        \PYG{k}{yield} \PYG{l+m+mi}{48}\PYG{o}{+}\PYG{p}{(}\PYG{n}{n}\PYG{o}{\PYGZam{}}\PYG{l+m+mh}{0x0f}\PYG{p}{)}
+
 \PYG{n+nd}{@staticmethod}
 \PYG{k}{def} \PYG{n+nf}{number\PYGZus{}comp3}\PYG{p}{(} \PYG{n+nb}{buffer}\PYG{p}{,} \PYG{n}{attr} \PYG{p}{)}\PYG{p}{:}
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Decode comp\PYGZhy{}3, packed decimal values.}
 
 \PYG{l+s+sd}{    Each byte is two decimal digits.}
 
-\PYG{l+s+sd}{    Last byte has a digit plus sign information: \PYGZsq{}d\PYGZsq{} is \PYGZlt{}0, \PYGZsq{}f\PYGZsq{} is unsigned, and \PYGZsq{}c\PYGZsq{} \PYGZgt{}=0.}
+\PYG{l+s+sd}{    Last byte has a digit plus sign information: 0xd is \PYGZlt{}0, 0xf is unsigned, and 0xc \PYGZgt{}=0.}
 \PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{n}{final}\PYG{p}{,} \PYG{n}{alpha}\PYG{p}{,} \PYG{n}{length}\PYG{p}{,} \PYG{n}{scale}\PYG{p}{,} \PYG{n}{precision}\PYG{p}{,} \PYG{n}{signed}\PYG{p}{,} \PYG{n}{dec\PYGZus{}sign} \PYG{o}{=} \PYG{n}{attr}\PYG{o}{.}\PYG{n}{size\PYGZus{}scale\PYGZus{}precision}
-    \PYG{n}{digits}\PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
-    \PYG{k}{for} \PYG{n}{n} \PYG{o+ow}{in} \PYG{n+nb}{buffer}\PYG{p}{:}
-        \PYG{n}{digits}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(} \PYG{n}{n}\PYG{o}{/}\PYG{o}{/}\PYG{l+m+mi}{16} \PYG{p}{)}
-        \PYG{n}{digits}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(} \PYG{n}{n}\PYG{o}{\PYGZpc{}}\PYG{l+m+mi}{16} \PYG{p}{)}
     \PYG{c}{\PYGZsh{}print( repr(buffer), \PYGZdq{}from\PYGZdq{}, repr(display) )}
-    \PYG{n}{sign}\PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZhy{}}\PYG{l+s}{\PYGZdq{}} \PYG{k}{if} \PYG{n}{digits}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{==}\PYG{l+m+mi}{13} \PYG{k}{else} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ }\PYG{l+s}{\PYGZdq{}}
-    \PYG{n}{text}\PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{join}\PYG{p}{(} \PYG{n+nb}{map}\PYG{p}{(}\PYG{n+nb}{str}\PYG{p}{,}\PYG{n}{digits}\PYG{p}{[}\PYG{p}{:}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{)} \PYG{p}{)}
-    \PYG{c}{\PYGZsh{} Adjust to include Precision.}
+    \PYG{n}{digits} \PYG{o}{=} \PYG{n+nb}{bytearray}\PYG{p}{(} \PYG{n}{Character\PYGZus{}File}\PYG{o}{.}\PYG{n}{unpack}\PYG{p}{(} \PYG{n+nb}{buffer} \PYG{p}{)} \PYG{p}{)}
+    \PYG{c}{\PYGZsh{} Proper sign in front; replace trailing sign with space.}
+    \PYG{n}{digits}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{o}{=} \PYG{l+m+mi}{45} \PYG{k}{if} \PYG{n}{digits}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{==}\PYG{l+m+mi}{48}\PYG{o}{+}\PYG{l+m+mh}{0xd} \PYG{k}{else} \PYG{l+m+mi}{32} \PYG{c}{\PYGZsh{} ord(b\PYGZsq{}\PYGZhy{}\PYGZsq{}), ord(b\PYGZsq{} \PYGZsq{})}
+    \PYG{n}{digits}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{=} \PYG{l+m+mi}{32} \PYG{c}{\PYGZsh{} ord(\PYGZsq{} \PYGZsq{})}
+    \PYG{c}{\PYGZsh{} Add decimal place if needed.}
     \PYG{k}{if} \PYG{n}{precision}\PYG{p}{:}
-        \PYG{n}{display}\PYG{o}{=} \PYG{n}{sign} \PYG{o}{+} \PYG{n}{text}\PYG{p}{[}\PYG{p}{:}\PYG{o}{\PYGZhy{}}\PYG{n}{precision}\PYG{p}{]}\PYG{o}{+}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZdq{}}\PYG{o}{+}\PYG{n}{text}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{n}{precision}\PYG{p}{:}\PYG{p}{]}
-    \PYG{k}{else}\PYG{p}{:}
-        \PYG{n}{display}\PYG{o}{=} \PYG{n}{sign} \PYG{o}{+} \PYG{n}{text}
+        \PYG{n}{digits}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{n}{precision}\PYG{p}{:}\PYG{p}{]}\PYG{o}{=} \PYG{n}{digits}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{n}{precision}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{:}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{c}{\PYGZsh{} Shift digits to right.}
+        \PYG{n}{digits}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{n}{precision}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{=} \PYG{l+m+mi}{46} \PYG{c}{\PYGZsh{} Insert ord(b\PYGZsq{}.\PYGZsq{})}
     \PYG{k}{try}\PYG{p}{:}
-        \PYG{k}{return} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(} \PYG{n}{display} \PYG{p}{)}
+        \PYG{k}{return} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(} \PYG{n}{digits}\PYG{o}{.}\PYG{n}{decode}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ASCII}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{p}{)}
     \PYG{k}{except} \PYG{n+ne}{Exception}\PYG{p}{:}
-        \PYG{n}{Character\PYGZus{}File}\PYG{o}{.}\PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Can}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{t process \PYGZob{}0!r\PYGZcb{} from \PYGZob{}1!r\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{display}\PYG{p}{,}\PYG{n+nb}{buffer}\PYG{p}{)} \PYG{p}{)}
+        \PYG{n}{Character\PYGZus{}File}\PYG{o}{.}\PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Can}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{t process \PYGZob{}0!r\PYGZcb{} from \PYGZob{}1!r\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{digits}\PYG{p}{,}\PYG{n+nb}{buffer}\PYG{p}{)} \PYG{p}{)}
         \PYG{k}{raise}
 \end{Verbatim}
 
 COMP in proper character files may not make any sense, either.
 A codec would make a hash of the bit patterns required.
+Gagin, we've defined it here because that's relatively simple to extend.
+
+We're simply going to unpack big-ending bytes.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n+nd}{@staticmethod}
@@ -7156,7 +7245,7 @@ This is left as a future extension.
 
 
 \subsubsection{COBOL Loader Module -- Parse COBOL Source to Load a Schema}
-\label{cobol_loader::doc}\label{cobol_loader:module-cobol.loader}\label{cobol_loader:cobol-loader}\label{cobol_loader:cobol-loader-module-parse-cobol-source-to-load-a-schema}\index{cobol.loader (module)}
+\label{cobol_loader:cobol-loader-module-parse-cobol-source-to-load-a-schema}\label{cobol_loader::doc}\label{cobol_loader:cobol-loader}\label{cobol_loader:module-cobol.loader}\index{cobol.loader (module)}
 Parsing a spreadsheet schema is relatively easy: see {\hyperref[schema_loader:schema-loader]{\emph{Schema Loader Module -- Load Embedded or External Schema}}}.
 Parsing a COBOL schema, however, is a bit more complex.
 
@@ -7166,7 +7255,7 @@ What remains is parsing the COBOL source to extract a schema.
 A new {\hyperref[schema_loader:schema.loader.ExternalSchemaLoader]{\code{schema.loader.ExternalSchemaLoader}}} subclass is required
 to parse the DDE sublanguage of COBOL.   This loader will build the hierarchical
 DDE from the COBOL source, decorate this with size and offset information,
-then flatten it into a simple {\hyperref[schema:schema.Schema]{\code{schema.Schema}}} instance.{}`
+then flatten it into a simple {\hyperref[schema:schema.Schema]{\code{schema.Schema}}} instance.
 
 
 \paragraph{Load A Schema Use Case}
@@ -7667,22 +7756,22 @@ It could be done in the parser, also.
 the final picture
 
 \item[{Alpha}] \leavevmode
-boolean alpha/numeric
+boolean; True if any \code{"X"} or \code{"A"}; False if all \code{"9"} and related
 
 \item[{Length}] \leavevmode
-length of the final picture (just being lazy, really)
+length of the final picture
 
 \item[{Scale}] \leavevmode
-count of ``P'' positions
+count of \code{"P"} positions, often zero
 
 \item[{Precision}] \leavevmode
 digits to the right of the decimal point
 
 \item[{Signed}] \leavevmode
-boolean
+boolean; True if any \code{"S"}, \code{"-"} or related
 
 \item[{Decimal}] \leavevmode
-''.'' or ``V'' or None
+\code{"."} or \code{"V"} or \code{None}
 
 \end{description}\end{quote}
 
@@ -9281,7 +9370,7 @@ The overall top-most parent DDE associated with this object is \code{self.dde().
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Occurs}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}No OCCURS clause present. Data is irrelevant.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}No OCCURS clause present. Data from a row is irrelevant.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{n}{default}\PYG{o}{=} \PYG{n+nb+bp}{True}
     \PYG{n}{static}\PYG{o}{=} \PYG{n+nb+bp}{True}
     \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}str\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
@@ -9300,7 +9389,7 @@ The overall top-most parent DDE associated with this object is \code{self.dde().
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{OccursFixed}\PYG{p}{(} \PYG{n}{Occurs} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}OCCURS n TIMES. Data is irrelevant.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}OCCURS n TIMES. Data from a row is irrelevant.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{n}{default}\PYG{o}{=} \PYG{n+nb+bp}{False}
     \PYG{n}{static}\PYG{o}{=} \PYG{n+nb+bp}{True}
     \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{number} \PYG{p}{)}\PYG{p}{:}
@@ -9321,7 +9410,7 @@ The overall top-most parent DDE associated with this object is \code{self.dde().
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{OccursDependingOn}\PYG{p}{(} \PYG{n}{Occurs} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}OCCURS TO n TIMES DEPENDING ON name. Data is required.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}OCCURS TO n TIMES DEPENDING ON name. Data from a row is required.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{n}{default}\PYG{o}{=} \PYG{n+nb+bp}{False}
     \PYG{n}{static}\PYG{o}{=} \PYG{n+nb+bp}{False}
     \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{limit} \PYG{p}{)}\PYG{p}{:}
@@ -9339,9 +9428,8 @@ The overall top-most parent DDE associated with this object is \code{self.dde().
         \PYG{k}{if} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr} \PYG{o+ow}{is} \PYG{n+nb+bp}{None}\PYG{p}{:}
             \PYG{n}{schema\PYGZus{}dict}\PYG{o}{=} \PYG{n+nb}{dict}\PYG{p}{(} \PYG{p}{(}\PYG{n}{a}\PYG{o}{.}\PYG{n}{name}\PYG{p}{,} \PYG{n}{a}\PYG{p}{)} \PYG{k}{for} \PYG{n}{a} \PYG{o+ow}{in} \PYG{n}{aRow}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema} \PYG{p}{)}
             \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr}\PYG{o}{=} \PYG{n}{schema\PYGZus{}dict}\PYG{p}{[}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{name}\PYG{p}{]}
-        \PYG{n}{logger}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Getting \PYGZob{}0\PYGZcb{} from \PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr}\PYG{p}{,}\PYG{n}{aRow}\PYG{p}{)} \PYG{p}{)}
+        \PYG{c}{\PYGZsh{}\PYGZsh{} logger.debug( \PYGZdq{}Getting \PYGZob{}0\PYGZcb{} from \PYGZob{}1\PYGZcb{}\PYGZdq{}.format(self.attr,aRow) )}
         \PYG{n}{value}\PYG{o}{=} \PYG{n}{aRow}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr} \PYG{p}{)}\PYG{o}{.}\PYG{n}{to\PYGZus{}int}\PYG{p}{(}\PYG{p}{)}
-        \PYG{c}{\PYGZsh{} ???? if value \PYGZgt{} self.limit: return self.limit \PYGZsh{} ????}
         \PYG{k}{return} \PYG{n}{value}
 \end{Verbatim}
 \index{OccursDependingOnLimit (class in cobol.defs)}
@@ -9815,6 +9903,14 @@ This can be used with or without a row. The common case of all statically
 located items does not require a row.
 It must be used with a row for the case of OCCURS Depending On.
 
+\begin{notice}{note}{Todo}
+
+Fix performance.
+
+This is called once per row: it needs to be simpler and
+faster. Some refactoring can eliminate the if statements.
+\end{notice}
+
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{setSizeAndOffset}\PYG{p}{(} \PYG{n}{aDDE}\PYG{p}{,} \PYG{n}{aRow}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{n}{base}\PYG{o}{=}\PYG{l+m+mi}{0} \PYG{p}{)}\PYG{p}{:}
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Given a top\PYGZhy{}level DDE, a Row of data (or None),}
@@ -9841,7 +9937,7 @@ It must be used with a row for the case of OCCURS Depending On.
     \PYG{c}{\PYGZsh{} Initialize the size \PYGZhy{}\PYGZhy{} it may get updated below for group\PYGZhy{}level items.}
     \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{size}\PYG{o}{=} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{usage}\PYG{o}{.}\PYG{n}{size}\PYG{p}{(}\PYG{p}{)}
 
-    \PYG{n}{logger}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} Enter \PYGZob{}1\PYGZcb{} offset=\PYGZob{}2\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZgt{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{*}\PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{indent}\PYG{p}{,} \PYG{n}{aDDE}\PYG{p}{,} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{offset}\PYG{p}{)} \PYG{p}{)}
+    \PYG{c}{\PYGZsh{}\PYGZsh{} logger.debug( \PYGZdq{}\PYGZob{}0\PYGZcb{} Enter \PYGZob{}1\PYGZcb{} offset=\PYGZob{}2\PYGZcb{}\PYGZdq{}.format(\PYGZdq{}\PYGZgt{}\PYGZdq{}*aDDE.indent, aDDE, aDDE.offset) )}
 
     \PYG{c}{\PYGZsh{} For non\PYGZhy{}picture group\PYGZhy{}level, handle all of the children.}
     \PYG{k}{for} \PYG{n}{child} \PYG{o+ow}{in} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{children}\PYG{p}{:}
@@ -9862,8 +9958,8 @@ It must be used with a row for the case of OCCURS Depending On.
     \PYG{c}{\PYGZsh{} Collect final results from handling the children.}
     \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{totalSize} \PYG{o}{=} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{size} \PYG{o}{*} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{occurs}\PYG{o}{.}\PYG{n}{number}\PYG{p}{(}\PYG{n}{aRow}\PYG{p}{)}
 
-    \PYG{n}{logger}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}0\PYGZcb{} Exit  \PYGZob{}1\PYGZcb{} size=\PYGZob{}2\PYGZcb{}*\PYGZob{}3\PYGZcb{}=\PYGZob{}4\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}
-        \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZlt{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{*}\PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{indent}\PYG{p}{,} \PYG{n}{aDDE}\PYG{p}{,} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{size}\PYG{p}{,} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{occurs}\PYG{o}{.}\PYG{n}{number}\PYG{p}{(}\PYG{n}{aRow}\PYG{p}{)}\PYG{p}{,} \PYG{n}{aDDE}\PYG{o}{.}\PYG{n}{totalSize}\PYG{p}{)} \PYG{p}{)}
+    \PYG{c}{\PYGZsh{}\PYGZsh{} logger.debug( \PYGZdq{}\PYGZob{}0\PYGZcb{} Exit  \PYGZob{}1\PYGZcb{} size=\PYGZob{}2\PYGZcb{}*\PYGZob{}3\PYGZcb{}=\PYGZob{}4\PYGZcb{}\PYGZdq{}.format(}
+    \PYG{c}{\PYGZsh{}\PYGZsh{}     \PYGZdq{}\PYGZlt{}\PYGZdq{}*aDDE.indent, aDDE, aDDE.size, aDDE.occurs.number(aRow), aDDE.totalSize) )}
 \end{Verbatim}
 
 This function can be used during DDE load time if there are no Occurs Depending On.
@@ -9872,7 +9968,7 @@ See {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}}.
 
 
 \section{The \textbf{Stingray} Developer's Guide}
-\label{developer::doc}\label{developer:developer}\label{developer:the-stingray-developer-s-guide}
+\label{developer::doc}\label{developer:the-stingray-developer-s-guide}\label{developer:developer}
 We use \textbf{Stingray} to work with data files where the schema is
 either external or complex (or both). We can tackle this question:
 \begin{quote}
@@ -10852,7 +10948,7 @@ This should permit skipping past the junk.
 
 
 \section{\textbf{Stingray} Demo Applications}
-\label{demo/index::doc}\label{demo/index:stingray-demo-applications}\label{demo/index:demo}
+\label{demo/index:stingray-demo-applications}\label{demo/index::doc}\label{demo/index:demo}
 Perhaps the most important use case for \textbf{Stingray} is to write data extract
 applications. This is shown below in {\hyperref[demo/validation:demo-validate]{\emph{Application Level Data Validation Technique}}}.
 We can also handle COBOL file conversions. This is shown below in {\hyperref[demo/cobol_reader:demo-cobol]{\emph{Reading COBOL Files}}}.
@@ -10871,7 +10967,7 @@ More importantly, how do we confirm that an application can successfully use a f
 
 
 \subsection{Unit Level Validation for Application and Data}
-\label{demo/data_quality::doc}\label{demo/data_quality:unit-level-validation-for-application-and-data}\label{demo/data_quality:demo-sqa}
+\label{demo/data_quality::doc}\label{demo/data_quality:demo-sqa}\label{demo/data_quality:unit-level-validation-for-application-and-data}
 We validate that a given file actually matches the required schema through a three-part valiation process.
 \begin{enumerate}
 \item {} 
@@ -11156,7 +11252,7 @@ OK
 
 
 \subsection{Application Level Data Validation Technique}
-\label{demo/validation::doc}\label{demo/validation:demo-validate}\label{demo/validation:application-level-data-validation-technique}
+\label{demo/validation:demo-validate}\label{demo/validation:application-level-data-validation-technique}\label{demo/validation::doc}
 We validate that that a file actually matches a schema through a three-part valiation process.
 We looked at the first two parts in {\hyperref[demo/data_quality:demo-sqa]{\emph{Unit Level Validation for Application and Data}}}.
 \begin{itemize}
@@ -12212,7 +12308,7 @@ we can pass the file object created by \code{ZipFile.open()} as the second argum
 
 \section{History}
 \label{history:history}\label{history::doc}\label{history:id1}
-Latest release is 4.4.1.
+Latest release is 4.4.2.
 
 
 \subsection{Version 4}
@@ -12305,6 +12401,9 @@ This is the default.
 \item {} 
 Fixed Occurs Depending On Calculation initialization error.
 \href{https://sourceforge.net/p/stingrayreader/tickets/15/}{https://sourceforge.net/p/stingrayreader/tickets/15/}
+
+\item {} 
+Tweaked performance slightly based on profile results.
 
 \end{itemize}
 
@@ -12471,7 +12570,7 @@ and easy-to-use \code{suite()} function that returns the module's suite.
 
 
 \subsection{Cell Module Tests}
-\label{testing/cell::doc}\label{testing/cell:cell-module-tests}\label{testing/cell:test-cells}
+\label{testing/cell:cell-module-tests}\label{testing/cell::doc}\label{testing/cell:test-cells}
 A Cell is the unit of data.  These unit tests exercise the classes in the
 {\hyperref[cell:module-cell]{\code{cell}}} module.  For more information, see {\hyperref[cell:cells]{\emph{Cell Module -- Data Element Containers and Conversions}}}.
 
@@ -12910,7 +13009,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Schema Module Tests}
-\label{testing/schema::doc}\label{testing/schema:schema-module-tests}
+\label{testing/schema:schema-module-tests}\label{testing/schema::doc}
 A Schema is little more than a list of Attributes,
 and an Attribute is little more than a named tuple.
 
@@ -13057,7 +13156,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Schema Loader Testing}
-\label{testing/schema_loader::doc}\label{testing/schema_loader:schema-loader-testing}
+\label{testing/schema_loader:schema-loader-testing}\label{testing/schema_loader::doc}
 A Schema Loader will build a schema from a variety of sources.
 \begin{itemize}
 \item {} 
@@ -14211,7 +14310,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{COBOL Schema Loader Unit Tests}
-\label{testing/cobol_loader::doc}\label{testing/cobol_loader:cobol-schema-loader-unit-tests}
+\label{testing/cobol_loader:cobol-schema-loader-unit-tests}\label{testing/cobol_loader::doc}
 These are unit tests of various parts of the COBOL schema loader.  See {\hyperref[cobol_loader:cobol-loader]{\emph{COBOL Loader Module -- Parse COBOL Source to Load a Schema}}}.
 
 
@@ -16147,7 +16246,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Test Snappy and Protobuf}
-\label{testing/snappy_protobuf::doc}\label{testing/snappy_protobuf:test-snappy-protobuf}\label{testing/snappy_protobuf:test-snappy-and-protobuf}
+\label{testing/snappy_protobuf::doc}\label{testing/snappy_protobuf:test-snappy-and-protobuf}\label{testing/snappy_protobuf:test-snappy-protobuf}
 These are tests for the snappy decompression and the protobuf object encoding.
 
 
@@ -16370,7 +16469,7 @@ To enable logging.
 
 
 \section{Stingray Build}
-\label{build::doc}\label{build:stingray-build}\label{build:build}
+\label{build::doc}\label{build:build}\label{build:stingray-build}
 The source for \code{stingray} is a Sphinx project that depends on PyLit.
 Yes.  The documentation spawns the code.
 
@@ -16459,7 +16558,7 @@ See {\hyperref[demo/index:demo]{\emph{Stingray Demo Applications}}}.
 
 \end{itemize}
 
-This reports, also, that 139 tests were run.
+This reports, also, that 174 tests were run.
 
 \end{enumerate}
 
@@ -16809,7 +16908,7 @@ if sys.version\PYGZus{}info \PYGZlt{} (3,3):
 
 setup(
     name=\PYGZsq{}stingray\PYGZsq{},
-    version=\PYGZsq{}4.4.1\PYGZsq{},
+    version=\PYGZsq{}4.4.2\PYGZsq{},
     description=\PYGZsq{}Schema\PYGZhy{}Based File Reader, COBOL, EBCDIC Conversion, ETL, Data Profiling\PYGZsq{},
     author=\PYGZsq{}S.Lott\PYGZsq{},
     author\PYGZus{}email=\PYGZsq{}s\PYGZus{}lott@yahoo.com\PYGZsq{},
@@ -16863,6 +16962,40 @@ classifiers=[
 \label{index:the-todo-list}
 \begin{notice}{note}{Todo}
 
+Test hashable interface of Cell
+\end{notice}
+
+(The {\hyperref[cell:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cell.rst, line 214.)
+
+\begin{notice}{note}{Todo}
+
+refactor setSizeAndOffset()
+
+Refactor setSizeAndOffset() into the {\hyperref[index:cobol.defs.Allocation]{\code{Allocation}}} class methods
+to remove isinstance() nonsense.
+\end{notice}
+
+(The {\hyperref[cobol_defs:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_defs.rst, line 1168.)
+
+\begin{notice}{note}{Todo}
+
+Fix performance.
+
+This is called once per row: it needs to be simpler and
+faster. Some refactoring can eliminate the if statements.
+\end{notice}
+
+(The {\hyperref[cobol_defs:index-1]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_defs.rst, line 1180.)
+
+\begin{notice}{note}{Todo}
+
+88-level items could create boolean-valued properties.
+\end{notice}
+
+(The {\hyperref[cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_loader.rst, line 397.)
+
+\begin{notice}{note}{Todo}
+
 Index by name and path, also.
 
 This will eliminate some complexity in COBOL schema handling where
@@ -16880,10 +17013,10 @@ EBCDIC File V format with Occurs Depending On to show the combination.
 
 \begin{notice}{note}{Todo}
 
-Refactor this, it feels clunky.
+Test EXTERNAL, GLOBAL as Skipped Words, too.
 \end{notice}
 
-(The {\hyperref[workbook/ods:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/ods.rst, line 120.)
+(The {\hyperref[testing/cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/testing/cobol\_loader.rst, line 990.)
 
 \begin{notice}{note}{Todo}
 
@@ -16918,13 +17051,6 @@ all the modules in the package that extend this base definition.
 
 \begin{notice}{note}{Todo}
 
-Test hashable interface of Cell
-\end{notice}
-
-(The {\hyperref[cell:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cell.rst, line 214.)
-
-\begin{notice}{note}{Todo}
-
 Additional Numbers13\_Workbook Feature
 
 Translate Formula and Formula error to Text
@@ -16934,27 +17060,10 @@ Translate Formula and Formula error to Text
 
 \begin{notice}{note}{Todo}
 
-Test EXTERNAL, GLOBAL as Skipped Words, too.
+Refactor this, it feels clunky.
 \end{notice}
 
-(The {\hyperref[testing/cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/testing/cobol\_loader.rst, line 990.)
-
-\begin{notice}{note}{Todo}
-
-refactor setSizeAndOffset()
-
-Refactor setSizeAndOffset() into the {\hyperref[index:cobol.defs.Allocation]{\code{Allocation}}} class methods
-to remove isinstance() nonsense.
-\end{notice}
-
-(The {\hyperref[cobol_defs:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_defs.rst, line 1169.)
-
-\begin{notice}{note}{Todo}
-
-88-level items could create boolean-valued properties.
-\end{notice}
-
-(The {\hyperref[cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_loader.rst, line 397.)
+(The {\hyperref[workbook/ods:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/ods.rst, line 120.)
 
 
 \chapter{Indices and Tables}
@@ -16993,7 +17102,7 @@ to remove isinstance() nonsense.
 \item {\texttt{snappy}}, \pageref{snappy:module-snappy}
 \indexspace
 \bigletter{w}
-\item {\texttt{workbook}}, \pageref{workbook/numbers_13:module-workbook}
+\item {\texttt{workbook}}, \pageref{workbook/fixed:module-workbook}
 \end{theindex}
 
 \renewcommand{\indexname}{Index}

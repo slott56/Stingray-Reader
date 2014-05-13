@@ -5,7 +5,7 @@
 History
 ##############
 
-Latest release is 4.4.1.
+Latest release is 4.4.2.
 
 Version 4
 ==========
@@ -84,6 +84,8 @@ Change Details:
     
 -   Fixed Occurs Depending On Calculation initialization error.
     https://sourceforge.net/p/stingrayreader/tickets/15/
+    
+-   Tweaked performance slightly based on profile results.
     
 Version 3
 ==============
