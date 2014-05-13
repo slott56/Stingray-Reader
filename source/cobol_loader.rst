@@ -17,7 +17,7 @@ What remains is parsing the COBOL source to extract a schema.
 A new :py:class:`schema.loader.ExternalSchemaLoader` subclass is required
 to parse the DDE sublanguage of COBOL.   This loader will build the hierarchical
 DDE from the COBOL source, decorate this with size and offset information, 
-then flatten it into a simple :py:class:`schema.Schema` instance.`
+then flatten it into a simple :py:class:`schema.Schema` instance.
 
 Load A Schema Use Case
 =============================
@@ -464,12 +464,12 @@ It could be done in the parser, also.
 ..  py:class:: Picture
 
     :final: the final picture
-    :alpha: boolean alpha/numeric
-    :length: length of the final picture (just being lazy, really)
-    :scale: count of "P" positions
+    :alpha: boolean; True if any ``"X"`` or ``"A"``; False if all ``"9"`` and related
+    :length: length of the final picture
+    :scale: count of ``"P"`` positions, often zero
     :precision: digits to the right of the decimal point
-    :signed: boolean
-    :decimal: "." or "V" or None
+    :signed: boolean; True if any ``"S"``, ``"-"`` or related 
+    :decimal: ``"."`` or ``"V"`` or ``None``
 
 ::
 
