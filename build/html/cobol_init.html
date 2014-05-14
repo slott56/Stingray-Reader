@@ -69,7 +69,7 @@ more sophisticated COBOL-based workbooks.</li>
 to create a schema.</p>
 <div class="section" id="module-cobol">
 <span id="module-overheads"></span><h2>10.2.1.1. Module Overheads<a class="headerlink" href="#module-cobol" title="Permalink to this headline">¶</a></h2>
-<p>We depend on <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>, <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>, and <a class="reference internal" href="workbook/xlsx.html#module-workbook" title="workbook"><tt class="xref py py-mod docutils literal"><span class="pre">workbook</span></tt></a>.
+<p>We depend on <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>, <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>, and <a class="reference internal" href="workbook/fixed.html#module-workbook" title="workbook"><tt class="xref py py-mod docutils literal"><span class="pre">workbook</span></tt></a>.
 We&#8217;ll also import one class definition from <a class="reference internal" href="cobol_defs.html#module-cobol.defs" title="cobol.defs"><tt class="xref py py-mod docutils literal"><span class="pre">cobol.defs</span></tt></a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;stingray.cobol -- Extend the core Stingray definitions to handle COBOL</span>
 <span class="sd">DDE&#39;s and COBOL files, including packed decimal and EBCDIC data.</span>
@@ -698,7 +698,7 @@ magic to recover the records properly.</li>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">RECFM_Parser</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Parse a physical file format.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">record_iter</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return each physical record.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return each physical record, stripped of headers.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
     <span class="k">def</span> <span class="nf">used</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="nb">bytes</span> <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;The number of bytes actually consumed.</span>
@@ -729,6 +729,10 @@ magic to recover the records properly.</li>
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">data</span>
             <span class="n">data</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lrecl</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">rdw_iter</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Yield rows with RDW, effectively RECFM_V format.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_iter</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span> <span class="s">&quot;&gt;H2x&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span> <span class="p">)</span><span class="o">+</span><span class="n">row</span>
 </pre></div>
 </div>
 <dl class="class">
@@ -761,11 +765,19 @@ magic to recover the records properly.</li>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">=</span> <span class="n">source</span>
     <span class="k">def</span> <span class="nf">record_iter</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over records, stripped of RDW&#39;s.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">rdw</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">row</span>
+    <span class="k">def</span> <span class="nf">rdw_iter</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over records which include the 4-byte RDW.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">rdw</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">rdw</span><span class="o">+</span><span class="n">row</span>
+    <span class="k">def</span> <span class="nf">_data_iter</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
         <span class="n">rdw</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">rdw</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">size</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span> <span class="s">&quot;&gt;H2x&quot;</span><span class="p">,</span> <span class="n">rdw</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">data</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span> <span class="n">size</span><span class="o">-</span><span class="mi">4</span> <span class="p">)</span>
-            <span class="k">yield</span> <span class="n">data</span>
+            <span class="k">yield</span> <span class="n">rdw</span><span class="p">,</span> <span class="n">data</span>
             <span class="n">rdw</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -788,6 +800,22 @@ These BDW and RDW describe the structure of the file.</p>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">=</span> <span class="n">source</span>
     <span class="k">def</span> <span class="nf">record_iter</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over records, stripped of RDW&#39;s.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">rdw</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">row</span>
+    <span class="k">def</span> <span class="nf">rdw_iter</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over records which include the 4-byte RDW.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">rdw</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_iter</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">rdw</span><span class="o">+</span><span class="n">row</span>
+    <span class="k">def</span> <span class="nf">bdw_iter</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over blocks, which include 4-byte BDW and records with 4-byte RDW&#39;s.&quot;&quot;&quot;</span>
+        <span class="n">bdw</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">bdw</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">blksize</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span> <span class="s">&quot;&gt;H2x&quot;</span><span class="p">,</span> <span class="n">bdw</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">block_data</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span> <span class="n">blksize</span><span class="o">-</span><span class="mi">4</span> <span class="p">)</span>
+            <span class="k">yield</span> <span class="n">bdw</span><span class="o">+</span><span class="n">data</span>
+            <span class="n">bdw</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_data_iter</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
         <span class="n">bdw</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">bdw</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">blksize</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span> <span class="s">&quot;&gt;H2x&quot;</span><span class="p">,</span> <span class="n">bdw</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -795,14 +823,15 @@ These BDW and RDW describe the structure of the file.</p>
             <span class="n">offset</span><span class="o">=</span> <span class="mi">0</span>
             <span class="k">while</span> <span class="n">offset</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_data</span><span class="p">):</span>
                 <span class="k">assert</span> <span class="n">offset</span><span class="o">+</span><span class="mi">4</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_data</span><span class="p">),</span> <span class="s">&quot;Corrupted Data Block {!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">block_data</span><span class="p">)</span>
-                <span class="n">lrecl</span><span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span> <span class="s">&quot;&gt;H2x&quot;</span><span class="p">,</span> <span class="n">block_data</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="mi">4</span><span class="p">]</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">yield</span> <span class="n">block_data</span><span class="p">[</span><span class="n">offset</span><span class="o">+</span><span class="mi">4</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="n">lrecl</span><span class="p">]</span>
-                <span class="n">offset</span> <span class="o">+=</span> <span class="n">lrecl</span>
+                <span class="n">rdw</span><span class="o">=</span> <span class="n">block_data</span><span class="p">[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="mi">4</span><span class="p">]</span>
+                <span class="n">size</span><span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span> <span class="s">&quot;&gt;H2x&quot;</span><span class="p">,</span> <span class="n">rdw</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">yield</span> <span class="n">rdw</span><span class="p">,</span> <span class="n">block_data</span><span class="p">[</span><span class="n">offset</span><span class="o">+</span><span class="mi">4</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="n">size</span><span class="p">]</span>
+                <span class="n">offset</span> <span class="o">+=</span> <span class="n">size</span>
             <span class="n">bdw</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We might want to implement the <tt class="xref py py-meth docutils literal"><span class="pre">RECFM_Parser.used()</span></tt> method to compare the number of bytes
-used against the RDW size.</p>
+<p>We might want to implement a generic <tt class="xref py py-meth docutils literal"><span class="pre">RECFM_Parser.used()</span></tt> method to compare the number of bytes
+used against the RDW size and raise an exception in the event of a mismatch.</p>
 <dl class="class">
 <dt id="cobol.RECFM_N">
 <em class="property">class </em><tt class="descclassname">cobol.</tt><tt class="descname">RECFM_N</tt><a class="headerlink" href="#cobol.RECFM_N" title="Permalink to this definition">¶</a></dt>

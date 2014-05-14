@@ -698,7 +698,7 @@ This class hierarchy breaks up EBCDIC files into records.
     class RECFM_Parser:
         """Parse a physical file format."""
         def record_iter( self ):
-            """Return each physical record."""
+            """Return each physical record, stripped of headers."""
             raise NotImplementedError
         def used( self, bytes ):
             """The number of bytes actually consumed.
@@ -728,6 +728,10 @@ Simple fixed-length records. No header words.
             while len(data) != 0:
                 yield data
                 data= self.source.read(self.lrecl)
+        def rdw_iter( self ):
+            """Yield rows with RDW, effectively RECFM_V format."""
+            for row in self.record_iter():
+                yield struct.pack( ">H2x", len(row)+4 )+row
 
 ..  py:class:: RECFM_FB
 
@@ -758,11 +762,19 @@ Variable-length records. Each record has an RDW header word with the length.
             super().__init__()
             self.source= source
         def record_iter( self ):
+            """Iterate over records, stripped of RDW's."""
+            for rdw, row in self._data_iter():
+                yield row
+        def rdw_iter( self ):
+            """Iterate over records which include the 4-byte RDW."""
+            for rdw, row in self._data_iter():
+                yield rdw+row        
+        def _data_iter( self ):
             rdw= self.source.read(4)
             while len(rdw) != 0:
                 size = struct.unpack( ">H2x", rdw )[0]
                 data= self.source.read( size-4 )
-                yield data
+                yield rdw, data
                 rdw= self.source.read(4)
                 
 We might want to implement the :py:meth:`RECFM_Parser.used` method to compare the number of bytes
@@ -785,6 +797,22 @@ These BDW and RDW describe the structure of the file.
             super().__init__()
             self.source= source
         def record_iter( self ):
+            """Iterate over records, stripped of RDW's."""
+            for rdw, row in self._data_iter():
+                yield row
+        def rdw_iter( self ):
+            """Iterate over records which include the 4-byte RDW."""
+            for rdw, row in self._data_iter():
+                yield rdw+row        
+        def bdw_iter( self ):
+            """Iterate over blocks, which include 4-byte BDW and records with 4-byte RDW's."""
+            bdw= self.source.read(4)
+            while len(bdw) != 0:
+                blksize = struct.unpack( ">H2x", bdw )[0]
+                block_data= self.source.read( blksize-4 )
+                yield bdw+data
+                bdw= self.source.read(4)
+        def _data_iter( self ):
             bdw= self.source.read(4)
             while len(bdw) != 0:
                 blksize = struct.unpack( ">H2x", bdw )[0]
@@ -792,13 +820,14 @@ These BDW and RDW describe the structure of the file.
                 offset= 0
                 while offset != len(block_data): 
                     assert offset+4 < len(block_data), "Corrupted Data Block {!r}".format(block_data)
-                    lrecl= struct.unpack( ">H2x", block_data[offset:offset+4] )[0]
-                    yield block_data[offset+4:offset+lrecl]
-                    offset += lrecl
+                    rdw= block_data[offset:offset+4]
+                    size= struct.unpack( ">H2x", rdw )[0]
+                    yield rdw, block_data[offset+4:offset+size]
+                    offset += size
                 bdw= self.source.read(4)
                 
-We might want to implement the :py:meth:`RECFM_Parser.used` method to compare the number of bytes
-used against the RDW size.
+We might want to implement a generic :py:meth:`RECFM_Parser.used` method to compare the number of bytes
+used against the RDW size and raise an exception in the event of a mismatch.
 
 ..  py:class:: RECFM_N
 

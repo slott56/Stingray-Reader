@@ -77,81 +77,81 @@
 \indexentry{RepeatingAttribute (class in cobol)|hyperpage}{84}
 \indexentry{index() (cobol.RepeatingAttribute method)|hyperpage}{84}
 \indexentry{ODO\_LazyRow (class in cobol)|hyperpage}{86}
-\indexentry{dump\_iter() (in module cobol)|hyperpage}{86}
+\indexentry{dump\_iter() (in module cobol)|hyperpage}{87}
 \indexentry{dump() (in module cobol)|hyperpage}{87}
 \indexentry{COBOL\_File (class in cobol)|hyperpage}{88}
-\indexentry{row\_get\_index() (cobol.COBOL\_File method)|hyperpage}{88}
-\indexentry{row\_get() (cobol.COBOL\_File method)|hyperpage}{89}
+\indexentry{row\_get\_index() (cobol.COBOL\_File method)|hyperpage}{89}
+\indexentry{row\_get() (cobol.COBOL\_File method)|hyperpage}{90}
 \indexentry{Character\_File (class in cobol)|hyperpage}{90}
 \indexentry{RECFM\_Parser (class in cobol)|hyperpage}{92}
 \indexentry{RECFM\_F (class in cobol)|hyperpage}{92}
-\indexentry{RECFM\_FB (class in cobol)|hyperpage}{92}
-\indexentry{RECFM\_V (class in cobol)|hyperpage}{92}
+\indexentry{RECFM\_FB (class in cobol)|hyperpage}{93}
+\indexentry{RECFM\_V (class in cobol)|hyperpage}{93}
 \indexentry{RECFM\_VB (class in cobol)|hyperpage}{93}
-\indexentry{RECFM\_N (class in cobol)|hyperpage}{93}
-\indexentry{EBCDIC\_File (class in cobol)|hyperpage}{94}
-\indexentry{rows\_of() (cobol.EBCDIC\_File method)|hyperpage}{94}
-\indexentry{cobol.loader (module)|hyperpage}{95}
-\indexentry{SyntaxError (class in cobol.loader)|hyperpage}{102}
-\indexentry{Picture (class in cobol.loader)|hyperpage}{102}
-\indexentry{picture\_parser() (in module cobol.loader)|hyperpage}{102}
-\indexentry{Lexer (class in cobol.loader)|hyperpage}{104}
-\indexentry{clean() (cobol.loader.Lexer method)|hyperpage}{104}
-\indexentry{scan() (cobol.loader.Lexer method)|hyperpage}{104}
-\indexentry{Lexer\_Long\_Lines (class in cobol.loader)|hyperpage}{105}
-\indexentry{RecordFactory (class in cobol.loader)|hyperpage}{105}
-\indexentry{dde\_iter() (cobol.loader.RecordFactory method)|hyperpage}{108}
-\indexentry{makeRecord() (cobol.loader.RecordFactory method)|hyperpage}{110}
-\indexentry{decorate() (cobol.loader.RecordFactory method)|hyperpage}{111}
-\indexentry{make\_attr() (in module cobol.loader)|hyperpage}{112}
-\indexentry{make\_schema() (in module cobol.loader)|hyperpage}{112}
-\indexentry{COBOLSchemaLoader (class in cobol.loader)|hyperpage}{112}
-\indexentry{load() (cobol.loader.COBOLSchemaLoader method)|hyperpage}{113}
-\indexentry{COBOL\_schema() (in module cobol.loader)|hyperpage}{113}
-\indexentry{cobol.defs (module)|hyperpage}{113}
-\indexentry{UnsupportedError (class in cobol.defs)|hyperpage}{115}
-\indexentry{TextCell (class in cobol.defs)|hyperpage}{116}
-\indexentry{NumberCell (class in cobol.defs)|hyperpage}{116}
-\indexentry{NumberDisplayCell (class in cobol.defs)|hyperpage}{117}
-\indexentry{NumberCompCell (class in cobol.defs)|hyperpage}{117}
-\indexentry{NumberComp3Cell (class in cobol.defs)|hyperpage}{117}
-\indexentry{ErrorCell (class in cobol.defs)|hyperpage}{117}
-\indexentry{Usage (class in cobol.defs)|hyperpage}{119}
-\indexentry{create\_func() (cobol.defs.Usage method)|hyperpage}{120}
-\indexentry{size() (cobol.defs.Usage method)|hyperpage}{120}
-\indexentry{UsageDisplay (class in cobol.defs)|hyperpage}{120}
-\indexentry{UsageComp (class in cobol.defs)|hyperpage}{120}
-\indexentry{UsageComp3 (class in cobol.defs)|hyperpage}{121}
-\indexentry{Allocation (class in cobol.defs)|hyperpage}{122}
-\indexentry{Redefines (class in cobol.defs)|hyperpage}{122}
-\indexentry{resolve() (cobol.defs.Redefines method)|hyperpage}{123}
-\indexentry{offset() (cobol.defs.Redefines method)|hyperpage}{123}
-\indexentry{totalSize() (cobol.defs.Redefines method)|hyperpage}{123}
-\indexentry{Successor (class in cobol.defs)|hyperpage}{123}
-\indexentry{offset() (cobol.defs.Successor method)|hyperpage}{123}
-\indexentry{totalSize() (cobol.defs.Successor method)|hyperpage}{124}
-\indexentry{Group (class in cobol.defs)|hyperpage}{124}
-\indexentry{offset() (cobol.defs.Group method)|hyperpage}{124}
-\indexentry{totalSize() (cobol.defs.Group method)|hyperpage}{124}
-\indexentry{Occurs (class in cobol.defs)|hyperpage}{125}
-\indexentry{OccursFixed (class in cobol.defs)|hyperpage}{125}
-\indexentry{OccursDependingOn (class in cobol.defs)|hyperpage}{125}
-\indexentry{OccursDependingOnLimit (class in cobol.defs)|hyperpage}{126}
-\indexentry{DDE (class in cobol.defs)|hyperpage}{126}
-\indexentry{DDE.\_\_iter\_\_ (class in cobol.defs)|hyperpage}{129}
-\indexentry{report() (in module cobol.defs)|hyperpage}{130}
-\indexentry{source() (in module cobol.defs)|hyperpage}{130}
-\indexentry{search() (in module cobol.defs)|hyperpage}{130}
-\indexentry{resolver() (in module cobol.defs)|hyperpage}{130}
-\indexentry{setDimensionality() (in module cobol.defs)|hyperpage}{131}
-\indexentry{setSizeAndOffset() (in module cobol.defs)|hyperpage}{131}
-\indexentry{make\_builder() (built-in function)|hyperpage}{135}
-\indexentry{process\_sheet() (built-in function)|hyperpage}{138}
-\indexentry{process\_workbook() (built-in function)|hyperpage}{138}
-\indexentry{some\_builder() (built-in function)|hyperpage}{146}
-\indexentry{process\_some\_sheet() (built-in function)|hyperpage}{148}
-\indexentry{sphinx\_build() (built-in function)|hyperpage}{229}
-\indexentry{pylit\_build() (built-in function)|hyperpage}{229}
-\indexentry{mkdir() (built-in function)|hyperpage}{230}
-\indexentry{copy\_file() (built-in function)|hyperpage}{230}
-\indexentry{run\_test() (built-in function)|hyperpage}{230}
+\indexentry{RECFM\_N (class in cobol)|hyperpage}{94}
+\indexentry{EBCDIC\_File (class in cobol)|hyperpage}{95}
+\indexentry{rows\_of() (cobol.EBCDIC\_File method)|hyperpage}{95}
+\indexentry{cobol.loader (module)|hyperpage}{96}
+\indexentry{SyntaxError (class in cobol.loader)|hyperpage}{103}
+\indexentry{Picture (class in cobol.loader)|hyperpage}{103}
+\indexentry{picture\_parser() (in module cobol.loader)|hyperpage}{103}
+\indexentry{Lexer (class in cobol.loader)|hyperpage}{105}
+\indexentry{clean() (cobol.loader.Lexer method)|hyperpage}{105}
+\indexentry{scan() (cobol.loader.Lexer method)|hyperpage}{105}
+\indexentry{Lexer\_Long\_Lines (class in cobol.loader)|hyperpage}{106}
+\indexentry{RecordFactory (class in cobol.loader)|hyperpage}{106}
+\indexentry{dde\_iter() (cobol.loader.RecordFactory method)|hyperpage}{109}
+\indexentry{makeRecord() (cobol.loader.RecordFactory method)|hyperpage}{111}
+\indexentry{decorate() (cobol.loader.RecordFactory method)|hyperpage}{112}
+\indexentry{make\_attr() (in module cobol.loader)|hyperpage}{113}
+\indexentry{make\_schema() (in module cobol.loader)|hyperpage}{113}
+\indexentry{COBOLSchemaLoader (class in cobol.loader)|hyperpage}{113}
+\indexentry{load() (cobol.loader.COBOLSchemaLoader method)|hyperpage}{114}
+\indexentry{COBOL\_schema() (in module cobol.loader)|hyperpage}{114}
+\indexentry{cobol.defs (module)|hyperpage}{114}
+\indexentry{UnsupportedError (class in cobol.defs)|hyperpage}{116}
+\indexentry{TextCell (class in cobol.defs)|hyperpage}{117}
+\indexentry{NumberCell (class in cobol.defs)|hyperpage}{117}
+\indexentry{NumberDisplayCell (class in cobol.defs)|hyperpage}{118}
+\indexentry{NumberCompCell (class in cobol.defs)|hyperpage}{118}
+\indexentry{NumberComp3Cell (class in cobol.defs)|hyperpage}{118}
+\indexentry{ErrorCell (class in cobol.defs)|hyperpage}{118}
+\indexentry{Usage (class in cobol.defs)|hyperpage}{120}
+\indexentry{create\_func() (cobol.defs.Usage method)|hyperpage}{121}
+\indexentry{size() (cobol.defs.Usage method)|hyperpage}{121}
+\indexentry{UsageDisplay (class in cobol.defs)|hyperpage}{121}
+\indexentry{UsageComp (class in cobol.defs)|hyperpage}{121}
+\indexentry{UsageComp3 (class in cobol.defs)|hyperpage}{122}
+\indexentry{Allocation (class in cobol.defs)|hyperpage}{123}
+\indexentry{Redefines (class in cobol.defs)|hyperpage}{123}
+\indexentry{resolve() (cobol.defs.Redefines method)|hyperpage}{124}
+\indexentry{offset() (cobol.defs.Redefines method)|hyperpage}{124}
+\indexentry{totalSize() (cobol.defs.Redefines method)|hyperpage}{124}
+\indexentry{Successor (class in cobol.defs)|hyperpage}{124}
+\indexentry{offset() (cobol.defs.Successor method)|hyperpage}{124}
+\indexentry{totalSize() (cobol.defs.Successor method)|hyperpage}{125}
+\indexentry{Group (class in cobol.defs)|hyperpage}{125}
+\indexentry{offset() (cobol.defs.Group method)|hyperpage}{125}
+\indexentry{totalSize() (cobol.defs.Group method)|hyperpage}{125}
+\indexentry{Occurs (class in cobol.defs)|hyperpage}{126}
+\indexentry{OccursFixed (class in cobol.defs)|hyperpage}{126}
+\indexentry{OccursDependingOn (class in cobol.defs)|hyperpage}{126}
+\indexentry{OccursDependingOnLimit (class in cobol.defs)|hyperpage}{127}
+\indexentry{DDE (class in cobol.defs)|hyperpage}{127}
+\indexentry{DDE.\_\_iter\_\_ (class in cobol.defs)|hyperpage}{130}
+\indexentry{report() (in module cobol.defs)|hyperpage}{131}
+\indexentry{source() (in module cobol.defs)|hyperpage}{131}
+\indexentry{search() (in module cobol.defs)|hyperpage}{131}
+\indexentry{resolver() (in module cobol.defs)|hyperpage}{131}
+\indexentry{setDimensionality() (in module cobol.defs)|hyperpage}{132}
+\indexentry{setSizeAndOffset() (in module cobol.defs)|hyperpage}{132}
+\indexentry{make\_builder() (built-in function)|hyperpage}{136}
+\indexentry{process\_sheet() (built-in function)|hyperpage}{139}
+\indexentry{process\_workbook() (built-in function)|hyperpage}{139}
+\indexentry{some\_builder() (built-in function)|hyperpage}{147}
+\indexentry{process\_some\_sheet() (built-in function)|hyperpage}{149}
+\indexentry{sphinx\_build() (built-in function)|hyperpage}{230}
+\indexentry{pylit\_build() (built-in function)|hyperpage}{230}
+\indexentry{mkdir() (built-in function)|hyperpage}{231}
+\indexentry{copy\_file() (built-in function)|hyperpage}{231}
+\indexentry{run\_test() (built-in function)|hyperpage}{231}

@@ -43,6 +43,11 @@ For each source file row, there's a two-step operation.
 2.  Build Python objects from the Cells found in the row.  
     Building Python objects is best done with a "builder" function, 
     as shown above in :ref:`schema`, :ref:`developer`, and :ref:`demo`.
+    
+3.  Split the file into sections for parallel processing.
+    The GNU/Linux ``split`` command won't work with EBCDIC files, so
+    we have to use the low-level RECFM definitions to parse and split
+    a file.
 
 High-Level Processing
 ----------------------
@@ -199,7 +204,7 @@ The second example provides too few indices, a sequence of `Cell` objects is ret
 
 The third example provides all indices, an individual `Cell` is returned.
 
-Low-Level Processing
+Generic Processing
 ---------------------
 
 The :py:func:`cobol.dump` function can dump a record showing
@@ -217,7 +222,6 @@ long lists of values.
 The raw bytes and the ``Cell`` object are (technically) redundant, since all
 subclasses of ``Cell`` used by the ``cobol`` package have a ``raw`` attribute with
 the raw bytes. However, it's sometimes simpler to have this expanded in the tuple.
-
 
 The Occurs Depending On Problem
 ---------------------------------
@@ -397,6 +401,50 @@ properly located within the content.
 
 We've added a series of RECFM classes as a **Strategy** to 
 read files with variable length records.
+
+Low-Level Split Processing
+---------------------------------
+
+We may have a need to split an EBCDIC file, similar to the Posix ``split`` command.
+This is done using :py:class:`cobol.RECFM` parsers to read records and write to 
+new file(s).
+
+A splitter looks like this:
+
+..  parsed-literal::
+
+    import itertools
+    import stringray.cobol
+    import collections
+    import pprint
+    
+    batch_size= 1000
+    counts= collections.defaultdict(int)
+    with open( "some_file.schema", "rb" ) as source:
+        reader= stringray.cobol.RECFM_VB( source ).bdw_iter()
+        batches= itertools.groupby( enumerate(reader), lambda x: x[0]//batch_size ):
+        for group, group_iter in batches:
+            with open( "some_file_{0}.schema".format(group), "wb" ) as target:
+            for id, row in group_iter:
+                target.write( row )
+                counts['rows'] += 1
+                counts[str(group)] += 1
+    pprint.pprint( dict(counts) )
+                
+There are several possible variations on the construction of the ``reader`` object.
+
+-   cobol.RECFM_F( source ).record_iter() -- result is RECFM_F.
+
+-   cobol.RECFM_F( source ).rdw_iter() -- result is RECFM_V; RDW's have been added.
+
+-   cobol.RECFM_V( source ).rdw_iter() -- result is RECFM_V; RDW's have been preserved.
+
+-   cobol.RECFM_VB( source ).rdw_iter() -- result is RECFM_V; RDW's have been preserved;
+    BDW's have been discarded.
+
+-   cobol.RECFM_VB( source ).bdw_iter() -- result is RECFM_VB; BDW's and RDW's have been 
+    preserved. The batch size is the number of blocks, not the number of records.
+
     
 The Bad Data Problem
 ----------------------
