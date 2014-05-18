@@ -140,8 +140,8 @@ class Test_Copybook_2( DDE_Test ):
         
         row= next( data.sheet( "" ).rows() )
         #stingray.cobol.dump( schema, row )
-        self.assertEqual( "NO", row.cell(schema_dict["ARE-THERE-MORE-RECORDS"]).to_str() )
-        self.assertEqual( "NO", row.cell(schema_dict["NO-MORE-RECORDS"]).to_str() )
+        self.assertEqual( "NO ", row.cell(schema_dict["ARE-THERE-MORE-RECORDS"]).to_str() )
+        self.assertEqual( "NO ", row.cell(schema_dict["NO-MORE-RECORDS"]).to_str() )
 
 # DDE Test copybook 3 with nested occurs level
 # =============================================

@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.2',
+        VERSION:     '4.4.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -54,7 +54,7 @@
             
   <div class="section" id="history">
 <span id="id1"></span><h1>13. History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
-<p>Latest release is 4.4.2.</p>
+<p>Latest release is 4.4.3.</p>
 <div class="section" id="version-4">
 <h2>13.1. Version 4<a class="headerlink" href="#version-4" title="Permalink to this headline">¶</a></h2>
 <p>Version 4 dates from March, 2014. It switches to Python3.3</p>
@@ -124,6 +124,16 @@ This is the default.
 <a class="reference external" href="https://sourceforge.net/p/stingrayreader/tickets/15/">https://sourceforge.net/p/stingrayreader/tickets/15/</a></p>
 </li>
 <li><p class="first">Tweaked performance slightly based on profile results.</p>
+</li>
+<li><p class="first">Make embedded schema loader tolerate blank sheets by producing
+a warning and returning <tt class="docutils literal"><span class="pre">None</span></tt> instead of raising an <tt class="docutils literal"><span class="pre">StopIteration</span></tt> exception.
+Tweak the Data validation demo to handle the None-instead-of-schema feature.</p>
+</li>
+<li><p class="first">Changed <tt class="xref py py-meth docutils literal"><span class="pre">cobol.COBOL_file.row_get()</span></tt> to leave trailing spaces
+intact. This may disrupt applications that expected stripping of usage DISPLAY
+fields.</p>
+<p>This created a problem of trashing COMP items that had values
+of 0x40 exactly &#8211; an EBCDIC space.</p>
 </li>
 </ul>
 </div>

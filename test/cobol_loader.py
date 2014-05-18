@@ -254,6 +254,11 @@ class TestUsageComp( unittest.TestCase ):
         self.usage.setTypeInfo( self.picture )
         self.assertEqual( 2, self.usage.size() )
         self.assertEqual( "COMP", self.usage.source() )
+    def test_should_show_size_S9_5( self ):
+        self.picture= stingray.cobol.loader.Picture( "99999", False, 5, 0, 0, True, "V" )
+        self.usage.setTypeInfo( self.picture )
+        self.assertEqual( 4, self.usage.size() )
+        self.assertEqual( "COMP", self.usage.source() )
     
 # ::
 

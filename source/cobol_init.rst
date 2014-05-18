@@ -537,7 +537,7 @@ If the attribute is has no dimensions, then it's simply pulled from the source r
                 return self.row_get_index( row, attr )
             else:
                 extract= row._state['data'][attr.offset:attr.offset+attr.size]
-                return attr.create( extract.rstrip(), self, attr=attr ) 
+                return attr.create( extract, self, attr=attr ) 
 
 Note that this depends on the superclass, which depends ordinary Unicode/ASCII line breaks.
 This will not work for EBCDIC files, which may lack appropriate line break characters.

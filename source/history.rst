@@ -5,7 +5,7 @@
 History
 ##############
 
-Latest release is 4.4.2.
+Latest release is 4.4.3.
 
 Version 4
 ==========
@@ -91,6 +91,13 @@ Change Details:
     a warning and returning ``None`` instead of raising an ``StopIteration`` exception.
     Tweak the Data validation demo to handle the None-instead-of-schema feature.
     
+-   Changed :py:meth:`cobol.COBOL_file.row_get` to leave trailing spaces
+    intact. This may disrupt applications that expected stripping of usage DISPLAY
+    fields.
+    
+    This created a problem of trashing COMP items that had values
+    of 0x40 exactly -- an EBCDIC space.
+        
 Version 3
 ==============
 

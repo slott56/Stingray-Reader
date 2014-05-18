@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.4.2',
+        VERSION:     '4.4.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -318,6 +318,11 @@ really care about three: DISPLAY, COMP and COMP-3.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">picture</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">Picture</span><span class="p">(</span> <span class="s">&quot;9999&quot;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="s">&quot;V&quot;</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">setTypeInfo</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">picture</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;COMP&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_should_show_size_S9_5</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">picture</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">Picture</span><span class="p">(</span> <span class="s">&quot;99999&quot;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="s">&quot;V&quot;</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">setTypeInfo</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">picture</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">4</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s">&quot;COMP&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">usage</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="p">)</span>
 </pre></div>
 </div>
