@@ -86,6 +86,10 @@ Change Details:
     https://sourceforge.net/p/stingrayreader/tickets/15/
     
 -   Tweaked performance slightly based on profile results.
+
+-   Make embedded schema loader tolerate blank sheets by producing 
+    a warning and returning ``None`` instead of raising an ``StopIteration`` exception.
+    Tweak the Data validation demo to handle the None-instead-of-schema feature.
     
 Version 3
 ==============
