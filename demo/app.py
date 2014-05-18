@@ -27,6 +27,17 @@
 # which validate their input file and have a simple plug-in strategy for 
 # doing any final persistent processing on that file.
 #
+# ..  important:: Simple File Structures
+#
+#     This validation is designed for simple CSV files with embedded schema.
+#     The assumption is that each sheet within the workbook
+#     has a consistent structure. There's no filter applied to pass
+#     or reject sheets.
+#            
+#     Some kind of extension to this application is required
+#     to handle named sheets within a more complex workbook or 
+#     to handle sheets which have no header.
+#
 # State Change Commands
 # =======================
 #
@@ -296,6 +307,9 @@ def make_builder( args ):
 
 def process_sheet( sheet, builder, persistence ):
     counts= defaultdict( int )
+    if sheet.schema is None:
+        # Empty sheet -- no embedded schema
+        return counts
     for source_row in sheet.schema.rows_as_dict_iter(sheet):
         try:
             counts['read'] += 1
@@ -376,7 +390,8 @@ def process_workbook( source, sheet_func, builder_func ):
 # Command-Line Interface
 # ----------------------
 #
-# We have some standard arguments.  While we'd like to use "-v" for validate mode, this gets confused with setting the verbosity level.
+# We have some standard arguments.  
+# While we'd like to use "-v" for validate mode, this gets confused with setting the verbosity level.
 #
 # ::
 
@@ -451,5 +466,6 @@ if __name__ == "__main__":
 #
 # We can see that :file:`sample/csv_workbook.csv` has two valid rows.
 #
-# We can see that :file:`sample/simple.csv` has seven rows, all of which are missing the required value.  If all the rows are wrong, the schema in the file
+# We can see that :file:`sample/simple.csv` has seven rows, all of which are missing the required value.  
+# If all the rows are wrong, the schema in the file
 # doesn't match the schema required by the application.

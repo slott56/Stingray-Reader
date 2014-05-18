@@ -314,11 +314,12 @@ extensions and physical formats.</p>
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">file_object</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
         <span class="n">schema_path</span><span class="o">=</span><span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="n">schema_sheet</span><span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Open a workbook.</span>
+
 <span class="sd">        :param name: filename to open.</span>
 <span class="sd">        :param file_object: File-like object to process.  If not</span>
 <span class="sd">        provided the named file will be opened.</span>
-<span class="sd">        :param schema_path: Directory with external schema files</span>
-<span class="sd">        :param schema_sheet: A sheet in an external schema workbook.</span>
+<span class="sd">        :keyword schema_path: Directory with external schema files</span>
+<span class="sd">        :keyword schema_sheet: A sheet in an external schema workbook.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span> <span class="n">name</span> <span class="p">)</span>
         <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>

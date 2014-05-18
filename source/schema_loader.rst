@@ -132,6 +132,23 @@ We depend on :py:mod:`schema`, :py:mod:`cell` and :py:mod:`sheet`.
     from stingray.schema import Schema, Attribute
     import stingray.cell
     import stingray.sheet
+    import warnings
+    
+No Schema Exception
+====================
+
+In some circumstances, we can't load a schema. The most common situation
+is a :py:class:`HeadingRowSchemaLoader` which is applied to an empty workbook sheet.
+No rows means no schema.
+
+::
+
+    class NoSchemaFound( Exception ):
+        pass
+        
+The default behavior is to simply write a warning for an empty sheet.
+The lack of a schema means there's no data, also, and 99% of the time, silently ignoring
+an empty sheet is desirable.
 
 Schema Loader
 =================
@@ -183,15 +200,21 @@ plug-in that the Workbook uses when instantiating each Sheet.
         """Read just the first row of a sheet to get embedded
         schema information."""
         def schema( self ):
-            """Get the schema from row one.  Remaining rows are data."""
-            row_1= next( self.row_iter )
-            attributes = ( 
-                dict(name=c.to_str()) for c in row_1 
-            )
-            schema = Schema( 
-                *(Attribute(**col) for col in attributes) 
-            )
-            return schema
+            """Try to get the schema from row one.  Remaining rows are data.
+            If the sheet is empty, emit a warning and return ``None``.
+            """
+            try:
+                row_1= next( self.row_iter )
+                attributes = ( 
+                    dict(name=c.to_str()) for c in row_1 
+                )
+                schema = Schema( 
+                    *(Attribute(**col) for col in attributes) 
+                )
+                return schema
+            except StopIteration:
+                warnings.warn( "Empty sheet: no schema present" )
+                
             
 We'll open a :py:class:`sheet.Sheet` with a specific loader.
 

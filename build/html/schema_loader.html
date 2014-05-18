@@ -153,11 +153,25 @@ to map the names that are found in the schema and build an <a class="reference i
 <span class="kn">from</span> <span class="nn">stingray.schema</span> <span class="kn">import</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Attribute</span>
 <span class="kn">import</span> <span class="nn">stingray.cell</span>
 <span class="kn">import</span> <span class="nn">stingray.sheet</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 </pre></div>
 </div>
 </div>
+<div class="section" id="no-schema-exception">
+<h2>7.6. No Schema Exception<a class="headerlink" href="#no-schema-exception" title="Permalink to this headline">¶</a></h2>
+<p>In some circumstances, we can&#8217;t load a schema. The most common situation
+is a <a class="reference internal" href="#schema.loader.HeadingRowSchemaLoader" title="schema.loader.HeadingRowSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">HeadingRowSchemaLoader</span></tt></a> which is applied to an empty workbook sheet.
+No rows means no schema.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">NoSchemaFound</span><span class="p">(</span> <span class="ne">Exception</span> <span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>The default behavior is to simply write a warning for an empty sheet.
+The lack of a schema means there&#8217;s no data, also, and 99% of the time, silently ignoring
+an empty sheet is desirable.</p>
+</div>
 <div class="section" id="id1">
-<h2>7.6. Schema Loader<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>7.7. Schema Loader<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="schema.loader.SchemaLoader">
 <em class="property">class </em><tt class="descclassname">schema.loader.</tt><tt class="descname">SchemaLoader</tt><a class="headerlink" href="#schema.loader.SchemaLoader" title="Permalink to this definition">¶</a></dt>
@@ -187,7 +201,7 @@ to map the names that are found in the schema and build an <a class="reference i
 </div>
 </div>
 <div class="section" id="embedded-schema-loader">
-<h2>7.7. Embedded Schema Loader<a class="headerlink" href="#embedded-schema-loader" title="Permalink to this headline">¶</a></h2>
+<h2>7.8. Embedded Schema Loader<a class="headerlink" href="#embedded-schema-loader" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="schema.loader.HeadingRowSchemaLoader">
 <em class="property">class </em><tt class="descclassname">schema.loader.</tt><tt class="descname">HeadingRowSchemaLoader</tt><a class="headerlink" href="#schema.loader.HeadingRowSchemaLoader" title="Permalink to this definition">¶</a></dt>
@@ -204,15 +218,20 @@ plug-in that the Workbook uses when instantiating each Sheet.</p>
     <span class="sd">&quot;&quot;&quot;Read just the first row of a sheet to get embedded</span>
 <span class="sd">    schema information.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get the schema from row one.  Remaining rows are data.&quot;&quot;&quot;</span>
-        <span class="n">row_1</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_iter</span> <span class="p">)</span>
-        <span class="n">attributes</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">to_str</span><span class="p">())</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">row_1</span>
-        <span class="p">)</span>
-        <span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
-            <span class="o">*</span><span class="p">(</span><span class="n">Attribute</span><span class="p">(</span><span class="o">**</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">schema</span>
+        <span class="sd">&quot;&quot;&quot;Try to get the schema from row one.  Remaining rows are data.</span>
+<span class="sd">        If the sheet is empty, emit a warning and return ``None``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">row_1</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_iter</span> <span class="p">)</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">to_str</span><span class="p">())</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">row_1</span>
+            <span class="p">)</span>
+            <span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span>
+                <span class="o">*</span><span class="p">(</span><span class="n">Attribute</span><span class="p">(</span><span class="o">**</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">schema</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span> <span class="s">&quot;Empty sheet: no schema present&quot;</span> <span class="p">)</span>
 </pre></div>
 </div>
 <p>We&#8217;ll open a <a class="reference internal" href="sheet.html#sheet.Sheet" title="sheet.Sheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Sheet</span></tt></a> with a specific loader.</p>
@@ -237,7 +256,7 @@ or Fixed format files, since an &#8220;empty&#8221; row may be difficult to disc
 </div>
 </div>
 <div class="section" id="external-schema-loader">
-<h2>7.8. External Schema Loader<a class="headerlink" href="#external-schema-loader" title="Permalink to this headline">¶</a></h2>
+<h2>7.9. External Schema Loader<a class="headerlink" href="#external-schema-loader" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="schema.loader.ExternalSchemaLoader">
 <em class="property">class </em><tt class="descclassname">schema.loader.</tt><tt class="descname">ExternalSchemaLoader</tt><a class="headerlink" href="#schema.loader.ExternalSchemaLoader" title="Permalink to this definition">¶</a></dt>
@@ -375,7 +394,7 @@ is subject to a great deal of change without notice.</li>
 </div>
 </div>
 <div class="section" id="worst-case-loader">
-<h2>7.9. Worst-Case Loader<a class="headerlink" href="#worst-case-loader" title="Permalink to this headline">¶</a></h2>
+<h2>7.10. Worst-Case Loader<a class="headerlink" href="#worst-case-loader" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="schema.loader.BareExternalSchemaLoader">
 <em class="property">class </em><tt class="descclassname">schema.loader.</tt><tt class="descname">BareExternalSchemaLoader</tt><a class="headerlink" href="#schema.loader.BareExternalSchemaLoader" title="Permalink to this definition">¶</a></dt>
@@ -404,7 +423,7 @@ an embedded schema on line one of the sheet.</p>
 </div>
 </div>
 <div class="section" id="parsing-and-loading-a-cobol-schema">
-<h2>7.10. Parsing and Loading a COBOL Schema<a class="headerlink" href="#parsing-and-loading-a-cobol-schema" title="Permalink to this headline">¶</a></h2>
+<h2>7.11. Parsing and Loading a COBOL Schema<a class="headerlink" href="#parsing-and-loading-a-cobol-schema" title="Permalink to this headline">¶</a></h2>
 <p>One logical extension to this is to parse COBOL DDE&#8217;s to create
 a schema that allows us to process a COBOL file (in EBCDIC) directly
 as if it were a simple workbook.</p>
@@ -430,11 +449,12 @@ more complex than simply loading rows from a sheet of a workbook.</p>
 <li><a class="reference internal" href="#manual-schema-use-case">7.3. Manual Schema Use Case</a></li>
 <li><a class="reference internal" href="#model">7.4. Model</a></li>
 <li><a class="reference internal" href="#overheads">7.5. Overheads</a></li>
-<li><a class="reference internal" href="#id1">7.6. Schema Loader</a></li>
-<li><a class="reference internal" href="#embedded-schema-loader">7.7. Embedded Schema Loader</a></li>
-<li><a class="reference internal" href="#external-schema-loader">7.8. External Schema Loader</a></li>
-<li><a class="reference internal" href="#worst-case-loader">7.9. Worst-Case Loader</a></li>
-<li><a class="reference internal" href="#parsing-and-loading-a-cobol-schema">7.10. Parsing and Loading a COBOL Schema</a></li>
+<li><a class="reference internal" href="#no-schema-exception">7.6. No Schema Exception</a></li>
+<li><a class="reference internal" href="#id1">7.7. Schema Loader</a></li>
+<li><a class="reference internal" href="#embedded-schema-loader">7.8. Embedded Schema Loader</a></li>
+<li><a class="reference internal" href="#external-schema-loader">7.9. External Schema Loader</a></li>
+<li><a class="reference internal" href="#worst-case-loader">7.10. Worst-Case Loader</a></li>
+<li><a class="reference internal" href="#parsing-and-loading-a-cobol-schema">7.11. Parsing and Loading a COBOL Schema</a></li>
 </ul>
 </li>
 </ul>

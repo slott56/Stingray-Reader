@@ -73,6 +73,17 @@ it can be viewed as a sort of &#8220;dry run&#8221;: all the processing; none of
 We&#8217;ll create applications
 which validate their input file and have a simple plug-in strategy for
 doing any final persistent processing on that file.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p>Simple File Structures</p>
+<p>This validation is designed for simple CSV files with embedded schema.
+The assumption is that each sheet within the workbook
+has a consistent structure. There&#8217;s no filter applied to pass
+or reject sheets.</p>
+<p class="last">Some kind of extension to this application is required
+to handle named sheets within a more complex workbook or
+to handle sheets which have no header.</p>
+</div>
 <div class="section" id="state-change-commands">
 <h2>12.2.1. State Change Commands<a class="headerlink" href="#state-change-commands" title="Permalink to this headline">¶</a></h2>
 <p>The <strong>Command</strong> design patterns is helpful for isolating state changes in an application.</p>
@@ -294,6 +305,9 @@ This transforms the source sheet into the target collection, usually an output f
 This handles all the rows present in a given sheet.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">process_sheet</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">builder</span><span class="p">,</span> <span class="n">persistence</span> <span class="p">):</span>
     <span class="n">counts</span><span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span> <span class="nb">int</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">sheet</span><span class="o">.</span><span class="n">schema</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="c"># Empty sheet -- no embedded schema</span>
+        <span class="k">return</span> <span class="n">counts</span>
     <span class="k">for</span> <span class="n">source_row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">rows_as_dict_iter</span><span class="p">(</span><span class="n">sheet</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">counts</span><span class="p">[</span><span class="s">&#39;read&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -367,7 +381,8 @@ See <a class="reference internal" href="data_quality.html#demo-sqa"><em>Unit Lev
 </div>
 <div class="section" id="command-line-interface">
 <h3>12.2.3.6. Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h3>
-<p>We have some standard arguments.  While we&#8217;d like to use &#8220;-v&#8221; for validate mode, this gets confused with setting the verbosity level.</p>
+<p>We have some standard arguments.
+While we&#8217;d like to use &#8220;-v&#8221; for validate mode, this gets confused with setting the verbosity level.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
     <span class="n">parser</span><span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span> <span class="s">&#39;file&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;+&#39;</span> <span class="p">)</span>
@@ -434,7 +449,8 @@ INFO:demo/app.py:{&#39;KeyError \&#39;Column &quot;3&quot; - string\&#39;&#39;: 
 </pre></div>
 </div>
 <p>We can see that <tt class="file docutils literal"><span class="pre">sample/csv_workbook.csv</span></tt> has two valid rows.</p>
-<p>We can see that <tt class="file docutils literal"><span class="pre">sample/simple.csv</span></tt> has seven rows, all of which are missing the required value.  If all the rows are wrong, the schema in the file
+<p>We can see that <tt class="file docutils literal"><span class="pre">sample/simple.csv</span></tt> has seven rows, all of which are missing the required value.
+If all the rows are wrong, the schema in the file
 doesn&#8217;t match the schema required by the application.</p>
 </div>
 </div>

@@ -317,11 +317,12 @@ extensions and physical formats.
         def __call__( self, name, file_object=None,
             schema_path='.', schema_sheet= None, **kw ):
             """Open a workbook.
+            
             :param name: filename to open.
             :param file_object: File-like object to process.  If not
             provided the named file will be opened.
-            :param schema_path: Directory with external schema files
-            :param schema_sheet: A sheet in an external schema workbook.
+            :keyword schema_path: Directory with external schema files
+            :keyword schema_sheet: A sheet in an external schema workbook.
             """
             _, ext = os.path.splitext( name )
             ext = ext.lower()

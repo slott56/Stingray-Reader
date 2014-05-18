@@ -14,7 +14,7 @@
 
 
 \title{The Stingray Schema-Based File Reader}
-\date{May 14, 2014}
+\date{May 18, 2014}
 \release{4.4.2}
 \author{S. Lott}
 \newcommand{\sphinxlogo}{}
@@ -32,66 +32,66 @@
     \PYG@it{\PYG@bf{\PYG@ff{#1}}}}}}}
 \def\PYG#1#2{\PYG@reset\PYG@toks#1+\relax+\PYG@do{#2}}
 
-\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
-\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
-\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
-\expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@si\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.44,0.63,0.82}{##1}}}
-\expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
-\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
+\expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
+\expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
+\expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
 \expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
 \expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@gt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
-\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
-\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
-\expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
-\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@gs\endcsname{\let\PYG@bf=\textbf}
-\expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
-\expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
-\expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
+\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@no\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.38,0.68,0.84}{##1}}}
 \expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
 \expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@no\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.38,0.68,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
-\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
+\expandafter\def\csname PYG@tok@si\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.44,0.63,0.82}{##1}}}
 \expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
+\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
+\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
+\expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
+\expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
+\expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
+\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
+\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@gt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
 \expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@gs\endcsname{\let\PYG@bf=\textbf}
+\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
+\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
+\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
 
 \def\PYGZbs{\char`\\}
 \def\PYGZus{\char`\_}
@@ -783,7 +783,7 @@ definition for the file.  A schema can be built from the parsed DDE.
 
 
 \section{Licensing}
-\label{license::doc}\label{license:licensing}
+\label{license:licensing}\label{license::doc}
 See \href{http://creativecommons.org/licenses/by-nc-sa/4.0/}{http://creativecommons.org/licenses/by-nc-sa/4.0/}
 
 This work is made available under the Creative Commons
@@ -912,7 +912,7 @@ using protobuf.
 
 
 \subsection{stingray \texttt{\_\_init\_\_.py}}
-\label{stingray_init:stingray-init-py}\label{stingray_init::doc}\label{stingray_init:stingray-init}
+\label{stingray_init:stingray-init}\label{stingray_init:stingray-init-py}\label{stingray_init::doc}
 This is approximately pure overhead required to make a Python package.
 \phantomsection\label{stingray_init:module-__init__}\index{\_\_init\_\_ (module)}
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -926,7 +926,7 @@ This is approximately pure overhead required to make a Python package.
 
 
 \section{Cell Module -- Data Element Containers and Conversions}
-\label{cell:cells}\label{cell:module-cell}\label{cell::doc}\label{cell:cell-module-data-element-containers-and-conversions}\index{cell (module)}
+\label{cell:module-cell}\label{cell:cells}\label{cell:cell-module-data-element-containers-and-conversions}\label{cell::doc}\index{cell (module)}
 The point of a {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} is two-fold.
 \begin{itemize}
 \item {} 
@@ -1593,7 +1593,7 @@ this to {\hyperref[cobol:cobol]{\emph{The COBOL Package}}}.
 
 
 \section{Sheet Module -- Sheet and Row Access}
-\label{sheet:module-sheet}\label{sheet:sheet-module-sheet-and-row-access}\label{sheet:sheets}\label{sheet::doc}\index{sheet (module)}
+\label{sheet:sheet-module-sheet-and-row-access}\label{sheet:sheets}\label{sheet:module-sheet}\label{sheet::doc}\index{sheet (module)}
 A \emph{Sheet} is a generator
 of \emph{Row} objects.  A \emph{Row} is a sequence of {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} instances, identified by position.
 
@@ -2137,7 +2137,7 @@ This assures proper packed decimal conversion of redefined fields.
 
 
 \section{Schema Package -- Schema and Attribute Definitions}
-\label{schema:schema-package-schema-and-attribute-definitions}\label{schema:schema}\label{schema::doc}\label{schema:module-schema}\index{schema (module)}
+\label{schema:schema}\label{schema:module-schema}\label{schema:schema-package-schema-and-attribute-definitions}\label{schema::doc}\index{schema (module)}
 A \emph{Schema} contains data descriptions.  It's a collection of \emph{Attribute} specifications.
 
 For our purposes, we're trying to cover the following bases:
@@ -2588,7 +2588,7 @@ Attribute( name= ``mm-dd-yy'', size= \emph{n}, offset= \emph{m},
 
 
 \section{Schema Loader Module -- Load Embedded or External Schema}
-\label{schema_loader:schema-loader}\label{schema_loader:module-schema.loader}\label{schema_loader:schema-loader-module-load-embedded-or-external-schema}\label{schema_loader::doc}\index{schema.loader (module)}
+\label{schema_loader:module-schema.loader}\label{schema_loader:schema-loader-module-load-embedded-or-external-schema}\label{schema_loader:schema-loader}\label{schema_loader::doc}\index{schema.loader (module)}
 A \emph{Schema Loader} loads the attributes of a schema from a source document.
 There are a variety of sources.
 \begin{itemize}
@@ -2720,7 +2720,24 @@ We depend on {\hyperref[schema:module-schema]{\code{schema}}}, {\hyperref[cell:m
 \PYG{k+kn}{from} \PYG{n+nn}{stingray.schema} \PYG{k+kn}{import} \PYG{n}{Schema}\PYG{p}{,} \PYG{n}{Attribute}
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.cell}
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
+\PYG{k+kn}{import} \PYG{n+nn}{warnings}
 \end{Verbatim}
+
+
+\subsection{No Schema Exception}
+\label{schema_loader:no-schema-exception}
+In some circumstances, we can't load a schema. The most common situation
+is a {\hyperref[schema_loader:schema.loader.HeadingRowSchemaLoader]{\code{HeadingRowSchemaLoader}}} which is applied to an empty workbook sheet.
+No rows means no schema.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{class} \PYG{n+nc}{NoSchemaFound}\PYG{p}{(} \PYG{n+ne}{Exception} \PYG{p}{)}\PYG{p}{:}
+    \PYG{k}{pass}
+\end{Verbatim}
+
+The default behavior is to simply write a warning for an empty sheet.
+The lack of a schema means there's no data, also, and 99\% of the time, silently ignoring
+an empty sheet is desirable.
 
 
 \subsection{Schema Loader}
@@ -2783,15 +2800,20 @@ plug-in that the Workbook uses when instantiating each Sheet.
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Read just the first row of a sheet to get embedded}
 \PYG{l+s+sd}{    schema information.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{k}{def} \PYG{n+nf}{schema}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
-        \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Get the schema from row one.  Remaining rows are data.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-        \PYG{n}{row\PYGZus{}1}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{row\PYGZus{}iter} \PYG{p}{)}
-        \PYG{n}{attributes} \PYG{o}{=} \PYG{p}{(}
-            \PYG{n+nb}{dict}\PYG{p}{(}\PYG{n}{name}\PYG{o}{=}\PYG{n}{c}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)}\PYG{p}{)} \PYG{k}{for} \PYG{n}{c} \PYG{o+ow}{in} \PYG{n}{row\PYGZus{}1}
-        \PYG{p}{)}
-        \PYG{n}{schema} \PYG{o}{=} \PYG{n}{Schema}\PYG{p}{(}
-            \PYG{o}{*}\PYG{p}{(}\PYG{n}{Attribute}\PYG{p}{(}\PYG{o}{*}\PYG{o}{*}\PYG{n}{col}\PYG{p}{)} \PYG{k}{for} \PYG{n}{col} \PYG{o+ow}{in} \PYG{n}{attributes}\PYG{p}{)}
-        \PYG{p}{)}
-        \PYG{k}{return} \PYG{n}{schema}
+        \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Try to get the schema from row one.  Remaining rows are data.}
+\PYG{l+s+sd}{        If the sheet is empty, emit a warning and return {}`{}`None{}`{}`.}
+\PYG{l+s+sd}{        \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+        \PYG{k}{try}\PYG{p}{:}
+            \PYG{n}{row\PYGZus{}1}\PYG{o}{=} \PYG{n+nb}{next}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{row\PYGZus{}iter} \PYG{p}{)}
+            \PYG{n}{attributes} \PYG{o}{=} \PYG{p}{(}
+                \PYG{n+nb}{dict}\PYG{p}{(}\PYG{n}{name}\PYG{o}{=}\PYG{n}{c}\PYG{o}{.}\PYG{n}{to\PYGZus{}str}\PYG{p}{(}\PYG{p}{)}\PYG{p}{)} \PYG{k}{for} \PYG{n}{c} \PYG{o+ow}{in} \PYG{n}{row\PYGZus{}1}
+            \PYG{p}{)}
+            \PYG{n}{schema} \PYG{o}{=} \PYG{n}{Schema}\PYG{p}{(}
+                \PYG{o}{*}\PYG{p}{(}\PYG{n}{Attribute}\PYG{p}{(}\PYG{o}{*}\PYG{o}{*}\PYG{n}{col}\PYG{p}{)} \PYG{k}{for} \PYG{n}{col} \PYG{o+ow}{in} \PYG{n}{attributes}\PYG{p}{)}
+            \PYG{p}{)}
+            \PYG{k}{return} \PYG{n}{schema}
+        \PYG{k}{except} \PYG{n+ne}{StopIteration}\PYG{p}{:}
+            \PYG{n}{warnings}\PYG{o}{.}\PYG{n}{warn}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Empty sheet: no schema present}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}
 \end{Verbatim}
 
 We'll open a {\hyperref[sheet:sheet.Sheet]{\code{sheet.Sheet}}} with a specific loader.
@@ -3028,13 +3050,13 @@ more complex than simply loading rows from a sheet of a workbook.
 
 
 \section{Workbook Package -- Uniform Wrappers for Workbooks}
-\label{workbook/index:workbook}\label{workbook/index:workbook-package-uniform-wrappers-for-workbooks}\label{workbook/index::doc}
+\label{workbook/index:workbook-package-uniform-wrappers-for-workbooks}\label{workbook/index:workbook}\label{workbook/index::doc}
 This package includes a base definition module plus a module for
 each physical format.
 
 
 \subsection{Workbook \_\_init\_\_ Module -- Wrapper for all implementations}
-\label{workbook/init:module-workbook}\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}\label{workbook/init:workbook-init}\label{workbook/init::doc}\index{workbook (module)}
+\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}\label{workbook/init:workbook-init}\label{workbook/init:module-workbook}\label{workbook/init::doc}\index{workbook (module)}
 A \emph{Workbook} is a collection of \emph{Sheets}.  It's also a set of decoding
 rules required to translate bytes (or XML text) into meaningful \emph{Cell} instances.
 
@@ -3378,11 +3400,12 @@ extensions and physical formats.
     \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}call\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
         \PYG{n}{schema\PYGZus{}path}\PYG{o}{=}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{schema\PYGZus{}sheet}\PYG{o}{=} \PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{o}{*}\PYG{o}{*}\PYG{n}{kw} \PYG{p}{)}\PYG{p}{:}
         \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Open a workbook.}
+
 \PYG{l+s+sd}{        :param name: filename to open.}
 \PYG{l+s+sd}{        :param file\PYGZus{}object: File\PYGZhy{}like object to process.  If not}
 \PYG{l+s+sd}{        provided the named file will be opened.}
-\PYG{l+s+sd}{        :param schema\PYGZus{}path: Directory with external schema files}
-\PYG{l+s+sd}{        :param schema\PYGZus{}sheet: A sheet in an external schema workbook.}
+\PYG{l+s+sd}{        :keyword schema\PYGZus{}path: Directory with external schema files}
+\PYG{l+s+sd}{        :keyword schema\PYGZus{}sheet: A sheet in an external schema workbook.}
 \PYG{l+s+sd}{        \PYGZdq{}\PYGZdq{}\PYGZdq{}}
         \PYG{n}{\PYGZus{}}\PYG{p}{,} \PYG{n}{ext} \PYG{o}{=} \PYG{n}{os}\PYG{o}{.}\PYG{n}{path}\PYG{o}{.}\PYG{n}{splitext}\PYG{p}{(} \PYG{n}{name} \PYG{p}{)}
         \PYG{n}{ext} \PYG{o}{=} \PYG{n}{ext}\PYG{o}{.}\PYG{n}{lower}\PYG{p}{(}\PYG{p}{)}
@@ -3442,7 +3465,7 @@ for binding file and schema.  See below for the {\hyperref[schema_loader:schema.
 
 
 \subsection{Workbook Base Definition}
-\label{workbook/base:workbook-base}\label{workbook/base:workbook-base-definition}\label{workbook/base::doc}
+\label{workbook/base:workbook-base-definition}\label{workbook/base:workbook-base}\label{workbook/base::doc}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{os}
@@ -3553,7 +3576,7 @@ each line into cells.
 
 
 \subsection{CSV Workbook}
-\label{workbook/csv:csv-workbook}\label{workbook/csv:workbook-csv}\label{workbook/csv::doc}
+\label{workbook/csv:workbook-csv}\label{workbook/csv:csv-workbook}\label{workbook/csv::doc}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{csv}
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
@@ -3745,7 +3768,7 @@ Convert a single \code{xlrd.Cell} to a proper subclass of {\hyperref[cell:cell.C
 
 
 \subsection{XLSX or XLSM Workbook}
-\label{workbook/xlsx:xlsx-or-xlsm-workbook}\label{workbook/xlsx::doc}\label{workbook/xlsx:workbook-xlsx}
+\label{workbook/xlsx:xlsx-or-xlsm-workbook}\label{workbook/xlsx:workbook-xlsx}\label{workbook/xlsx::doc}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4612,7 +4635,7 @@ Picking a sheet involves matching a two-part name: (workspace, table).
 
 
 \subsection{Numbers 13 Workbook}
-\label{workbook/numbers_13:workbook-number13}\label{workbook/numbers_13::doc}\label{workbook/numbers_13:numbers-13-workbook}
+\label{workbook/numbers_13:workbook-number13}\label{workbook/numbers_13:numbers-13-workbook}\label{workbook/numbers_13::doc}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4927,7 +4950,7 @@ enum CellType \PYGZob{}
 
 
 \subsection{Fixed-Format Workbook}
-\label{workbook/fixed:fixed-format-workbook}\label{workbook/fixed:workbook-fixed}\label{workbook/fixed::doc}
+\label{workbook/fixed:workbook-fixed}\label{workbook/fixed:fixed-format-workbook}\label{workbook/fixed::doc}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -5046,7 +5069,7 @@ Stingray.
 
 
 \subsection{Snappy Module -- Unpacking iWork 13 files.}
-\label{snappy:snappy}\label{snappy:snappy-module-unpacking-iwork-13-files}\label{snappy::doc}
+\label{snappy:snappy-module-unpacking-iwork-13-files}\label{snappy:snappy}\label{snappy::doc}
 This is not a full implementation of the Snappy compression protocol.
 It's a minimal implementation, enough to unpack iWork `13 files.
 \phantomsection\label{snappy:module-snappy}\index{snappy (module)}
@@ -5354,7 +5377,7 @@ data. This defines a sequence of windows over the stream of data.
 
 
 \subsection{Protobuf Module -- Unpacking iWork 13 files.}
-\label{protobuf:protobuf-module-unpacking-iwork-13-files}\label{protobuf::doc}\label{protobuf:protobuf}
+\label{protobuf:protobuf-module-unpacking-iwork-13-files}\label{protobuf:protobuf}\label{protobuf::doc}
 This is not a full implementation of Protobuf object representation.
 It's a minimal implementation, enough to unpack iWork `13 files.
 \phantomsection\label{protobuf:module-protobuf}\index{protobuf (module)}
@@ -5688,7 +5711,7 @@ that's associated with the ID in the ArchiveInfo.
 
 
 \section{The COBOL Package}
-\label{cobol:cobol}\label{cobol::doc}\label{cobol:the-cobol-package}
+\label{cobol:the-cobol-package}\label{cobol:cobol}\label{cobol::doc}
 Or.  ``How do I access COBOL-defined data from Python''?
 
 We have three problems to solve to get COBOL data into Python applications.
@@ -6248,7 +6271,7 @@ to handle COBOL files and EBCDIC data.
 
 
 \subsubsection{COBOL Package -- Extend Schema to Handle EBCDIC}
-\label{cobol_init:cobol-init}\label{cobol_init::doc}\label{cobol_init:cobol-package-extend-schema-to-handle-ebcdic}
+\label{cobol_init:cobol-init}\label{cobol_init:cobol-package-extend-schema-to-handle-ebcdic}\label{cobol_init::doc}
 The COBOL package is a (large) Python \code{\_\_init\_\_.py} module which
 includes much of the public API for working with COBOL files.
 
@@ -6271,8 +6294,8 @@ to create a schema.
 
 
 \paragraph{Module Overheads}
-\label{cobol_init:module-cobol}\label{cobol_init:module-overheads}\index{cobol (module)}
-We depend on {\hyperref[cell:module-cell]{\code{cell}}}, {\hyperref[schema:module-schema]{\code{schema}}}, and {\hyperref[workbook/fixed:module-workbook]{\code{workbook}}}.
+\label{cobol_init:module-overheads}\label{cobol_init:module-cobol}\index{cobol (module)}
+We depend on {\hyperref[cell:module-cell]{\code{cell}}}, {\hyperref[schema:module-schema]{\code{schema}}}, and {\hyperref[workbook/init:module-workbook]{\code{workbook}}}.
 We'll also import one class definition from {\hyperref[cobol_defs:module-cobol.defs]{\code{cobol.defs}}}.
 
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -7330,7 +7353,7 @@ This is left as a future extension.
 
 
 \subsubsection{COBOL Loader Module -- Parse COBOL Source to Load a Schema}
-\label{cobol_loader:cobol-loader-module-parse-cobol-source-to-load-a-schema}\label{cobol_loader:cobol-loader}\label{cobol_loader:module-cobol.loader}\label{cobol_loader::doc}\index{cobol.loader (module)}
+\label{cobol_loader:cobol-loader}\label{cobol_loader:cobol-loader-module-parse-cobol-source-to-load-a-schema}\label{cobol_loader:module-cobol.loader}\label{cobol_loader::doc}\index{cobol.loader (module)}
 Parsing a spreadsheet schema is relatively easy: see {\hyperref[schema_loader:schema-loader]{\emph{Schema Loader Module -- Load Embedded or External Schema}}}.
 Parsing a COBOL schema, however, is a bit more complex.
 
@@ -8615,7 +8638,7 @@ tweaked.
 
 
 \subsubsection{COBOL Definitions Module -- Handle COBOL DDE's}
-\label{cobol_defs:cobol-definitions-module-handle-cobol-dde-s}\label{cobol_defs:cobol-defs}\label{cobol_defs:module-cobol.defs}\label{cobol_defs::doc}\index{cobol.defs (module)}
+\label{cobol_defs:cobol-definitions-module-handle-cobol-dde-s}\label{cobol_defs:module-cobol.defs}\label{cobol_defs:cobol-defs}\label{cobol_defs::doc}\index{cobol.defs (module)}
 This is a small set of class definitions and functions
 that are used by {\hyperref[cobol_loader:module-cobol.loader]{\code{cobol.loader}}} as well as
 {\hyperref[cobol_init:module-cobol]{\code{cobol}}}.
@@ -10053,7 +10076,7 @@ See {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}}.
 
 
 \section{The \textbf{Stingray} Developer's Guide}
-\label{developer:developer}\label{developer::doc}\label{developer:the-stingray-developer-s-guide}
+\label{developer:the-stingray-developer-s-guide}\label{developer:developer}\label{developer::doc}
 We use \textbf{Stingray} to work with data files where the schema is
 either external or complex (or both). We can tackle this question:
 \begin{quote}
@@ -11337,7 +11360,7 @@ OK
 
 
 \subsection{Application Level Data Validation Technique}
-\label{demo/validation:application-level-data-validation-technique}\label{demo/validation::doc}\label{demo/validation:demo-validate}
+\label{demo/validation:application-level-data-validation-technique}\label{demo/validation:demo-validate}\label{demo/validation::doc}
 We validate that that a file actually matches a schema through a three-part valiation process.
 We looked at the first two parts in {\hyperref[demo/data_quality:demo-sqa]{\emph{Unit Level Validation for Application and Data}}}.
 \begin{itemize}
@@ -11362,6 +11385,19 @@ We'll do this with a combination of the \textbf{Command} and the \textbf{Strateg
 We'll create applications
 which validate their input file and have a simple plug-in strategy for
 doing any final persistent processing on that file.
+
+\begin{notice}{important}{Important:}
+Simple File Structures
+
+This validation is designed for simple CSV files with embedded schema.
+The assumption is that each sheet within the workbook
+has a consistent structure. There's no filter applied to pass
+or reject sheets.
+
+Some kind of extension to this application is required
+to handle named sheets within a more complex workbook or
+to handle sheets which have no header.
+\end{notice}
 
 
 \subsubsection{State Change Commands}
@@ -11637,6 +11673,9 @@ This handles all the rows present in a given sheet.
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{process\PYGZus{}sheet}\PYG{p}{(} \PYG{n}{sheet}\PYG{p}{,} \PYG{n}{builder}\PYG{p}{,} \PYG{n}{persistence} \PYG{p}{)}\PYG{p}{:}
     \PYG{n}{counts}\PYG{o}{=} \PYG{n}{defaultdict}\PYG{p}{(} \PYG{n+nb}{int} \PYG{p}{)}
+    \PYG{k}{if} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema} \PYG{o+ow}{is} \PYG{n+nb+bp}{None}\PYG{p}{:}
+        \PYG{c}{\PYGZsh{} Empty sheet \PYGZhy{}\PYGZhy{} no embedded schema}
+        \PYG{k}{return} \PYG{n}{counts}
     \PYG{k}{for} \PYG{n}{source\PYGZus{}row} \PYG{o+ow}{in} \PYG{n}{sheet}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{rows\PYGZus{}as\PYGZus{}dict\PYGZus{}iter}\PYG{p}{(}\PYG{n}{sheet}\PYG{p}{)}\PYG{p}{:}
         \PYG{k}{try}\PYG{p}{:}
             \PYG{n}{counts}\PYG{p}{[}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{read}\PYG{l+s}{\PYGZsq{}}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{l+m+mi}{1}
@@ -11717,7 +11756,8 @@ See {\hyperref[demo/data_quality:demo-sqa]{\emph{Unit Level Validation for Appli
 
 \paragraph{Command-Line Interface}
 \label{demo/validation:command-line-interface}
-We have some standard arguments.  While we'd like to use ``-v'' for validate mode, this gets confused with setting the verbosity level.
+We have some standard arguments.
+While we'd like to use ``-v'' for validate mode, this gets confused with setting the verbosity level.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{parse\PYGZus{}args}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}
@@ -11805,12 +11845,13 @@ INFO:demo/app.py:\PYGZob{}\PYGZsq{}KeyError \PYGZbs{}\PYGZsq{}Column \PYGZdq{}3\
 
 We can see that \code{sample/csv\_workbook.csv} has two valid rows.
 
-We can see that \code{sample/simple.csv} has seven rows, all of which are missing the required value.  If all the rows are wrong, the schema in the file
+We can see that \code{sample/simple.csv} has seven rows, all of which are missing the required value.
+If all the rows are wrong, the schema in the file
 doesn't match the schema required by the application.
 
 
 \subsection{Data Profiling Demonstration}
-\label{demo/profile:data-profiling-demonstration}\label{demo/profile::doc}\label{demo/profile:demo-profile}
+\label{demo/profile:data-profiling-demonstration}\label{demo/profile:demo-profile}\label{demo/profile::doc}
 This is a simple data profiling application that can be applied
 to workbooks to examine the data prior to creating builders.
 
@@ -12147,7 +12188,7 @@ type
 
 
 \subsection{Reading COBOL Files}
-\label{demo/cobol_reader:reading-cobol-files}\label{demo/cobol_reader::doc}\label{demo/cobol_reader:demo-cobol}
+\label{demo/cobol_reader:reading-cobol-files}\label{demo/cobol_reader:demo-cobol}\label{demo/cobol_reader::doc}
 For sample data, we're using data found here:
 \href{http://wonder.cdc.gov/wonder/sci\_data/codes/fips/type\_txt/cntyxref.asp}{http://wonder.cdc.gov/wonder/sci\_data/codes/fips/type\_txt/cntyxref.asp}
 
@@ -12392,7 +12433,7 @@ we can pass the file object created by \code{ZipFile.open()} as the second argum
 
 
 \section{History}
-\label{history:history}\label{history::doc}\label{history:id1}
+\label{history:history}\label{history:id1}\label{history::doc}
 Latest release is 4.4.2.
 
 
@@ -12655,7 +12696,7 @@ and easy-to-use \code{suite()} function that returns the module's suite.
 
 
 \subsection{Cell Module Tests}
-\label{testing/cell:test-cells}\label{testing/cell:cell-module-tests}\label{testing/cell::doc}
+\label{testing/cell:cell-module-tests}\label{testing/cell:test-cells}\label{testing/cell::doc}
 A Cell is the unit of data.  These unit tests exercise the classes in the
 {\hyperref[cell:module-cell]{\code{cell}}} module.  For more information, see {\hyperref[cell:cells]{\emph{Cell Module -- Data Element Containers and Conversions}}}.
 
@@ -16554,7 +16595,7 @@ To enable logging.
 
 
 \section{Stingray Build}
-\label{build:stingray-build}\label{build::doc}\label{build:build}
+\label{build:build}\label{build:stingray-build}\label{build::doc}
 The source for \code{stingray} is a Sphinx project that depends on PyLit.
 Yes.  The documentation spawns the code.
 
@@ -17105,6 +17146,22 @@ Test EXTERNAL, GLOBAL as Skipped Words, too.
 
 \begin{notice}{note}{Todo}
 
+Additional Numbers13\_Workbook Feature
+
+Translate Formula and Formula error to Text
+\end{notice}
+
+(The {\hyperref[workbook/numbers_13:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/numbers\_13.rst, line 27.)
+
+\begin{notice}{note}{Todo}
+
+Refactor this, it feels clunky.
+\end{notice}
+
+(The {\hyperref[workbook/ods:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/ods.rst, line 120.)
+
+\begin{notice}{note}{Todo}
+
 Refactor workbook package
 
 This module needs to be rebuilt into a package which
@@ -17133,22 +17190,6 @@ all the modules in the package that extend this base definition.
 \end{notice}
 
 (The {\hyperref[workbook/init:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/init.rst, line 170.)
-
-\begin{notice}{note}{Todo}
-
-Additional Numbers13\_Workbook Feature
-
-Translate Formula and Formula error to Text
-\end{notice}
-
-(The {\hyperref[workbook/numbers_13:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/numbers\_13.rst, line 27.)
-
-\begin{notice}{note}{Todo}
-
-Refactor this, it feels clunky.
-\end{notice}
-
-(The {\hyperref[workbook/ods:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/ods.rst, line 120.)
 
 
 \chapter{Indices and Tables}
@@ -17187,7 +17228,7 @@ Refactor this, it feels clunky.
 \item {\texttt{snappy}}, \pageref{snappy:module-snappy}
 \indexspace
 \bigletter{w}
-\item {\texttt{workbook}}, \pageref{workbook/fixed:module-workbook}
+\item {\texttt{workbook}}, \pageref{workbook/init:module-workbook}
 \end{theindex}
 
 \renewcommand{\indexname}{Index}
