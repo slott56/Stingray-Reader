@@ -1073,7 +1073,7 @@ offsets and sizes.
                 nSpec= '{:d}.{:d}'.format( length, precision )
             else:
                 nSpec= ""
-            print( "{:<65s} {:3s} {:3s} {:5s}".format(aDDE.indent*'  '+str(aDDE), 
+            print( "{:<65s} {:3d} {:3d} {:5s}".format(aDDE.indent*'  '+str(aDDE), 
                 aDDE.offset, aDDE.size, nSpec) )
 
 ..  py:function:: source( top )

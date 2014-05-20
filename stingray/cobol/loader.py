@@ -1146,8 +1146,16 @@ class COBOLSchemaLoader( stingray.schema.loader.ExternalSchemaLoader ):
 #
 # ..  py:function:: COBOL_schema(source, replacing=None)
 #
-# This function will parse the COBOL copybook, returning both the parsed COBOL 
-# as well as the final schema. 
+# This function will parse the COBOL copybook, returning a list of the parsed COBOL 
+# 01-level records as well as a final schema. 
+#
+# This is based on the (possibly false) assumption
+# that we're making a single schema object from the definitions provided.
+#
+# -   In some cases, we want everything merged into a single schema.
+#
+# -   In some edge cases, we want each 01-level to provide a distinct
+#     schema object.
 #
 # We may need to revise this function because we need a different lexer.
 # We might have some awful formatting issue with the source that needs to be 
@@ -1161,3 +1169,51 @@ def COBOL_schema( source, replacing=None ):
     dde_list= list( parser.makeRecord( lexer.scan(source) ) )
     schema= make_schema( dde_list )
     return dde_list, schema
+
+# ..  py:function:: COBOL_schemata(source, replacing=None)
+#
+# This function will parse the COBOL copybook, returning two lists:
+#
+# -   a list of the parsed COBOL 01-level records, and
+#
+# -   a list of final schemata, one for each 01-level definition.
+#
+# This is a peculiar extension in the rare case that we have multiple 01-levels
+# in a single file and we don't (or can't) use them as a single schema.
+#
+# We may need to revise this function because we need a different lexer.
+# We might have some awful formatting issue with the source that needs to be 
+# tweaked.
+#
+# ::
+
+def COBOL_schemata( source, replacing=None ):
+    lexer= Lexer( replacing )
+    parser= RecordFactory()
+    dde_list= list( parser.makeRecord( lexer.scan(source) ) )
+    schema_list= list( make_schema( dde ) for dde in dde_list )
+    return dde_list, schema_list
+
+# This gives us two API alternatives for parsing super-complex copybooks.
+#
+# There's a "Low-Level API" that looks like this:
+#
+# ..  parsed-literal
+#
+#     self.lexer= stingray.cobol.loader.Lexer()
+#     self.rf= stingray.cobol.loader.RecordFactory()
+#     dde_list = self.rf.makeRecord( self.lexer.scan(source) )
+#     schema_list = list( stingray.cobol.loader.make_schema(dde) for dde in dde_list )
+#
+#     self.record_1, self.record_2 = dde_list
+#     self.schema_1, self.schema_2 = schema_list
+#
+# There's a "High-Level API" that looks like this:
+#
+# ..  parsed-literal
+#    
+#     dde_list, schema_list = stingray.cobol.loader.COBOL_schemata( source )
+#     self.record_1, self.record_2 = dde_list
+#     self.schema_1, self.schema_2 = schema_list
+#    
+# When opening the workbook, one of the schema must be chosen as the "official" schema.

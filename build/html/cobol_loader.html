@@ -1112,8 +1112,15 @@ In this case, we want to do something like the following function.</p>
 <tt class="descclassname">cobol.loader.</tt><tt class="descname">COBOL_schema</tt><big>(</big><em>source</em>, <em>replacing=None</em><big>)</big><a class="headerlink" href="#cobol.loader.COBOL_schema" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<p>This function will parse the COBOL copybook, returning both the parsed COBOL
-as well as the final schema.</p>
+<p>This function will parse the COBOL copybook, returning a list of the parsed COBOL
+01-level records as well as a final schema.</p>
+<p>This is based on the (possibly false) assumption
+that we&#8217;re making a single schema object from the definitions provided.</p>
+<ul class="simple">
+<li>In some cases, we want everything merged into a single schema.</li>
+<li>In some edge cases, we want each 01-level to provide a distinct
+schema object.</li>
+</ul>
 <p>We may need to revise this function because we need a different lexer.
 We might have some awful formatting issue with the source that needs to be
 tweaked.</p>
@@ -1125,6 +1132,33 @@ tweaked.</p>
     <span class="k">return</span> <span class="n">dde_list</span><span class="p">,</span> <span class="n">schema</span>
 </pre></div>
 </div>
+<dl class="function">
+<dt id="cobol.loader.COBOL_schemata">
+<tt class="descclassname">cobol.loader.</tt><tt class="descname">COBOL_schemata</tt><big>(</big><em>source</em>, <em>replacing=None</em><big>)</big><a class="headerlink" href="#cobol.loader.COBOL_schemata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>This function will parse the COBOL copybook, returning two lists:</p>
+<ul class="simple">
+<li>a list of the parsed COBOL 01-level records, and</li>
+<li>a list of final schemata, one for each 01-level definition.</li>
+</ul>
+<p>This is a peculiar extension in the rare case that we have multiple 01-levels
+in a single file and we don&#8217;t (or can&#8217;t) use them as a single schema.</p>
+<p>We may need to revise this function because we need a different lexer.
+We might have some awful formatting issue with the source that needs to be
+tweaked.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">COBOL_schemata</span><span class="p">(</span> <span class="n">source</span><span class="p">,</span> <span class="n">replacing</span><span class="o">=</span><span class="bp">None</span> <span class="p">):</span>
+    <span class="n">lexer</span><span class="o">=</span> <span class="n">Lexer</span><span class="p">(</span> <span class="n">replacing</span> <span class="p">)</span>
+    <span class="n">parser</span><span class="o">=</span> <span class="n">RecordFactory</span><span class="p">()</span>
+    <span class="n">dde_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">parser</span><span class="o">.</span><span class="n">makeRecord</span><span class="p">(</span> <span class="n">lexer</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="n">schema_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">make_schema</span><span class="p">(</span> <span class="n">dde</span> <span class="p">)</span> <span class="k">for</span> <span class="n">dde</span> <span class="ow">in</span> <span class="n">dde_list</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">dde_list</span><span class="p">,</span> <span class="n">schema_list</span>
+</pre></div>
+</div>
+<p>This gives us two API alternatives for parsing super-complex copybooks.</p>
+<p>There&#8217;s a &#8220;Low-Level API&#8221; that looks like this:</p>
+<p>There&#8217;s a &#8220;High-Level API&#8221; that looks like this:</p>
+<p>When opening the workbook, one of the schema must be chosen as the &#8220;official&#8221; schema.</p>
 </div>
 </div>
 

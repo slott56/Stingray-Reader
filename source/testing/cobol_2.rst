@@ -18,8 +18,10 @@ Overheads
     """
     import unittest
     import decimal
-    import stingray.cobol.loader
     import logging, sys
+    import io
+    
+    import stingray.cobol.loader
     
 Superclass For Tests
 ======================
@@ -63,7 +65,7 @@ Be sure it parses.  Be sure we can extract data.
         def setUp( self ):
             super().setUp()
             self.dde1 = list(self.rf.makeRecord( self.lexer.scan(copy1) ))[0]
-            #stingray.cobol.loader.report( self.dde1 )
+            #stingray.cobol.defs.report( self.dde1 )
         def test_should_parse( self ):
             dde1= self.dde1
             self.assertEqual( 7, dde1.get( "QUESTION" ).offset )
@@ -121,7 +123,7 @@ Be sure it parses.  Be sure we can extract data.
         def setUp( self ):
             super().setUp()
             self.dde2= list(self.rf.makeRecord( self.lexer.scan(copy2) ))[0]
-            #stingray.cobol.loader.report( self.dde2 )
+            #stingray.cobol.defs.report( self.dde2 )
         def test_should_parse( self ):
             dde2= self.dde2
             self.assertEqual( 0, dde2.get("ARE-THERE-MORE-RECORDS").offset )
@@ -166,7 +168,7 @@ Be sure that the various access methods (via Attribute and via Python tuple-of-t
         def setUp( self ):
             super().setUp()
             self.dde3= list(self.rf.makeRecord( self.lexer.scan(copy3) ))[0]
-            #stingray.cobol.loader.report( self.dde3 )
+            #stingray.cobol.defs.report( self.dde3 )
         def test_should_extract( self ):
             schema = stingray.cobol.loader.make_schema( [self.dde3] )
             schema_dict= dict( (a.name, a) for a in schema )
@@ -217,7 +219,7 @@ has numerous things we need to gracefully skip.
         def setUp( self ):
             super().setUp()
             self.dde4= list(self.rf.makeRecord( self.lexer.scan(page174) ))[0]
-            #stingray.cobol.loader.report( self.dde4 )
+            #stingray.cobol.defs.report( self.dde4 )
         def test_should_parse( self ):
             dde4= self.dde4
             self.assertEqual( 2920, dde4.size )
@@ -258,7 +260,7 @@ Be sure it parses.  Be sure we can extract data.
         def setUp( self ):
             super().setUp()
             self.dde5= list(self.rf.makeRecord( self.lexer.scan(page195) ))[0]
-            #stingray.cobol.loader.report( self.dde5 )
+            #stingray.cobol.defs.report( self.dde5 )
         def test_should_parse( self ):
             dde5= self.dde5
             self.assertEqual( 10, dde5.size )
@@ -316,7 +318,7 @@ Be sure it parses.  Be sure we can extract data.
         def setUp( self ):
             super().setUp()
             self.dde6= list(self.rf.makeRecord( self.lexer.scan(page197) ))[0]
-            #stingray.cobol.loader.report( self.dde6 )
+            #stingray.cobol.defs.report( self.dde6 )
         def test_should_parse( self ):
             dde6= self.dde6
             self.assertEqual( 3, dde6.get("SALARY").size )
@@ -388,7 +390,7 @@ Be sure it parses.  Be sure we can extract data.
         def setUp( self ):
             super().setUp()
             self.dde7= list(self.rf.makeRecord( self.lexer.scan(page198A) ))[0]
-            #stingray.cobol.loader.report( self.dde7 )
+            #stingray.cobol.defs.report( self.dde7 )
         def test_should_parse( self ):
             dde7= self.dde7
             self.assertEqual( 18, dde7.get("REGULAR-EMPLOYEE").size )
@@ -448,7 +450,7 @@ Be sure it parses.  Be sure we can extract data.
             super().setUp()
             self.dde8= list(self.rf.makeRecord( self.lexer.scan(page198B) ))[0]
         def test_should_parse( self ):
-            #stingray.cobol.loader.report( self.dde8 )
+            #stingray.cobol.defs.report( self.dde8 )
             dde8= self.dde8
             self.assertEqual( 18, dde8.get("REGULAR-EMPLOYEE").size )
             self.assertEqual( 18, dde8.get("TEMPORARY-EMPLOYEE").size )
@@ -491,10 +493,14 @@ Be sure it parses.  Be sure we can extract data.
             self.assertEqual( "REDEFINES-RECORD.TEMPORARY-EMPLOYEE.HOURLY-PAY",
                 schema_name_dict.get('HOURLY-PAY').path )
 
-Test Copybook 9, Multiple 01 Levels
-===================================
+Test Copybook 9, Multiple 01 Levels with REDEFINES
+====================================================
 
-Some basic COBOL with two top-level records.
+Some basic COBOL with two top-level records that use a
+REDEFINES. A REDEFINES on an 01 level is more-or-less
+irrelevant. Yes, it defines an alternate layout, but
+for purposes of computing size and offset it doesn't
+matter.
 
 ::
 
@@ -519,8 +525,8 @@ Be sure it parses.  Be sure we can extract data.
         def setUp( self ):
             super().setUp()
             self.dde9a, self.dde9b = self.rf.makeRecord( self.lexer.scan(copy9) )
-            #stingray.cobol.loader.report( self.dde9a )
-            #stingray.cobol.loader.report( self.dde9b )
+            #stingray.cobol.defs.report( self.dde9a )
+            #stingray.cobol.defs.report( self.dde9b )
         def test_should_parse( self ):
             dde9= self.dde9a
             self.assertEqual( 0, dde9.get( "QUESTION" ).offset )
@@ -550,7 +556,7 @@ Be sure it parses.  Be sure we can extract data.
                 schema=schema )
 
             row= next( data.sheet( "" ).rows() )
-            #stingray..dump( schema, row )
+            #stingray.cobol.dump( schema, row )
             self.assertEqual( "1", row.cell(schema_dict['QUESTION']).to_str() )
             self.assertEqual( 2, row.cell(schema_dict['PRINT-YES']).to_int() )
             self.assertEqual( 3, row.cell(schema_dict['PRINT-NO']).to_float() )
@@ -584,7 +590,7 @@ data for setting size and offset.
         def setUp( self ):
             super().setUp()
             self.dde10 = list(self.rf.makeRecord( self.lexer.scan(copy10) ))[0]
-            #stingray.cobol.loader.report( self.dde10 )
+            #stingray.cobol.defs.report( self.dde10 )
         def test_should_parse( self ):
             dde10= self.dde10
 
@@ -650,7 +656,7 @@ data for setting size and offset.
         def setUp( self ):
             super().setUp()
             self.dde11 = list(self.rf.makeRecord( self.lexer.scan(copy11) ))[0]
-            #stingray.cobol.loader.report( self.dde11 )
+            #stingray.cobol.defs.report( self.dde11 )
 
         def test_should_parse( self ):
             dde11= self.dde11
@@ -704,6 +710,92 @@ data for setting size and offset.
             self.assertEqual( "XXXXX", dde11.get( "FIELD-4" ).sizeScalePrecision.final  )
             self.assertEqual( "", dde11.get( "FIELD-4" ).usage.source() )
 
+Test Copybook 12, Multiple 01 Levels -- unrelated
+====================================================
+
+Some basic COBOL with multiple top-level records. This occurs in the wild.
+It's not clear precisely what it means.
+
+Each top-level record should create a distinct schema.
+
+We're testing the :py:func:`stingray.cobol.loader.COBOL_schemata` function, really.
+
+::
+
+    copy12= """
+           01  DETAIL-LINE.
+               05  QUESTION                    PIC ZZ.
+               05  PRINT-YES                   PIC ZZ.
+               05  PRINT-NO                    PIC ZZ.
+               05  NOT-SURE                    PIC ZZ.
+           01  SUMMARY-LINE.
+               05  COUNT                       PIC ZZ.
+               05  FILLER                      PIC XX.
+               05  FILLER                      PIC XX.
+               05  FILLER                      PIC XX.
+    """
+
+Be sure it parses.  Be sure we can extract data.
+
+::
+
+    class Test_Copybook_12( DDE_Test ):
+        def setUp( self ):
+            super().setUp()
+            
+            # Low-Level API
+            #self.dde12a, self.dde12b = self.rf.makeRecord( self.lexer.scan(copy12) )
+            #self.schema_detail= stingray.cobol.loader.make_schema( [self.dde12a] )
+            #self.schema_summary= stingray.cobol.loader.make_schema( [self.dde12b] )
+            
+            # Higher-level API
+            file_like_object= io.StringIO( copy12 )
+            dde_list, schema_list = stingray.cobol.loader.COBOL_schemata( file_like_object )
+            self.dde12a, self.dde12b = dde_list
+            self.schema_detail, self.schema_summary = schema_list
+            
+            #stingray.cobol.defs.report( self.dde12a )
+            #stingray.cobol.defs.report( self.dde12b )
+        def test_should_parse( self ):
+            dde12a= self.dde12a
+            self.assertEqual( 0, dde12a.get( "QUESTION" ).offset )
+            self.assertEqual( 2, dde12a.get( "QUESTION" ).size )
+            self.assertEqual( "ZZ", dde12a.get( "QUESTION" ).sizeScalePrecision.final  )
+            self.assertEqual( "", dde12a.get( "QUESTION" ).usage.source() )
+            self.assertEqual( 2, dde12a.get( "PRINT-YES" ).offset )
+            self.assertEqual( 2, dde12a.get( "PRINT-YES" ).size )
+            self.assertEqual( "ZZ", dde12a.get( "PRINT-YES" ).sizeScalePrecision.final  )
+            self.assertEqual( 4, dde12a.get( "PRINT-NO" ).offset )
+            self.assertEqual( 2, dde12a.get( "PRINT-NO" ).size )
+            self.assertEqual( "ZZ", dde12a.get( "PRINT-NO" ).sizeScalePrecision.final  )
+            self.assertEqual( 6, dde12a.get( "NOT-SURE" ).offset )
+            self.assertEqual( 2, dde12a.get( "NOT-SURE" ).size )
+            self.assertEqual( "ZZ", dde12a.get( "NOT-SURE" ).sizeScalePrecision.final  )
+            dde12b= self.dde12b
+            self.assertEqual( 0, dde12b.get( "COUNT" ).offset )
+            self.assertEqual( 2, dde12b.get( "COUNT" ).size )
+            self.assertEqual( "ZZ", dde12b.get( "COUNT" ).sizeScalePrecision.final  )
+            self.assertEqual( "", dde12b.get( "COUNT" ).usage.source() )
+        def test_should_extract( self ):
+            schema_detail = self.schema_detail 
+            schema_summary = self.schema_summary
+            #print( schema_detail )
+            #print( schema_summary )
+            schema_detail_dict= dict( (a.name, a) for a in schema_detail ) 
+            schema_summary_dict= dict( (a.name, a) for a in schema_summary ) 
+            data= stingray.cobol.Character_File( name="", 
+                file_object= ["01020304",], 
+                schema=schema_detail )
+
+            row= next( data.sheet( "" ).rows() )
+            #stingray.cobol.dump( schema_detail, row )
+            #stingray.cobol.dump( schema_summary, row )
+            self.assertEqual( "1", row.cell(schema_detail_dict['QUESTION']).to_str() )
+            self.assertEqual( 2, row.cell(schema_detail_dict['PRINT-YES']).to_int() )
+            self.assertEqual( 3, row.cell(schema_detail_dict['PRINT-NO']).to_float() )
+            self.assertEqual( decimal.Decimal('4'), row.cell(schema_detail_dict['NOT-SURE']).to_decimal() )
+            self.assertEqual( "1", row.cell(schema_summary_dict['COUNT']).to_str() )
+            
 Test Suite and Runner
 =====================
 

@@ -108,14 +108,15 @@
 \indexentry{COBOLSchemaLoader (class in cobol.loader)|hyperpage}{114}
 \indexentry{load() (cobol.loader.COBOLSchemaLoader method)|hyperpage}{115}
 \indexentry{COBOL\_schema() (in module cobol.loader)|hyperpage}{115}
-\indexentry{cobol.defs (module)|hyperpage}{115}
-\indexentry{UnsupportedError (class in cobol.defs)|hyperpage}{117}
-\indexentry{TextCell (class in cobol.defs)|hyperpage}{118}
-\indexentry{NumberCell (class in cobol.defs)|hyperpage}{118}
+\indexentry{COBOL\_schemata() (in module cobol.loader)|hyperpage}{115}
+\indexentry{cobol.defs (module)|hyperpage}{116}
+\indexentry{UnsupportedError (class in cobol.defs)|hyperpage}{118}
+\indexentry{TextCell (class in cobol.defs)|hyperpage}{119}
+\indexentry{NumberCell (class in cobol.defs)|hyperpage}{119}
 \indexentry{NumberDisplayCell (class in cobol.defs)|hyperpage}{119}
 \indexentry{NumberCompCell (class in cobol.defs)|hyperpage}{119}
 \indexentry{NumberComp3Cell (class in cobol.defs)|hyperpage}{119}
-\indexentry{ErrorCell (class in cobol.defs)|hyperpage}{119}
+\indexentry{ErrorCell (class in cobol.defs)|hyperpage}{120}
 \indexentry{Usage (class in cobol.defs)|hyperpage}{121}
 \indexentry{create\_func() (cobol.defs.Usage method)|hyperpage}{122}
 \indexentry{size() (cobol.defs.Usage method)|hyperpage}{122}
@@ -150,8 +151,8 @@
 \indexentry{process\_workbook() (built-in function)|hyperpage}{140}
 \indexentry{some\_builder() (built-in function)|hyperpage}{148}
 \indexentry{process\_some\_sheet() (built-in function)|hyperpage}{150}
-\indexentry{sphinx\_build() (built-in function)|hyperpage}{232}
-\indexentry{pylit\_build() (built-in function)|hyperpage}{232}
-\indexentry{mkdir() (built-in function)|hyperpage}{233}
-\indexentry{copy\_file() (built-in function)|hyperpage}{233}
-\indexentry{run\_test() (built-in function)|hyperpage}{233}
+\indexentry{sphinx\_build() (built-in function)|hyperpage}{233}
+\indexentry{pylit\_build() (built-in function)|hyperpage}{234}
+\indexentry{mkdir() (built-in function)|hyperpage}{234}
+\indexentry{copy\_file() (built-in function)|hyperpage}{234}
+\indexentry{run\_test() (built-in function)|hyperpage}{235}
