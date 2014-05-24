@@ -82,7 +82,7 @@ from stingray.cobol.defs import TextCell
 #
 # In order to fetch data for an ODO ``OCCURS`` element, the attribute offsets and sizes
 # cannot **all** be computed during parsing. 
-# They must be computed lazily during data fetching. The :py:class:`ODO_LazyRow` 
+# They must be computed lazily during data fetching. The :py:class:`cobol.ODO_LazyRow` 
 # class handles the Occurs Depending On situation.
 #
 # Here are the attributes inherited from :py:class:`schema.Attribute`.
@@ -105,22 +105,24 @@ from stingray.cobol.defs import TextCell
 # :size: 
 #     Size within the buffer.
 #
-# These two properties can be tweaked by the :py:meth:`index` method. If left alone, they simply
-# a delegation to the DDE. If :py:meth:`index` is used, a subclass object is built
+# These two properties over overridden by the :py:class:`cobol.IndexedAttribute` subclass;
+# this is created by the :py:meth:`cobol.RepeatingAttribute.index` method. 
+# The superclass versions are simple a delegation to the DDE. 
+# If :py:meth:`cobol.RepeatingAttribute.index` is used, the subclass object is built
 # where these values come from the ``index`` method results.
 #
 # :dimensionality:
 #     A tuple of DDE's that defines the dimensionality pushed down to this
 #     item through the COBOL DDE hierarchy.
 #
-#     This meay be set by the :py:meth:`index` method.
+#     This meay be set by the :py:meth:`cobol.RepeatingAttribute.index` method.
 #
 # :offset: 
 #     Optional offset into a buffer. This may be statically defined,
 #     or it may be dynamic because of variably-located data supporting
 #     the Occurs Depends On.
 #    
-#     This meay be set by the :py:meth:`index` method.
+#     This meay be set by the :py:meth:`cobol.RepeatingAttribute.index` method.
 #     
 # This subclass introduces yet more attribute-like properties that simply
 # delegate to the DDE.
@@ -181,14 +183,14 @@ class RepeatingAttribute( stingray.schema.Attribute ):
 # If the number of index values is excessive, we'll attempt to pop from an empty
 # list.
 #
-# Note that py:meth:`index` is applied incrementally when the application supplies some
+# Note that :py:meth:`cobol.RepeatingAttribute.index` is applied incrementally when the application supplies some
 # of the indices.
 #
-# -   First, the application supplies some of the indices, creating
-#     a tweaked :py:class:`cobol.RepeatingAttribute` with an initial offset.
+# -   First, an application can supply some of the indices, creating
+#     :py:class:`cobol.IndexedAttribute` with an initial offset.
 #
-# -   Second, the :py:class:`COBOL_File` supplies the remaining indices,
-#     creating yet more temporary  :py:class:`cobol.RepeatingAttribute` based on the initial offset.
+# -   Second, the :py:class:`COBOL_File` will supply any remaining indices,
+#     creating yet more temporary  :py:class:`cobol.IndexedAttribute` based on the initial offset.
 # 
 # ::    
 
@@ -203,7 +205,8 @@ class RepeatingAttribute( stingray.schema.Attribute ):
         and dimensionality that can be used with :py:meth:`COBOL_File.row_get`.
         """
         assert values, "Missing index values"
-        # Previosly tweaked Attribute? Or originals?
+        # Original values for a RepeatingAttribute
+        # Modified values for an IndexedAttribute
         offset= self.offset
         dim_list= list(self.dimensionality)
         # Apply given index values.
@@ -255,10 +258,13 @@ class RepeatingAttribute( stingray.schema.Attribute ):
     def size_scale_precision(self):
         return self.dde().sizeScalePrecision
 
-# This is a subclass with (some) indices applied. Since this inherits the :py:meth:`cobol.RepeatingAttribute.index`
+# ..  py:class:: IndexedAttribute
+#
+# The IndexedAttribute is a subclass of :py:class:`cobol.RepeatingAttribute` 
+# with (some) indices applied. Since this inherits the :py:meth:`cobol.RepeatingAttribute.index`
 # method, we can apply indices incrementally.
 #
-# This is not built directly, but only created by :py:meth:`cobol.RepeatingAttribute.index`
+# This class is not built directly, but only created by :py:meth:`cobol.RepeatingAttribute.index`
 # with some (or all) indices applied.
 #
 # ::
@@ -406,13 +412,13 @@ def dump( schema, aRow ):
 # encoding.  Consequently, we can make them static methods, possibly even 
 # making this a mixin strategy.
 #
-# The use case looks like this.
+# The common use case looks like this.
 #
-# 1.  The application uses ``row.cell( schema[n] )``.  
-#     The ``cell()`` method is simply ``sheet.workbook.row_get( buffer, attribute )``.  
+# 1.  The application uses ``row.cell( schema[n] )`` to fetch a :py:class:`cell.Cell`.
+#     The :py:meth:`cobol.ODO_LazyRow.cell` method is simply ``sheet.workbook.row_get( buffer, attribute )``.  
 #     It applies the cell type (via the schema item's attribute) and the raw data in the row's buffer.
 #
-# 2.  ``row_get( buffer, attribute )`` has to do the following.
+# 2.  The workbook ``row_get( buffer, attribute )`` has to do the following.
 #
 #     -   Convert the buffer into a proper value based on the ``attribute`` type
 #         information **and** the worksheet-specific methods for unpacking the 
@@ -420,6 +426,16 @@ def dump( schema, aRow ):
 #         can refer to the proper conversion methods.
 #    
 #     -   Create the required :py:class:`cell.Cell` based on the ``attribute.create(sheet, value)`` function.
+#    
+# There's a less common use case to extract a subset of row bytes to populate a 
+# separate 01-level definition that's not tied to the Workbook's schema.
+#
+# 1.  The application uses ``subrow= row.data( schema[n], other_schema )`` to fetch some bytes that can
+#     be used to create a new LazyRow tied to a different schema.
+#
+# 2.  The application uses ``subrow.cell( subschema[m] )`` to fetch a :py:class:`cell.Cell`.
+#     This doesn't go back to the original workbook, it goes to this "subrow" of the
+#     workbook.
 #
 # ..  code-block:: none
 #
@@ -450,7 +466,7 @@ class COBOL_File( Fixed_Workbook ):
     This is a :py:class:`Fixed_Workbook`: a file with fixed-sized, no-punctuation fields.
     A schema is required to parse the attributes.
     
-    The rows are defined as :py:class:`ODO_LazyRow` instances so that
+    The rows are defined as :py:class:`cobol.ODO_LazyRow` instances so that
     bad data can be gracefully skipped over and Occurs Depending On offsets
     can be properly calculated.
     """
@@ -483,9 +499,10 @@ class COBOL_File( Fixed_Workbook ):
     def row_get_index( self, row, attr, *index ):
         """Emit a nested-tuple structure of Cell values using the given index values.
         :param row: the source Row.
-        :param attr: the  :py:class:`cobol.RepeatingAttribute`; possibly tweaked to 
-            have an offset and partial dimensions. Or possibly the original tuple
-            of dimensions.
+        :param attr: the  :py:class:`cobol.RepeatingAttribute`
+            with the original tuple of dimensions,
+            or a :py:class:`cobol.IndexedAttribute` which has 
+            an offset and partial dimensions. 
         :param index: optional tuple of index values to use.
             Instead of ``row_get( schema.get('name').index(i) )``
             we can use ``row_get_index( schema.get('name'), i )``
@@ -544,6 +561,29 @@ class COBOL_File( Fixed_Workbook ):
 # For that, we'll need to use specific physical format parsing helpers based on the 
 # Z/OS RECFM parameter used to define the file.
 #
+# ..  py:method:: COBOL_File.subrow( subschema, text_cell )
+#
+# In some COBOL files, there can be 01-level "subrecords" buried within an 01-level record.
+#
+# We can use ``wb.subrow(subschema, row.cell(schema_header_dict['GENERIC-FIELD']))``
+# to map a particular field ('GENERIC-FIELD') to an entire 01-level schema, creating
+# a "subrow" from a single field within the parent row.
+#
+# ::
+
+    def subrow( self, subschema, text_cell ):
+        """Build a row-like object from a single field.
+        
+        :param subschema: a schema built from an 01-level DDE.
+        :param text_cell: a specific text cell to use.
+        """
+        subrow = self.row_class(
+            stingray.sheet.ExternalSchemaSheet( self, "", subschema ),
+            data= text_cell.raw,
+        )
+        return subrow
+
+
 # Character File
 # -----------------
 #
@@ -906,7 +946,7 @@ class EBCDIC_File( Character_File ):
 #
 # -   If the schema depends on a variably located DDE, then we need to do the 
 #     :py:func:`cobol.defs.setSizeAndOffset` function using the DDE.
-#     This is done automagically by the :py:class:`ODO_LazyRow` object.
+#     This is done automagically by the :py:class:`cobol.ODO_LazyRow` object.
 #    
 # -   The legacy Z/OS RECFM details. 
 #
@@ -937,7 +977,7 @@ class EBCDIC_File( Character_File ):
         bytes were really needed.  For RECFM_N, this is important.
         For other RECFM, this is ignored.
         
-        :py:class:`ODO_LazyRow` may adjust the schema 
+        :py:class:`cobol.ODO_LazyRow` may adjust the schema 
         if it has an Occurs Depending On.
         """
         for data in self.parser.record_iter():

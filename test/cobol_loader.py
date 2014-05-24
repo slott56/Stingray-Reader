@@ -37,6 +37,7 @@ class TestLexicalScanner( unittest.TestCase ):
            05                              PIC X(6).
            05  PRINT-YES                   PIC ZZ.
            05                              PIC X(3).
+         SKIP2
            05  PRINT-NO                    PIC ZZ.
            05                              PIC X(6).
            05  NOT-SURE                    PIC ZZ.
@@ -116,6 +117,7 @@ class TestLongLexicalScanner( unittest.TestCase ):
       **************************************************************
        01  REPORT-TAPE-DETAIL-RECORD.                                   
            02  RDT-REC-CODE-BYTES.                                      00000130
+       EJECT
                03  RDT-REC-CODE-KEY              PIC X.                 00000140
         """
         self.scanner= stingray.cobol.loader.Lexer_Long_Lines().scan( self.copy1 )
@@ -1004,42 +1006,24 @@ class TestParserException( unittest.TestCase ):
     def setUp( self ):
         self.parser= stingray.cobol.loader.RecordFactory()
     def test_should_fail_renames( self ):
-        src1= ( "05", "BLANK-ZERO-1", "PIC", "X(10)", "RENAMES", "SOME-NAME", "." ) 
-        try:
-            dde= next(self.parser.dde_iter(iter(src1)))
-            self.fail( "Should not parse" )
-        except stingray.cobol.defs.UnsupportedError as e:
-            pass
+        src1= ( "66", "BLANK-ZERO-1", "RENAMES", "SOME-NAME", "." ) 
+        self.assertWarns( UserWarning, next, self.parser.dde_iter(iter(src1)) )
+        # Alternative RENAMES
+        # self.assertRaises( stingray.cobol.defs.UnsupportedError, ... 
     def test_should_fail_sign( self ):
         src1= ( "05", "SIGN-1", "PIC", "X(10)", "LEADING", "SIGN", "." ) 
         self.parser.lex= iter(src1)
-        try:
-            dde= next(self.parser.dde_iter(iter(src1)))
-            self.fail( "Should not parse" )
-        except stingray.cobol.defs.UnsupportedError as e:
-            pass
+        self.assertRaises( stingray.cobol.defs.UnsupportedError, next, self.parser.dde_iter(iter(src1)) )
         src2= ( "05", "SIGN-2", "PIC", "X(10)", "TRAILING", "." ) 
         self.parser.lex= iter(src2)
-        try:
-            dde= next(self.parser.dde_iter(iter(src1)))
-            self.fail( "Should not parse" )
-        except stingray.cobol.defs.UnsupportedError as e:
-            pass
+        self.assertRaises( stingray.cobol.defs.UnsupportedError, next, self.parser.dde_iter(iter(src2)) )
         src3= ( "05", "SIGN-3", "PIC", "X(10)", "SIGN", "IS", "SEPARATE", "." ) 
         self.parser.lex= iter(src3)
-        try:
-            dde= next(self.parser.dde_iter(iter(src1)))
-            self.fail( "Should not parse" )
-        except stingray.cobol.defs.UnsupportedError as e:
-            pass
+        self.assertRaises( stingray.cobol.defs.UnsupportedError, next, self.parser.dde_iter(iter(src3)) )
     def test_should_fail_synchronized( self ):
         src1= ( "05", "SYNC-1", "PIC", "X(10)", "SYNCHRONIZED", "." ) 
         self.parser.lex= iter(src1)
-        try:
-            dde= next(self.parser.dde_iter(iter(src1)))
-            self.fail( "Should not parse" )
-        except stingray.cobol.defs.UnsupportedError as e:
-            pass
+        self.assertRaises( stingray.cobol.defs.UnsupportedError, next, self.parser.dde_iter(iter(src1)) )
 
 # Parsing Complete DDE
 # =====================

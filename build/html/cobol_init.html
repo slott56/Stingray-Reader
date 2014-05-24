@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.3',
+        VERSION:     '4.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -100,7 +100,7 @@ effective offsets.</p>
 <p>There are two variants.</p>
 <ul class="simple">
 <li>The initial, immutable, <a class="reference internal" href="#cobol.RepeatingAttribute" title="cobol.RepeatingAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.RepeatingAttribute</span></tt></a> as parsed.</li>
-<li>A working <tt class="xref py py-class docutils literal"><span class="pre">cobol.IndexedAttribute</span></tt>. This is a subclass of
+<li>A working <a class="reference internal" href="#cobol.IndexedAttribute" title="cobol.IndexedAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.IndexedAttribute</span></tt></a>. This is a subclass of
 <a class="reference internal" href="#cobol.RepeatingAttribute" title="cobol.RepeatingAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.RepeatingAttribute</span></tt></a> and it contains partial or complete
 indexing. Partial indexing means that a tuple is built by
 <a class="reference internal" href="#cobol.COBOL_File.row_get" title="cobol.COBOL_File.row_get"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.COBOL_File.row_get()</span></tt></a>. Full indexing means that a single
@@ -118,7 +118,7 @@ indexing. Partial indexing means that a tuple is built by
 <img alt="_images/cobol_attribute.png" src="_images/cobol_attribute.png" />
 <p>In order to fetch data for an ODO <tt class="docutils literal"><span class="pre">OCCURS</span></tt> element, the attribute offsets and sizes
 cannot <strong>all</strong> be computed during parsing.
-They must be computed lazily during data fetching. The <a class="reference internal" href="#cobol.ODO_LazyRow" title="cobol.ODO_LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">ODO_LazyRow</span></tt></a>
+They must be computed lazily during data fetching. The <a class="reference internal" href="#cobol.ODO_LazyRow" title="cobol.ODO_LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">cobol.ODO_LazyRow</span></tt></a>
 class handles the Occurs Depending On situation.</p>
 <p>Here are the attributes inherited from <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -147,8 +147,10 @@ clearly changed based on the ODO issues.</p>
 </tr>
 </tbody>
 </table>
-<p>These two properties can be tweaked by the <tt class="xref py py-meth docutils literal"><span class="pre">index()</span></tt> method. If left alone, they simply
-a delegation to the DDE. If <tt class="xref py py-meth docutils literal"><span class="pre">index()</span></tt> is used, a subclass object is built
+<p>These two properties over overridden by the <a class="reference internal" href="#cobol.IndexedAttribute" title="cobol.IndexedAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.IndexedAttribute</span></tt></a> subclass;
+this is created by the <a class="reference internal" href="#cobol.RepeatingAttribute.index" title="cobol.RepeatingAttribute.index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.RepeatingAttribute.index()</span></tt></a> method.
+The superclass versions are simple a delegation to the DDE.
+If <a class="reference internal" href="#cobol.RepeatingAttribute.index" title="cobol.RepeatingAttribute.index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.RepeatingAttribute.index()</span></tt></a> is used, the subclass object is built
 where these values come from the <tt class="docutils literal"><span class="pre">index</span></tt> method results.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -156,13 +158,13 @@ where these values come from the <tt class="docutils literal"><span class="pre">
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">dimensionality:</th><td class="field-body"><p class="first">A tuple of DDE&#8217;s that defines the dimensionality pushed down to this
 item through the COBOL DDE hierarchy.</p>
-<p>This meay be set by the <tt class="xref py py-meth docutils literal"><span class="pre">index()</span></tt> method.</p>
+<p>This meay be set by the <a class="reference internal" href="#cobol.RepeatingAttribute.index" title="cobol.RepeatingAttribute.index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.RepeatingAttribute.index()</span></tt></a> method.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">offset:</th><td class="field-body"><p class="first">Optional offset into a buffer. This may be statically defined,
 or it may be dynamic because of variably-located data supporting
 the Occurs Depends On.</p>
-<p class="last">This meay be set by the <tt class="xref py py-meth docutils literal"><span class="pre">index()</span></tt> method.</p>
+<p class="last">This meay be set by the <a class="reference internal" href="#cobol.RepeatingAttribute.index" title="cobol.RepeatingAttribute.index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.RepeatingAttribute.index()</span></tt></a> method.</p>
 </td>
 </tr>
 </tbody>
@@ -226,13 +228,13 @@ attribute which has just the offset required and a dimensionality of <tt class="
 with which has the starting offset and the dimensions left otherwise unspecified.</p>
 <p>If the number of index values is excessive, we&#8217;ll attempt to pop from an empty
 list.</p>
-<p>Note that py:meth:<cite>index</cite> is applied incrementally when the application supplies some
+<p>Note that <a class="reference internal" href="#cobol.RepeatingAttribute.index" title="cobol.RepeatingAttribute.index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.RepeatingAttribute.index()</span></tt></a> is applied incrementally when the application supplies some
 of the indices.</p>
 <ul class="simple">
-<li>First, the application supplies some of the indices, creating
-a tweaked <a class="reference internal" href="#cobol.RepeatingAttribute" title="cobol.RepeatingAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.RepeatingAttribute</span></tt></a> with an initial offset.</li>
-<li>Second, the <a class="reference internal" href="#cobol.COBOL_File" title="cobol.COBOL_File"><tt class="xref py py-class docutils literal"><span class="pre">COBOL_File</span></tt></a> supplies the remaining indices,
-creating yet more temporary  <a class="reference internal" href="#cobol.RepeatingAttribute" title="cobol.RepeatingAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.RepeatingAttribute</span></tt></a> based on the initial offset.</li>
+<li>First, an application can supply some of the indices, creating
+<a class="reference internal" href="#cobol.IndexedAttribute" title="cobol.IndexedAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.IndexedAttribute</span></tt></a> with an initial offset.</li>
+<li>Second, the <a class="reference internal" href="#cobol.COBOL_File" title="cobol.COBOL_File"><tt class="xref py py-class docutils literal"><span class="pre">COBOL_File</span></tt></a> will supply any remaining indices,
+creating yet more temporary  <a class="reference internal" href="#cobol.IndexedAttribute" title="cobol.IndexedAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.IndexedAttribute</span></tt></a> based on the initial offset.</li>
 </ul>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">index</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">values</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;&quot;Apply possibly incomplete index values to an attribute.</span>
@@ -245,7 +247,8 @@ creating yet more temporary  <a class="reference internal" href="#cobol.Repeatin
 <span class="sd">    and dimensionality that can be used with :py:meth:`COBOL_File.row_get`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">values</span><span class="p">,</span> <span class="s">&quot;Missing index values&quot;</span>
-    <span class="c"># Previosly tweaked Attribute? Or originals?</span>
+    <span class="c"># Original values for a RepeatingAttribute</span>
+    <span class="c"># Modified values for an IndexedAttribute</span>
     <span class="n">offset</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span>
     <span class="n">dim_list</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimensionality</span><span class="p">)</span>
     <span class="c"># Apply given index values.</span>
@@ -293,9 +296,15 @@ generic <a class="reference internal" href="#cobol.RepeatingAttribute" title="co
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dde</span><span class="p">()</span><span class="o">.</span><span class="n">sizeScalePrecision</span>
 </pre></div>
 </div>
-<p>This is a subclass with (some) indices applied. Since this inherits the <a class="reference internal" href="#cobol.RepeatingAttribute.index" title="cobol.RepeatingAttribute.index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.RepeatingAttribute.index()</span></tt></a>
+<dl class="class">
+<dt id="cobol.IndexedAttribute">
+<em class="property">class </em><tt class="descclassname">cobol.</tt><tt class="descname">IndexedAttribute</tt><a class="headerlink" href="#cobol.IndexedAttribute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The IndexedAttribute is a subclass of <a class="reference internal" href="#cobol.RepeatingAttribute" title="cobol.RepeatingAttribute"><tt class="xref py py-class docutils literal"><span class="pre">cobol.RepeatingAttribute</span></tt></a>
+with (some) indices applied. Since this inherits the <a class="reference internal" href="#cobol.RepeatingAttribute.index" title="cobol.RepeatingAttribute.index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.RepeatingAttribute.index()</span></tt></a>
 method, we can apply indices incrementally.</p>
-<p>This is not built directly, but only created by <a class="reference internal" href="#cobol.RepeatingAttribute.index" title="cobol.RepeatingAttribute.index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.RepeatingAttribute.index()</span></tt></a>
+<p>This class is not built directly, but only created by <a class="reference internal" href="#cobol.RepeatingAttribute.index" title="cobol.RepeatingAttribute.index"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.RepeatingAttribute.index()</span></tt></a>
 with some (or all) indices applied.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">IndexedAttribute</span><span class="p">(</span> <span class="n">RepeatingAttribute</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An attribute with dimensionality and indexes applied.</span>
@@ -431,12 +440,12 @@ Each workbook subclass needs to implement methods for <tt class="docutils litera
 stateful sheet and row processing in the workbook.  They&#8217;re just bound to the
 encoding.  Consequently, we can make them static methods, possibly even
 making this a mixin strategy.</p>
-<p>The use case looks like this.</p>
+<p>The common use case looks like this.</p>
 <ol class="arabic simple">
-<li>The application uses <tt class="docutils literal"><span class="pre">row.cell(</span> <span class="pre">schema[n]</span> <span class="pre">)</span></tt>.
-The <tt class="docutils literal"><span class="pre">cell()</span></tt> method is simply <tt class="docutils literal"><span class="pre">sheet.workbook.row_get(</span> <span class="pre">buffer,</span> <span class="pre">attribute</span> <span class="pre">)</span></tt>.
+<li>The application uses <tt class="docutils literal"><span class="pre">row.cell(</span> <span class="pre">schema[n]</span> <span class="pre">)</span></tt> to fetch a <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a>.
+The <tt class="xref py py-meth docutils literal"><span class="pre">cobol.ODO_LazyRow.cell()</span></tt> method is simply <tt class="docutils literal"><span class="pre">sheet.workbook.row_get(</span> <span class="pre">buffer,</span> <span class="pre">attribute</span> <span class="pre">)</span></tt>.
 It applies the cell type (via the schema item&#8217;s attribute) and the raw data in the row&#8217;s buffer.</li>
-<li><tt class="docutils literal"><span class="pre">row_get(</span> <span class="pre">buffer,</span> <span class="pre">attribute</span> <span class="pre">)</span></tt> has to do the following.<ul>
+<li>The workbook <tt class="docutils literal"><span class="pre">row_get(</span> <span class="pre">buffer,</span> <span class="pre">attribute</span> <span class="pre">)</span></tt> has to do the following.<ul>
 <li>Convert the buffer into a proper value based on the <tt class="docutils literal"><span class="pre">attribute</span></tt> type
 information <strong>and</strong> the worksheet-specific methods for unpacking the
 various types of data.  The various <a class="reference internal" href="#module-cobol" title="cobol"><tt class="xref py py-mod docutils literal"><span class="pre">cobol</span></tt></a> Cell subclasses
@@ -444,6 +453,15 @@ can refer to the proper conversion methods.</li>
 <li>Create the required <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> based on the <tt class="docutils literal"><span class="pre">attribute.create(sheet,</span> <span class="pre">value)</span></tt> function.</li>
 </ul>
 </li>
+</ol>
+<p>There&#8217;s a less common use case to extract a subset of row bytes to populate a
+separate 01-level definition that&#8217;s not tied to the Workbook&#8217;s schema.</p>
+<ol class="arabic simple">
+<li>The application uses <tt class="docutils literal"><span class="pre">subrow=</span> <span class="pre">row.data(</span> <span class="pre">schema[n],</span> <span class="pre">other_schema</span> <span class="pre">)</span></tt> to fetch some bytes that can
+be used to create a new LazyRow tied to a different schema.</li>
+<li>The application uses <tt class="docutils literal"><span class="pre">subrow.cell(</span> <span class="pre">subschema[m]</span> <span class="pre">)</span></tt> to fetch a <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a>.
+This doesn&#8217;t go back to the original workbook, it goes to this &#8220;subrow&#8221; of the
+workbook.</li>
 </ol>
 <div class="highlight-none"><div class="highlight"><pre>http://yuml.me/diagram/scruffy;/class/
 #cobol,
@@ -470,7 +488,7 @@ a schema attribute with dimensionality.</p>
 <span class="sd">    This is a :py:class:`Fixed_Workbook`: a file with fixed-sized, no-punctuation fields.</span>
 <span class="sd">    A schema is required to parse the attributes.</span>
 
-<span class="sd">    The rows are defined as :py:class:`ODO_LazyRow` instances so that</span>
+<span class="sd">    The rows are defined as :py:class:`cobol.ODO_LazyRow` instances so that</span>
 <span class="sd">    bad data can be gracefully skipped over and Occurs Depending On offsets</span>
 <span class="sd">    can be properly calculated.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -500,9 +518,10 @@ a huge improvement.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">row_get_index</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="o">*</span><span class="n">index</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Emit a nested-tuple structure of Cell values using the given index values.</span>
 <span class="sd">    :param row: the source Row.</span>
-<span class="sd">    :param attr: the  :py:class:`cobol.RepeatingAttribute`; possibly tweaked to</span>
-<span class="sd">        have an offset and partial dimensions. Or possibly the original tuple</span>
-<span class="sd">        of dimensions.</span>
+<span class="sd">    :param attr: the  :py:class:`cobol.RepeatingAttribute`</span>
+<span class="sd">        with the original tuple of dimensions,</span>
+<span class="sd">        or a :py:class:`cobol.IndexedAttribute` which has</span>
+<span class="sd">        an offset and partial dimensions.</span>
 <span class="sd">    :param index: optional tuple of index values to use.</span>
 <span class="sd">        Instead of ``row_get( schema.get(&#39;name&#39;).index(i) )``</span>
 <span class="sd">        we can use ``row_get_index( schema.get(&#39;name&#39;), i )``</span>
@@ -562,6 +581,28 @@ a huge improvement.</p>
 This will not work for EBCDIC files, which may lack appropriate line break characters.
 For that, we&#8217;ll need to use specific physical format parsing helpers based on the
 Z/OS RECFM parameter used to define the file.</p>
+<dl class="method">
+<dt id="cobol.COBOL_File.subrow">
+<tt class="descclassname">COBOL_File.</tt><tt class="descname">subrow</tt><big>(</big><em>subschema</em>, <em>text_cell</em><big>)</big><a class="headerlink" href="#cobol.COBOL_File.subrow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>In some COBOL files, there can be 01-level &#8220;subrecords&#8221; buried within an 01-level record.</p>
+<p>We can use <tt class="docutils literal"><span class="pre">wb.subrow(subschema,</span> <span class="pre">row.cell(schema_header_dict['GENERIC-FIELD']))</span></tt>
+to map a particular field (&#8216;GENERIC-FIELD&#8217;) to an entire 01-level schema, creating
+a &#8220;subrow&#8221; from a single field within the parent row.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">subrow</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">subschema</span><span class="p">,</span> <span class="n">text_cell</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Build a row-like object from a single field.</span>
+
+<span class="sd">    :param subschema: a schema built from an 01-level DDE.</span>
+<span class="sd">    :param text_cell: a specific text cell to use.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">subrow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_class</span><span class="p">(</span>
+        <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">ExternalSchemaSheet</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">subschema</span> <span class="p">),</span>
+        <span class="n">data</span><span class="o">=</span> <span class="n">text_cell</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">subrow</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="character-file">
 <h3>10.2.1.5.2. Character File<a class="headerlink" href="#character-file" title="Permalink to this headline">¶</a></h3>
@@ -912,7 +953,7 @@ two issues:</p>
 <ul>
 <li><p class="first">If the schema depends on a variably located DDE, then we need to do the
 <a class="reference internal" href="cobol_defs.html#cobol.defs.setSizeAndOffset" title="cobol.defs.setSizeAndOffset"><tt class="xref py py-func docutils literal"><span class="pre">cobol.defs.setSizeAndOffset()</span></tt></a> function using the DDE.
-This is done automagically by the <a class="reference internal" href="#cobol.ODO_LazyRow" title="cobol.ODO_LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">ODO_LazyRow</span></tt></a> object.</p>
+This is done automagically by the <a class="reference internal" href="#cobol.ODO_LazyRow" title="cobol.ODO_LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">cobol.ODO_LazyRow</span></tt></a> object.</p>
 </li>
 <li><p class="first">The legacy Z/OS RECFM details.</p>
 <ul class="simple">
@@ -940,7 +981,7 @@ actually used.</p>
 <span class="sd">    bytes were really needed.  For RECFM_N, this is important.</span>
 <span class="sd">    For other RECFM, this is ignored.</span>
 
-<span class="sd">    :py:class:`ODO_LazyRow` may adjust the schema</span>
+<span class="sd">    :py:class:`cobol.ODO_LazyRow` may adjust the schema</span>
 <span class="sd">    if it has an Occurs Depending On.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">record_iter</span><span class="p">():</span>

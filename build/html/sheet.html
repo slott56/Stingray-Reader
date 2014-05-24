@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.3',
+        VERSION:     '4.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -253,8 +253,9 @@ Subclasses implement different bindings for the sheet&#8217;s schema information
 into row-as-dict or some even more elaborate structure.</p>
 <p>A row depends on details of an <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a>
 and a <a class="reference internal" href="workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a>.
-This feels circular, but doesn&#8217;t present any real problems.</p>
-<p>The <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> conversions are handled by the Workbook.
+This feels circular. But this Sheet/Row schema definition is really
+just a convenient wrapper around the Workbook details.</p>
+<p>The <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> conversions are handled by the <a class="reference internal" href="workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a>.
 Some Workbooks have cell content identified by position.
 Some Workbooks have cell content identified by size, offset and encoding.
 Therefore, we must provide the Attribute details to the Workbook

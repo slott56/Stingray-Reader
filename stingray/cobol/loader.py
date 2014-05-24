@@ -543,6 +543,9 @@ def picture_parser( pic ):
 # This may need to be overridden to remove line numbers (from positions 72-80),
 # module identification (from positions 1-5), and format control directives.
 #
+# Also, we have to deal with "Compiler Directing Statements": EJECT, SKIP1, SKIP2 and SKIP3.
+# These are simply noise that may appear in the source.
+#
 # ..  py:class:: Lexer
 #
 # Basic lexer that simply removes comments and the first six positions of each line.
@@ -581,15 +584,19 @@ class Lexer:
             text= text.splitlines()
         self.all_lines= ( self.clean(line) + ' ' 
             for line in text )
-        # Remove comments and blank lines
-        self.lines = ( line for line in self.all_lines 
-            if line and line[0] not in ('*', '/') )
+        # Remove comments, blank lines and compiler directives
+        self.lines = ( line 
+            for line in self.all_lines 
+                if line and line[0] not in ('*', '/') 
+                and line.strip() not in ("EJECT", "SKIP1", "SKIP2", "SKIP3") )
+        # Break remaining lines into words 
         for line in self.lines:
-            logger.debug( line )
             if len(line) == 0: continue
+            logger.debug( line )  
+            # Apply all replacing rules.
             for old, new in self.replacing:
                 line= line.replace(old,new)
-            if self.replacing: logger.debug( line )                    
+            if self.replacing: logger.debug( "Post-Replacing {!r}".format(line) )  
             current= line.lstrip()
             while current:
                 if current[0] == "'":
@@ -786,7 +793,7 @@ class RecordFactory:
         return self.redefines_class(name=redef)
 
 # A ``RENAMES`` creates an alternative group-level name for some elementary items.
-# It's considered bad practice. 
+# While it is considered bad practice, we still need to politely skip the syntax.
 #
 # ::
 
@@ -797,7 +804,9 @@ class RecordFactory:
         if self.token in {"THRU","THROUGH"}:
             ren2= next(self.lext)
             self.token= next(self.lex)
-        raise stingray.cobol.defs.UnsupportedError( "Renames clause" )
+        warnings.warn( "RENAMES clause found and ignored." )
+        # Alternative RENAMES
+        # raise stingray.cobol.defs.UnsupportedError( "Renames clause" )
 
 # There are two variations on the ``SIGN`` clause syntax.
 #
@@ -872,11 +881,15 @@ class RecordFactory:
             self.token= next(self.lex)
         return lit
 
-# This fits the generator design pattern well.  The low-level :py:meth:`RecordFactory.dde_iter` method
-# emits individual DDE statements.  These will be assembled into an overall record 
-# definition, below.
-#
 # ..  py:method:: RecordFactory.dde_iter( lexer )
+#
+# Iterate over all DDE's in the stream of tokens from the given lexer.
+# These DDE's can then be assembled into an overall record 
+# definition.
+#
+# Note that we do not define special cases for 66, 77 or 88-level items.
+# These level numbers have special significance. For our purposes, however,
+# the numbers can be ignored.
 #
 # ::
         
@@ -963,15 +976,18 @@ class RecordFactory:
 # Note that some clauses (like ``REDEFINES``) occupy a special place in COBOL syntax.
 # We're not fastidious about enforcing COBOL semantic rules. Presumably the 
 # source is proper COBOL and was actually used to create the source file. 
-#
-# The overall parsing method, :py:meth:`RecordFactory.makeRecord` is an iterator
-# that yields the top-level parsed items.
-# It uses the :py:meth:`RecordFactory.dde_iter` to get tokens and accumulates a proper
-# hierarchy of individual DDE instances.
-#
-# This will yield the ``01``-level records. Generally, there's only one. 
 #        
 # ..  py:method:: RecordFactory.makeRecord( lexer )
+#
+# This overall is iterator
+# that yields the top-level records.
+#
+# This depends on the :py:meth:`RecordFactory.dde_iter` to get tokens and accumulates a proper
+# hierarchy of individual DDE instances.
+#
+# This will yield a sequence of ``01``-level records that are parsed.
+#
+# The 77-level and 66-level items are not treated specially. 
 #
 # ::
 

@@ -1,7 +1,6 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.5.5)  20 MAY 2014 08:03
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.5.5)  24 MAY 2014 13:03
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
 **stingray.tex
 (./stingray.tex
@@ -1015,458 +1014,478 @@ File: sheet.png Graphic file (type png)
 Package pdftex.def Info: sheet.png used on input line 1794.
 (pdftex.def)             Requested size: 469.755pt x 413.9943pt.
  [22 <./sheet.png>] [23] [24] [25] [26] [27]
-[28] [29] <schema.png, id=440, 463.7325pt x 114.4275pt>
+[28] [29] <schema.png, id=441, 463.7325pt x 114.4275pt>
 File: schema.png Graphic file (type png)
  <use schema.png>
-Package pdftex.def Info: schema.png used on input line 2390.
+Package pdftex.def Info: schema.png used on input line 2391.
 (pdftex.def)             Requested size: 463.73135pt x 114.42722pt.
 File: schema.png Graphic file (type png)
 
 <use schema.png>
-Package pdftex.def Info: schema.png used on input line 2390.
+Package pdftex.def Info: schema.png used on input line 2391.
 (pdftex.def)             Requested size: 463.73135pt x 114.42722pt.
  [30 <./schema.png>] [31] [32] [33]
-<schema_loader.png, id=481, 536.0025pt x 327.47343pt>
+<schema_loader.png, id=482, 536.0025pt x 327.47343pt>
 File: schema_loader.png Graphic file (type png)
  <use schema_loader.png>
-Package pdftex.def Info: schema_loader.png used on input line 2707.
+Package pdftex.def Info: schema_loader.png used on input line 2708.
 (pdftex.def)             Requested size: 433.62pt x 264.92224pt.
 
-Overfull \vbox (0.66936pt too high) detected at line 2724
+Overfull \vbox (0.66936pt too high) detected at line 2725
  []
 
 [34 <./schema_loader.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 2791--2794
+Underfull \hbox (badness 10000) in paragraph at lines 2792--2795
 []\T1/ptm/m/n/10 All other cases have to be han-dled with some-thing a bit more
  so-phis-ti-cated. The
  []
 
 [35] [36] [37] [38] [39] [40]
-<workbook.png, id=562, 955.31906pt x 327.47343pt>
+<workbook.png, id=563, 955.31906pt x 327.47343pt>
 File: workbook.png Graphic file (type png)
  <use workbook.png>
-Package pdftex.def Info: workbook.png used on input line 3224.
+Package pdftex.def Info: workbook.png used on input line 3225.
 (pdftex.def)             Requested size: 433.62pt x 148.64087pt.
  [41 <./workbook.png>] [42] [43] [44] [45] [46] [47] [48] [49] [50] [51] [52] [
 53]
 [54] [55] [56]
-Overfull \vbox (0.91475pt too high) detected at line 4523
+Overfull \vbox (0.91475pt too high) detected at line 4524
  []
 
 [57] [58] [59] [60] [61]
-Underfull \vbox (badness 10000) detected at line 4816
+Underfull \vbox (badness 10000) detected at line 4817
  []
 
 
-Underfull \vbox (badness 10000) detected at line 4816
+Underfull \vbox (badness 10000) detected at line 4817
  []
 
 [62] [63] [64] [65]
-Underfull \hbox (badness 5939) in paragraph at lines 5019--5023
+Underfull \hbox (badness 5939) in paragraph at lines 5020--5024
 []\T1/ptm/m/n/10 Therefore, we must build [][]\T1/pcr/m/n/10 sheet.LazyRow[][] 
 \T1/ptm/m/n/10 ob-jects here and de-fer the data type con-ver-sion un-til
  []
 
 [66] [67] [68] [69] [70]
-Overfull \hbox (81.73834pt too wide) in paragraph at lines 5420--5421
+Overfull \hbox (81.73834pt too wide) in paragraph at lines 5421--5422
 [][][]\T1/ptm/m/n/10 https://github.com/obriensp/iWorkFileFormat/blob/master/iW
 orkFileInspector/iWorkFileInspector/Persistence/MessageTypes[][] 
  []
 
 
-Overfull \hbox (92.60829pt too wide) in paragraph at lines 5428--5429
+Overfull \hbox (92.60829pt too wide) in paragraph at lines 5429--5430
 [][][]\T1/ptm/m/n/10 https://github.com/obriensp/iWorkFileFormat/blob/master/iW
 orkFileInspector/iWorkFileInspector/Messages/Proto/TSTArchives.proto[][] 
  []
 
 
-Overfull \hbox (88.73828pt too wide) in paragraph at lines 5433--5434
+Overfull \hbox (88.73828pt too wide) in paragraph at lines 5434--5435
 [][][]\T1/ptm/m/n/10 https://github.com/obriensp/iWorkFileFormat/blob/master/iW
 orkFileInspector/iWorkFileInspector/Messages/Proto/TNArchives.proto[][] 
  []
 
 
-Overfull \hbox (100.20815pt too wide) in paragraph at lines 5438--5439
+Overfull \hbox (100.20815pt too wide) in paragraph at lines 5439--5440
 [][][]\T1/ptm/m/n/10 https://github.com/obriensp/iWorkFileFormat/blob/master/iW
 orkFileInspector/iWorkFileInspector/Messages/Proto/TSCEArchives.proto[][] 
  []
 
 
-Overfull \hbox (94.64821pt too wide) in paragraph at lines 5443--5444
+Overfull \hbox (94.64821pt too wide) in paragraph at lines 5444--5445
 [][][]\T1/ptm/m/n/10 https://github.com/obriensp/iWorkFileFormat/blob/master/iW
 orkFileInspector/iWorkFileInspector/Messages/Proto/TSKArchives.proto[][] 
  []
 
 
-Overfull \hbox (115.34764pt too wide) in paragraph at lines 5450--5451
+Overfull \hbox (115.34764pt too wide) in paragraph at lines 5451--5452
 [][][]\T1/ptm/m/n/10 https://github.com/obriensp/iWorkFileFormat/blob/master/iW
 orkFileInspector/iWorkFileInspector/Persistence/MessageTypes/Numbers.json[][] 
  []
 
 
-Overfull \hbox (115.9177pt too wide) in paragraph at lines 5453--5454
+Overfull \hbox (115.9177pt too wide) in paragraph at lines 5454--5455
 [][][]\T1/ptm/m/n/10 https://github.com/obriensp/iWorkFileFormat/blob/master/iW
 orkFileInspector/iWorkFileInspector/Persistence/MessageTypes/Common.json[][] 
  []
 
-[71] [72] [73] [74] [75] [76] [77] [78] [79]
-<zOSB037.png, id=902, 388.45125pt x 430.60875pt>
+[71] [72] [73] [74] [75] [76] [77] [78] [79] [80]
+<zOSB037.png, id=912, 388.45125pt x 430.60875pt>
 File: zOSB037.png Graphic file (type png)
  <use zOSB037.png>
-Package pdftex.def Info: zOSB037.png used on input line 6073.
+Package pdftex.def Info: zOSB037.png used on input line 6148.
 (pdftex.def)             Requested size: 388.45029pt x 430.60768pt.
 File: zOSB037.png Graphic file (type png)
 
 <use zOSB037.png>
-Package pdftex.def Info: zOSB037.png used on input line 6073.
+Package pdftex.def Info: zOSB037.png used on input line 6148.
 (pdftex.def)             Requested size: 388.45029pt x 430.60768pt.
- [80 <./zOSB037.png>] [81]
+ [81 <./zOSB037.png>] [82]
 LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <9> not available
-(Font)              Font shape `T1/phv/b/n' tried instead on input line 6296.
- [82]
-Underfull \hbox (badness 5119) in paragraph at lines 6326--6329
+(Font)              Font shape `T1/phv/b/n' tried instead on input line 6371.
+ [83]
+Underfull \hbox (badness 5119) in paragraph at lines 6401--6404
 []\T1/ptm/m/n/10 An at-tribute that has an \T1/pcr/m/n/10 OCCURS \T1/ptm/m/n/10
  clause (or who's par-ent has an \T1/pcr/m/n/10 OCCURS \T1/ptm/m/n/10 clause) c
 an ac-cept an
  []
 
-<cobol_attribute.png, id=944, 249.18094pt x 327.47343pt>
+<cobol_attribute.png, id=955, 249.18094pt x 327.47343pt>
 File: cobol_attribute.png Graphic file (type png)
 
 <use cobol_attribute.png>
-Package pdftex.def Info: cobol_attribute.png used on input line 6354.
+Package pdftex.def Info: cobol_attribute.png used on input line 6429.
 (pdftex.def)             Requested size: 249.18031pt x 327.47264pt.
 File: cobol_attribute.png Graphic file (type png)
  <use cobol_attribute.png>
-Package pdftex.def Info: cobol_attribute.png used on input line 6354.
+Package pdftex.def Info: cobol_attribute.png used on input line 6429.
 (pdftex.def)             Requested size: 249.18031pt x 327.47264pt.
- [83] [84 <./cobol_attribute.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 6480--6482
-[]\T1/ptm/m/n/10 Second, the [][]\T1/pcr/m/n/10 COBOL_File[][] \T1/ptm/m/n/10 s
-up-plies the re-main-ing in-dices, cre-at-ing yet more tem-po-rary
+ [84] [85 <./cobol_attribute.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 6557--6559
+[]\T1/ptm/m/n/10 Second, the [][]\T1/pcr/m/n/10 COBOL_File[][] \T1/ptm/m/n/10 w
+ill sup-ply any re-main-ing in-dices, cre-at-ing yet more tem-po-rary
  []
 
-[85] [86] [87]
-Underfull \hbox (badness 10000) in paragraph at lines 6700--6703
+[86] [87] [88]
+Underfull \hbox (badness 10000) in paragraph at lines 6785--6788
 []\T1/ptm/m/n/10 The cell type. [][]\T1/pcr/m/n/10 cobol.defs.TextCell[][]\T1/p
 tm/m/n/10 , [][]\T1/pcr/m/n/10 cobol.defs.NumberDisplayCell[][]\T1/ptm/m/n/10 ,
 
  []
 
-[88]
-Underfull \hbox (badness 10000) in paragraph at lines 6721--6724
-[]\T1/ptm/m/n/10 The ap-pli-ca-tion uses \T1/pcr/m/n/10 row.cell( schema[n] )\T
-1/ptm/m/n/10 . The \T1/pcr/m/n/10 cell() \T1/ptm/m/n/10 method is sim-ply
+[89]
+Underfull \hbox (badness 10000) in paragraph at lines 6806--6809
+[]\T1/ptm/m/n/10 The ap-pli-ca-tion uses \T1/pcr/m/n/10 row.cell( schema[n] ) \
+T1/ptm/m/n/10 to fetch a [][]\T1/pcr/m/n/10 cell.Cell[][]\T1/ptm/m/n/10 . The
  []
 
-<cobol_file.png, id=1005, 569.87906pt x 114.4275pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 6806--6809
+\T1/pcr/m/n/10 cobol.ODO_LazyRow.cell() \T1/ptm/m/n/10 method is sim-ply \T1/pc
+r/m/n/10 sheet.workbook.row_get( buffer,
+ []
+
+<cobol_file.png, id=1025, 569.87906pt x 114.4275pt>
 File: cobol_file.png Graphic file (type png)
  <use cobol_file.png>
-Package pdftex.def Info: cobol_file.png used on input line 6749.
+Package pdftex.def Info: cobol_file.png used on input line 6848.
 (pdftex.def)             Requested size: 433.62pt x 87.06706pt.
 
-[89 <./cobol_file.png>] [90] [91] [92] [93] [94] [95]
-Underfull \hbox (badness 10000) in paragraph at lines 7279--7282
+[90 <./cobol_file.png>] [91] [92] [93] [94] [95] [96]
+Underfull \hbox (badness 10000) in paragraph at lines 7405--7408
 []\T1/ptm/m/n/10 If the schema de-pends on a vari-ably lo-cated DDE, then we ne
 ed to do the
  []
 
-[96] [97] [98]
-Underfull \hbox (badness 6412) in paragraph at lines 7552--7556
+[97] [98] [99] [100]
+Underfull \hbox (badness 6412) in paragraph at lines 7678--7682
 []\T1/ptm/m/n/10 We may also need to change the record fac-tory. This in-volves
  two sep-a-rate ex-ten-sions. We
  []
 
 
-Underfull \hbox (badness 5105) in paragraph at lines 7552--7556
+Underfull \hbox (badness 5105) in paragraph at lines 7678--7682
 \T1/ptm/m/n/10 must ex-tend the [][]\T1/pcr/m/n/10 cobol.loader.RecordFactory[]
 [] \T1/ptm/m/n/10 to change the fea-tures. Then we can ex-tend
  []
 
-[99] [100] [101]
-Overfull \hbox (14.18015pt too wide) in paragraph at lines 7746--7747
+[101] [102]
+Overfull \hbox (14.18015pt too wide) in paragraph at lines 7872--7873
 []\T1/ptm/m/n/10 See [][]http://publib.boulder.ibm.com/infocenter/comphelp/v7v9
 1/index.jsp?topic=%2Fcom.ibm.aix.cbl.doc%2Ftptbl27.htm[][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 7767--7770
+Underfull \hbox (badness 10000) in paragraph at lines 7893--7896
 []\T1/ptm/m/n/10 Variably Lo-cated. The cal-cu-la-tion of size and off-set is b
 ased on live data. The
  []
 
-<cobol_loader.png, id=1135, 404.26031pt x 463.7325pt>
-File: cobol_loader.png Graphic file (type png)
- <use cobol_loader.png>
-Package pdftex.def Info: cobol_loader.png used on input line 7806.
-(pdftex.def)             Requested size: 404.25932pt x 463.73135pt.
+[103] <cobol_loader.png, id=1163, 404.26031pt x 463.7325pt>
 File: cobol_loader.png Graphic file (type png)
 
 <use cobol_loader.png>
-Package pdftex.def Info: cobol_loader.png used on input line 7806.
+Package pdftex.def Info: cobol_loader.png used on input line 7932.
 (pdftex.def)             Requested size: 404.25932pt x 463.73135pt.
- [102] [103 <./cobol_loader.png>] [104] [105] [106]
-[107] [108] [109] [110]
-Underfull \vbox (badness 10000) detected at line 8403
+File: cobol_loader.png Graphic file (type png)
+ <use cobol_loader.png>
+Package pdftex.def Info: cobol_loader.png used on input line 7932.
+(pdftex.def)             Requested size: 404.25932pt x 463.73135pt.
+ [104] [105 <./cobol_loader.png>]
+[106] [107] [108] [109] [110] [111] [112]
+Underfull \vbox (badness 10000) detected at line 8542
  []
 
 
-Underfull \vbox (badness 10000) detected at line 8403
+Underfull \vbox (badness 10000) detected at line 8542
  []
 
-[111] [112] <cobol_final.png, id=1217, 216.81pt x 330.48468pt>
+[113] [114] <cobol_final.png, id=1241, 216.81pt x 330.48468pt>
 File: cobol_final.png Graphic file (type png)
 
 <use cobol_final.png>
-Package pdftex.def Info: cobol_final.png used on input line 8523.
+Package pdftex.def Info: cobol_final.png used on input line 8665.
 (pdftex.def)             Requested size: 216.80946pt x 330.48387pt.
 File: cobol_final.png Graphic file (type png)
  <use cobol_final.png>
-Package pdftex.def Info: cobol_final.png used on input line 8523.
+Package pdftex.def Info: cobol_final.png used on input line 8665.
 (pdftex.def)             Requested size: 216.80946pt x 330.48387pt.
- [113] [114 <./cobol_final.png>]
-[115] [116]
-Underfull \hbox (badness 10000) in paragraph at lines 8785--8787
+ [115] [116 <./cobol_final.png>]
+[117] [118]
+Underfull \hbox (badness 10000) in paragraph at lines 8927--8929
 [] []\T1/ptm/b/n/10 The Mod-ule De-pen-dency Prob-lem[] \T1/ptm/m/n/10 The [][]
 \T1/pcr/m/n/10 Usage[][] \T1/ptm/m/n/10 class prop-erly de-pends on [][]\T1/pcr
 /m/n/10 cobol[][]\T1/ptm/m/n/10 . The
  []
 
-[117] <cobol_cell.png, id=1265, 632.3625pt x 190.46156pt>
+[119] <cobol_cell.png, id=1289, 632.3625pt x 190.46156pt>
 File: cobol_cell.png Graphic file (type png)
  <use cobol_cell.png>
-Package pdftex.def Info: cobol_cell.png used on input line 8902.
+Package pdftex.def Info: cobol_cell.png used on input line 9044.
 (pdftex.def)             Requested size: 433.62pt x 130.60486pt.
 
-[118] [119 <./cobol_cell.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 9019--9021
+[120] [121 <./cobol_cell.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 9161--9163
 [][][]\T1/ptm/m/n/10 Allocation Strat-egy Hi-er-ar-chy[][] de-fines the re-la-t
 ion-ships among DDE's: Pre-de-ces-sor/Successor,
  []
 
-<cobol_usage.png, id=1292, 393.72093pt x 463.7325pt>
+<cobol_usage.png, id=1316, 393.72093pt x 463.7325pt>
 File: cobol_usage.png Graphic file (type png)
  <use cobol_usage.png>
-Package pdftex.def Info: cobol_usage.png used on input line 9069.
+Package pdftex.def Info: cobol_usage.png used on input line 9211.
 (pdftex.def)             Requested size: 393.71997pt x 463.73135pt.
 File: cobol_usage.png Graphic file (type png)
 
 <use cobol_usage.png>
-Package pdftex.def Info: cobol_usage.png used on input line 9069.
+Package pdftex.def Info: cobol_usage.png used on input line 9211.
 (pdftex.def)             Requested size: 393.71997pt x 463.73135pt.
- [120] [121 <./cobol_usage.png>] [122]
-Underfull \hbox (badness 10000) in paragraph at lines 9251--9254
+ [122] [123 <./cobol_usage.png>] [124]
+Underfull \hbox (badness 10000) in paragraph at lines 9393--9396
 []\T1/ptm/m/n/10 The \T1/ptm/b/n/10 Strat-egy \T1/ptm/m/n/10 de-sign pat-tern a
 l-lows an el-e-ment to del-e-gate the [][]\T1/pcr/m/n/10 Redefines.offset()[][]
 \T1/ptm/m/n/10 , and
  []
 
-[123] <cobol_redefines.png, id=1331, 345.54094pt x 463.7325pt>
+[125] <cobol_redefines.png, id=1356, 345.54094pt x 463.7325pt>
 File: cobol_redefines.png Graphic file (type png)
 
 <use cobol_redefines.png>
-Package pdftex.def Info: cobol_redefines.png used on input line 9266.
+Package pdftex.def Info: cobol_redefines.png used on input line 9408.
 (pdftex.def)             Requested size: 345.54008pt x 463.73135pt.
 File: cobol_redefines.png Graphic file (type png)
  <use cobol_redefines.png>
-Package pdftex.def Info: cobol_redefines.png used on input line 9266.
+Package pdftex.def Info: cobol_redefines.png used on input line 9408.
 (pdftex.def)             Requested size: 345.54008pt x 463.73135pt.
- [124 <./cobol_redefines.png>] [125] [126] [127]
-Overfull \hbox (84.0193pt too wide) in paragraph at lines 9611--9612
+ [126 <./cobol_redefines.png>] [127] [128] [129]
+Overfull \hbox (84.0193pt too wide) in paragraph at lines 9753--9754
 []\T1/ptm/m/n/10 See [][]http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.j
 sp?topic=%2Fcom.ibm.ent.cbl.zos.doc%2Ftopics%2FMG%2Figymch1027.htm[][] 
  []
 
-[128] [129] [130] [131] [132] [133] [134] [135]
-Underfull \hbox (badness 5787) in paragraph at lines 10251--10255
+[130] [131] [132] [133] [134] [135] [136] [137]
+Underfull \hbox (badness 5787) in paragraph at lines 10393--10397
 []\T1/ptm/b/n/10 Embedded\T1/ptm/m/n/10 . This is com-monly seen as col-umn ti-
 tles within the sheet. Or any vari-a-tion
  []
 
 
-Underfull \hbox (badness 8075) in paragraph at lines 10257--10262
+Underfull \hbox (badness 8075) in paragraph at lines 10399--10404
 []\T1/ptm/b/n/10 External\T1/ptm/m/n/10 . This is a sep-a-rate sheet or sep-a-r
 ate file. In this case, we can start with
  []
 
-[136] [137] [138] [139] [140] [141] [142] [143] [144] [145] [146] [147]
-[148] [149] [150] [151] [152] [153] [154] [155] [156] [157] [158] [159]
-Underfull \hbox (badness 10000) in paragraph at lines 12051--12053
+[138] [139] [140] [141] [142] [143] [144] [145] [146] [147] [148] [149]
+[150] [151] [152] [153] [154] [155] [156] [157] [158] [159] [160] [161]
+Underfull \hbox (badness 10000) in paragraph at lines 12193--12195
 []\T1/ptm/m/n/10 If these as-sump-tions are not uni-ver-sally true, then dif-fe
 r-ent ap-pli-ca-tion pro-grams or dif-fer-ent
  []
 
-[160] [161]
-Underfull \vbox (badness 10000) detected at line 12239
+[162] [163]
+Underfull \vbox (badness 10000) detected at line 12381
  []
 
 
-Underfull \vbox (badness 10000) detected at line 12239
+Underfull \vbox (badness 10000) detected at line 12381
  []
 
-[162]
-Underfull \hbox (badness 6961) in paragraph at lines 12247--12249
+[164]
+Underfull \hbox (badness 6961) in paragraph at lines 12389--12391
 []\T1/ptm/m/n/10 The data files are in two zip archives: [][]http://wonder.cdc.
 gov/wonder/sci_data/datasets/zipctyA.zip[][] and
  []
 
-[163] [164] [165]
-Underfull \hbox (badness 10000) in paragraph at lines 12484--12485
+[165] [166] [167]
+Underfull \hbox (badness 10000) in paragraph at lines 12626--12627
 []\T1/pcr/m/n/10 stingray.cobol.Character_File( filename, file_object=archive.o
 pen(filename),
  []
 
-[166] [167] [168] [169] [170] [171] [172] [173] [174] [175] [176] [177]
-[178] [179]
-Underfull \hbox (badness 10000) in paragraph at lines 13457--13459
+[168] [169]
+Underfull \hbox (badness 10000) in paragraph at lines 12751--12756
+[]\T1/ptm/m/n/10 Handle ``sub-record'' pro-cess-ing. See \T1/pcr/m/n/10 stingra
+y.test.cobol_2.Test_Copybook_13(
+ []
+
+[170] [171] [172] [173] [174] [175] [176] [177] [178] [179] [180] [181]
+Underfull \hbox (badness 10000) in paragraph at lines 13615--13617
 \T1/ptm/m/n/10 An [][]\T1/pcr/m/n/10 schema.loader.ExternalSchemaLoader[][] \T1
 /ptm/m/n/10 builds a [][]\T1/pcr/m/n/10 schema.Schema[][] \T1/ptm/m/n/10 from a
 n-other
  []
 
-[180] [181] [182] [183] [184] [185] [186] [187] [188] [189] [190] [191]
-Underfull \hbox (badness 10000) in paragraph at lines 14249--14252
+[182] [183] [184] [185] [186] [187] [188] [189] [190] [191] [192] [193]
+[194]
+Underfull \hbox (badness 10000) in paragraph at lines 14407--14410
 []\T1/ptm/m/n/10 Do we need \T1/pcr/m/n/10 TestCharacterFile_Bytes \T1/ptm/m/n/
 10 as a sep-a-rate test case? Prob-a-bly not. The
  []
 
-[192]
-Underfull \vbox (badness 2229) detected at line 14321
+[195] [196] [197] [198] [199] [200] [201] [202] [203] [204]
+Overfull \vbox (0.63242pt too high) detected at line 15134
  []
 
-[193] [194] [195] [196] [197] [198] [199] [200] [201] [202]
-Underfull \vbox (badness 10000) detected at line 14974
+[205] [206]
+Underfull \vbox (badness 10000) detected at line 15261
  []
 
-
-Underfull \vbox (badness 10000) detected at line 14974
+[207]
+Underfull \vbox (badness 1142) detected at line 15324
  []
 
-[203] [204]
-Underfull \vbox (badness 10000) detected at line 15101
- []
-
-[205]
-Underfull \vbox (badness 1142) detected at line 15164
- []
-
-[206] [207] [208] [209]
-Underfull \vbox (badness 10000) detected at line 15462
+[208] [209] [210] [211]
+Underfull \vbox (badness 10000) detected at line 15622
  []
 
 
-Underfull \vbox (badness 10000) detected at line 15462
+Underfull \vbox (badness 10000) detected at line 15622
  []
 
-[210] [211] [212] [213]
-Underfull \hbox (badness 10000) in paragraph at lines 15599--15602
+[212]
+Underfull \vbox (badness 10000) detected at line 15622
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 15622
+ []
+
+[213]
+Underfull \vbox (badness 3792) detected at line 15683
+ []
+
+[214]
+Underfull \hbox (badness 10000) in paragraph at lines 15741--15744
 []\T1/ptm/m/n/10 Here's a test of the ``main'' method for pars-ing a record. No
 te that
  []
 
-[214]
-Underfull \hbox (badness 10000) in paragraph at lines 15663--15665
+[215]
+Underfull \hbox (badness 10000) in paragraph at lines 15805--15807
 \T1/ptm/m/n/10 A DDE is tran-formed into a flat schema from the highly-nested D
 DE struc-ture via the
  []
 
-[215] [216] [217] [218] [219] [220] [221] [222] [223] [224] [225] [226]
-[227] [228] [229]
-Overfull \vbox (0.54517pt too high) detected at line 16698
+[216] [217] [218] [219] [220] [221] [222] [223] [224] [225] [226] [227]
+[228] [229] [230]
+Underfull \vbox (badness 10000) detected at line 16756
  []
 
-[230] [231] [232] [233] [234] [235]
-Underfull \hbox (badness 10000) in paragraph at lines 17109--17110
+
+Underfull \vbox (badness 10000) detected at line 16756
+ []
+
+[231] [232] [233] [234] [235] [236] [237] [238] [239]
+Underfull \hbox (badness 10000) in paragraph at lines 17350--17351
 []\T1/pcr/m/n/10 git clone git://git.code.sf.net/p/stingrayreader/code
  []
 
-[236] [237] [238]
-Chapter 2.
-[239
+[240] [241] [242
 
-] [240
+]
+Chapter 2.
+[243] [244
 
 ]
 Chapter 3.
 
-LaTeX Warning: Hyper reference `cell:index-0' on page 241 undefined on input li
-ne 17256.
+LaTeX Warning: Hyper reference `cell:index-0' on page 245 undefined on input li
+ne 17497.
 
 
-LaTeX Warning: Hyper reference `schema:index-0' on page 241 undefined on input 
-line 17266.
+LaTeX Warning: Hyper reference `index:cobol.defs.Allocation' on page 245 undefi
+ned on input line 17503.
 
 
-LaTeX Warning: Hyper reference `testing/cobol:index-0' on page 241 undefined on
- input line 17273.
+LaTeX Warning: Hyper reference `cobol_defs:index-0' on page 245 undefined on in
+put line 17507.
 
 
-LaTeX Warning: Hyper reference `testing/cobol_loader:index-0' on page 241 undef
-ined on input line 17280.
-
-[241]
-
-LaTeX Warning: Hyper reference `workbook/init:index-0' on page 242 undefined on
- input line 17311.
+LaTeX Warning: Hyper reference `cobol_defs:index-1' on page 245 undefined on in
+put line 17517.
 
 
-LaTeX Warning: Hyper reference `workbook/numbers_13:index-0' on page 242 undefi
-ned on input line 17320.
+LaTeX Warning: Hyper reference `cobol_loader:index-0' on page 245 undefined on 
+input line 17524.
 
 
-LaTeX Warning: Hyper reference `workbook/ods:index-0' on page 242 undefined on 
-input line 17327.
+LaTeX Warning: Hyper reference `schema:index-0' on page 245 undefined on input 
+line 17534.
 
 
-LaTeX Warning: Hyper reference `index:cobol.defs.Allocation' on page 242 undefi
-ned on input line 17333.
+LaTeX Warning: Hyper reference `testing/cobol:index-0' on page 245 undefined on
+ input line 17541.
+
+[245]
+
+LaTeX Warning: Hyper reference `testing/cobol_loader:index-0' on page 246 undef
+ined on input line 17548.
 
 
-LaTeX Warning: Hyper reference `cobol_defs:index-0' on page 242 undefined on in
-put line 17337.
+LaTeX Warning: Hyper reference `workbook/init:index-0' on page 246 undefined on
+ input line 17579.
 
 
-LaTeX Warning: Hyper reference `cobol_defs:index-1' on page 242 undefined on in
-put line 17347.
+LaTeX Warning: Hyper reference `workbook/numbers_13:index-0' on page 246 undefi
+ned on input line 17588.
 
 
-LaTeX Warning: Hyper reference `cobol_loader:index-0' on page 242 undefined on 
-input line 17354.
+LaTeX Warning: Hyper reference `workbook/ods:index-0' on page 246 undefined on 
+input line 17595.
 
-[242]
+[246]
 Chapter 4.
-[243
+[247
 
-] [244
+] [248
 
-] [245
+] [249
 
 
 ]
 No file stingray.ind.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 17398.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 17398.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 17639.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 17639.
 (./stingray.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 17398.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 17639.
 
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 17398
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 17639
 .
 Package rerunfilecheck Info: File `stingray.out' has not changed.
-(rerunfilecheck)             Checksum: 1895D9EEE030EBB701AAAF051C6C76B4;1450.
+(rerunfilecheck)             Checksum: 857128609B9887FA20EBB3DA853005D6;1450.
 
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 17398.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 17639.
  ) 
 Here is how much of TeX's memory you used:
- 10504 strings out of 493308
- 155062 string characters out of 6137817
- 299311 words of memory out of 5000000
- 12949 multiletter control sequences out of 15000+600000
+ 10518 strings out of 493308
+ 155338 string characters out of 6137817
+ 302520 words of memory out of 5000000
+ 12953 multiletter control sequences out of 15000+600000
  75860 words of font info for 84 fonts, out of 8000000 for 9000
  958 hyphenation exceptions out of 8191
- 37i,13n,45p,1053b,472s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 37i,13n,45p,1053b,463s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2013/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/te
 xlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/tex
@@ -1483,10 +1502,10 @@ vetic/uhvbo8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/helvetic/
 uhvr8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/times/utmb8a.pfb
 ></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/loc
 al/texlive/2013/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on stingray.pdf (249 pages, 1261295 bytes).
+Output written on stingray.pdf (253 pages, 1269151 bytes).
 PDF statistics:
- 2535 PDF objects out of 2984 (max. 8388607)
- 2220 compressed objects within 23 object streams
- 803 named destinations out of 1000 (max. 500000)
+ 2572 PDF objects out of 2984 (max. 8388607)
+ 2253 compressed objects within 23 object streams
+ 813 named destinations out of 1000 (max. 500000)
  234 words of extra memory for PDF output out of 10000 (max. 10000000)
 

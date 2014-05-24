@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.3',
+        VERSION:     '4.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -54,7 +54,7 @@
             
   <div class="section" id="history">
 <span id="id1"></span><h1>13. History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
-<p>Latest release is 4.4.3.</p>
+<p>Latest release is 4.4.4.</p>
 <div class="section" id="version-4">
 <h2>13.1. Version 4<a class="headerlink" href="#version-4" title="Permalink to this headline">¶</a></h2>
 <p>Version 4 dates from March, 2014. It switches to Python3.3</p>
@@ -134,6 +134,19 @@ intact. This may disrupt applications that expected stripping of usage DISPLAY
 fields.</p>
 <p>This created a problem of trashing COMP items that had values
 of 0x40 exactly &#8211; an EBCDIC space.</p>
+</li>
+<li><p class="first">Handle Compiler Control Statements <tt class="docutils literal"><span class="pre">EJECT</span></tt>, <tt class="docutils literal"><span class="pre">SKIP1</span></tt>, <tt class="docutils literal"><span class="pre">SKIP2</span></tt>, and <tt class="docutils literal"><span class="pre">SKIP3</span></tt>
+by silently dropping them in the lexical scanner.</p>
+</li>
+<li><p class="first">Changed <tt class="docutils literal"><span class="pre">RENAMES</span></tt> handling to be a warning instead of an exception.
+This allows compiling &#8211; but not fully processing &#8211; DDE&#8217;s with
+RENAMES clauses.</p>
+</li>
+<li><p class="first">Handle &#8220;subrecord&#8221; processing. See <tt class="xref py py-class docutils literal"><span class="pre">stingray.test.cobol_2.Test_Copybook_13(</span> <span class="pre">DDE_Test</span> <span class="pre">)</span></tt>.
+The idea is that we can do
+<tt class="docutils literal"><span class="pre">subrow=</span> <span class="pre">data.subrow(</span> <span class="pre">self.segment_abc,</span> <span class="pre">row.cell(schema_header_dict['GENERIC-FIELD'])</span>&nbsp; <span class="pre">)</span></tt>
+to map a field, <tt class="docutils literal"><span class="pre">GENERIC-FIELD</span></tt>, to an 01-level schema, <tt class="docutils literal"><span class="pre">self.segment_abc</span></tt>.
+We can then pick fields out of <tt class="docutils literal"><span class="pre">subrow</span></tt> using fields defined in <tt class="docutils literal"><span class="pre">self.segment_abc</span></tt>.</p>
 </li>
 </ul>
 </div>

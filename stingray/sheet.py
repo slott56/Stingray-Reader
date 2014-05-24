@@ -237,9 +237,10 @@ class Sheet:
 #
 # A row depends on details of an :py:class:`schema.Attribute` 
 # and a :py:class:`workbook.Workbook`.  
-# This feels circular, but doesn't present any real problems.
+# This feels circular. But this Sheet/Row schema definition is really
+# just a convenient wrapper around the Workbook details.
 #
-# The :py:class:`cell.Cell` conversions are handled by the Workbook.
+# The :py:class:`cell.Cell` conversions are handled by the :py:class:`workbook.Workbook`.
 # Some Workbooks have cell content identified by position.
 # Some Workbooks have cell content identified by size, offset and encoding.
 # Therefore, we must provide the Attribute details to the Workbook

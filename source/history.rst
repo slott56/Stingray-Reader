@@ -5,7 +5,7 @@
 History
 ##############
 
-Latest release is 4.4.3.
+Latest release is 4.4.4.
 
 Version 4
 ==========
@@ -97,7 +97,20 @@ Change Details:
     
     This created a problem of trashing COMP items that had values
     of 0x40 exactly -- an EBCDIC space.
-        
+    
+-   Handle Compiler Control Statements ``EJECT``, ``SKIP1``, ``SKIP2``, and ``SKIP3`` 
+    by silently dropping them in the lexical scanner.
+    
+-   Changed ``RENAMES`` handling to be a warning instead of an exception.
+    This allows compiling -- but not fully processing -- DDE's with 
+    RENAMES clauses.
+
+-   Handle "subrecord" processing. See :py:class:`stingray.test.cobol_2.Test_Copybook_13( DDE_Test )`.
+    The idea is that we can do 
+    ``subrow= data.subrow( self.segment_abc, row.cell(schema_header_dict['GENERIC-FIELD'])  )``
+    to map a field, ``GENERIC-FIELD``, to an 01-level schema, ``self.segment_abc``.
+    We can then pick fields out of ``subrow`` using fields defined in ``self.segment_abc``.
+
 Version 3
 ==============
 

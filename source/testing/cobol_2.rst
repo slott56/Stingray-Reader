@@ -795,7 +795,106 @@ Be sure it parses.  Be sure we can extract data.
             self.assertEqual( 3, row.cell(schema_detail_dict['PRINT-NO']).to_float() )
             self.assertEqual( decimal.Decimal('4'), row.cell(schema_detail_dict['NOT-SURE']).to_decimal() )
             self.assertEqual( "1", row.cell(schema_summary_dict['COUNT']).to_str() )
+
+Test Copybook 13, Multiple 01 Levels -- "Segmented"
+====================================================
+
+This kind of thing occurs in the wild, too.
+
+Each top-level record should create a distinct schema.
+
+The GENERIC-FIELD data maps to ABC-SPECIFIC-RECORD or DEF-ANOTHER-RECORD.
+The mapping doesn't start at offset 0.
+
+::
+
+    copy13= """
+           01  GENERIC-RECORD.
+               05 HEADER PIC X(3).
+               05 GENERIC-FIELD PIC X(17).
+       
+           01 ABC-SPECIFIC-RECORD.
+               05 ITEM-1 PIC X(10).
+               05 ITEM-2 PIC X(7).
+       
+           01 DEF-ANOTHER-RECORD.
+               05 ITEM-3 PIC X(7).
+               05 ITEM-4 PIC X(10).
+    """
+
+Be sure it parses.  Be sure we can extract data.
+
+::
+
+    class Test_Copybook_13( DDE_Test ):
+        def setUp( self ):
+            super().setUp()            
+            file_like_object= io.StringIO( copy13 )
+            dde_list, schema_list = stingray.cobol.loader.COBOL_schemata( file_like_object )
+            self.dde13a, self.dde13b, self.dde13c = dde_list
+            self.schema_header, self.segment_abc, self.segment_def = schema_list
             
+            #stingray.cobol.defs.report( self.dde13a )
+            #stingray.cobol.defs.report( self.dde13b )
+            #stingray.cobol.defs.report( self.dde13c )
+        def test_should_parse( self ):
+            dde13a= self.dde13a
+            self.assertEqual(  0, dde13a.get( "HEADER" ).offset )
+            self.assertEqual(  3, dde13a.get( "HEADER" ).size )
+            self.assertEqual(  3, dde13a.get( "GENERIC-FIELD" ).offset )
+            self.assertEqual( 17, dde13a.get( "GENERIC-FIELD" ).size )
+
+            dde13b= self.dde13b
+            self.assertEqual(  0, dde13b.get( "ITEM-1" ).offset )
+            self.assertEqual( 10, dde13b.get( "ITEM-1" ).size )
+            self.assertEqual( 10, dde13b.get( "ITEM-2" ).offset )
+            self.assertEqual(  7, dde13b.get( "ITEM-2" ).size )
+
+            dde13c= self.dde13c
+            self.assertEqual(  0, dde13c.get( "ITEM-3" ).offset )
+            self.assertEqual(  7, dde13c.get( "ITEM-3" ).size )
+            self.assertEqual(  7, dde13c.get( "ITEM-4" ).offset )
+            self.assertEqual( 10, dde13c.get( "ITEM-4" ).size )
+
+        def test_should_extract( self ):
+            #print( self.schema_header )
+            #print( self.segment_abc )
+            #print( self.segment_def )
+            schema_header_dict= dict( (a.name, a) for a in self.schema_header ) 
+            schema_segment_abc_dict= dict( (a.name, a) for a in self.segment_abc ) 
+            schema_segment_def_dict= dict( (a.name, a) for a in self.segment_def
+             ) 
+            data= stingray.cobol.Character_File( name="", 
+                file_object= ["ABC0123456789TUVWXYZDEFG","DEF0123456QRSTUVWXYZ",], 
+                schema=self.schema_header )
+
+            data_iter= data.sheet( "" ).rows()
+            row= next( data_iter )
+            #stingray.cobol.dump( self.schema_header, row )
+
+            self.assertEqual( "ABC", row.cell(schema_header_dict['HEADER']).to_str() )
+            
+            # High-level API for building a row from a field's data.
+            subrow= data.subrow( self.segment_abc, row.cell(schema_header_dict['GENERIC-FIELD'])  )
+            #stingray.cobol.dump( self.segment_abc, subrow )
+            
+            self.assertEqual( "0123456789", subrow.cell(schema_segment_abc_dict['ITEM-1']).to_str() )
+            self.assertEqual( "TUVWXYZ", subrow.cell(schema_segment_abc_dict['ITEM-2']).to_str() )
+
+            row= next( data_iter )
+            #stingray.cobol.dump( self.schema_header, row )
+
+            self.assertEqual( "DEF", row.cell(schema_header_dict['HEADER']).to_str() )
+            
+            # Low-level API for building a row from a specific field's data.
+            subrow = stingray.cobol.ODO_LazyRow(
+                stingray.sheet.ExternalSchemaSheet( data, "DEF-ANOTHER-RECORD", self.segment_def ),
+                data= row.cell( schema_header_dict['GENERIC-FIELD'] ).raw,
+            )
+
+            self.assertEqual( "0123456", subrow.cell(schema_segment_def_dict['ITEM-3']).to_str() )
+            self.assertEqual( "QRSTUVWXYZ", subrow.cell(schema_segment_def_dict['ITEM-4']).to_str() )
+                        
 Test Suite and Runner
 =====================
 

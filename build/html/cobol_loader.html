@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.3',
+        VERSION:     '4.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -527,6 +527,8 @@ reason.  It&#8217;s derived data from the source picture clause.</p>
 lexical scanner provides a <a class="reference internal" href="#cobol.loader.Lexer.clean" title="cobol.loader.Lexer.clean"><tt class="xref py py-meth docutils literal"><span class="pre">Lexer.clean()</span></tt></a> method that simply removes comments.
 This may need to be overridden to remove line numbers (from positions 72-80),
 module identification (from positions 1-5), and format control directives.</p>
+<p>Also, we have to deal with &#8220;Compiler Directing Statements&#8221;: EJECT, SKIP1, SKIP2 and SKIP3.
+These are simply noise that may appear in the source.</p>
 <dl class="class">
 <dt id="cobol.loader.Lexer">
 <em class="property">class </em><tt class="descclassname">cobol.loader.</tt><tt class="descname">Lexer</tt><a class="headerlink" href="#cobol.loader.Lexer" title="Permalink to this definition">¶</a></dt>
@@ -568,15 +570,19 @@ module identification (from positions 1-5), and format control directives.</p>
         <span class="n">text</span><span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">all_lines</span><span class="o">=</span> <span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; &#39;</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">text</span> <span class="p">)</span>
-    <span class="c"># Remove comments and blank lines</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="p">(</span> <span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_lines</span>
-        <span class="k">if</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;*&#39;</span><span class="p">,</span> <span class="s">&#39;/&#39;</span><span class="p">)</span> <span class="p">)</span>
+    <span class="c"># Remove comments, blank lines and compiler directives</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="p">(</span> <span class="n">line</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_lines</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;*&#39;</span><span class="p">,</span> <span class="s">&#39;/&#39;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;EJECT&quot;</span><span class="p">,</span> <span class="s">&quot;SKIP1&quot;</span><span class="p">,</span> <span class="s">&quot;SKIP2&quot;</span><span class="p">,</span> <span class="s">&quot;SKIP3&quot;</span><span class="p">)</span> <span class="p">)</span>
+    <span class="c"># Break remaining lines into words</span>
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="n">line</span> <span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="n">line</span> <span class="p">)</span>
+        <span class="c"># Apply all replacing rules.</span>
         <span class="k">for</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">replacing</span><span class="p">:</span>
             <span class="n">line</span><span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">old</span><span class="p">,</span><span class="n">new</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">replacing</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="n">line</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">replacing</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;Post-Replacing {!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="p">)</span>
         <span class="n">current</span><span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
         <span class="k">while</span> <span class="n">current</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">current</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;&#39;&quot;</span><span class="p">:</span>
@@ -762,7 +768,7 @@ token in <tt class="docutils literal"><span class="pre">self.token</span></tt>.<
 </pre></div>
 </div>
 <p>A <tt class="docutils literal"><span class="pre">RENAMES</span></tt> creates an alternative group-level name for some elementary items.
-It&#8217;s considered bad practice.</p>
+While it is considered bad practice, we still need to politely skip the syntax.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">renames</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Raise an exception on a RENAMES clause.&quot;&quot;&quot;</span>
     <span class="n">ren1</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="p">)</span>
@@ -770,7 +776,9 @@ It&#8217;s considered bad practice.</p>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&quot;THRU&quot;</span><span class="p">,</span><span class="s">&quot;THROUGH&quot;</span><span class="p">}:</span>
         <span class="n">ren2</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lext</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="p">)</span>
-    <span class="k">raise</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">defs</span><span class="o">.</span><span class="n">UnsupportedError</span><span class="p">(</span> <span class="s">&quot;Renames clause&quot;</span> <span class="p">)</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span> <span class="s">&quot;RENAMES clause found and ignored.&quot;</span> <span class="p">)</span>
+    <span class="c"># Alternative RENAMES</span>
+    <span class="c"># raise stingray.cobol.defs.UnsupportedError( &quot;Renames clause&quot; )</span>
 </pre></div>
 </div>
 <p>There are two variations on the <tt class="docutils literal"><span class="pre">SIGN</span></tt> clause syntax.</p>
@@ -837,14 +845,17 @@ It may be that we have to absorb all non-keyword values.</p>
     <span class="k">return</span> <span class="n">lit</span>
 </pre></div>
 </div>
-<p>This fits the generator design pattern well.  The low-level <a class="reference internal" href="#cobol.loader.RecordFactory.dde_iter" title="cobol.loader.RecordFactory.dde_iter"><tt class="xref py py-meth docutils literal"><span class="pre">RecordFactory.dde_iter()</span></tt></a> method
-emits individual DDE statements.  These will be assembled into an overall record
-definition, below.</p>
 <dl class="method">
 <dt id="cobol.loader.RecordFactory.dde_iter">
 <tt class="descclassname">RecordFactory.</tt><tt class="descname">dde_iter</tt><big>(</big><em>lexer</em><big>)</big><a class="headerlink" href="#cobol.loader.RecordFactory.dde_iter" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<p>Iterate over all DDE&#8217;s in the stream of tokens from the given lexer.
+These DDE&#8217;s can then be assembled into an overall record
+definition.</p>
+<p>Note that we do not define special cases for 66, 77 or 88-level items.
+These level numbers have special significance. For our purposes, however,
+the numbers can be ignored.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">dde_iter</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">lexer</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a single DDE from an entry of clauses.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lex</span><span class="o">=</span> <span class="n">lexer</span>
@@ -929,16 +940,17 @@ definition, below.</p>
 <p>Note that some clauses (like <tt class="docutils literal"><span class="pre">REDEFINES</span></tt>) occupy a special place in COBOL syntax.
 We&#8217;re not fastidious about enforcing COBOL semantic rules. Presumably the
 source is proper COBOL and was actually used to create the source file.</p>
-<p>The overall parsing method, <a class="reference internal" href="#cobol.loader.RecordFactory.makeRecord" title="cobol.loader.RecordFactory.makeRecord"><tt class="xref py py-meth docutils literal"><span class="pre">RecordFactory.makeRecord()</span></tt></a> is an iterator
-that yields the top-level parsed items.
-It uses the <a class="reference internal" href="#cobol.loader.RecordFactory.dde_iter" title="cobol.loader.RecordFactory.dde_iter"><tt class="xref py py-meth docutils literal"><span class="pre">RecordFactory.dde_iter()</span></tt></a> to get tokens and accumulates a proper
-hierarchy of individual DDE instances.</p>
-<p>This will yield the <tt class="docutils literal"><span class="pre">01</span></tt>-level records. Generally, there&#8217;s only one.</p>
 <dl class="method">
 <dt id="cobol.loader.RecordFactory.makeRecord">
 <tt class="descclassname">RecordFactory.</tt><tt class="descname">makeRecord</tt><big>(</big><em>lexer</em><big>)</big><a class="headerlink" href="#cobol.loader.RecordFactory.makeRecord" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<p>This overall is iterator
+that yields the top-level records.</p>
+<p>This depends on the <a class="reference internal" href="#cobol.loader.RecordFactory.dde_iter" title="cobol.loader.RecordFactory.dde_iter"><tt class="xref py py-meth docutils literal"><span class="pre">RecordFactory.dde_iter()</span></tt></a> to get tokens and accumulates a proper
+hierarchy of individual DDE instances.</p>
+<p>This will yield a sequence of <tt class="docutils literal"><span class="pre">01</span></tt>-level records that are parsed.</p>
+<p>The 77-level and 66-level items are not treated specially.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">makeRecord</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">lexer</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Parse an entire copybook block of text.&quot;&quot;&quot;</span>
     <span class="c"># Parse the first DDE and establish the context stack.</span>

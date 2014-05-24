@@ -156,22 +156,90 @@ This is like the positional version, shown above.
             foo= row.cell(schema[*n*]).to_str()
             bar= row.cell(schema[*m*])[*i*][*j*].to_str()
             
+Handling 01-Level Subrecords
+---------------------------------------
+
+In some COBOL files, there can be 01-level "subrecords" buried within an 01-level record.
+
+A programming technique seen in the wild is this.
+
+..  parsed-literal::
+
+    01 GENERIC-RECORD.
+       05 HEADER PIC X(3).
+       05 GENERIC-FIELD PIC X(17).
+       
+    01 ABC-SPECIFIC-RECORD.
+       05 ITEM-1 PIC X(10).
+       05 ITEM-2 PIC X(7).
+       
+    01 DEF-ANOTHER-RECORD.
+       05 ITEM-3 PIC X(7).
+       05 ITEM-4 PIC X(10).
+       
+The original COBOL program likely did something like this to make the two
+other 01-level items work as sub-records to a parent 01-level.
+
+..  parsed-literal::
+
+     IF HEADER EQUALS "ABC"
+     THEN
+          MOVE GENERIC-FIELD TO ABC-SPECIFIC-RECORD
+          *process this record*
+     ELSE IF HEADER EQUALS "DEF"
+          MOVE GENERIC-FIELD TO DEF-ANOTHER-RECORD
+          *process this record*
+          
+How do we work with multiple :py:class:`sheet.Row` objects here?
+
+-   We have the ``GENERIC-RECORD`` created by a COBOL workbook bound to 
+    a schema for this record.
+    
+    For this, ``row.cell( schema_dict['HEADER'] )`` fetches the value.
+    
+-   We have the ``ABC-SPECIFIC-RECORD`` and the ``DEF-ANOTHER-RECORD`` 
+    bound to a subset of bytes within the source record.
+    
+The second case requires Python code which vaguely parallels the COBOL 
+code. 
+In effect, we're creating a new :py:class:`cobol.ODO_LazyRow` object from
+``buffer= row.cell( schema_dict['GENERIC-FIELD'] ).raw`` and the
+proper schema for that variant.
+
+..  parsed-literal::
+
+    segment = ODO_LazyRow(
+        ExternalSchemaSheet( workbook, "ABC-SPECIFIC-RECORD", subschema ),
+        data= row.cell( schema_dict['GENERIC-FIELD'] ).raw,
+    )
+    
+This is implemented as the :py:meth:`cobol.COBOL_File.subrow` method.
+It allows us to work with a single field (``schema_dict['GENERIC-FIELD']``) 
+as if it was a row with a given schema (``subschema``).
+       
 Possible Added Fluency
 ----------------------
 
-The path names are awkward to use since they must include every level
+There are several places where extra fluency might help.
+
+-   Complex nested COBOL layouts with duplicated bottom-level names.
+
+-   Complex indexing. Do we handle this in COBOL or Python syntax?
+
+In the case of duplicated bottom-level names, we are forced to use 
+the COBOL schema path names. These names are awkward to use since they must include every level
 from the ``01`` to the relevant item.
 
 A subclass of :py:class:`schema.Schema` *could* introduce
 a method like ``get_name()`` to make a schema into a slightly more fluent
-mapping in addition to a sequenmce.
+mapping.
 
 ..  parsed-literal::
 
             foo= row.cell(schema_dict.get_name('bar'))
             baz_i_j= row.cell(schema_dict.get_name('baz').index(*i*, *j*))
 
-This doesn't work for non-unique names. 
+While handy for intermediate names, it still wouldn't work for non-unique bottom-level names. 
 
 The COBOL ``OF`` syntax *could* be modeled using a fluent ``of()`` method.
 
@@ -181,16 +249,15 @@ The COBOL ``OF`` syntax *could* be modeled using a fluent ``of()`` method.
             baz_i_j= row.cell(schema_dict.get('baz').index(*i*, *j*))
             baz_i_quux_j = row.cell(schema_dict.get('baz').index(*i*).of('quux').index(*j*))
 
-This is all potentially useful for hyper-complex COBOL record layouts.
+This is potentially useful for hyper-complex COBOL record layouts.
+
+Complex indices can be handled in COBOL syntax creating just a single Cell value.
+Or they can be handled by Python syntax by creating a Python structure of multiple Cell
+values.  This leads us to use partial and incremental index calculation.
 
 Incremental index calculation involves creating an interim, stateful Attribute definition.
-The "cloning" and "tweaking" of an :py:class:`schema.Attribute` definition is a bad design.
-The index processing is stateful, and we would need to accumulate
-index information somehow along the path of fluent methods.
-
-This works out better if the
-:py:class:`sheet.Row.cell` method handles the index calculations entirely separate
-from the attribute navigation. The following seems like a more sensible way to handle this.
+A partial index efficiently implemented as stateful intermediate objects. We can accumulate
+index information incrementally.
 
 ..  parsed-literal::
 
