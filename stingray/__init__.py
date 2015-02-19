@@ -17,4 +17,4 @@ layout of workbooks and flat files.
 
 Requires Python 3.3, xlrd 0.9.2
 """
-__version__ = "4.4.4"
+__version__ = "4.4.5"

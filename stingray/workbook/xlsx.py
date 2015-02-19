@@ -23,17 +23,20 @@ import stingray.cell
 #
 # ..  py:class:: XLSX_Workbook
 #
-# We're opening a ZIP archive and parsing the various XML documents
-# that we find therein.
+#     Extract sheets, rows and cells from an XLSX format file.
 #
-# The :py:class:`ElementTree` incremental parser provides
-# parse "events" for specific tags, allowing for lower-memory parsing of
-# the sometimes large XML documents.
 #
-# See http://effbot.org/zone/element-iterparse.htm
+#     We're opening a ZIP archive and parsing the various XML documents
+#     that we find therein.
 #
-# The class as a whole defines some handy constants like XML namespaces
-# and a pattern for parsing Cell ID's to separate the letters from the numbers.
+#     The :py:class:`ElementTree` incremental parser provides
+#     parse "events" for specific tags, allowing for lower-memory parsing of
+#     the sometimes large XML documents.
+#
+#     See http://effbot.org/zone/element-iterparse.htm
+#
+#     The class as a whole defines some handy constants like XML namespaces
+#     and a pattern for parsing Cell ID's to separate the letters from the numbers.
 #
 # ::
 
@@ -143,6 +146,9 @@ class XLSX_Workbook( Workbook ):
 #
 # ..  py:method:: XLSX_Workbook.sheets( )
 #
+#     Return the list of sheets for this workbook.
+#
+#
 # ::
 
     def sheets( self ):
@@ -183,6 +189,9 @@ class XLSX_Workbook( Workbook ):
 #     enough information to build the Cell instance.
 #
 # ..  py:method:: XLSX_Workbook.rows_of( sheet )
+#
+#     Iterate through rows of the given sheet.
+#
 #
 # ::
 
@@ -238,14 +247,19 @@ class XLSX_Workbook( Workbook ):
 
 # ..  py:method:: XLSX_Workbook.row_get( row, attribute )
 #
+#     Low-level get of a particular attribute from the given row.
+#
+#
 # ::
 
     def row_get( self, row, attribute ):
         """Create a Cell from the row's data."""
         return row[attribute.position]
 
-# Build a subclass of :py:class:`cell.Cell` from the current value tag content plus the
-# containing cell type information.
+# ..  py:method:: XLSX_Workbook.cell( row, element )
+#
+#     Build a subclass of :py:class:`cell.Cell` from the current value tag content plus the
+#     containing cell type information.
 #
 # ::
 

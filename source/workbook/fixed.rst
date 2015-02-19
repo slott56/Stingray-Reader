@@ -6,6 +6,13 @@
 Fixed-Format Workbook
 -----------------------
 
+Like a CSV workbook, this is a kind of degenerate case.  We don't have
+a lot of sheets, or a lot of data types.
+
+A subclass might do EBCDIC conversion and possibly even decode
+packed decimal numbers.  To do this, a COBOL-language DDE would be
+required as the schema definition. See :ref:`cobol`.
+
 ::
 
     import logging
@@ -19,12 +26,11 @@ Fixed-Format Workbook
 
 ..  py:class:: Fixed_Workbook
 
-Like a CSV workbook, this is a kind of degenerate case.  We don't have
-a lot of sheets, or a lot of data types.
-
-A subclass might do EBCDIC conversion and possibly even decode
-packed decimal numbers.  To do this, a COBOL-language DDE would be
-required as the schema definition. See :ref:`cobol`.
+    Extract sheets, rows and cells from a fixed-format file.
+    
+    The schema must have size and offset information to locate the fields.
+    
+    There's only a single sheet and it matches the filename.    
 
 ::
 
@@ -56,6 +62,10 @@ required as the schema definition. See :ref:`cobol`.
 
 ..  py:method:: Fixed_Workbook.sheet( sheet )
 
+    Create a sheet for this workbook.
+    The :py:data:`sheet_type` attribute of the class ignored.
+    This must return a :py:class:`sheet.ExternalSchemaSheet`.
+
 ::
 
         def sheet( self, sheet_name ):
@@ -71,6 +81,8 @@ Or :py:meth:`cobol.COBOL_File.row_get`, which can be more complex still.
 
 ..  py:method:: Fixed_Workbook.rows_of( sheet )
 
+    Iterator through all rows. The sheet's schema is required to decompose the rows.
+
 ::
 
         def rows_of( self, sheet ):
@@ -84,6 +96,8 @@ Or :py:meth:`cobol.COBOL_File.row_get`, which can be more complex still.
                 yield row
 
 ..  py:method:: Fixed_Workbook.row_get( row, attribute )
+
+    Concrete implementation to get an attribute's value from a given row.
 
 ::
 

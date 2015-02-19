@@ -149,6 +149,9 @@ from stingray.cobol.defs import TextCell
 #
 # ..  py:class:: RepeatingAttribute
 #
+#     An attribute with dimensionality. Not all COBOL items repeat.
+#
+#
 # ::
 
 
@@ -174,23 +177,23 @@ class RepeatingAttribute( stingray.schema.Attribute ):
 
 # ..  py:method:: RepeatingAttribute.index( *values )
 #
-# If the number of index values matches the dimensionality, we'll return a tweaked
-# attribute which has just the offset required and a dimensionality of ``tuple()``.
+#     If the number of index values matches the dimensionality, we'll return a tweaked
+#     attribute which has just the offset required and a dimensionality of ``tuple()``.
 #
-# If the number of index values is insufficient, we'll return a tweaked attribute
-# with which has the starting offset and the dimensions left otherwise unspecified.
+#     If the number of index values is insufficient, we'll return a tweaked attribute
+#     with which has the starting offset and the dimensions left otherwise unspecified.
 #
-# If the number of index values is excessive, we'll attempt to pop from an empty
-# list.
+#     If the number of index values is excessive, we'll attempt to pop from an empty
+#     list.
 #
-# Note that :py:meth:`cobol.RepeatingAttribute.index` is applied incrementally when the application supplies some
-# of the indices.
+#     Note that :py:meth:`cobol.RepeatingAttribute.index` is applied incrementally when the application supplies some
+#     of the indices.
 #
-# -   First, an application can supply some of the indices, creating
-#     :py:class:`cobol.IndexedAttribute` with an initial offset.
+#     -   First, an application can supply some of the indices, creating
+#         :py:class:`cobol.IndexedAttribute` with an initial offset.
 #
-# -   Second, the :py:class:`COBOL_File` will supply any remaining indices,
-#     creating yet more temporary  :py:class:`cobol.IndexedAttribute` based on the initial offset.
+#     -   Second, the :py:class:`COBOL_File` will supply any remaining indices,
+#         creating yet more temporary  :py:class:`cobol.IndexedAttribute` based on the initial offset.
 # 
 # ::    
 
@@ -260,12 +263,12 @@ class RepeatingAttribute( stingray.schema.Attribute ):
 
 # ..  py:class:: IndexedAttribute
 #
-# The IndexedAttribute is a subclass of :py:class:`cobol.RepeatingAttribute` 
-# with (some) indices applied. Since this inherits the :py:meth:`cobol.RepeatingAttribute.index`
-# method, we can apply indices incrementally.
+#     The IndexedAttribute is a subclass of :py:class:`cobol.RepeatingAttribute` 
+#     with (some) indices applied. Since this inherits the :py:meth:`cobol.RepeatingAttribute.index`
+#     method, we can apply indices incrementally.
 #
-# This class is not built directly, but only created by :py:meth:`cobol.RepeatingAttribute.index`
-# with some (or all) indices applied.
+#     This class is not built directly, but only created by :py:meth:`cobol.RepeatingAttribute.index`
+#     with some (or all) indices applied.
 #
 # ::
 
@@ -298,8 +301,8 @@ class IndexedAttribute( RepeatingAttribute ):
 #
 # ..  py:class:: ODO_LazyRow
 #
-# This subclass of :py:class:`sheet.LazyRow` to provide add the feature to recompute sizes
-# and offsets in the case of a variable-located DDE due to an Occurs Depending On.
+#     This subclass of :py:class:`sheet.LazyRow` to provide add the feature to recompute sizes
+#     and offsets in the case of a variable-located DDE due to an Occurs Depending On.
 #
 # ::
 
@@ -324,19 +327,19 @@ class ODO_LazyRow( stingray.sheet.LazyRow ):
 # Dump a Record
 # ===============
 #
-# ..  py:function:: dump_iter
+# ..  py:function:: dump_iter( aDDE, aRow )
 #
-# To support dumping raw data from a record, this will iterate through all items
-# in an original DDE. It will a five-tuple with (dde, attribute, indices, bytes, Cell)
-# for each DDE.
+#     To support dumping raw data from a record, this will iterate through all items
+#     in an original DDE. It will a five-tuple with (dde, attribute, indices, bytes, Cell)
+#     for each DDE.
 #
-# If the DDE does not have an OCCURS clause, the indices will be an empty tuple.
-# Otherwise, each individual combination will be yielded. For big, nested tables, this
-# may turn out to be a lot of combinations.
+#     If the DDE does not have an OCCURS clause, the indices will be an empty tuple.
+#     Otherwise, each individual combination will be yielded. For big, nested tables, this
+#     may turn out to be a lot of combinations.
 #
-# The bytes is the raw bytes for non-FILLER and non-group elements. 
+#     The bytes is the raw bytes for non-FILLER and non-group elements. 
 #
-# The Cell will be a Cell object, either with valid data or an :py:class:`cobol.defs.ErrorCell`.
+#     The Cell will be a Cell object, either with valid data or an :py:class:`cobol.defs.ErrorCell`.
 #
 #    
 # ::
@@ -365,9 +368,9 @@ def dump_iter( aDDE, aRow ):
         for details in dump_iter( child, aRow ):
             yield details
 
-# ..  py:function:: dump
+# ..  py:function:: dump( schema, row )
 #
-# Dump data from a record, driven by the original DDE structure.
+#     Dump data from a record, driven by the original DDE structure.
 #
 # ::
 
@@ -453,8 +456,8 @@ def dump( schema, aRow ):
 #
 # ..  py:class:: COBOL_File
 #
-# This class introduces the expanded version of ``row_get`` that honors
-# a schema attribute with dimensionality.
+#     This class introduces the expanded version of ``row_get`` that honors
+#     a schema attribute with dimensionality.
 #
 # ::
 
@@ -474,19 +477,19 @@ class COBOL_File( Fixed_Workbook ):
 
 # ..  py:method:: COBOL_File.row_get_index( row, attr, *index )
 #
-# Returning a particular Cell from a row, however, is more interesting for COBOL
-# because the Attribute may contains an "OCCURS" clause.  In which case, we may need
-# to assemble a tuple of values.
+#     Returning a particular Cell from a row, however, is more interesting for COBOL
+#     because the Attribute may contains an "OCCURS" clause.  In which case, we may need
+#     to assemble a tuple of values.
 #
-# If there is dimensionality, then take the top-level dimension (``dim[0]``) and
-# use it as an iterator to fetch data based on the rest of the dimensions (``dim[1:]``).
+#     If there is dimensionality, then take the top-level dimension (``dim[0]``) and
+#     use it as an iterator to fetch data based on the rest of the dimensions (``dim[1:]``).
 #
-# This can assemble a recursive tuple-of-tuples if there are multiple levels
-# of dimensionality. 
+#     This can assemble a recursive tuple-of-tuples if there are multiple levels
+#     of dimensionality. 
 #
-# If too few index values are provided, a tuple of results is built around the missing values.
+#     If too few index values are provided, a tuple of results is built around the missing values.
 #
-# If enough values are provided, a single result object will be built.
+#     If enough values are provided, a single result object will be built.
 #
 # ..  important:: Performance
 #
@@ -529,11 +532,11 @@ class COBOL_File( Fixed_Workbook ):
             
 # ..  py:method:: COBOL_File.row_get( row, attr )
 #
-# The API method will get data from a row described by an attribute.
-# If the attribute has dimensions, then indices are used or multiple values are returned
-# by :py:meth:`cobol.COBOL_File.row_get_index`.
+#     The API method will get data from a row described by an attribute.
+#     If the attribute has dimensions, then indices are used or multiple values are returned
+#     by :py:meth:`cobol.COBOL_File.row_get_index`.
 #
-# If the attribute is has no dimensions, then it's simply pulled from the source row.
+#     If the attribute is has no dimensions, then it's simply pulled from the source row.
 #
 # ..  important:: Performance
 #
@@ -563,11 +566,11 @@ class COBOL_File( Fixed_Workbook ):
 #
 # ..  py:method:: COBOL_File.subrow( subschema, text_cell )
 #
-# In some COBOL files, there can be 01-level "subrecords" buried within an 01-level record.
+#     In some COBOL files, there can be 01-level "subrecords" buried within an 01-level record.
 #
-# We can use ``wb.subrow(subschema, row.cell(schema_header_dict['GENERIC-FIELD']))``
-# to map a particular field ('GENERIC-FIELD') to an entire 01-level schema, creating
-# a "subrow" from a single field within the parent row.
+#     We can use ``wb.subrow(subschema, row.cell(schema_header_dict['GENERIC-FIELD']))``
+#     to map a particular field ('GENERIC-FIELD') to an entire 01-level schema, creating
+#     a "subrow" from a single field within the parent row.
 #
 # ::
 
@@ -587,11 +590,12 @@ class COBOL_File( Fixed_Workbook ):
 # Character File
 # -----------------
 #
-# This is subclass of :py:class:`COBOL_File` that handles COBOL data parsing
-# where the underlying file is text. Since the file is text, Python handles
-# any OS-level bytes-to-text conversions.
 #
 # ..  py:class:: Character_File
+#
+#     This is subclass of :py:class:`COBOL_File` that handles COBOL data parsing
+#     where the underlying file is text. Since the file is text, Python handles
+#     any OS-level bytes-to-text conversions.
 #
 # ::
 
@@ -730,7 +734,7 @@ Character_File.log= logging.getLogger( Character_File.__qualname__ )
 #
 # ..  py:class:: RECFM_Parser
 #
-# This class hierarchy breaks up EBCDIC files into records. 
+#     This class hierarchy breaks up EBCDIC files into records. 
 #
 #
 # ::
@@ -749,7 +753,7 @@ class RECFM_Parser:
 
 # ..  py:class:: RECFM_F
 #
-# Simple fixed-length records. No header words.
+#     Simple fixed-length records. No header words.
 #
 # ::
 
@@ -775,7 +779,7 @@ class RECFM_F(RECFM_Parser):
 
 # ..  py:class:: RECFM_FB
 #
-# Simple fixed-blocked records. No header words.
+#     Simple fixed-blocked records. No header words.
 #
 # ::
 
@@ -788,7 +792,7 @@ class RECFM_FB( RECFM_F ):
     
 # ..  py:class:: RECFM_V
 #
-# Variable-length records. Each record has an RDW header word with the length.
+#     Variable-length records. Each record has an RDW header word with the length.
 #
 # ::
 
@@ -822,8 +826,8 @@ class RECFM_V(RECFM_Parser):
 #
 # ..  py:class:: RECFM_VB
 #
-# Variable-length, blocked records. Each block has a BDW; each record has an RDW header word.
-# These BDW and RDW describe the structure of the file.
+#     Variable-length, blocked records. Each block has a BDW; each record has an RDW header word.
+#     These BDW and RDW describe the structure of the file.
 #
 # ::
 
@@ -850,7 +854,7 @@ class RECFM_VB(RECFM_Parser):
         while len(bdw) != 0:
             blksize = struct.unpack( ">H2x", bdw )[0]
             block_data= self.source.read( blksize-4 )
-            yield bdw+data
+            yield bdw+block_data
             bdw= self.source.read(4)
     def _data_iter( self ):
         bdw= self.source.read(4)
@@ -871,8 +875,8 @@ class RECFM_VB(RECFM_Parser):
 #
 # ..  py:class:: RECFM_N
 #
-# Variable-length records without RDW's. Exasperating because we have to feed 
-# bytes to the buffer as needed until the record is complete.
+#     Variable-length records without RDW's. Exasperating because we have to feed 
+#     bytes to the buffer as needed until the record is complete.
 #
 # ::
 
@@ -898,10 +902,10 @@ class RECFM_N:
 
 # ..  py:class:: EBCDIC_File
 #
-# This subclass handles EBCDIC conversion and COMP-3
-# packed decimal numbers.  For this to work, the schema needs to use slightly different Cell-type conversions.  
+#     This subclass handles EBCDIC conversion and COMP-3
+#     packed decimal numbers.  For this to work, the schema needs to use slightly different Cell-type conversions.  
 #
-# Otherwise, this is similar to processing simple character data.
+#     Otherwise, this is similar to processing simple character data.
 #
 #
 # ::
@@ -941,31 +945,31 @@ class EBCDIC_File( Character_File ):
 
 # ..  py:method:: EBCDIC_File.rows_of( sheet )
 #
-# We must extend the :py:meth:`workbook.Character_File.rows_of` method to deal with 
-# two issues:
+#     We must extend the :py:meth:`workbook.Character_File.rows_of` method to deal with 
+#     two issues:
 #
-# -   If the schema depends on a variably located DDE, then we need to do the 
-#     :py:func:`cobol.defs.setSizeAndOffset` function using the DDE.
-#     This is done automagically by the :py:class:`cobol.ODO_LazyRow` object.
+#     -   If the schema depends on a variably located DDE, then we need to do the 
+#         :py:func:`cobol.defs.setSizeAndOffset` function using the DDE.
+#         This is done automagically by the :py:class:`cobol.ODO_LazyRow` object.
 #    
-# -   The legacy Z/OS RECFM details. 
+#     -   The legacy Z/OS RECFM details. 
 #
-#     *   We might have F or FB files, which are simply
-#         long runs of EBCDIC bytes with no line breaks.
-#         The LRECL must match the DDE.
+#         *   We might have F or FB files, which are simply
+#             long runs of EBCDIC bytes with no line breaks.
+#             The LRECL must match the DDE.
 #        
-#     *   We might have V (or VB) which have 4-byte header on each row (plus a 4-byte header on each block.)
-#         The LRECL doesn't matter.
+#         *   We might have V (or VB) which have 4-byte header on each row (plus a 4-byte header on each block.)
+#             The LRECL doesn't matter.
 #        
-#     *   We can tolerate the awful situation where it's variable length (Occurs Depending On)
-#         but there are no RECFM=V or RECFM=VB header words. We call this RECFM=N.
-#         We fetch an oversized buffer and push back bytes beyond the end of the record.
+#         *   We can tolerate the awful situation where it's variable length (Occurs Depending On)
+#             but there are no RECFM=V or RECFM=VB header words. We call this RECFM=N.
+#             We fetch an oversized buffer and push back bytes beyond the end of the record.
 #    
-#     This means that the ``super().rows_of( sheet )`` has been replaced with a RECFM-aware
-#     byte-parser. This byte parser may involve a back-and-forth to handle RECFM=N.
-#     In the case of RECFM=N, we provide an overly-large buffer (32768 bytes) and after
-#     any size and offset calculations, the ``row._size`` shows how many bytes were
-#     actually used.
+#         This means that the ``super().rows_of( sheet )`` has been replaced with a RECFM-aware
+#         byte-parser. This byte parser may involve a back-and-forth to handle RECFM=N.
+#         In the case of RECFM=N, we provide an overly-large buffer (32768 bytes) and after
+#         any size and offset calculations, the ``row._size`` shows how many bytes were
+#         actually used.
 #
 # ::
 

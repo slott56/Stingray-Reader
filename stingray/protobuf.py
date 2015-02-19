@@ -7,9 +7,10 @@
 # ###############################################################
 #
 # This is not a full implementation of Protobuf object representation.
-# It's a minimal implementation, enough to unpack iWork '13 files.
+# This is a minimal implementation of protobuf parsing, enough to unpack iWork '13 files.
 #
 # ..  py:module:: protobuf 
+#
 #
 # The iWork '13 use of protobuf
 # ===============================================
@@ -142,11 +143,11 @@ from stingray.snappy import varint
 
 # ..  py:class:: Message
 #
-# A definition of a generic protobuf message. This is both an instance
-# and it also as staticmethods that build instances from a buffer of bytes.
+#     A definition of a generic protobuf message. This is both an instance
+#     and it also as staticmethods that build instances from a buffer of bytes.
 #
-# We don't use subclasses of ``Message``. The proper way to use
-# Protobuf is to compile ``.proto`` files into Message class definitions.
+#     We don't use subclasses of ``Message``. The proper way to use
+#     Protobuf is to compile ``.proto`` files into Message class definitions.
 #
 # ::
 
@@ -166,8 +167,11 @@ class Message:
     def __getitem__( self, index ):
         return self.fields.get(index,[])
 
-# An iterative parser for the top-level (name, value) pairs in the protobuf stream.
-# This yields all of the pairs that are parsed.
+# ..  py:method::  Message.parse_protobuf_iter( message_bytes )
+#
+#     An iterative parser for the top-level (name, value) pairs in the protobuf stream.
+#     This yields all of the pairs that are parsed. This a static method which builds
+#     message instances.
 #
 # ::
 
@@ -204,9 +208,11 @@ class Message:
                 item, field_number, wire_type, item_size, field_value) )
             yield field_number, field_value
     
-# Create a bag in the form of a mapping ``{name: [value,value,value], ... }``. This will 
-# contain the top-level identifiers and the bytes that could be used to parse 
-# lower-level messages.
+# ..  py:method::  Message.parse_protobuf( message_bytes )
+#
+#     Create a bag in the form of a mapping ``{name: [value,value,value], ... }``. This will 
+#     contain the top-level identifiers and the bytes that could be used to parse 
+#     lower-level messages.
 #
 # ::
 
@@ -229,8 +235,8 @@ Message.log= logging.getLogger( Message.__class__.__qualname__ )
 
 # ..  py:class:: Archive_Reader
 #
-# A Reader for IWA archives. This requires that the archive has been 
-# processed by the :py:class:`snappy.Snappy` decompressor.
+#     A Reader for IWA archives. This requires that the archive has been 
+#     processed by the :py:class:`snappy.Snappy` decompressor.
 #
 # ::
 
@@ -247,6 +253,7 @@ class Archive_Reader:
     def __init__( self ):
         self.tsp_names= self._tsp_name_map()
         self.log= logging.getLogger( self.__class__.__qualname__ )
+
 
 # Mapping from internal code numbers of protobuf message class names.
 # This requires :file:`Numbers.json` and :file:`Common.json` from the installation
@@ -272,6 +279,8 @@ class Archive_Reader:
         )     
         return tsp_names
 
+# ..  py:method::  Archive_Reader.make_message( messageInfo, payload )
+#
 # Create the payload message from a MessageInfo instance and the payload bytes.
 #
 # ::
@@ -281,6 +290,8 @@ class Archive_Reader:
         name= self.tsp_names[messageInfo[1][0]]
         return Message( name, payload )
         
+# ..  py:method::  Archive_Reader.archive_iter( data )
+#
 # Iterate through all messages in this IWA archive. Locate the ArchiveInfo,
 # MessageInfo and Payload. Parse the payload to create the final message
 # that's associated with the ID in the ArchiveInfo.

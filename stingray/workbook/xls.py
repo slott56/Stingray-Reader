@@ -20,9 +20,11 @@ import stingray.cell
 #
 # ..  py:class:: XLS_Workbook
 #
-# This definition of a workbook wraps ``xlrd`` so that it fits the Stingray framework.   
-# We'll use proper :py:class:`cell.Cell` subclass instances instead of the default ``xlrd.Cell``
-# values that ``xlrd`` normally creates.
+#     Extract sheets, rows and cells from an XLS format file.
+#
+#     This definition of a workbook wraps :py:mod:`xlrd` so that it fits the Stingray framework.   
+#     We'll use proper :py:class:`cell.Cell` subclass instances instead of the default ``xlrd.Cell``
+#     values that :py:mod:`xlrd` normally creates.
 #
 # ::
 
@@ -44,6 +46,8 @@ class XLS_Workbook( Workbook ):
 
 # ..  py:method:: XLS_Workbook.sheets( )
 #
+#     Return the list of sheets for this workbook.
+#
 # ::
 
     def sheets( self ):
@@ -55,6 +59,9 @@ class XLS_Workbook( Workbook ):
 # until the callback to :py:meth:`XLS_Workbook.row_get`.
 #
 # ..  py:method:: XLS_Workbook.rows_of( sheet )
+#
+#     Iterate through rows of the given sheet.
+#
 #
 # ::
 
@@ -68,16 +75,20 @@ class XLS_Workbook( Workbook ):
 
 # ..  py:method:: XLS_Workbook.row_get( row, attribute )
 #
+#     Low-level get of a particular attribute from the given row.
+#
 # ::
 
     def row_get( self, row, attribute ):
         """Create a Cell from the row's data."""
         return row[attribute.position]
 
-# In :py:meth:`XLS_Workbook.rows_of` we built a row eagerly.
-# That way, returning an individual Cell is easy.
+# ..  py:method:: XLS_Workbook.cell( row, xlrd_cell )
 #
-# Convert a single ``xlrd.Cell`` to a proper subclass of :py:class:`cell.Cell`
+#     In :py:meth:`XLS_Workbook.rows_of` we built a row eagerly.
+#     That way, returning an individual Cell is easy.
+#
+#     Convert a single ``xlrd.Cell`` to a proper subclass of :py:class:`cell.Cell`
 #
 # ::
 

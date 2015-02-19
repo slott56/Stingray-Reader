@@ -162,8 +162,8 @@ logger= logging.getLogger( __name__ )
 #
 # ..  py:class:: UnsupportedError
 #
-# We have syntax which expresses an unsupported feature
-# of the COBOL language.
+#     A syntax which expresses an unsupported feature
+#     of the COBOL language.
 #
 # ::
 
@@ -223,6 +223,8 @@ class UnsupportedError( Exception ):
 #
 # ..  py:class:: TextCell
 #
+#     A cell which contains COBOL Alphanumeric data.
+#
 # ::
 
 class TextCell( stingray.cell.TextCell ):
@@ -233,7 +235,7 @@ class TextCell( stingray.cell.TextCell ):
 
 # ..  py:class:: NumberCell
 #
-# This is an abstraction to simply hold all the standard conversions
+#     This is an abstraction to simply hold all the standard conversions
 #
 # ::
 
@@ -246,6 +248,8 @@ class NumberCell( stingray.cell.NumberCell ):
 
 # ..  py:class:: NumberDisplayCell
 #
+#     A COBOL numeric item with USAGE DISPLAY.
+#
 # ::
 
 class NumberDisplayCell( NumberCell ):
@@ -255,6 +259,9 @@ class NumberDisplayCell( NumberCell ):
         self._value= workbook.number_display( self.raw, attr )
         
 # ..  py:class:: NumberCompCell
+#
+#     A COBOL numeric item with USAGE COMPUTATIONAL.
+#
 #
 # ::
 
@@ -268,6 +275,9 @@ class NumberCompCell( NumberCell ):
         
 # ..  py:class:: NumberComp3Cell
 #
+#     A COBOL numeric item with USAGE COMPUTATIONAL-3.
+#
+#
 # ::
 
 class NumberComp3Cell( NumberCell ):
@@ -278,6 +288,9 @@ class NumberComp3Cell( NumberCell ):
 
 
 # ..  py:class:: ErrorCell
+#
+#     A COBOL numeric item with invalid data.
+#
 #
 # ::
 
@@ -346,17 +359,17 @@ class ErrorCell( stingray.cell.ErrorCell ):
 #
 # ..  py:class:: Usage
 #
-# The Usage class provides detailed representation and conversion support
-# for a given DDE. A :py:class:`schema.Attribute` will refer to a 
-# :py:class:`cobol.defs.DDE`. This DDE will have a :py:class:`Usage` object that shows
-# how to create the underlying ``Cell`` instance from the raw data 
-# in the :py:class:`cobol.COBOL_File` subclass of ``Workbook``.
+#     The Usage class provides detailed representation and conversion support
+#     for a given DDE. A :py:class:`schema.Attribute` will refer to a 
+#     :py:class:`cobol.defs.DDE`. This DDE will have a :py:class:`Usage` object that shows
+#     how to create the underlying ``Cell`` instance from the raw data 
+#     in the :py:class:`cobol.COBOL_File` subclass of ``Workbook``.
 #
-# For numeric types, this may mean a fallback from creating a :py:class:`NumberCell`
-# to creating a :py:class:`ErrorCell`. If the number is invalid in some way, then 
-# an error is required.
+#     For numeric types, this may mean a fallback from creating a :py:class:`NumberCell`
+#     to creating a :py:class:`ErrorCell`. If the number is invalid in some way, then 
+#     an error is required.
 #
-# The superclass of ``Usage`` is abstract and doesn't compute a proper size.
+#     The superclass of ``Usage`` is abstract and doesn't compute a proper size.
 #
 # ::
 
@@ -385,6 +398,9 @@ class Usage:
 
 # ..  py:method:: Usage.create_func()
 #
+#     Create a CELL object. Use the raw bytes to build an Cell described
+#     by the given Attribute.
+#
 # ::
 
     def create_func( self, raw, workbook, attr ):
@@ -395,7 +411,7 @@ class Usage:
 
 # ..  py:method:: Usage.size( picture )
 #
-# The count is in bytes.  Not characters.
+#     The count is in bytes.  Not characters.
 #
 # ::
 
@@ -405,7 +421,7 @@ class Usage:
 
 # ..  py:class:: UsageDisplay
 #            
-# Usage "DISPLAY" is the COBOL language default.  It's also assumed for group-level items.
+#     Usage "DISPLAY" is the COBOL language default.  It's also assumed for group-level items.
 #         
 # ::
 
@@ -427,7 +443,7 @@ class UsageDisplay( Usage ):
 
 # ..  py:class:: UsageComp
 #
-# Usage "COMPUTATIONAL" is binary-encoded data.
+#     Usage "COMPUTATIONAL" is binary-encoded data.
 #
 # ::
   
@@ -452,7 +468,7 @@ class UsageComp( Usage ):
 
 # ..  py:class:: UsageComp3
 #
-# Usage "COMP-3" is packed-decimal encoded data.
+#     Usage "COMP-3" is packed-decimal encoded data.
 #
 # ::
  
@@ -514,8 +530,8 @@ class UsageComp3( Usage ):
 #
 # ..  py:class:: Allocation
 #
-# The :py:class:`Allocation` superclass defines an abstract base
-# class for the various allocation strategies.
+#     The :py:class:`Allocation` superclass defines an abstract base
+#     class for the various allocation strategies.
 #
 # ::
 
@@ -528,11 +544,11 @@ class Allocation:
 
 # ..  py:class:: Redefines
 #
-# The :py:class:`Redefines` subclass depends on another element. It uses
-# the referenced name to look up the offset and total size information.  
+#     The :py:class:`Redefines` subclass depends on another element. It uses
+#     the referenced name to look up the offset and total size information.  
 #
-# For this to work, the name must be resolved via the :py:meth:`Redefines.resolve` method.
-# The :py:func:`resolver` function applies the :py:meth:`Redefines.resolve` method throughout the structure.
+#     For this to work, the name must be resolved via the :py:meth:`Redefines.resolve` method.
+#     The :py:func:`resolver` function applies the :py:meth:`Redefines.resolve` method throughout the structure.
 #
 # ::
 
@@ -547,6 +563,9 @@ class Redefines(Allocation):
 
 # ..  py:method:: Redefines.resolve( aDDE )
 #
+#     Resolve a DDE name. See our ``self.refers_to`` to refer to a DDE within
+#     the given structure.
+#    
 # ::
 
     def resolve( self, aDDE ):
@@ -558,8 +577,8 @@ class Redefines(Allocation):
 
 # ..  py:method:: Redefines.offset( offset )
 #
-# For a redefines, this uses the resolved ``refers_to`` name and fetches 
-# the offset.
+#     For a redefines, this uses the resolved ``refers_to`` name and fetches 
+#     the offset.
 #
 # ::
 
@@ -570,6 +589,8 @@ class Redefines(Allocation):
         return self.refers_to.offset
 
 # ..  py:method:: Redefines.totalSize()
+#
+#     Returns the total size.
 #
 # ::
 
@@ -587,10 +608,10 @@ class Redefines(Allocation):
 #
 # ..  py:class:: Successor
 #
-# The :py:class:`Successor`
-# subclass does not depend on a named element, it depends on the immediate
-# predecessor. It uses that contextual offset and size information provided by 
-# the :py:func:`setSizeAndOffset` function.
+#     The :py:class:`Successor`
+#     subclass does not depend on a named element, it depends on the immediate
+#     predecessor. It uses that contextual offset and size information provided by 
+#     the :py:func:`setSizeAndOffset` function.
 #            
 # ::
 
@@ -606,13 +627,13 @@ class Successor(Allocation):
 
 # ..  py:method:: Successor.offset( offset )
 #
-# For a successor, we use the predecessor in the ``refers_to`` field
-# to track down the offset of the predecessor. 
+#     For a successor, we use the predecessor in the ``refers_to`` field
+#     to track down the offset of the predecessor. 
 #
-# This field's offset is predecessor offset + predecessor total size.
+#     This field's offset is predecessor offset + predecessor total size.
 #
-# The predecessor may have to do some thinking to get its total size or
-# offset because of an Occurs Depending On situation.
+#     The predecessor may have to do some thinking to get its total size or
+#     offset because of an Occurs Depending On situation.
 #
 # ::
 
@@ -625,8 +646,8 @@ class Successor(Allocation):
         
 # ..  py:method:: Successor.totalSize()
 #
-# The total size of a field with occurs depending on requires a record with live data.
-# Otherwise, the total size is trivially computed from the DDE definition.
+#     The total size of a field with occurs depending on requires a record with live data.
+#     Otherwise, the total size is trivially computed from the DDE definition.
 #    
 # ::
 
@@ -638,10 +659,9 @@ class Successor(Allocation):
 
 # ..  py:class:: Group
 #
-# The :py:class:`GROUP`
-# subclass does not depend on a named element, it depends on the immediate
-# parent group. It uses that contextual offset and size information provided by 
-# the :py:func:`setSizeAndOffset` function.
+#     This subclass does not depend on a named element, it depends on the immediate
+#     parent group. It uses that contextual offset and size information provided by 
+#     the :py:func:`setSizeAndOffset` function.
 #            
 # ::
 
@@ -655,13 +675,13 @@ class Group(Allocation):
         
 # ..  py:method:: Group.offset( offset )
 #
-# For the first item in a group, we use the group parent in the ``dde`` field
-# to track down the offset of the group we're a member of. 
+#     For the first item in a group, we use the group parent in the ``dde`` field
+#     to track down the offset of the group we're a member of. 
 #
-# This field's offset is the group offset, since this field is first in the group.
+#     This field's offset is the group offset, since this field is first in the group.
 #
-# The group may have to do some recursive processing to get its predecessor's total size or
-# offset because of an Occurs Depending On situation.
+#     The group may have to do some recursive processing to get its predecessor's total size or
+#     offset because of an Occurs Depending On situation.
 #
 # ::
 
@@ -674,9 +694,9 @@ class Group(Allocation):
         
 # ..  py:method:: Group.totalSize()
 #
-# This is essentially the same as the successor -- it's merely an item within a DDE,
-# we just track the first items separately with this subclass so that they
-# can refer to the parent to walk up the tree.
+#     This is essentially the same as the successor -- it's merely an item within a DDE,
+#     we just track the first items separately with this subclass so that they
+#     can refer to the parent to walk up the tree.
 #
 # ::
 
@@ -722,6 +742,8 @@ class Group(Allocation):
 #    
 # ..  py:class:: Occurs
 #
+#     Abstract superclass for an Occurs clause.
+#
 # ::
 
 class Occurs:
@@ -736,6 +758,9 @@ class Occurs:
         return 1
         
 # ..  py:class:: OccursFixed
+#
+#     Occurs clause with a simple fixed number of occurrences.
+#
 #
 # ::
 
@@ -753,6 +778,9 @@ class OccursFixed( Occurs ):
         return self._number
         
 # ..  py:class:: OccursDependingOn
+#
+#     Occurs clause with a DEPENDING ON option.
+#
 #
 # ::
 
@@ -781,23 +809,23 @@ class OccursDependingOn( Occurs ):
         
 # ..  py:class:: OccursDependingOnLimit
 #
-# This is an extension to OccursDependingOn. It limits the ODO clause to the defined
-# upper bound. 
+#     This is an extension to OccursDependingOn. It limits the ODO clause to the defined
+#     upper bound. 
 #
-# If we have ``05 SOMETHING OCCURS 1 TO 5 TIMES DEPENDING ON X`` and
-# the value of ``X`` is greater than 5, the maximum defined value, 5, is used.
+#     If we have ``05 SOMETHING OCCURS 1 TO 5 TIMES DEPENDING ON X`` and
+#     the value of ``X`` is greater than 5, the maximum defined value, 5, is used.
 #
-# This entirely hypothetical as a possible fix to a problem. It's probably a 
-# Very Bad Idea, and should be removed.
+#     This entirely hypothetical as a possible fix to a problem. It's probably a 
+#     Very Bad Idea, and should be removed.
 #
-# See http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.jsp?topic=%2Fcom.ibm.ent.cbl.zos.doc%2Ftopics%2FMG%2Figymch1027.htm
+#     See http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.jsp?topic=%2Fcom.ibm.ent.cbl.zos.doc%2Ftopics%2FMG%2Figymch1027.htm
 #
-#     "When the maximum length is used, it is not necessary to initialize the ODO object before the table receives data."
+#         "When the maximum length is used, it is not necessary to initialize the ODO object before the table receives data."
 #    
-#     "When TABLE-GROUP-1 is a receiving item, Enterprise COBOL moves the maximum number of character positions for it (450 bytes for TABLE-1 plus two bytes for ODO-KEY-1). Therefore, you need not initialize the length of TABLE-1 before moving the SEND-ITEM-1 data into the table."
+#         "When TABLE-GROUP-1 is a receiving item, Enterprise COBOL moves the maximum number of character positions for it (450 bytes for TABLE-1 plus two bytes for ODO-KEY-1). Therefore, you need not initialize the length of TABLE-1 before moving the SEND-ITEM-1 data into the table."
 #
-# Based on this (and bad data seen in the wild) we deduce that this upper limit
-# clamping **may** be a language  feature.
+#     Based on this (and bad data seen in the wild) we deduce that this upper limit
+#     clamping **may** be a language  feature.
 #
 # ::
 
@@ -816,81 +844,81 @@ class OccursDependingOnLimit( OccursDependingOn ):
 #
 # ..  py:class:: DDE
 #
-# The :py:class:`DDE` class itself defines a single element (group or elementary) of a
-# record.  There are several broad areas of functionality for a DDE:
-# (1) construction, (2) reporting and decoration, (3) processing record data.
+#     The :py:class:`DDE` class itself defines a single element (group or elementary) of a
+#     record.  There are several broad areas of functionality for a DDE:
+#     (1) construction, (2) reporting and decoration, (3) processing record data.
 #
-# The class definition includes the attributes determined at
-# parse time, attributes added during decoration time and
-# attributes used during decoration processing.
+#     The class definition includes the attributes determined at
+#     parse time, attributes added during decoration time and
+#     attributes used during decoration processing.
 #
-# As noted above, Group-level vs. Elementary-level *could* be separate subclasses of DDE.
-# They aren't right now, since group-level items can be used in an application program
-# like elementary items. 
+#     As noted above, Group-level vs. Elementary-level *could* be separate subclasses of DDE.
+#     They aren't right now, since group-level items can be used in an application program
+#     like elementary items. 
 #
-# A group-level item contains subsidiary DDE's and has no PICTURE clause.
-# An elementary-level DDE is defined by having a PICTURE clause.
+#     A group-level item contains subsidiary DDE's and has no PICTURE clause.
+#     An elementary-level DDE is defined by having a PICTURE clause.
 #
-# All group-level DDE's are effectively string-type data.
-# An elementary-level DDE with a numeric PICTURE is numeric-type data.  It can
-# be usage display or usage computational.  An elementary-level DDE with a string PICTURE is string-type data.
+#     All group-level DDE's are effectively string-type data.
+#     An elementary-level DDE with a numeric PICTURE is numeric-type data.  It can
+#     be usage display or usage computational.  An elementary-level DDE with a string PICTURE is string-type data.
 #
-# Occurs and Redefines can occur at any level.  
+#     Occurs and Redefines can occur at any level.  
 #
-# Each entry is defined by the following attributes:
+#     Each entry is defined by the following attributes:
 #
-# :level:
-#     COBOL level number 01 to 49, 66 or 88.
-# :myName:
-#     COBOL variable name
-# :occurs:
-#     An instance of :py:class:`Occurs`.
-#     the number of occurrences. The default is 1, which we call "format 0".
-#     There are two defined formats: format 1 has a fixed number of occurrences;
-#     format 2 is the Occurs Depending On with a variable number of occurrences.
-# :picture:
-#     the exploded picture clause, with ()'s expanded
-# :initValue:
-#     any initial value provided
-# :allocation:
-#     an instance of :py:class:`Allocation` used to compute the offset and total size.
-# :usage:
-#     an instance of :py:class:`Usage` to delegate data conversion properly.
-#     The actual conversion is handled by the workbook.
-# :contains:
-#     the list of contained fields within a group
-# :parent:
-#     A weakref to the immediate parent DDE
-# :top:
-#     A weakref to the overall record definition DDE.
+#     :level:
+#         COBOL level number 01 to 49, 66 or 88.
+#     :myName:
+#         COBOL variable name
+#     :occurs:
+#         An instance of :py:class:`Occurs`.
+#         the number of occurrences. The default is 1, which we call "format 0".
+#         There are two defined formats: format 1 has a fixed number of occurrences;
+#         format 2 is the Occurs Depending On with a variable number of occurrences.
+#     :picture:
+#         the exploded picture clause, with ()'s expanded
+#     :initValue:
+#         any initial value provided
+#     :allocation:
+#         an instance of :py:class:`Allocation` used to compute the offset and total size.
+#     :usage:
+#         an instance of :py:class:`Usage` to delegate data conversion properly.
+#         The actual conversion is handled by the workbook.
+#     :contains:
+#         the list of contained fields within a group
+#     :parent:
+#         A weakref to the immediate parent DDE
+#     :top:
+#         A weakref to the overall record definition DDE.
 #    
-# The following decorations are applied by functions that traverse the DDE structure.
+#     The following decorations are applied by functions that traverse the DDE structure.
 #
-# :sizeScalePrecision:
-#     ``Picture`` namedtuple with details derived from parsing the PICTURE clause
-# :size:
-#     the size of an individual occurrence
+#     :sizeScalePrecision:
+#         ``Picture`` namedtuple with details derived from parsing the PICTURE clause
+#     :size:
+#         the size of an individual occurrence
 #
-# The following features may have to be computed lazily if there's an Occurs
-# Depending On. Otherwise they can be computed eagerly.
+#     The following features may have to be computed lazily if there's an Occurs
+#     Depending On. Otherwise they can be computed eagerly.
 #
-# :variably_located:
-#     Variably Located if any this element or any child has Occurs Depending On.
-#     Otherwise (no ODO) the DDE is Statically Located.
-#     Actually, only element **after** the ODO element are variably located. But it's simpler
-#     to treat the whole record as variable.
-# :offset:
-#     offset to this field from start of record.
-# :totalSize:
-#     overall size of this item, including all occurrences.
+#     :variably_located:
+#         Variably Located if any this element or any child has Occurs Depending On.
+#         Otherwise (no ODO) the DDE is Statically Located.
+#         Actually, only element **after** the ODO element are variably located. But it's simpler
+#         to treat the whole record as variable.
+#     :offset:
+#         offset to this field from start of record.
+#     :totalSize:
+#         overall size of this item, including all occurrences.
 #
-# Additionally, this item -- in a way -- breaks the dependencies between
-# a :py:class:`schema.Attribute` and a DDE. It's appropriate for an Attribute
-# to depend on a DDE, but the reverse isn't proper. However, we DDE
-# referring to an attribute anyway.
+#     Additionally, this item -- in a way -- breaks the dependencies between
+#     a :py:class:`schema.Attribute` and a DDE. It's appropriate for an Attribute
+#     to depend on a DDE, but the reverse isn't proper. However, we DDE
+#     referring to an attribute anyway.
 #
-# :attribute:
-#     weakref to the :py:class:`schema.Attribute` built from this DDE.
+#     :attribute:
+#         weakref to the :py:class:`schema.Attribute` built from this DDE.
 #    
 # ::
 
@@ -1058,8 +1086,8 @@ class DDE:
 #
 # ..  py:function:: report( top )
 #
-# Report the structure of this DDE in COBOL-like notation enriched with
-# offsets and sizes.
+#     Report the structure of this DDE in COBOL-like notation enriched with
+#     offsets and sizes.
 #
 # ::
 
@@ -1078,7 +1106,7 @@ def report( top ):
 
 # ..  py:function:: source( top )
 #
-# Print a version of the source.
+#     Print a version of the source.
 #
 # ::
 
@@ -1089,8 +1117,8 @@ def source( top ):
 
 # ..  py:function:: search( top, aName )
 #
-# Search the structure for a given name.
-# This returns the found value or ``None``.
+#     Search the structure for a given name.
+#     This returns the found value or ``None``.
 #
 # ::
 
@@ -1102,9 +1130,9 @@ def search( top, aName ):
     
 # ..  py:function:: resolver( top )
 #
-# Apply :py:meth:`Allocation.resolve` throughout the structure.
-# For each ``REDEFINES`` or ``OCCURS DEPENDING ON`` clause, locate the DDE to which
-# it refers, saving a repeated searches.  
+#     Apply :py:meth:`Allocation.resolve` throughout the structure.
+#     For each ``REDEFINES`` or ``OCCURS DEPENDING ON`` clause, locate the DDE to which
+#     it refers, saving a repeated searches.  
 #
 # ::
 
@@ -1132,11 +1160,11 @@ def resolver( top ):
 #       
 # ..  py:function:: setDimensionality( top )
 #
-# Set Dimensionality for each DDE.
-# This will be the sequence of the non-default ``OCCURS`` clauses that apply to each item. 
-# This is the item's, plus any belonging to the parents of the item.
+#     Set Dimensionality for each DDE.
+#     This will be the sequence of the non-default ``OCCURS`` clauses that apply to each item. 
+#     This is the item's, plus any belonging to the parents of the item.
 #
-# The order is from top down to the elementary item.
+#     The order is from top down to the elementary item.
 #
 # ::
 
@@ -1172,9 +1200,9 @@ def setDimensionality( top ):
 #
 # ..  py:function:: setSizeAndOffset( aDDE, aRow=None, base=0 )
 #
-# This can be used with or without a row. The common case of all statically
-# located items does not require a row. 
-# It must be used with a row for the case of OCCURS Depending On.
+#     This can be used with or without a row. The common case of all statically
+#     located items does not require a row. 
+#     It must be used with a row for the case of OCCURS Depending On.
 #
 #
 # ..  todo:: Fix performance.

@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -75,13 +75,13 @@ a &#8220;save as&#8221; in Numbers &#8216;09 format.</p>
 <dl class="class">
 <dt id="workbook.Numbers09_Workbook">
 <em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">Numbers09_Workbook</tt><a class="headerlink" href="#workbook.Numbers09_Workbook" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Extract sheets, rows and cells from a Numbers &#8216;09 format file.</p>
+<p>The <tt class="docutils literal"><span class="pre">.numbers</span></tt> &#8220;file&#8221; is a ZIP file.</p>
+<p>The <tt class="file docutils literal"><span class="pre">index.xml</span></tt> element the interesting part of the archive.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Numbers09_Workbook</span><span class="p">(</span> <span class="n">Workbook</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Mac OS X Numbers Workbook for iWork 09.</span>
-
-<span class="sd">    The ``.numbers`` &quot;file&quot; is a ZIP file.</span>
-<span class="sd">    The index.xml is the interesting part of this.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">NUMBERS_NS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">&quot;ls&quot;</span><span class="p">:</span><span class="s">&quot;http://developer.apple.com/namespaces/ls&quot;</span><span class="p">,</span>
@@ -142,7 +142,12 @@ get the tables within the workspaces.</p>
     <span class="c"># or return map( self.cell, datasource )</span>
 </pre></div>
 </div>
-<p>Create a <tt class="docutils literal"><span class="pre">Cell</span></tt> instance from the decoded data.</p>
+<dl class="method">
+<dt id="workbook.Numbers09_Workbook.cell">
+<tt class="descclassname">Numbers09_Workbook.</tt><tt class="descname">cell</tt><big>(</big><em>cell</em><big>)</big><a class="headerlink" href="#workbook.Numbers09_Workbook.cell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <tt class="docutils literal"><span class="pre">Cell</span></tt> instance from the decoded data.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cell</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">cell</span> <span class="p">):</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="n">dom</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="p">)</span>
 
@@ -329,7 +334,14 @@ precisely.</p>
         <span class="n">digits</span><span class="o">=</span> <span class="n">digits</span><span class="p">,</span> <span class="n">comma</span><span class="o">=</span><span class="n">comma</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="n">precision</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>The &#8220;sheets&#8221; are the <tt class="docutils literal"><span class="pre">[</span> <span class="pre">(</span></tt> <em>workspace</em><cite>,</cite> <em>table</em> <tt class="docutils literal"><span class="pre">),</span> <span class="pre">...</span> <span class="pre">]</span></tt> pairs.</p>
+<dl class="method">
+<dt id="workbook.Numbers09_Workbook.sheets">
+<tt class="descclassname">Numbers09_Workbook.</tt><tt class="descname">sheets</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.Numbers09_Workbook.sheets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of &#8220;sheets&#8221; (actually underlying tables.)</p>
+<p>The &#8220;sheets&#8221; are <tt class="docutils literal"><span class="pre">[</span> <span class="pre">(</span></tt> <em>workspace</em><cite>,</cite> <em>table</em> <tt class="docutils literal"><span class="pre">),</span> <span class="pre">...</span> <span class="pre">]</span></tt> pairs.</p>
+<p>Picking a sheet involves matching a two-part name: (workspace, table).</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">sheets</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Build &quot;sheet&quot; names from workspace/table&quot;&quot;&quot;</span>
     <span class="n">sheet_list</span><span class="o">=</span> <span class="p">[]</span>
@@ -340,7 +352,12 @@ precisely.</p>
     <span class="k">return</span> <span class="n">sheet_list</span>
 </pre></div>
 </div>
-<p>Picking a sheet involves matching a two-part name: (workspace, table).</p>
+<dl class="method">
+<dt id="workbook.Numbers09_Workbook.rows_of">
+<tt class="descclassname">Numbers09_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.Numbers09_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterator through all rows of a sheet.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">rows_of</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Iterator over rows.</span>
 

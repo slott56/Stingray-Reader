@@ -29,13 +29,16 @@ Numbers '13 is entirely different. See :ref:`workbook_number13`.
 
 ..  py:class:: Numbers09_Workbook
 
+    Extract sheets, rows and cells from a Numbers '09 format file.
+        
+    The ``.numbers`` "file" is a ZIP file.
+        
+    The :file:`index.xml` element the interesting part of the archive.
+
 ::
 
     class Numbers09_Workbook( Workbook ):
         """Mac OS X Numbers Workbook for iWork 09.
-        
-        The ``.numbers`` "file" is a ZIP file.
-        The index.xml is the interesting part of this.
         """
         NUMBERS_NS = {
         "ls":"http://developer.apple.com/namespaces/ls",
@@ -102,7 +105,9 @@ Locate a "data source" within the XML document. Create ``Cell`` instances.
                 yield self.cell( cell_doc )
             # or return map( self.cell, datasource )
 
-Create a ``Cell`` instance from the decoded data.
+..  py:method:: Numbers09_Workbook.cell( cell )
+
+    Create a ``Cell`` instance from the decoded data.
 
 ::
 
@@ -298,7 +303,13 @@ Rewrite a number format from Numbers to Python
             return "{digits}{comma}.{precision}f".format(
                 digits= digits, comma=comma, precision=precision )
                         
-The "sheets" are the ``[ (`` *workspace*\ `,` *table* ``), ... ]`` pairs.
+..  py:method:: Numbers09_Workbook.sheets( )
+
+    Return a list of "sheets" (actually underlying tables.)
+
+    The "sheets" are ``[ (`` *workspace*\ `,` *table* ``), ... ]`` pairs.
+
+    Picking a sheet involves matching a two-part name: (workspace, table).
 
 ::
 
@@ -311,7 +322,9 @@ The "sheets" are the ``[ (`` *workspace*\ `,` *table* ``), ... ]`` pairs.
                     sheet_list.append( (w_name, t_name) )
             return sheet_list
 
-Picking a sheet involves matching a two-part name: (workspace, table).
+..  py:method:: Numbers09_Workbook.rows_of( sheet )
+
+    Iterator through all rows of a sheet.
 
 ::
 

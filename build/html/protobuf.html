@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -57,7 +57,7 @@
   <div class="section" id="protobuf-module-unpacking-iwork-13-files">
 <span id="protobuf"></span><h1>9.2. Protobuf Module &#8211; Unpacking iWork 13 files.<a class="headerlink" href="#protobuf-module-unpacking-iwork-13-files" title="Permalink to this headline">¶</a></h1>
 <p>This is not a full implementation of Protobuf object representation.
-It&#8217;s a minimal implementation, enough to unpack iWork &#8216;13 files.</p>
+This is a minimal implementation of protobuf parsing, enough to unpack iWork &#8216;13 files.</p>
 <span class="target" id="module-protobuf"></span><div class="section" id="the-iwork-13-use-of-protobuf">
 <h2>9.2.1. The iWork &#8216;13 use of protobuf<a class="headerlink" href="#the-iwork-13-use-of-protobuf" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://github.com/obriensp/iWorkFileFormat">https://github.com/obriensp/iWorkFileFormat</a></p>
@@ -163,12 +163,12 @@ actual data of interest.</p>
 <dl class="class">
 <dt id="protobuf.Message">
 <em class="property">class </em><tt class="descclassname">protobuf.</tt><tt class="descname">Message</tt><a class="headerlink" href="#protobuf.Message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>A definition of a generic protobuf message. This is both an instance
+<dd><p>A definition of a generic protobuf message. This is both an instance
 and it also as staticmethods that build instances from a buffer of bytes.</p>
 <p>We don&#8217;t use subclasses of <tt class="docutils literal"><span class="pre">Message</span></tt>. The proper way to use
 Protobuf is to compile <tt class="docutils literal"><span class="pre">.proto</span></tt> files into Message class definitions.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Message</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Generic protobuf message built from sequence of bytes.</span>
 
@@ -186,8 +186,14 @@ Protobuf is to compile <tt class="docutils literal"><span class="pre">.proto</sp
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">index</span><span class="p">,[])</span>
 </pre></div>
 </div>
-<p>An iterative parser for the top-level (name, value) pairs in the protobuf stream.
-This yields all of the pairs that are parsed.</p>
+<dl class="method">
+<dt id="protobuf.Message.parse_protobuf_iter">
+<tt class="descclassname">Message.</tt><tt class="descname">parse_protobuf_iter</tt><big>(</big><em>message_bytes</em><big>)</big><a class="headerlink" href="#protobuf.Message.parse_protobuf_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>An iterative parser for the top-level (name, value) pairs in the protobuf stream.
+This yields all of the pairs that are parsed. This a static method which builds
+message instances.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">parse_protobuf_iter</span><span class="p">(</span> <span class="n">message_bytes</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Parse a protobuf stream, iterating over the name-value pairs that are present.</span>
@@ -222,9 +228,14 @@ This yields all of the pairs that are parsed.</p>
         <span class="k">yield</span> <span class="n">field_number</span><span class="p">,</span> <span class="n">field_value</span>
 </pre></div>
 </div>
-<p>Create a bag in the form of a mapping <tt class="docutils literal"><span class="pre">{name:</span> <span class="pre">[value,value,value],</span> <span class="pre">...</span> <span class="pre">}</span></tt>. This will
+<dl class="method">
+<dt id="protobuf.Message.parse_protobuf">
+<tt class="descclassname">Message.</tt><tt class="descname">parse_protobuf</tt><big>(</big><em>message_bytes</em><big>)</big><a class="headerlink" href="#protobuf.Message.parse_protobuf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a bag in the form of a mapping <tt class="docutils literal"><span class="pre">{name:</span> <span class="pre">[value,value,value],</span> <span class="pre">...</span> <span class="pre">}</span></tt>. This will
 contain the top-level identifiers and the bytes that could be used to parse
 lower-level messages.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">parse_protobuf</span><span class="p">(</span> <span class="n">message_bytes</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates a bag of name-value pairs. Names can repeat, so values are</span>
@@ -244,10 +255,10 @@ create many <tt class="docutils literal"><span class="pre">Message</span></tt> i
 <dl class="class">
 <dt id="protobuf.Archive_Reader">
 <em class="property">class </em><tt class="descclassname">protobuf.</tt><tt class="descname">Archive_Reader</tt><a class="headerlink" href="#protobuf.Archive_Reader" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>A Reader for IWA archives. This requires that the archive has been
+<dd><p>A Reader for IWA archives. This requires that the archive has been
 processed by the <a class="reference internal" href="snappy.html#snappy.Snappy" title="snappy.Snappy"><tt class="xref py py-class docutils literal"><span class="pre">snappy.Snappy</span></tt></a> decompressor.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Archive_Reader</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Read and yield Archive entries from MessageInfo.type and payload.</span>
 <span class="sd">    Resolves the ID into a protobuf message name.</span>
@@ -284,12 +295,22 @@ directory.</p>
     <span class="k">return</span> <span class="n">tsp_names</span>
 </pre></div>
 </div>
+<dl class="method">
+<dt id="protobuf.Archive_Reader.make_message">
+<tt class="descclassname">Archive_Reader.</tt><tt class="descname">make_message</tt><big>(</big><em>messageInfo</em>, <em>payload</em><big>)</big><a class="headerlink" href="#protobuf.Archive_Reader.make_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <p>Create the payload message from a MessageInfo instance and the payload bytes.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">make_message</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">messageInfo</span><span class="p">,</span> <span class="n">payload</span> <span class="p">):</span>
     <span class="n">name</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tsp_names</span><span class="p">[</span><span class="n">messageInfo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
     <span class="k">return</span> <span class="n">Message</span><span class="p">(</span> <span class="n">name</span><span class="p">,</span> <span class="n">payload</span> <span class="p">)</span>
 </pre></div>
 </div>
+<dl class="method">
+<dt id="protobuf.Archive_Reader.archive_iter">
+<tt class="descclassname">Archive_Reader.</tt><tt class="descname">archive_iter</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#protobuf.Archive_Reader.archive_iter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <p>Iterate through all messages in this IWA archive. Locate the ArchiveInfo,
 MessageInfo and Payload. Parse the payload to create the final message
 that&#8217;s associated with the ID in the ArchiveInfo.</p>

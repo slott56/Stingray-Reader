@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -263,11 +263,11 @@ work, we establish a default locale.</p>
 <dl class="class">
 <dt id="cell.Cell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">Cell</tt><a class="headerlink" href="#cell.Cell" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>The <a class="reference internal" href="#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> class hierarchy extends this base class.  Note that we have
+<dd><p>The <a class="reference internal" href="#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> class hierarchy extends this base class.  Note that we have
 a relatively short list of built-in conversions.
 For more complex, application-specific conversions, the raw <tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt> is available as a property.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Cell</span><span class="p">(</span> <span class="n">Hashable</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A class hierarchy for each kind of Cell.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">workbook</span><span class="o">=</span><span class="bp">None</span> <span class="p">):</span>
@@ -319,9 +319,10 @@ hashable.</p>
 <dl class="class">
 <dt id="cell.EmptyCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">EmptyCell</tt><a class="headerlink" href="#cell.EmptyCell" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>An <tt class="docutils literal"><span class="pre">EmptyCell</span></tt> implements empty cells.  <tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt> may report them as a type <tt class="docutils literal"><span class="pre">XL_CELL_EMPTY</span></tt>.
+A Numbers spreadsheet may use the <tt class="docutils literal"><span class="pre">&lt;o&gt;</span></tt> or <tt class="docutils literal"><span class="pre">&lt;g&gt;</span></tt> tag.</p>
+</dd></dl>
 
-<p>An <tt class="docutils literal"><span class="pre">EmptyCell</span></tt> implements empty cells.  <tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt> may report them as a type <tt class="docutils literal"><span class="pre">XL_CELL_EMPTY</span></tt>. A Numbers spreadsheet may use the <tt class="docutils literal"><span class="pre">&lt;o&gt;</span></tt> or <tt class="docutils literal"><span class="pre">&lt;g&gt;</span></tt> tag.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">EmptyCell</span><span class="p">(</span> <span class="n">Cell</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The *value* will be &#39;&#39;, but we ignore that.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span> <span class="k">return</span> <span class="bp">True</span>
@@ -339,9 +340,7 @@ hashable.</p>
 <dl class="class">
 <dt id="cell.TextCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">TextCell</tt><a class="headerlink" href="#cell.TextCell" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>A <tt class="docutils literal"><span class="pre">TextCell</span></tt> implements the cells with text values.
+<dd><p>A <tt class="docutils literal"><span class="pre">TextCell</span></tt> implements the cells with text values.
 <tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt> may report them as a type <tt class="docutils literal"><span class="pre">XL_CELL_TEXT</span></tt>.
 It&#8217;s often possible to interpret the text as some other value,
 so the conversions make reasonable attempts at that.</p>
@@ -349,6 +348,8 @@ so the conversions make reasonable attempts at that.</p>
 This is the default type for Fixed format files, also.</p>
 <p>Note that COBOL files will explicitly have bytes values, not
 string values.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TextCell</span><span class="p">(</span> <span class="n">Cell</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A Cell which contains a Python string value.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">to_int</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
@@ -378,13 +379,13 @@ string values.</p>
 <dl class="class">
 <dt id="cell.NumberCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">NumberCell</tt><a class="headerlink" href="#cell.NumberCell" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>A <tt class="docutils literal"><span class="pre">NumberCell</span></tt> implements the cells with a float value.
+<dd><p>A <tt class="docutils literal"><span class="pre">NumberCell</span></tt> implements the cells with a float value.
 <tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt> may report them as a type <tt class="docutils literal"><span class="pre">XL_CELL_NUMBER</span></tt>.
 A variety of conversions make sense for a number value.
 Note that the <tt class="docutils literal"><span class="pre">to_datetime()</span></tt> conversion depends on <tt class="docutils literal"><span class="pre">xlrd</span></tt>.
 This may be a faulty assumption for some species of workbooks.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">NumberCell</span><span class="p">(</span> <span class="n">Cell</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A cell which contains a Python float value.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">to_int</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
@@ -424,11 +425,11 @@ This may be a faulty assumption for some species of workbooks.</p>
 <dl class="class">
 <dt id="cell.FloatDateCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">FloatDateCell</tt><a class="headerlink" href="#cell.FloatDateCell" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>A <tt class="docutils literal"><span class="pre">FloatDateCell</span></tt> implements the cells with <tt class="docutils literal"><span class="pre">XL_CELL_DATE</span></tt>.
+<dd><p>A <tt class="docutils literal"><span class="pre">FloatDateCell</span></tt> implements the cells with <tt class="docutils literal"><span class="pre">XL_CELL_DATE</span></tt>.
 Since the conversions are all identical to number,
 we simply inherit the features of a number.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">FloatDateCell</span><span class="p">(</span> <span class="n">NumberCell</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A cell which contains a float value that is actually an Excel date.&quot;&quot;&quot;</span>
     <span class="k">pass</span>
@@ -442,11 +443,11 @@ dressed-up floating-point numbers.</p>
 <dl class="class">
 <dt id="cell.BooleanCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">BooleanCell</tt><a class="headerlink" href="#cell.BooleanCell" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>A <tt class="docutils literal"><span class="pre">BooleanCell</span></tt> implements the cells with <tt class="docutils literal"><span class="pre">XL_CELL_BOOLEAN</span></tt>.
+<dd><p>A <tt class="docutils literal"><span class="pre">BooleanCell</span></tt> implements the cells with <tt class="docutils literal"><span class="pre">XL_CELL_BOOLEAN</span></tt>.
 Since the conversions are all identical to number,
 we simply inherit the features.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">BooleanCell</span><span class="p">(</span> <span class="n">NumberCell</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A cell which contains a boolean value.&quot;&quot;&quot;</span>
     <span class="k">pass</span>
@@ -458,11 +459,11 @@ we simply inherit the features.</p>
 <dl class="class">
 <dt id="cell.ErrorCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">ErrorCell</tt><a class="headerlink" href="#cell.ErrorCell" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>An <tt class="docutils literal"><span class="pre">ErrorCell</span></tt> implements the cells with <tt class="docutils literal"><span class="pre">XL_CELL_ERROR</span></tt>.
+<dd><p>An <tt class="docutils literal"><span class="pre">ErrorCell</span></tt> implements the cells with <tt class="docutils literal"><span class="pre">XL_CELL_ERROR</span></tt>.
 The only sensible conversion is <tt class="xref py py-meth docutils literal"><span class="pre">ErrorCell.to_str()</span></tt> which reports
 the error string for the cell.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ErrorCell</span><span class="p">(</span> <span class="n">Cell</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A cell which contains an error code.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">to_int</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
@@ -485,12 +486,12 @@ the error string for the cell.</p>
 <dl class="class">
 <dt id="cell.DateCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">DateCell</tt><a class="headerlink" href="#cell.DateCell" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>A <tt class="docutils literal"><span class="pre">DateCell</span></tt> implements a cell with a proper date-time value.
+<dd><p>A <tt class="docutils literal"><span class="pre">DateCell</span></tt> implements a cell with a proper date-time value.
 This is a value which did not come from a workbook float value.</p>
 <p>This could be a parsed string, for example.</p>
 <p>A variety of conversions make sense for a proper date value.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">DateCell</span><span class="p">(</span> <span class="n">Cell</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A cell which contains a proper :mod:`datetime` value.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">to_int</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
@@ -526,12 +527,20 @@ as text.</p>
 <a class="reference internal" href="#cell.TextCell" title="cell.TextCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.TextCell</span></tt></a>.</p>
 <div class="section" id="dates">
 <h3>4.13.1. Dates<a class="headerlink" href="#dates" title="Permalink to this headline">¶</a></h3>
-<p>The function <a class="reference internal" href="#cell.date_from_string" title="cell.date_from_string"><tt class="xref py py-func docutils literal"><span class="pre">date_from_string()</span></tt></a> is a closure based on a format string
-that returns a single-argument conversion function.</p>
 <dl class="function">
 <dt id="cell.date_from_string">
 <tt class="descclassname">cell.</tt><tt class="descname">date_from_string</tt><big>(</big><em>format</em><big>)</big><a class="headerlink" href="#cell.date_from_string" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A closure based on a format string
+that returns a single-argument conversion function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>format</strong> &#8211; the format string to use.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">date_from_string</span><span class="p">(</span> <span class="n">format</span> <span class="p">):</span>
     <span class="k">def</span> <span class="nf">the_conversion</span><span class="p">(</span> <span class="n">string</span> <span class="p">):</span>
@@ -543,7 +552,17 @@ that returns a single-argument conversion function.</p>
 <dl class="function">
 <dt id="cell.datecell_from_string">
 <tt class="descclassname">cell.</tt><tt class="descname">datecell_from_string</tt><big>(</big><em>format</em><big>)</big><a class="headerlink" href="#cell.datecell_from_string" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A closure based on a format string
+that returns a single-argument conversion function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>format</strong> &#8211; the format string to use.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">datecell_from_string</span><span class="p">(</span> <span class="n">format</span> <span class="p">):</span>
     <span class="n">dt_conv</span><span class="o">=</span> <span class="n">date_from_string</span><span class="p">(</span> <span class="n">format</span> <span class="p">)</span>
@@ -560,8 +579,18 @@ that returns a single-argument conversion function.</p>
 <p>The function <a class="reference internal" href="#cell.date_from_float" title="cell.date_from_float"><tt class="xref py py-func docutils literal"><span class="pre">date_from_float()</span></tt></a> is an additional closure based on a <tt class="docutils literal"><span class="pre">workbook.datemode</span></tt> that returns a single-argument conversion function.</p>
 <dl class="function">
 <dt id="cell.date_from_float">
-<tt class="descclassname">cell.</tt><tt class="descname">date_from_float</tt><big>(</big><em>format</em><big>)</big><a class="headerlink" href="#cell.date_from_float" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descclassname">cell.</tt><tt class="descname">date_from_float</tt><big>(</big><em>datemode</em><big>)</big><a class="headerlink" href="#cell.date_from_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>A closure based on a datemode setting
+that returns a single-argument conversion function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>datemode</strong> &#8211; the data mode for the workbook document as a whole.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">date_from_float</span><span class="p">(</span> <span class="n">datemode</span> <span class="p">):</span>
     <span class="k">def</span> <span class="nf">the_conversion</span><span class="p">(</span> <span class="n">value</span> <span class="p">):</span>

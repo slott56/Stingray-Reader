@@ -5,6 +5,10 @@
 # Workbook Base Definition
 # ==========================
 #
+# These are the definitions shared by all Workbook subclass definitions.
+#
+# ..  py:module:: workbook
+#
 # ::
 
 import logging
@@ -12,12 +16,10 @@ import os
 
 import stingray.sheet
 
-# ..  py:module:: workbook
-#
 # ..  py:class:: Workbook
 #
-# We note that these physical formats all encode a single, common data structure.
-# Here are some abstract definitions.
+#     All physical workbook formats all encode a single, common data structure.
+#     Here are some abstract definitions.
 #
 # ::
 
@@ -51,6 +53,8 @@ class Workbook:
 
 # ..  py:method:: Workbook.sheets( )
 #
+#     The list of sheet names.
+#
 # ::
 
     def sheets( self ):
@@ -73,6 +77,8 @@ class Workbook:
 
 # ..  py:method:: Workbook.rows_of( sheet )
 #
+#     An iterator over rows of a given sheet.
+#
 # ::
 
     def rows_of( self, sheet ):
@@ -80,6 +86,10 @@ class Workbook:
         raise NotImplementedError
 
 # ..  py:method:: Workbook.row_get( row, attribute )
+#
+#     Get a value from the current row using the current attribute.
+#     This is the essential, underlying implementation to fetch data
+#     from a row of a workbook. 
 #
 # ::
 

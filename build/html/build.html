@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -154,9 +154,9 @@ instead of using command-line shell script techniques.</p>
 <dl class="function">
 <dt id="sphinx_build">
 <tt class="descname">sphinx_build</tt><big>(</big><em>srcdir</em>, <em>outdir</em>, <em>buildername='html'</em><big>)</big><a class="headerlink" href="#sphinx_build" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Handle the simple use case for the <tt class="docutils literal"><span class="pre">sphinx-build</span></tt> script.</p>
+</dd></dl>
 
-<p>This function handles the simple use case for the <tt class="docutils literal"><span class="pre">sphinx-build</span></tt> script.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">sphinx_build</span><span class="p">(</span> <span class="n">srcdir</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">buildername</span><span class="o">=</span><span class="s">&#39;html&#39;</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Essentially: ``sphinx-build $* -b html source build/html``&quot;&quot;&quot;</span>
     <span class="n">confdir</span><span class="o">=</span> <span class="n">srcdir</span><span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span> <span class="n">srcdir</span> <span class="p">)</span>
@@ -173,10 +173,10 @@ instead of using command-line shell script techniques.</p>
 <dl class="function">
 <dt id="pylit_build">
 <tt class="descname">pylit_build</tt><big>(</big><em>srcdir</em>, <em>outdir</em><big>)</big><a class="headerlink" href="#pylit_build" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>This function handles the simple use case for PyLit.</p>
+<dd><p>Handle the simple use case for PyLit.</p>
 <p>This also handles the necessary rewrite to modify standard paths to Windows paths.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">pylit_build</span><span class="p">(</span> <span class="n">infile</span><span class="p">,</span> <span class="n">outfile</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Essentially: ``python3 -m pylit -t source/demo/data_quality.rst demo/test.py``</span>
 
@@ -195,11 +195,11 @@ instead of using command-line shell script techniques.</p>
 <dl class="function">
 <dt id="mkdir">
 <tt class="descname">mkdir</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#mkdir" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>This function handles the simple use case for assuring that the directory
+<dd><p>Handles the simple use case for assuring that the directory
 tree exists.</p>
 <p>This also handles a rewrite to modify standard paths to Windows paths.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">mkdir</span><span class="p">(</span> <span class="n">path</span> <span class="p">):</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">!=</span> <span class="s">&#39;/&#39;</span><span class="p">:</span>
         <span class="c"># Fix windows paths.</span>
@@ -219,9 +219,9 @@ tree exists.</p>
 <dl class="function">
 <dt id="copy_file">
 <tt class="descname">copy_file</tt><big>(</big><em>srcdir</em>, <em>outdir</em><big>)</big><a class="headerlink" href="#copy_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Handles the simple use case for copying a file.</p>
+</dd></dl>
 
-<p>This function handles the simple use case for copying a file</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">copy_file</span><span class="p">(</span> <span class="n">srcdir</span><span class="p">,</span> <span class="n">outdir</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Essentially: ``cp srcdir outdir``&quot;&quot;&quot;</span>
     <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span> <span class="n">srcdir</span><span class="p">,</span> <span class="n">outdir</span> <span class="p">)</span>
@@ -233,9 +233,9 @@ tree exists.</p>
 <dl class="function">
 <dt id="run_test">
 <tt class="descname">run_test</tt><big>(</big><big>)</big><a class="headerlink" href="#run_test" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>In effect, this does <tt class="docutils literal"><span class="pre">python3</span> <span class="pre">test/main.py</span></tt></p>
+</dd></dl>
 
-<p>In effect, this does <tt class="docutils literal"><span class="pre">python3</span> <span class="pre">test/main.py</span></tt></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">run_test</span><span class="p">():</span>
     <span class="kn">from</span> <span class="nn">test.main</span> <span class="kn">import</span> <span class="n">suite</span>
     <span class="kn">from</span> <span class="nn">test</span> <span class="kn">import</span> <span class="n">Logger</span>

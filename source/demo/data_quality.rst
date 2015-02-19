@@ -78,6 +78,8 @@ For this demo, here's a sample builder function:
 
 ..  py:function:: some_builder(aRow)
 
+    Build a Python dict from the row of data.
+
 ::
 
     def some_builder( aRow ):
@@ -194,6 +196,8 @@ It looks like this:
 For this demo, here's a sample sheet process function:
 
 ..  py:function:: process_some_sheet(sheet)
+
+    Process all rows of the named sheet.
 
 ::
 

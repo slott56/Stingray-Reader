@@ -126,7 +126,7 @@ Sphinx Build
 
 ..  py:function:: sphinx_build( srcdir, outdir, buildername='html' )
 
-This function handles the simple use case for the ``sphinx-build`` script.
+    Handle the simple use case for the ``sphinx-build`` script.
 
 ::
 
@@ -144,9 +144,9 @@ PyLit Build
 
 ..  py:function:: pylit_build( srcdir, outdir )
 
-This function handles the simple use case for PyLit.
+    Handle the simple use case for PyLit.
 
-This also handles the necessary rewrite to modify standard paths to Windows paths.
+    This also handles the necessary rewrite to modify standard paths to Windows paths.
 
 ::
 
@@ -166,10 +166,10 @@ Make Directories
 
 ..  py:function:: mkdir( path )
 
-This function handles the simple use case for assuring that the directory
-tree exists.
+    Handles the simple use case for assuring that the directory
+    tree exists.
 
-This also handles a rewrite to modify standard paths to Windows paths.
+    This also handles a rewrite to modify standard paths to Windows paths.
 
 ::
 
@@ -190,7 +190,7 @@ Copy Data File
 
 ..  py:function:: copy_file( srcdir, outdir )
 
-This function handles the simple use case for copying a file
+    Handles the simple use case for copying a file.
 
 ::
 
@@ -203,7 +203,7 @@ Run the Test Script
 
 ..  py:function:: run_test( )
 
-In effect, this does ``python3 test/main.py``
+    In effect, this does ``python3 test/main.py``
 
 ::
 

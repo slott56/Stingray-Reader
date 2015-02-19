@@ -40,13 +40,17 @@ from stingray.protobuf import Archive_Reader, Message
 #
 # ..  py:class:: Numbers13_Workbook
 #
+#     Extract sheets, rows and cells from a Numbers '13 format file.
+#        
+#     The ``.numbers`` "file" is a directory bundle or package.
+#        
+#     The :file:`index.zip` file is the interesting part of the bundle.
+#
+#
 # ::
 
 class Numbers13_Workbook( Workbook ):
     """Mac OS X Numbers Workbook for iWork '13.
-    
-    The ``.numbers`` "file" is a directory bundle or package.
-    The ``index.zip`` file is the interesting part of the bundle.
     """
     def __init__( self, name, file_object=None ):
         """Prepare the workbook for reading.
@@ -58,7 +62,7 @@ class Numbers13_Workbook( Workbook ):
         it as a proper directory. But we don't.
         """
         super().__init__( name, None )
-        self.archive= self.load_archive( name )
+        self.archive= self._load_archive( name )
    
 # Read the archive to get the serialized messages. This method deserializes
 # all of the protobuf-encoded messages. It's a shabby stand-in for proper protobuf
@@ -71,7 +75,7 @@ class Numbers13_Workbook( Workbook ):
 # ::
 
     @staticmethod
-    def load_archive( filename ):
+    def _load_archive( filename ):
         """Extract all the protobuf-serialized Archived messages.
         We don't actually need to read **all** of them.
         We really only need Index/Document.iwa, Index/CalculationEngine.iwa, and
@@ -197,6 +201,13 @@ class Numbers13_Workbook( Workbook ):
 #   This includes text cells with references to the data lists string literals.
 #   It includes number, date and boolean cells with numeric-looking data.
 #
+# ..  py:method:: Numbers13_Workbook.sheets( )
+#
+#     Return a list of "sheets" (actually underlying tables.)
+#
+#     The "sheets" are ``[ (`` *workspace*\ `,` *table* ``), ... ]`` pairs.
+#
+#     Picking a sheet involves matching a two-part name: (workspace, table).
 #
 # ::
 
@@ -247,7 +258,7 @@ class Numbers13_Workbook( Workbook ):
             v= stingray.cell.EmptyCell( "", self )
         elif celltype == 2:
             v= stingray.cell.NumberCell( value, self )
-        elif celltype in (3, 9): # Automatic??
+        elif celltype in (3, 9): # Text and Rich Text
             v= stingray.cell.TextCell( strings[value].decode("UTF-8"), self )
         elif celltype == 5:
             seconds= int(value)
@@ -267,6 +278,10 @@ class Numbers13_Workbook( Workbook ):
         self.log.debug( "_cell {0} = {1}".format( cell, v) ) 
         return v
 
+# ..  py:method:: Numbers13_Workbook.rows_of( sheet )
+#
+#     Iterator through all rows.
+#
 # ::
 
     def rows_of( self, sheet ):

@@ -20,10 +20,12 @@ ODS Workbook
 
 ..  py:module:: workbook
 
+We should use ``iterparse`` rather than simply parsing the entire XML document.
+If the document is large, then we can't hold it all in memory.
+
 ..  py:class:: ODS_Workbook
 
-We should use ``iterparse`` rather than simply parsing the entire document.
-If the document is large, then we can't hold it all in memory.
+    Extract sheets, rows and cells from a OOO ODS format file.
 
 ::
 
@@ -76,6 +78,8 @@ the name attribute from that tag.
 
 ..  py:method:: ODS_Workbook.sheets( )
 
+    Return the list of sheets for this workbook.
+    
 ::
 
         def sheets( self ):
@@ -94,7 +98,9 @@ it can be a mixed content value of the element.  There are three cases.
 
 -   :samp:`<table-cell value-type="{type}">{value}</table-cell>`
 
-..  py:method:: ODS_Workbook.rows_of( )
+..  py:method:: ODS_Workbook.rows_of( sheet )
+
+    Iterate through rows of the given sheet.
 
 ::
 
@@ -108,6 +114,8 @@ it can be a mixed content value of the element.  There are three cases.
                 yield row
 
 ..  py:method:: ODS_Workbook.row_get( row, attribute )
+
+    Low-level get of a particular attribute from the given row.
 
 ::
 

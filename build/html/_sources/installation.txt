@@ -85,7 +85,7 @@ This provides Python package information.
     
     setup(
         name='stingray',
-        version='4.4.4',
+        version='4.4.5',
         description='Schema-Based File Reader, COBOL, EBCDIC Conversion, ETL, Data Profiling',
         author='S.Lott',
         author_email='s_lott@yahoo.com',

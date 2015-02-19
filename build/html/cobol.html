@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -54,14 +54,27 @@
             
   <div class="section" id="the-cobol-package">
 <span id="cobol"></span><h1>10. The COBOL Package<a class="headerlink" href="#the-cobol-package" title="Permalink to this headline">¶</a></h1>
-<p>Or.  &#8220;How do I access COBOL-defined data from Python&#8221;?</p>
-<p>We have three problems to solve to get COBOL data into Python applications.</p>
+<p>If you&#8217;re interested in the implementation, you can cut to the chase.
+See <a class="reference internal" href="#cobol-impl"><em>COBOL Implementation</em></a>.</p>
 <ul class="simple">
-<li>Most of the <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> subclasses aren&#8217;t really appropriate for
+<li><a class="reference internal" href="cobol_init.html#cobol-init"><em>COBOL Package &#8211; Extend Schema to Handle EBCDIC</em></a>.</li>
+<li><a class="reference internal" href="cobol_loader.html#cobol-loader"><em>COBOL Loader Module &#8211; Parse COBOL Source to Load a Schema</em></a>.</li>
+<li><a class="reference internal" href="cobol_defs.html#cobol-defs"><em>COBOL Definitions Module &#8211; Handle COBOL DDE&#8217;s</em></a>.</li>
+</ul>
+<p>This section answers the following question:</p>
+<blockquote>
+<div>&#8220;How do I access COBOL-defined data from Python&#8221;?</div></blockquote>
+<p>We have three problems to solve to get COBOL data into Python applications.</p>
+<ul>
+<li><p class="first">How do we represent the data?</p>
+<p>Most of the <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> subclasses aren&#8217;t really appropriate for
 data coming from COBOL applications.
-Indeed, only <a class="reference internal" href="cell.html#cell.TextCell" title="cell.TextCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.TextCell</span></tt></a> is really appropriate.</li>
-<li>The schema more complex than the
-flat-file schema expected by <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>.<ul>
+Indeed, only <a class="reference internal" href="cell.html#cell.TextCell" title="cell.TextCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.TextCell</span></tt></a> is really appropriate.</p>
+</li>
+<li><p class="first">How do we represent the schema?</p>
+<p>The schema more complex than the
+flat-file schema expected by <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>.</p>
+<ul class="simple">
 <li>The structure is hierarchical.</li>
 <li>Each attribute has a large number of properties required for proper
 conversion to Python types.</li>
@@ -73,7 +86,9 @@ The USAGE information indicates the encoding of the data which is
 expected to be in the field, the actual data may not match the definition.</li>
 </ul>
 </li>
-<li>The schema is encoded in COBOL.  That is the subject of <a class="reference internal" href="cobol_loader.html#cobol-loader"><em>COBOL Loader Module &#8211; Parse COBOL Source to Load a Schema</em></a>.</li>
+<li><p class="first">How do we build the schema?</p>
+<p>The schema is encoded in COBOL.  That is the subject of <a class="reference internal" href="cobol_loader.html#cobol-loader"><em>COBOL Loader Module &#8211; Parse COBOL Source to Load a Schema</em></a>.</p>
+</li>
 </ul>
 <div class="section" id="requirements">
 <h2>10.1. Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
@@ -529,8 +544,8 @@ defined by the Usage and Picture classes.</p>
 <p>The <a class="reference internal" href="cobol_defs.html#cobol.defs.ErrorCell" title="cobol.defs.ErrorCell"><tt class="xref py py-class docutils literal"><span class="pre">cobol.defs.ErrorCell</span></tt></a> includes the raw bytes, but a value of <tt class="docutils literal"><span class="pre">None</span></tt>.</p>
 </div>
 </div>
-<div class="section" id="implementation">
-<h2>10.2. Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cobol-implementation">
+<span id="cobol-impl"></span><h2>10.2. COBOL Implementation<a class="headerlink" href="#cobol-implementation" title="Permalink to this headline">¶</a></h2>
 <p>These are the modules that extend the core functionality of Stingray
 to handle COBOL files and EBCDIC data.</p>
 <div class="toctree-wrapper compound">
@@ -567,7 +582,7 @@ to handle COBOL files and EBCDIC data.</p>
 <li><a class="reference internal" href="#the-bad-data-problem">10.1.9. The Bad Data Problem</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#implementation">10.2. Implementation</a></li>
+<li><a class="reference internal" href="#cobol-implementation">10.2. COBOL Implementation</a></li>
 </ul>
 </li>
 </ul>

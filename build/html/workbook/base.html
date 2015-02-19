@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -56,19 +56,20 @@
             
   <div class="section" id="workbook-base-definition">
 <span id="workbook-base"></span><h1>8.2. Workbook Base Definition<a class="headerlink" href="#workbook-base-definition" title="Permalink to this headline">¶</a></h1>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
+<p>These are the definitions shared by all Workbook subclass definitions.</p>
+<span class="target" id="module-workbook"></span><div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">import</span> <span class="nn">stingray.sheet</span>
 </pre></div>
 </div>
-<span class="target" id="module-workbook"></span><dl class="class">
+<dl class="class">
 <dt id="workbook.Workbook">
 <em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">Workbook</tt><a class="headerlink" href="#workbook.Workbook" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>We note that these physical formats all encode a single, common data structure.
+<dd><p>All physical workbook formats all encode a single, common data structure.
 Here are some abstract definitions.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Workbook</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;A workbook file; a collection of Sheets.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">file_object</span><span class="o">=</span><span class="bp">None</span> <span class="p">):</span>
@@ -102,7 +103,8 @@ absence of a schema.</p>
 <dl class="method">
 <dt id="workbook.Workbook.sheets">
 <tt class="descclassname">Workbook.</tt><tt class="descname">sheets</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.Workbook.sheets" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The list of sheet names.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">sheets</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;List of sheet names.</span>
@@ -124,7 +126,8 @@ absence of a schema.</p>
 <dl class="method">
 <dt id="workbook.Workbook.rows_of">
 <tt class="descclassname">Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>An iterator over rows of a given sheet.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">rows_of</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An iterator over all rows of the given sheet.&quot;&quot;&quot;</span>
@@ -134,7 +137,10 @@ absence of a schema.</p>
 <dl class="method">
 <dt id="workbook.Workbook.row_get">
 <tt class="descclassname">Workbook.</tt><tt class="descname">row_get</tt><big>(</big><em>row</em>, <em>attribute</em><big>)</big><a class="headerlink" href="#workbook.Workbook.row_get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get a value from the current row using the current attribute.
+This is the essential, underlying implementation to fetch data
+from a row of a workbook.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">row_get</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">attribute</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a Cell from the row&#39;s data.&quot;&quot;&quot;</span>

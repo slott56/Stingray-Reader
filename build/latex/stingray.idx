@@ -12,7 +12,7 @@
 \indexentry{datecell\_from\_string() (in module cell)|hyperpage}{18}
 \indexentry{date\_from\_float() (in module cell)|hyperpage}{19}
 \indexentry{sheet (module)|hyperpage}{19}
-\indexentry{Sheet (class in sheet)|hyperpage}{22}
+\indexentry{Sheet (class in sheet)|hyperpage}{23}
 \indexentry{Row (class in sheet)|hyperpage}{23}
 \indexentry{LazyRow (class in sheet)|hyperpage}{24}
 \indexentry{ExternalSchemaSheet (class in sheet)|hyperpage}{25}
@@ -32,129 +32,142 @@
 \indexentry{No\_Schema (class in workbook)|hyperpage}{43}
 \indexentry{Opener (class in workbook)|hyperpage}{43}
 \indexentry{open\_workbook() (in module workbook)|hyperpage}{44}
-\indexentry{workbook (module)|hyperpage}{44}
-\indexentry{Workbook (class in workbook)|hyperpage}{44}
+\indexentry{workbook (module)|hyperpage}{45}
+\indexentry{Workbook (class in workbook)|hyperpage}{45}
 \indexentry{sheet() (workbook.Workbook method)|hyperpage}{45}
 \indexentry{sheets() (workbook.Workbook method)|hyperpage}{45}
 \indexentry{rows\_of() (workbook.Workbook method)|hyperpage}{45}
-\indexentry{row\_get() (workbook.Workbook method)|hyperpage}{45}
+\indexentry{row\_get() (workbook.Workbook method)|hyperpage}{46}
 \indexentry{workbook (module)|hyperpage}{46}
 \indexentry{CSV\_Workbook (class in workbook)|hyperpage}{46}
 \indexentry{rows\_of() (workbook.CSV\_Workbook method)|hyperpage}{46}
-\indexentry{row\_get() (workbook.CSV\_Workbook method)|hyperpage}{46}
+\indexentry{row\_get() (workbook.CSV\_Workbook method)|hyperpage}{47}
 \indexentry{workbook (module)|hyperpage}{47}
 \indexentry{XLS\_Workbook (class in workbook)|hyperpage}{47}
 \indexentry{sheets() (workbook.XLS\_Workbook method)|hyperpage}{47}
-\indexentry{rows\_of() (workbook.XLS\_Workbook method)|hyperpage}{47}
-\indexentry{row\_get() (workbook.XLS\_Workbook method)|hyperpage}{47}
+\indexentry{rows\_of() (workbook.XLS\_Workbook method)|hyperpage}{48}
+\indexentry{row\_get() (workbook.XLS\_Workbook method)|hyperpage}{48}
+\indexentry{cell() (workbook.XLS\_Workbook method)|hyperpage}{48}
 \indexentry{workbook (module)|hyperpage}{48}
 \indexentry{XLSX\_Workbook (class in workbook)|hyperpage}{48}
 \indexentry{sheets() (workbook.XLSX\_Workbook method)|hyperpage}{50}
-\indexentry{rows\_of() (workbook.XLSX\_Workbook method)|hyperpage}{50}
-\indexentry{row\_get() (workbook.XLSX\_Workbook method)|hyperpage}{51}
-\indexentry{workbook (module)|hyperpage}{52}
-\indexentry{ODS\_Workbook (class in workbook)|hyperpage}{52}
+\indexentry{rows\_of() (workbook.XLSX\_Workbook method)|hyperpage}{51}
+\indexentry{row\_get() (workbook.XLSX\_Workbook method)|hyperpage}{52}
+\indexentry{cell() (workbook.XLSX\_Workbook method)|hyperpage}{52}
+\indexentry{workbook (module)|hyperpage}{53}
+\indexentry{ODS\_Workbook (class in workbook)|hyperpage}{53}
 \indexentry{sheets() (workbook.ODS\_Workbook method)|hyperpage}{53}
-\indexentry{rows\_of() (workbook.ODS\_Workbook method)|hyperpage}{53}
-\indexentry{row\_get() (workbook.ODS\_Workbook method)|hyperpage}{53}
+\indexentry{rows\_of() (workbook.ODS\_Workbook method)|hyperpage}{54}
+\indexentry{row\_get() (workbook.ODS\_Workbook method)|hyperpage}{54}
 \indexentry{workbook (module)|hyperpage}{55}
 \indexentry{Numbers09\_Workbook (class in workbook)|hyperpage}{55}
-\indexentry{workbook (module)|hyperpage}{60}
+\indexentry{cell() (workbook.Numbers09\_Workbook method)|hyperpage}{57}
+\indexentry{sheets() (workbook.Numbers09\_Workbook method)|hyperpage}{60}
+\indexentry{rows\_of() (workbook.Numbers09\_Workbook method)|hyperpage}{60}
+\indexentry{workbook (module)|hyperpage}{61}
 \indexentry{Numbers13\_Workbook (class in workbook)|hyperpage}{61}
-\indexentry{workbook (module)|hyperpage}{65}
-\indexentry{Fixed\_Workbook (class in workbook)|hyperpage}{65}
-\indexentry{sheet() (workbook.Fixed\_Workbook method)|hyperpage}{66}
-\indexentry{rows\_of() (workbook.Fixed\_Workbook method)|hyperpage}{66}
-\indexentry{row\_get() (workbook.Fixed\_Workbook method)|hyperpage}{66}
-\indexentry{snappy (module)|hyperpage}{66}
-\indexentry{bytes\_int() (in module snappy)|hyperpage}{67}
-\indexentry{varint() (in module snappy)|hyperpage}{67}
-\indexentry{Snappy (class in snappy)|hyperpage}{68}
-\indexentry{protobuf (module)|hyperpage}{70}
-\indexentry{Message (class in protobuf)|hyperpage}{72}
-\indexentry{Archive\_Reader (class in protobuf)|hyperpage}{74}
-\indexentry{cobol (module)|hyperpage}{83}
-\indexentry{RepeatingAttribute (class in cobol)|hyperpage}{86}
-\indexentry{index() (cobol.RepeatingAttribute method)|hyperpage}{86}
-\indexentry{IndexedAttribute (class in cobol)|hyperpage}{87}
-\indexentry{ODO\_LazyRow (class in cobol)|hyperpage}{88}
-\indexentry{dump\_iter() (in module cobol)|hyperpage}{88}
-\indexentry{dump() (in module cobol)|hyperpage}{89}
-\indexentry{COBOL\_File (class in cobol)|hyperpage}{90}
-\indexentry{row\_get\_index() (cobol.COBOL\_File method)|hyperpage}{91}
-\indexentry{row\_get() (cobol.COBOL\_File method)|hyperpage}{91}
-\indexentry{subrow() (cobol.COBOL\_File method)|hyperpage}{92}
-\indexentry{Character\_File (class in cobol)|hyperpage}{92}
-\indexentry{RECFM\_Parser (class in cobol)|hyperpage}{94}
-\indexentry{RECFM\_F (class in cobol)|hyperpage}{94}
-\indexentry{RECFM\_FB (class in cobol)|hyperpage}{95}
-\indexentry{RECFM\_V (class in cobol)|hyperpage}{95}
-\indexentry{RECFM\_VB (class in cobol)|hyperpage}{96}
-\indexentry{RECFM\_N (class in cobol)|hyperpage}{96}
-\indexentry{EBCDIC\_File (class in cobol)|hyperpage}{97}
-\indexentry{rows\_of() (cobol.EBCDIC\_File method)|hyperpage}{97}
-\indexentry{cobol.loader (module)|hyperpage}{98}
-\indexentry{SyntaxError (class in cobol.loader)|hyperpage}{106}
-\indexentry{Picture (class in cobol.loader)|hyperpage}{106}
-\indexentry{picture\_parser() (in module cobol.loader)|hyperpage}{106}
-\indexentry{Lexer (class in cobol.loader)|hyperpage}{107}
-\indexentry{clean() (cobol.loader.Lexer method)|hyperpage}{108}
-\indexentry{scan() (cobol.loader.Lexer method)|hyperpage}{108}
-\indexentry{Lexer\_Long\_Lines (class in cobol.loader)|hyperpage}{108}
-\indexentry{RecordFactory (class in cobol.loader)|hyperpage}{109}
-\indexentry{dde\_iter() (cobol.loader.RecordFactory method)|hyperpage}{112}
-\indexentry{makeRecord() (cobol.loader.RecordFactory method)|hyperpage}{114}
-\indexentry{decorate() (cobol.loader.RecordFactory method)|hyperpage}{115}
-\indexentry{make\_attr() (in module cobol.loader)|hyperpage}{116}
-\indexentry{make\_schema() (in module cobol.loader)|hyperpage}{116}
-\indexentry{COBOLSchemaLoader (class in cobol.loader)|hyperpage}{116}
-\indexentry{load() (cobol.loader.COBOLSchemaLoader method)|hyperpage}{117}
-\indexentry{COBOL\_schema() (in module cobol.loader)|hyperpage}{117}
-\indexentry{COBOL\_schemata() (in module cobol.loader)|hyperpage}{117}
-\indexentry{cobol.defs (module)|hyperpage}{118}
-\indexentry{UnsupportedError (class in cobol.defs)|hyperpage}{120}
-\indexentry{TextCell (class in cobol.defs)|hyperpage}{121}
-\indexentry{NumberCell (class in cobol.defs)|hyperpage}{121}
-\indexentry{NumberDisplayCell (class in cobol.defs)|hyperpage}{121}
-\indexentry{NumberCompCell (class in cobol.defs)|hyperpage}{121}
-\indexentry{NumberComp3Cell (class in cobol.defs)|hyperpage}{121}
-\indexentry{ErrorCell (class in cobol.defs)|hyperpage}{122}
-\indexentry{Usage (class in cobol.defs)|hyperpage}{123}
-\indexentry{create\_func() (cobol.defs.Usage method)|hyperpage}{124}
-\indexentry{size() (cobol.defs.Usage method)|hyperpage}{124}
-\indexentry{UsageDisplay (class in cobol.defs)|hyperpage}{124}
-\indexentry{UsageComp (class in cobol.defs)|hyperpage}{124}
-\indexentry{UsageComp3 (class in cobol.defs)|hyperpage}{125}
-\indexentry{Allocation (class in cobol.defs)|hyperpage}{126}
-\indexentry{Redefines (class in cobol.defs)|hyperpage}{126}
-\indexentry{resolve() (cobol.defs.Redefines method)|hyperpage}{127}
-\indexentry{offset() (cobol.defs.Redefines method)|hyperpage}{127}
-\indexentry{totalSize() (cobol.defs.Redefines method)|hyperpage}{127}
-\indexentry{Successor (class in cobol.defs)|hyperpage}{127}
-\indexentry{offset() (cobol.defs.Successor method)|hyperpage}{127}
-\indexentry{totalSize() (cobol.defs.Successor method)|hyperpage}{128}
-\indexentry{Group (class in cobol.defs)|hyperpage}{128}
-\indexentry{offset() (cobol.defs.Group method)|hyperpage}{128}
-\indexentry{totalSize() (cobol.defs.Group method)|hyperpage}{128}
-\indexentry{Occurs (class in cobol.defs)|hyperpage}{129}
-\indexentry{OccursFixed (class in cobol.defs)|hyperpage}{129}
-\indexentry{OccursDependingOn (class in cobol.defs)|hyperpage}{129}
-\indexentry{OccursDependingOnLimit (class in cobol.defs)|hyperpage}{130}
-\indexentry{DDE (class in cobol.defs)|hyperpage}{130}
-\indexentry{DDE.\_\_iter\_\_ (class in cobol.defs)|hyperpage}{133}
-\indexentry{report() (in module cobol.defs)|hyperpage}{134}
-\indexentry{source() (in module cobol.defs)|hyperpage}{134}
-\indexentry{search() (in module cobol.defs)|hyperpage}{134}
-\indexentry{resolver() (in module cobol.defs)|hyperpage}{134}
-\indexentry{setDimensionality() (in module cobol.defs)|hyperpage}{135}
-\indexentry{setSizeAndOffset() (in module cobol.defs)|hyperpage}{135}
-\indexentry{make\_builder() (built-in function)|hyperpage}{139}
-\indexentry{process\_sheet() (built-in function)|hyperpage}{142}
-\indexentry{process\_workbook() (built-in function)|hyperpage}{142}
-\indexentry{some\_builder() (built-in function)|hyperpage}{150}
-\indexentry{process\_some\_sheet() (built-in function)|hyperpage}{152}
-\indexentry{sphinx\_build() (built-in function)|hyperpage}{237}
-\indexentry{pylit\_build() (built-in function)|hyperpage}{237}
-\indexentry{mkdir() (built-in function)|hyperpage}{238}
-\indexentry{copy\_file() (built-in function)|hyperpage}{238}
-\indexentry{run\_test() (built-in function)|hyperpage}{238}
+\indexentry{sheets() (workbook.Numbers13\_Workbook method)|hyperpage}{64}
+\indexentry{rows\_of() (workbook.Numbers13\_Workbook method)|hyperpage}{65}
+\indexentry{workbook (module)|hyperpage}{66}
+\indexentry{Fixed\_Workbook (class in workbook)|hyperpage}{66}
+\indexentry{sheet() (workbook.Fixed\_Workbook method)|hyperpage}{67}
+\indexentry{rows\_of() (workbook.Fixed\_Workbook method)|hyperpage}{67}
+\indexentry{row\_get() (workbook.Fixed\_Workbook method)|hyperpage}{67}
+\indexentry{snappy (module)|hyperpage}{68}
+\indexentry{bytes\_int() (in module snappy)|hyperpage}{68}
+\indexentry{varint() (in module snappy)|hyperpage}{69}
+\indexentry{Snappy (class in snappy)|hyperpage}{70}
+\indexentry{lz77() (snappy.Snappy method)|hyperpage}{70}
+\indexentry{decompress() (snappy.Snappy method)|hyperpage}{71}
+\indexentry{protobuf (module)|hyperpage}{72}
+\indexentry{Message (class in protobuf)|hyperpage}{74}
+\indexentry{parse\_protobuf\_iter() (protobuf.Message method)|hyperpage}{74}
+\indexentry{parse\_protobuf() (protobuf.Message method)|hyperpage}{75}
+\indexentry{Archive\_Reader (class in protobuf)|hyperpage}{75}
+\indexentry{make\_message() (protobuf.Archive\_Reader method)|hyperpage}{76}
+\indexentry{archive\_iter() (protobuf.Archive\_Reader method)|hyperpage}{76}
+\indexentry{cobol (module)|hyperpage}{85}
+\indexentry{RepeatingAttribute (class in cobol)|hyperpage}{87}
+\indexentry{index() (cobol.RepeatingAttribute method)|hyperpage}{87}
+\indexentry{IndexedAttribute (class in cobol)|hyperpage}{89}
+\indexentry{ODO\_LazyRow (class in cobol)|hyperpage}{89}
+\indexentry{dump\_iter() (in module cobol)|hyperpage}{90}
+\indexentry{dump() (in module cobol)|hyperpage}{90}
+\indexentry{COBOL\_File (class in cobol)|hyperpage}{92}
+\indexentry{row\_get\_index() (cobol.COBOL\_File method)|hyperpage}{92}
+\indexentry{row\_get() (cobol.COBOL\_File method)|hyperpage}{93}
+\indexentry{subrow() (cobol.COBOL\_File method)|hyperpage}{93}
+\indexentry{Character\_File (class in cobol)|hyperpage}{94}
+\indexentry{RECFM\_Parser (class in cobol)|hyperpage}{96}
+\indexentry{RECFM\_F (class in cobol)|hyperpage}{96}
+\indexentry{RECFM\_FB (class in cobol)|hyperpage}{96}
+\indexentry{RECFM\_V (class in cobol)|hyperpage}{96}
+\indexentry{RECFM\_VB (class in cobol)|hyperpage}{97}
+\indexentry{RECFM\_N (class in cobol)|hyperpage}{98}
+\indexentry{EBCDIC\_File (class in cobol)|hyperpage}{98}
+\indexentry{rows\_of() (cobol.EBCDIC\_File method)|hyperpage}{99}
+\indexentry{cobol.loader (module)|hyperpage}{100}
+\indexentry{SyntaxError (class in cobol.loader)|hyperpage}{107}
+\indexentry{Picture (class in cobol.loader)|hyperpage}{107}
+\indexentry{picture\_parser() (in module cobol.loader)|hyperpage}{107}
+\indexentry{Lexer (class in cobol.loader)|hyperpage}{108}
+\indexentry{clean() (cobol.loader.Lexer method)|hyperpage}{109}
+\indexentry{scan() (cobol.loader.Lexer method)|hyperpage}{109}
+\indexentry{Lexer\_Long\_Lines (class in cobol.loader)|hyperpage}{109}
+\indexentry{RecordFactory (class in cobol.loader)|hyperpage}{110}
+\indexentry{dde\_iter() (cobol.loader.RecordFactory method)|hyperpage}{113}
+\indexentry{makeRecord() (cobol.loader.RecordFactory method)|hyperpage}{115}
+\indexentry{decorate() (cobol.loader.RecordFactory method)|hyperpage}{116}
+\indexentry{make\_attr() (in module cobol.loader)|hyperpage}{117}
+\indexentry{make\_schema() (in module cobol.loader)|hyperpage}{117}
+\indexentry{COBOLSchemaLoader (class in cobol.loader)|hyperpage}{118}
+\indexentry{load() (cobol.loader.COBOLSchemaLoader method)|hyperpage}{118}
+\indexentry{COBOL\_schema() (in module cobol.loader)|hyperpage}{118}
+\indexentry{COBOL\_schemata() (in module cobol.loader)|hyperpage}{119}
+\indexentry{cobol.defs (module)|hyperpage}{120}
+\indexentry{UnsupportedError (class in cobol.defs)|hyperpage}{121}
+\indexentry{TextCell (class in cobol.defs)|hyperpage}{122}
+\indexentry{NumberCell (class in cobol.defs)|hyperpage}{123}
+\indexentry{NumberDisplayCell (class in cobol.defs)|hyperpage}{123}
+\indexentry{NumberCompCell (class in cobol.defs)|hyperpage}{123}
+\indexentry{NumberComp3Cell (class in cobol.defs)|hyperpage}{123}
+\indexentry{ErrorCell (class in cobol.defs)|hyperpage}{123}
+\indexentry{Usage (class in cobol.defs)|hyperpage}{125}
+\indexentry{create\_func() (cobol.defs.Usage method)|hyperpage}{126}
+\indexentry{size() (cobol.defs.Usage method)|hyperpage}{126}
+\indexentry{UsageDisplay (class in cobol.defs)|hyperpage}{126}
+\indexentry{UsageComp (class in cobol.defs)|hyperpage}{126}
+\indexentry{UsageComp3 (class in cobol.defs)|hyperpage}{127}
+\indexentry{Allocation (class in cobol.defs)|hyperpage}{128}
+\indexentry{Redefines (class in cobol.defs)|hyperpage}{128}
+\indexentry{resolve() (cobol.defs.Redefines method)|hyperpage}{129}
+\indexentry{offset() (cobol.defs.Redefines method)|hyperpage}{129}
+\indexentry{totalSize() (cobol.defs.Redefines method)|hyperpage}{129}
+\indexentry{Successor (class in cobol.defs)|hyperpage}{129}
+\indexentry{offset() (cobol.defs.Successor method)|hyperpage}{130}
+\indexentry{totalSize() (cobol.defs.Successor method)|hyperpage}{130}
+\indexentry{Group (class in cobol.defs)|hyperpage}{130}
+\indexentry{offset() (cobol.defs.Group method)|hyperpage}{130}
+\indexentry{totalSize() (cobol.defs.Group method)|hyperpage}{130}
+\indexentry{Occurs (class in cobol.defs)|hyperpage}{131}
+\indexentry{OccursFixed (class in cobol.defs)|hyperpage}{131}
+\indexentry{OccursDependingOn (class in cobol.defs)|hyperpage}{131}
+\indexentry{OccursDependingOnLimit (class in cobol.defs)|hyperpage}{132}
+\indexentry{DDE (class in cobol.defs)|hyperpage}{132}
+\indexentry{DDE.\_\_iter\_\_ (class in cobol.defs)|hyperpage}{135}
+\indexentry{report() (in module cobol.defs)|hyperpage}{136}
+\indexentry{source() (in module cobol.defs)|hyperpage}{136}
+\indexentry{search() (in module cobol.defs)|hyperpage}{136}
+\indexentry{resolver() (in module cobol.defs)|hyperpage}{136}
+\indexentry{setDimensionality() (in module cobol.defs)|hyperpage}{137}
+\indexentry{setSizeAndOffset() (in module cobol.defs)|hyperpage}{137}
+\indexentry{make\_builder() (built-in function)|hyperpage}{141}
+\indexentry{process\_sheet() (built-in function)|hyperpage}{144}
+\indexentry{process\_workbook() (built-in function)|hyperpage}{144}
+\indexentry{some\_builder() (built-in function)|hyperpage}{152}
+\indexentry{process\_some\_sheet() (built-in function)|hyperpage}{154}
+\indexentry{sphinx\_build() (built-in function)|hyperpage}{239}
+\indexentry{pylit\_build() (built-in function)|hyperpage}{239}
+\indexentry{mkdir() (built-in function)|hyperpage}{240}
+\indexentry{copy\_file() (built-in function)|hyperpage}{240}
+\indexentry{run\_test() (built-in function)|hyperpage}{240}

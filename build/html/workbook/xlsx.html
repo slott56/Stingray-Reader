@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -71,8 +71,7 @@
 <span class="target" id="module-workbook"></span><dl class="class">
 <dt id="workbook.XLSX_Workbook">
 <em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">XLSX_Workbook</tt><a class="headerlink" href="#workbook.XLSX_Workbook" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dd><p>Extract sheets, rows and cells from an XLSX format file.</p>
 <p>We&#8217;re opening a ZIP archive and parsing the various XML documents
 that we find therein.</p>
 <p>The <tt class="xref py py-class docutils literal"><span class="pre">ElementTree</span></tt> incremental parser provides
@@ -81,6 +80,8 @@ the sometimes large XML documents.</p>
 <p>See <a class="reference external" href="http://effbot.org/zone/element-iterparse.htm">http://effbot.org/zone/element-iterparse.htm</a></p>
 <p>The class as a whole defines some handy constants like XML namespaces
 and a pattern for parsing Cell ID&#8217;s to separate the letters from the numbers.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">XLSX_Workbook</span><span class="p">(</span> <span class="n">Workbook</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;ECMA Standard XLSX or XLSM documents.</span>
 <span class="sd">    Locate sheets and rows within a given sheet.</span>
@@ -180,7 +181,8 @@ with tempfile.TemporaryFile( ) as temp:
 <dl class="method">
 <dt id="workbook.XLSX_Workbook.sheets">
 <tt class="descclassname">XLSX_Workbook.</tt><tt class="descname">sheets</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.XLSX_Workbook.sheets" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return the list of sheets for this workbook.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">sheets</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_to_id</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
@@ -218,7 +220,8 @@ enough information to build the Cell instance.</li>
 <dl class="method">
 <dt id="workbook.XLSX_Workbook.rows_of">
 <tt class="descclassname">XLSX_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.XLSX_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Iterate through rows of the given sheet.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">rows_of</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Iterator over rows as a list of Cells for a named worksheet.&quot;&quot;&quot;</span>
@@ -274,15 +277,21 @@ enough information to build the Cell instance.</li>
 <dl class="method">
 <dt id="workbook.XLSX_Workbook.row_get">
 <tt class="descclassname">XLSX_Workbook.</tt><tt class="descname">row_get</tt><big>(</big><em>row</em>, <em>attribute</em><big>)</big><a class="headerlink" href="#workbook.XLSX_Workbook.row_get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Low-level get of a particular attribute from the given row.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">row_get</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">attribute</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a Cell from the row&#39;s data.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="n">attribute</span><span class="o">.</span><span class="n">position</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Build a subclass of <a class="reference internal" href="../cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> from the current value tag content plus the
+<dl class="method">
+<dt id="workbook.XLSX_Workbook.cell">
+<tt class="descclassname">XLSX_Workbook.</tt><tt class="descname">cell</tt><big>(</big><em>row</em>, <em>element</em><big>)</big><a class="headerlink" href="#workbook.XLSX_Workbook.cell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a subclass of <a class="reference internal" href="../cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> from the current value tag content plus the
 containing cell type information.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">cell</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">element</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a proper :py:class:`cell.Cell` subclass from cell and value information.&quot;&quot;&quot;</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_id</span><span class="p">,</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span> <span class="p">)</span>

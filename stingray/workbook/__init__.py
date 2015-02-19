@@ -296,8 +296,8 @@ from stingray.workbook.fixed import Fixed_Workbook
 #
 # ..  py:class:: No_Schema
 #
-# The :py:class:`No_Schema` exception is raised if there's a problem
-# loading a schema.
+#     The :py:class:`No_Schema` exception is raised if there's a problem
+#     loading a schema.
 #
 # ::
 
@@ -307,8 +307,8 @@ class No_Schema( Exception ):
 
 # ..  py:class:: Opener
 #
-# An opener **Factory** class.  A subclass can extend this to handle other file
-# extensions and physical formats.
+#     An opener **Factory** class.  A subclass can extend this to handle other file
+#     extensions and physical formats.
 #
 # ::
 
@@ -357,8 +357,18 @@ class Opener:
 
 # ..  py:function:: open_workbook( name, file_object, schema_path, schema_sheet )
 #
-# The default :py:func:`workbook.open_workbook` is simply an instance
-# of the :py:class:`workbook.Opener`.
+#     Open a workbook.
+#    
+#     :param name: The name of the file.
+#    
+#     :param file_object: (optional) already opened file object.
+#    
+#     :param schema_path: (optional) filename for an external schema file.
+#    
+#     :param schema_sheet: (optional) name of a sheet with a schema.
+#    
+#     The default :py:func:`workbook.open_workbook` is simply an instance
+#     of the :py:class:`workbook.Opener`.
 #
 # ::
 

@@ -20,9 +20,13 @@ CSV Workbook
 
 ..  py:class:: CSV_Workbook
 
-We're wrapping the :py:func:`csv.reader`.  We need to create proper
-:py:class:`cell.TextCell` instances instead of the default string values
-that :py:mod:`csv` normally creates.
+    Extract sheets, rows and cells from a CSV file.
+    
+    A wrapper for :py:func:`csv.reader`.  This will create proper
+    :py:class:`cell.TextCell` instances instead of the default string values
+    that :py:mod:`csv` normally creates.
+    
+    There's only a single sheet and it matches the filename.
 
 ::
 
@@ -52,6 +56,8 @@ the conversions until the callback to :py:meth:`workbook.Workbook.row_get`.
 
 ..  py:method:: CSV_Workbook.rows_of( sheet )
 
+    Iterator through all rows. The sheet is ignored.
+
 ::
 
         def rows_of( self, sheet ):
@@ -64,6 +70,8 @@ the conversions until the callback to :py:meth:`workbook.Workbook.row_get`.
                 yield row
 
 ..  py:method:: CSV_Workbook.row_get( row, attribute )
+
+    Concrete implementation to get an attribute's value from a given row.
 
 ::
 

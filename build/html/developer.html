@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -215,7 +215,8 @@ version.</p>
 <dl class="function">
 <dt id="make_builder">
 <tt class="descname">make_builder</tt><big>(</big><em>args</em><big>)</big><a class="headerlink" href="#make_builder" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>Create a builder object from the args.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -398,7 +399,8 @@ the following.</p>
 <dl class="function">
 <dt id="process_sheet">
 <tt class="descname">process_sheet</tt><big>(</big><em>sheet</em>, <em>builder</em><big>)</big><a class="headerlink" href="#process_sheet" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Process the given sheet using the given builder.</p>
+</dd></dl>
 
 <pre class="literal-block">
 def process_sheet( sheet, builder=builder_1 ):
@@ -427,8 +429,9 @@ tests the file as much as it tests the sheet processing function.</p>
 <p>The overall processing of a given workbook input looks like this.</p>
 <dl class="function">
 <dt id="process_workbook">
-<tt class="descname">process_workbook</tt><big>(</big><em>sheet</em>, <em>builder</em><big>)</big><a class="headerlink" href="#process_workbook" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descname">process_workbook</tt><big>(</big><em>source</em>, <em>builder</em><big>)</big><a class="headerlink" href="#process_workbook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process all sheets of the workbook using the given builder.</p>
+</dd></dl>
 
 <pre class="literal-block">
 def process_workbook( source, builder ):

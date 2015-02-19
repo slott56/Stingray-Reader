@@ -5,7 +5,7 @@
 History
 ##############
 
-Latest release is 4.4.4.
+Latest release is 4.4.5.
 
 Version 4
 ==========
@@ -110,7 +110,13 @@ Change Details:
     ``subrow= data.subrow( self.segment_abc, row.cell(schema_header_dict['GENERIC-FIELD'])  )``
     to map a field, ``GENERIC-FIELD``, to an 01-level schema, ``self.segment_abc``.
     We can then pick fields out of ``subrow`` using fields defined in ``self.segment_abc``.
-
+    
+-   Add :py:func:`cobol.loader.COBOL_schema()` and :py:func:`cobol.loader.COBOL_schemata()`
+    functions to provide a higher-level API for building a record schema or 
+    a (less common) multiple schemata.
+    
+-   Fix a bug in cobol.RECFM_VB.bdw_iter() function.
+    
 Version 3
 ==============
 

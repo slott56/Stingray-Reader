@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -67,13 +67,14 @@
 <span class="kn">import</span> <span class="nn">stingray.cell</span>
 </pre></div>
 </div>
-<span class="target" id="module-workbook"></span><dl class="class">
+<span class="target" id="module-workbook"></span><p>We should use <tt class="docutils literal"><span class="pre">iterparse</span></tt> rather than simply parsing the entire XML document.
+If the document is large, then we can&#8217;t hold it all in memory.</p>
+<dl class="class">
 <dt id="workbook.ODS_Workbook">
 <em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">ODS_Workbook</tt><a class="headerlink" href="#workbook.ODS_Workbook" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Extract sheets, rows and cells from a OOO ODS format file.</p>
+</dd></dl>
 
-<p>We should use <tt class="docutils literal"><span class="pre">iterparse</span></tt> rather than simply parsing the entire document.
-If the document is large, then we can&#8217;t hold it all in memory.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ODS_Workbook</span><span class="p">(</span> <span class="n">Workbook</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Standard OOO ODS document.</span>
 <span class="sd">    Locate sheets and rows within a given sheet.</span>
@@ -120,7 +121,8 @@ the name attribute from that tag.</p>
 <dl class="method">
 <dt id="workbook.ODS_Workbook.sheets">
 <tt class="descclassname">ODS_Workbook.</tt><tt class="descname">sheets</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.ODS_Workbook.sheets" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return the list of sheets for this workbook.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">sheets</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
@@ -138,8 +140,9 @@ it can be a mixed content value of the element.  There are three cases.</p>
 </ul>
 <dl class="method">
 <dt id="workbook.ODS_Workbook.rows_of">
-<tt class="descclassname">ODS_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.ODS_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descclassname">ODS_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.ODS_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate through rows of the given sheet.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">rows_of</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Iterator over rows as a list of Cells for a named worksheet.&quot;&quot;&quot;</span>
@@ -154,7 +157,8 @@ it can be a mixed content value of the element.  There are three cases.</p>
 <dl class="method">
 <dt id="workbook.ODS_Workbook.row_get">
 <tt class="descclassname">ODS_Workbook.</tt><tt class="descname">row_get</tt><big>(</big><em>row</em>, <em>attribute</em><big>)</big><a class="headerlink" href="#workbook.ODS_Workbook.row_get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Low-level get of a particular attribute from the given row.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">row_get</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">attribute</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a Cell from the row&#39;s data.&quot;&quot;&quot;</span>

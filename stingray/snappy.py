@@ -70,7 +70,11 @@ import sys
 
 # ..  py:function:: bytes_int( seq )
 #
-# Function to decode bytes into an integer
+#     Decode a sequence of bytes into an integer.
+#    
+#     :param seq: sequence of bytes; the entire sequence is consumed.
+#    
+#     :returns: integer
 #
 # ::
 
@@ -86,7 +90,12 @@ def bytes_int( seq ):
 
 # ..  py:function:: varint( stream )
 #
-# Function to decode varint-encoded bytes.
+#     Decode varint-encoded sequence of bytes.
+#    
+#     :param seq: sequence of bytes; consume bytes to decode the int.
+#    
+#     :returns: integer
+#
 #
 # ::
 
@@ -106,9 +115,7 @@ def varint( stream ):
         v += (b & 0x7F)<<shift
     return v
 
-# ..  py:class:: Snappy
-#
-# The snappy decode class has two parts. 
+# The snappy protocol has two levels. 
 #
 # -   The LZ77 decoder which expands the tags to create the data.
 #     There are four kinds of tags.
@@ -152,8 +159,21 @@ def varint( stream ):
 #
 #
 # -   The higher-level framing protocol. 
-#     There is just one kind of frame, type "0" (Compressed Data) frame with a 
+#    
+#     -   type "0" (Compressed Data) frame with a  three-byte length.
+#    
+#     -   Other types are possible in principle. Numbers '13 doesn't use them.
+#
+# ..  py:class:: Snappy
+#
+# Implement the two-level snappy protocol used by Numbers '13.
+#
+# -   The LZ77 decoder which expands the tags to create the data.
+#
+# -   The higher-level framing protocol
+#     with just one kind of frame, type "0" (Compressed Data) with a 
 #     three-byte length.
+#
 #
 # ::
 
@@ -161,11 +181,13 @@ class Snappy:
     def __init__( self ):
         self.log= logging.getLogger( self.__class__.__qualname__ )
 
-# The LZ77 decoder. This locates the **varint** size header.  That's followed by 
-# a sequence of tags.  The literal tag has data. The other three tags repeat
-# previously output bytes.
+# ..  py:method:: Snappy.lz77( frame )
 #
-# Because of the framing protocol, we're limited to a buffer of only 64K bytes.
+#     The LZ77 decoder. This locates the **varint** size header.  That's followed by 
+#     a sequence of tags.  The literal tag has data. The other three tags repeat
+#     previously output bytes.
+#
+#     Because of the framing protocol, we're limited to a buffer of only 64K bytes.
 #        
 # ::
 
@@ -239,8 +261,10 @@ class Snappy:
         assert len(buffer) == size, "len(buffer) {0} != size {1}".format(len(buffer),size)
         return buffer
 
-# The Framing protocol required to decode. The frames contain up to 64K of compressed
-# data. This defines a sequence of windows over the stream of data.
+# ..  py:method:: Snappy.decompress( file_object )
+#
+#     The Framing protocol required to decode. The frames contain up to 64K of compressed
+#     data. This defines a sequence of windows over the stream of data.
 #        
 # ::
 

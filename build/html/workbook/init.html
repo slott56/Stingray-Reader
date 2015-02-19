@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -293,10 +293,10 @@ a member of a larger archive.</li>
 <dl class="class">
 <dt id="workbook.No_Schema">
 <em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">No_Schema</tt><a class="headerlink" href="#workbook.No_Schema" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>The <a class="reference internal" href="#workbook.No_Schema" title="workbook.No_Schema"><tt class="xref py py-class docutils literal"><span class="pre">No_Schema</span></tt></a> exception is raised if there&#8217;s a problem
+<dd><p>The <a class="reference internal" href="#workbook.No_Schema" title="workbook.No_Schema"><tt class="xref py py-class docutils literal"><span class="pre">No_Schema</span></tt></a> exception is raised if there&#8217;s a problem
 loading a schema.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">No_Schema</span><span class="p">(</span> <span class="ne">Exception</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A valid schema could not be loaded.&quot;&quot;&quot;</span>
     <span class="k">pass</span>
@@ -305,10 +305,10 @@ loading a schema.</p>
 <dl class="class">
 <dt id="workbook.Opener">
 <em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">Opener</tt><a class="headerlink" href="#workbook.Opener" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>An opener <strong>Factory</strong> class.  A subclass can extend this to handle other file
+<dd><p>An opener <strong>Factory</strong> class.  A subclass can extend this to handle other file
 extensions and physical formats.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Opener</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;An extensible opener that examines the file extension.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">file_object</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -356,10 +356,25 @@ extensions and physical formats.</p>
 <dl class="function">
 <dt id="workbook.open_workbook">
 <tt class="descclassname">workbook.</tt><tt class="descname">open_workbook</tt><big>(</big><em>name</em>, <em>file_object</em>, <em>schema_path</em>, <em>schema_sheet</em><big>)</big><a class="headerlink" href="#workbook.open_workbook" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dd><p>Open a workbook.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; The name of the file.</li>
+<li><strong>file_object</strong> &#8211; (optional) already opened file object.</li>
+<li><strong>schema_path</strong> &#8211; (optional) filename for an external schema file.</li>
+<li><strong>schema_sheet</strong> &#8211; (optional) name of a sheet with a schema.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <p>The default <a class="reference internal" href="#workbook.open_workbook" title="workbook.open_workbook"><tt class="xref py py-func docutils literal"><span class="pre">workbook.open_workbook()</span></tt></a> is simply an instance
 of the <a class="reference internal" href="#workbook.Opener" title="workbook.Opener"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Opener</span></tt></a>.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="n">open_workbook</span><span class="o">=</span> <span class="n">Opener</span><span class="p">()</span>
 </pre></div>
 </div>

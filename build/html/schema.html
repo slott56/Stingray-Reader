@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -264,9 +264,7 @@ the application.  All this module does is get a workbook <a class="reference int
 <dl class="class">
 <dt id="schema.Schema">
 <em class="property">class </em><tt class="descclassname">schema.</tt><tt class="descname">Schema</tt><a class="headerlink" href="#schema.Schema" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>The core Schema definition is an extension to <tt class="docutils literal"><span class="pre">list</span></tt>. In addition to
+<dd><p>The core Schema definition is an extension to <tt class="docutils literal"><span class="pre">list</span></tt>. In addition to
 a sequence of attributes, it also has an &#8220;info&#8221; object that&#8217;s a dictionary
 of additional keywords.</p>
 <p>The <tt class="xref py py-meth docutils literal"><span class="pre">schema.Schema.rows_as_dict_iter()</span></tt> method uses the sheet&#8217;s
@@ -278,13 +276,15 @@ choice is arbitrary.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">info:</th><td class="field-body">Dict of additional information about this schema. Meta-metadata.
+<tr class="field-odd field"><th class="field-name">Info:</th><td class="field-body">Dict of additional information about this schema. Meta-metadata.
 For COBOL schema, this includes the source DDE.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">names:</th><td class="field-body">Attribute names for rows_as_dict_iter()</td>
+<tr class="field-even field"><th class="field-name">Names:</th><td class="field-body">Attribute names for rows_as_dict_iter()</td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Schema</span><span class="p">(</span> <span class="nb">list</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A Mutable Sequence of attributes.  Order matters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -348,18 +348,16 @@ we create the a &#8220;schema dictionary&#8221; using simple names and path name
 <dl class="class">
 <dt id="schema.Attribute">
 <em class="property">class </em><tt class="descclassname">schema.</tt><tt class="descname">Attribute</tt><a class="headerlink" href="#schema.Attribute" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>An Attribute definition has a required value of a name and a class that will
+<dd><p>An Attribute definition has a required value of a name and a class that will
 be created to hold the data.</p>
 <p>Here are the essential attributes of an Attribute.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">name:</th><td class="field-body">The attribute name. Typically always available for most kinds of schema.</td>
+<tr class="field-odd field"><th class="field-name">Name:</th><td class="field-body">The attribute name. Typically always available for most kinds of schema.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">create:</th><td class="field-body">Cell class to create.  If omitted, the class-level
+<tr class="field-even field"><th class="field-name">Create:</th><td class="field-body">Cell class to create.  If omitted, the class-level
 <tt class="xref py py-data docutils literal"><span class="pre">Attribute.default_cell</span></tt> will be used.
 By default, this refers to <tt class="xref py py-class docutils literal"><span class="pre">stingray.cell.TextCell</span></tt>.</td>
 </tr>
@@ -371,18 +369,20 @@ values commonly provided by simple fixed format file schemata.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">offset:</th><td class="field-body">Optional offset into a buffer. For simple fixed-layout files,
+<tr class="field-odd field"><th class="field-name">Offset:</th><td class="field-body">Optional offset into a buffer. For simple fixed-layout files,
 this is a constant. For COBOL files with Occurs Depending On,
 however, this must be a function based on the actual record
 being processed.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">size:</th><td class="field-body">Optional size within the buffer.</td>
+<tr class="field-even field"><th class="field-name">Size:</th><td class="field-body">Optional size within the buffer.</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">position:</th><td class="field-body">Optional sequential position.</td>
+<tr class="field-odd field"><th class="field-name">Position:</th><td class="field-body">Optional sequential position.</td>
 </tr>
 </tbody>
 </table>
 <p>A subclass might introduce yet more attributes.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Attribute</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Essential definition of a single source data element.&quot;&quot;&quot;</span>
     <span class="n">default_cell</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span>

@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -68,11 +68,13 @@
 <span class="target" id="module-workbook"></span><dl class="class">
 <dt id="workbook.CSV_Workbook">
 <em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">CSV_Workbook</tt><a class="headerlink" href="#workbook.CSV_Workbook" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>We&#8217;re wrapping the <tt class="xref py py-func docutils literal"><span class="pre">csv.reader()</span></tt>.  We need to create proper
+<dd><p>Extract sheets, rows and cells from a CSV file.</p>
+<p>A wrapper for <tt class="xref py py-func docutils literal"><span class="pre">csv.reader()</span></tt>.  This will create proper
 <a class="reference internal" href="../cell.html#cell.TextCell" title="cell.TextCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.TextCell</span></tt></a> instances instead of the default string values
 that <tt class="xref py py-mod docutils literal"><span class="pre">csv</span></tt> normally creates.</p>
+<p>There&#8217;s only a single sheet and it matches the filename.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">CSV_Workbook</span><span class="p">(</span> <span class="n">Workbook</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Uses ``csv.reader``.  There&#39;s one sheet only.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">file_object</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
@@ -100,7 +102,8 @@ the conversions until the callback to <a class="reference internal" href="base.h
 <dl class="method">
 <dt id="workbook.CSV_Workbook.rows_of">
 <tt class="descclassname">CSV_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.CSV_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Iterator through all rows. The sheet is ignored.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">rows_of</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An iterator over all rows of the named sheet.</span>
@@ -115,7 +118,8 @@ the conversions until the callback to <a class="reference internal" href="base.h
 <dl class="method">
 <dt id="workbook.CSV_Workbook.row_get">
 <tt class="descclassname">CSV_Workbook.</tt><tt class="descname">row_get</tt><big>(</big><em>row</em>, <em>attribute</em><big>)</big><a class="headerlink" href="#workbook.CSV_Workbook.row_get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Concrete implementation to get an attribute&#8217;s value from a given row.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">row_get</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">attribute</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a Cell from the row&#39;s data.&quot;&quot;&quot;</span>

@@ -9,13 +9,19 @@
 # ..  py:module:: cobol.loader
 #
 # Parsing a spreadsheet schema is relatively easy: see :ref:`schema_loader`.
-# Parsing a COBOL schema, however, is a bit more complex.
+# Parsing a COBOL schema, however, is a bit more complex. We need to parse
+# COBOL sources code to decode Data Definition Elements (DDE's) and create
+# a usable representation of the DDE that matches the Stingray schema model.
 #
-# Two of the three problems associated with COBOL are solved in  :ref:`cobol`.
-# What remains is parsing the COBOL source to extract a schema.  
+# We'll wind up with two representations of the COBOL schema:
+#
+# -   The original DDE hierarchy. See `DDE Loader Design`_ for details.
+#
+# -   A flattened version that's a  :py:class:`schema.Schema` instance.
 #
 # A new :py:class:`schema.loader.ExternalSchemaLoader` subclass is required
-# to parse the DDE sublanguage of COBOL.   This loader will build the hierarchical
+# to parse the DDE sublanguage of COBOL.  The `COBOL Schema Loader Class`_ section
+# details this. A loader will build the hierarchical
 # DDE from the COBOL source, decorate this with size and offset information, 
 # then flatten it into a simple :py:class:`schema.Schema` instance.
 #
@@ -204,7 +210,8 @@
 #
 # This will use a different record factory to elaborate the details of the DDE.
 #
-# Design
+#
+# DDE Loader Design
 # =================
 #
 # A DDE contains a recursive definition of a COBOL group-level DDE.
@@ -213,6 +220,12 @@
 # features of every DDE, including an ``OCCURS`` clause and a ``REDEFINES`` clause.
 # In addition to the required picture clause, elementary items have an optional ``USAGE`` clause,
 # and optional ``SIGN`` clause.
+#
+# A single class, :py:class:`cobol.defs.DDE`, defines the features of a group-level item.  It supports
+# the occurs and redefines features.  It can contain a number of DDE items.
+# The leaves of the tree define the features of an elementary item.  
+#
+# See :ref:`cobol_defs` for details.
 #
 # The ``PICTURE`` clause specifies how to interpret a sequence of bytes.  The picture
 # clause interacts with the optional ``USAGE`` clause, ``SIGN`` clause and ``SYNCHRONIZED`` clause
@@ -233,35 +246,6 @@
 # Program logic must be examined to determine the conditions under which each interpretation is valid.
 # It's entirely possible either interpretation has invalid fields.
 #
-# DDE Class
-# -------------
-#
-# The parent class, :py:class:`DDE`, defines the features of a group-level item.  It supports
-# the occurs and redefines features.  It can contain a number of DDE items.
-# The leaves of the tree define the features of an elementary item.  
-#
-# We could have a class hierarchy with group and elementary subclasses.
-# The group level item could have a container for lower level items.
-# The elementary class definition *could* add support for the picture clause, but remove 
-# the container for lower-level items.  
-#
-# On balance, it seems simpler to have one generic DDE node class and use 
-# optional fields than to create a proper subclass.
-# There isn't a *good* reason for this.   An **if** 
-# statement to look for an optional picture-clause is fairly rare.
-#
-# The various optional clauses are handled using a variety of design patterns.
-# The usage information, for instance, is used to create a **Strategy** object
-# that is used to extract a field from a record's bytes.
-#
-# The redefines information is used to create a **Strategy** object that
-# computes the offset to a field.  There are two variant strategies: locate the basis
-# field and use that field's offset or use the end of the previous element as
-# the offset.
-#
-# This is further compounded by the Occurs Depending On (ODO) calculation
-# which cannot be done statically or eagerly, but must be done dynamically and lazily based on
-# live data.
 #
 # DDE Post-processing
 # --------------------
@@ -336,7 +320,7 @@
 # Additional types include COMP-1 and COMP-2 which are single- and double-precision floating-point.
 # They're rare enough that we ignore them.
 #
-# Additional Requirements
+# Occurs Depending On
 # -----------------------
 #
 # Support for Occurs Depending On is based several features of COBOL.
@@ -443,8 +427,8 @@ logger= logging.getLogger( __name__ )
 #
 # ..  py:class:: SyntaxError
 #
-# These are compilation problems.  We have syntax which
-# is utterly baffling.
+#     These are compilation problems.  We have syntax which
+#     is utterly baffling.
 #
 # ::
 
@@ -463,6 +447,8 @@ class SyntaxError( Exception ):
 #
 # ..  py:class:: Picture
 #
+#     Define the various attribtes of a COBOL PICTURE clause.
+#    
 #     :final: the final picture
 #     :alpha: boolean; True if any ``"X"`` or ``"A"``; False if all ``"9"`` and related
 #     :length: length of the final picture
@@ -477,6 +463,8 @@ Picture = namedtuple( 'Picture',
     'final, alpha, length, scale, precision, signed, decimal' )
 
 # ..  py:function:: picture_parser( pic )
+#
+#     Parse the text of a PICTURE definition.
 #
 # ::
 
@@ -530,7 +518,7 @@ def picture_parser( pic ):
         
     final= "".join( out )
     alpha= ('A' in final) or ('X' in final) or ('/' in final)
-    logger.debug( "PIC {0} {1} {2} {3} {4}".format(pic, final, alpha, scale, precision) )
+    logger.debug( "PIC {0} {1} alpha={2} scale={3} prec={4}".format(pic, final, alpha, scale, precision) )
     # Note: Actual bytes consumed depends on len(final) and usage!
     return Picture( final, alpha, len(final), scale,
         precision, signed, decimal)
@@ -548,7 +536,7 @@ def picture_parser( pic ):
 #
 # ..  py:class:: Lexer
 #
-# Basic lexer that simply removes comments and the first six positions of each line.
+#     Basic lexer that simply removes comments and the first six positions of each line.
 #
 #
 # ::
@@ -564,6 +552,8 @@ class Lexer:
 
 # ..  py:method:: Lexer.clean( line )
 #
+#     The default process for cleaning a line. Simply rstrip trailing spaces.
+#
 # ::
 
     def clean( self, line ):
@@ -571,6 +561,8 @@ class Lexer:
         return line[6:].rstrip()
 
 # ..  py:method:: Lexer.scan( text )
+#
+#     Locate the sequence of tokens in the input stream.
 #            
 # ::
 
@@ -618,9 +610,9 @@ class Lexer:
 
 # ..  py:class:: Lexer_Long_Lines
 #
-# More sophisticated lexer that removes the first six positions of each line.
-# If the line is over 72 positions, it also removes positions [71:80].
-# Since it's an extension to :py:class:`cobol.loader.Lexer`, it also removes comments.
+#     More sophisticated lexer that removes the first six positions of each line.
+#     If the line is over 72 positions, it also removes positions [71:80].
+#     Since it's an extension to :py:class:`cobol.loader.Lexer`, it also removes comments.
 #
 # ::
 
@@ -652,13 +644,12 @@ class Lexer_Long_Lines( Lexer ):
 #
 # (3) complete record layout parsing.
 #
-# Parsing a record layout involves parsing a sequence of elements and
-# assembling them into a proper structure.  Each element consists of a sequence of 
-# individual clauses.
-#
-# The picture clauses are parsed separately by the DDE during its initialization.
-#
 # ..  py:class:: RecordFactory
+#
+#     Parse a record layout. This means parsing a sequence of DDE's and
+#     assembling them into a proper structure.  Each element consists of a sequence of 
+#     individual clauses.
+#
 #
 # ::
 
@@ -883,13 +874,13 @@ class RecordFactory:
 
 # ..  py:method:: RecordFactory.dde_iter( lexer )
 #
-# Iterate over all DDE's in the stream of tokens from the given lexer.
-# These DDE's can then be assembled into an overall record 
-# definition.
+#     Iterate over all DDE's in the stream of tokens from the given lexer.
+#     These DDE's can then be assembled into an overall record 
+#     definition.
 #
-# Note that we do not define special cases for 66, 77 or 88-level items.
-# These level numbers have special significance. For our purposes, however,
-# the numbers can be ignored.
+#     Note that we do not define special cases for 66, 77 or 88-level items.
+#     These level numbers have special significance. For our purposes, however,
+#     the numbers can be ignored.
 #
 # ::
         
@@ -979,15 +970,15 @@ class RecordFactory:
 #        
 # ..  py:method:: RecordFactory.makeRecord( lexer )
 #
-# This overall is iterator
-# that yields the top-level records.
+#     This overall is iterator
+#     that yields the top-level records.
 #
-# This depends on the :py:meth:`RecordFactory.dde_iter` to get tokens and accumulates a proper
-# hierarchy of individual DDE instances.
+#     This depends on the :py:meth:`RecordFactory.dde_iter` to get tokens and accumulates a proper
+#     hierarchy of individual DDE instances.
 #
-# This will yield a sequence of ``01``-level records that are parsed.
+#     This will yield a sequence of ``01``-level records that are parsed.
 #
-# The 77-level and 66-level items are not treated specially. 
+#     The 77-level and 66-level items are not treated specially. 
 #
 # ::
 
@@ -1032,21 +1023,20 @@ class RecordFactory:
 
 # ..  py:method:: RecordFactory.decorate( top )
 #
-# The final stages of compilation:
+#     The final stages of compilation:
 #
-# -   Resolve ``REDEFINES`` names using :py:func:`cobol.defs.resolver`.
+#     -   Resolve ``REDEFINES`` names using :py:func:`cobol.defs.resolver`.
 #
-# -   Push dimensionality down to each elementary item using :py:func:`cobol.defs.setDimensionality`.
+#     -   Push dimensionality down to each elementary item using :py:func:`cobol.defs.setDimensionality`.
 #
-# -   Work out size and offset, if possible. Use using :py:func:`cobol.defs.setSizeAndOffset`
-#     This depends on the presence 
-#     of Occurs Depending On. If we can't compute size and offset, it must be 
-#     computed as each row is read.  
-#     This is done automagically by a :py:class:`sheet.LazyRow` object.
+#     -   Work out size and offset, if possible. Use using :py:func:`cobol.defs.setSizeAndOffset`
+#         This depends on the presence 
+#         of Occurs Depending On. If we can't compute size and offset, it must be 
+#         computed as each row is read.  
+#         This is done automagically by a :py:class:`sheet.LazyRow` object.
 #
-#    
-#     Should we emit a warning? It's not usually a mystery that the DDE involves
-#     Occurs Depending On.
+#         Should we emit a warning? It's not usually a mystery that the DDE involves
+#         Occurs Depending On.
 #
 # ::
 
@@ -1060,8 +1050,8 @@ class RecordFactory:
         else:
             stingray.cobol.defs.setSizeAndOffset( top )
                         
-# COBOL Schema Loader
-# =====================
+# COBOL Schema Loader Class
+# ==========================
 #
 # Given a DDE, create a proper :py:class:`schema.Schema` object which contains
 # proper :py:class:`schema.Attribute` objects for each group and elementary item
@@ -1084,7 +1074,14 @@ class RecordFactory:
 #    
 # ..  image:: cobol_final.png
 #
-# ..  py:function:: make_attr
+# We have a number of supporting functions that make this work.
+#
+# ..  py:function:: make_attr( aDDE )
+#
+#     Transform a :py:class:`cobol.defs.DDE` into an  :py:class:`stingray.cobol.RepeatingAttribute`.
+#     This will include a weakref to the DDE so that the source information (like parents and children)
+#     is available. It will also build a weak reference from the original DDE to the resulting
+#     attribute.
 #
 # ::
 
@@ -1101,13 +1098,13 @@ def make_attr( aDDE ):
     aDDE.attribute= weakref.ref( attr )
     return attr
 
-# ..  py:function:: make_schema
+# ..  py:function:: make_schema( dde_iter )
 #
-# The :py:class:`schema.Schema` -- as a whole -- is built by a function
-# that converts the DDE's into attributes.
+#     The :py:class:`schema.Schema` -- as a whole -- is built by a function
+#     that converts the individual DDE's into attributes.
 #
-# This may need to be extended in case other DDE names (i.e. paths)
-# are required in addition to the elementary names.
+#     This may need to be extended in case other DDE names (i.e. paths)
+#     are required in addition to the elementary names.
 #
 # ::
         
@@ -1122,10 +1119,8 @@ def make_schema( dde_iter ):
             
 # ..  py:class:: COBOLSchemaLoader
 #
-# Here's the overall schema loader process: parse and then build a schema.
-# This is consistent with the :py:class:`schema.loader.ExternalSchemaLoader`.
-# However, this is rarely precisely what we want. We're almost always going
-# to break this down into separate steps.
+#     The overall schema loader process: parse and then build a schema.
+#     This is consistent with the :py:class:`schema.loader.ExternalSchemaLoader`.
 #
 # ::
 
@@ -1143,6 +1138,10 @@ class COBOLSchemaLoader( stingray.schema.loader.ExternalSchemaLoader ):
         
 # ..  py:method:: COBOLSchemaLoader.load()
 #
+#     Use the :py:meth:`RecordFactory.makeRecord` method to iterate through
+#     the top-level DDE's. Use :py:func:`make_schema` to build a single schema
+#     from the DDE(s).
+#
 # ::
 
     def load( self ):
@@ -1157,30 +1156,59 @@ class COBOLSchemaLoader( stingray.schema.loader.ExternalSchemaLoader ):
 # Note that we provide the "replacing" option to the underlying Lexer.
 # The lexical scanning includes any replacement text.
 #
+# Top-Level Schema Loader Functions
+# ==================================
+#
+# The simplest use case is to create an instance of :py:class:`COBOLSchemaLoader`.
+#
+# ..  parsed-literal::
+#
+#     with open("sample/zipcty.cob", "r") as cobol:
+#         schema= stingray.cobol.loader.COBOLSchemaLoader( cobol ).load()
+#
+# In some cases, we need to subclass the SchemaLoader to change the lexer.
+# Here's the example from `Extensions and Special Cases`_.
+#
+# ..  parsed-literal::
+#
+#     class MySchemaLoader( cobol.COBOLSchemaLoader ):
+#         lexer_class= cobol.loader.Lexer_Long_Lines
+#        
 # In some cases, we want to see the intermediate COBOL record definitions.
 # In this case, we want to do something like the following function.
 #
-# ..  py:function:: COBOL_schema(source, replacing=None)
+# ..  py:function:: COBOL_schema(source, lexer_class=Lexer, replacing=None)
 #
-# This function will parse the COBOL copybook, returning a list of the parsed COBOL 
-# 01-level records as well as a final schema. 
+#     This function will parse the COBOL copybook, returning a list of the parsed COBOL 
+#     01-level records as well as a final schema. 
 #
-# This is based on the (possibly false) assumption
-# that we're making a single schema object from the definitions provided.
+#     This is based on the (possibly false) assumption
+#     that we're making a single schema object from the definitions provided.
 #
-# -   In some cases, we want everything merged into a single schema.
+#     -   In some cases, we want everything merged into a single schema.
 #
-# -   In some edge cases, we want each 01-level to provide a distinct
-#     schema object.
+#     -   In some edge cases, we want each 01-level to provide a distinct
+#         schema object.
 #
-# We may need to revise this function because we need a different lexer.
-# We might have some awful formatting issue with the source that needs to be 
-# tweaked.
+#     We may need to revise this function because we need a different lexer.
+#     We might have some awful formatting issue with the source that needs to be 
+#     tweaked.
 #
+#     :param source: file-like object that is the open source file.
+#
+#     :param lexer_class: Lexer to use. The default is :py:class:`cobol.load.Lexer`.
+#
+#     :param replacing: replacing argument to provide to the lexer. 
+#         This is ``None`` by default.
+#    
+#     :returns: 2-tuple (dde_list, schema).
+#         The first item is a list of 01-level :py:class:`cobol.def.DDE` objects.
+#         The second item is a :py:class:`cobol.defs.Schema` object.
+#    
 # ::
 
-def COBOL_schema( source, replacing=None ):
-    lexer= Lexer( replacing )
+def COBOL_schema( source, lexer_class=Lexer, replacing=None,  ):
+    lexer= lexer_class( replacing )
     parser= RecordFactory()
     dde_list= list( parser.makeRecord( lexer.scan(source) ) )
     schema= make_schema( dde_list )
@@ -1188,29 +1216,37 @@ def COBOL_schema( source, replacing=None ):
 
 # ..  py:function:: COBOL_schemata(source, replacing=None)
 #
-# This function will parse the COBOL copybook, returning two lists:
+#     This function will parse the COBOL copybook, returning two lists:
 #
-# -   a list of the parsed COBOL 01-level records, and
+#     -   a list of the parsed COBOL 01-level records, and
 #
-# -   a list of final schemata, one for each 01-level definition.
+#     -   a list of final schemata, one for each 01-level definition.
 #
-# This is a peculiar extension in the rare case that we have multiple 01-levels
-# in a single file and we don't (or can't) use them as a single schema.
+#     This is a peculiar extension in the rare case that we have multiple 01-levels
+#     in a single file and we don't want to (or can't) use them as a single schema.
 #
-# We may need to revise this function because we need a different lexer.
-# We might have some awful formatting issue with the source that needs to be 
-# tweaked.
+#     :param source: file-like object that is the open source file.
 #
+#     :param lexer_class: Lexer to use. The default is :py:class:`cobol.load.Lexer`.
+#
+#     :param replacing: replacing argument to provide to the lexer. 
+#         This is ``None`` by default.
+#
+#     :returns: 2-tuple (dde_list, schema).
+#         The first item is a list of 01-level :py:class:`cobol.def.DDE` objects.
+#         The second item is list of :py:class:`cobol.defs.Schema` objects, one for
+#         each 01-level DDE.
+#    
 # ::
 
-def COBOL_schemata( source, replacing=None ):
-    lexer= Lexer( replacing )
+def COBOL_schemata( source, replacing=None, lexer_class=Lexer ):
+    lexer= lexer_class( replacing )
     parser= RecordFactory()
     dde_list= list( parser.makeRecord( lexer.scan(source) ) )
     schema_list= list( make_schema( dde ) for dde in dde_list )
     return dde_list, schema_list
 
-# This gives us two API alternatives for parsing super-complex copybooks.
+# This function gives us two API alternatives for parsing super-complex copybooks.
 #
 # There's a "Low-Level API" that looks like this:
 #
@@ -1228,7 +1264,8 @@ def COBOL_schemata( source, replacing=None ):
 #
 # ..  parsed-literal
 #    
-#     dde_list, schema_list = stingray.cobol.loader.COBOL_schemata( source )
+#     dde_list, schema_list = stingray.cobol.loader.COBOL_schemata( 
+#         source, lexer_class=cobol.loader.Lexer_Long_Lines )
 #     self.record_1, self.record_2 = dde_list
 #     self.schema_1, self.schema_2 = schema_list
 #    

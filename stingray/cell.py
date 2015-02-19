@@ -161,9 +161,9 @@ locale.setlocale(locale.LC_ALL, '')
 #
 # ..  py:class:: Cell
 #
-# The :py:class:`cell.Cell` class hierarchy extends this base class.  Note that we have
-# a relatively short list of built-in conversions.  
-# For more complex, application-specific conversions, the raw :py:attr:`value` is available as a property.
+#     The :py:class:`cell.Cell` class hierarchy extends this base class.  Note that we have
+#     a relatively short list of built-in conversions.  
+#     For more complex, application-specific conversions, the raw :py:attr:`value` is available as a property.
 #
 # ::
 
@@ -218,7 +218,8 @@ class Cell( Hashable ):
 #
 # ..  py:class:: EmptyCell
 #
-# An ``EmptyCell`` implements empty cells.  :py:mod:`xlrd` may report them as a type ``XL_CELL_EMPTY``. A Numbers spreadsheet may use the ``<o>`` or ``<g>`` tag.
+#     An ``EmptyCell`` implements empty cells.  :py:mod:`xlrd` may report them as a type ``XL_CELL_EMPTY``. 
+#     A Numbers spreadsheet may use the ``<o>`` or ``<g>`` tag.
 #
 # ::
 
@@ -237,16 +238,16 @@ class EmptyCell( Cell ):
 #
 # ..  py:class:: TextCell
 #
-# A ``TextCell`` implements the cells with text values.
-# :py:mod:`xlrd` may report them as a type ``XL_CELL_TEXT``.
-# It's often possible to interpret the text as some other value,
-# so the conversions make reasonable attempts at that.
+#     A ``TextCell`` implements the cells with text values.
+#     :py:mod:`xlrd` may report them as a type ``XL_CELL_TEXT``.
+#     It's often possible to interpret the text as some other value,
+#     so the conversions make reasonable attempts at that.
 #
-# This is used for CSV workbooks as well as XLS workbooks.
-# This is the default type for Fixed format files, also.
+#     This is used for CSV workbooks as well as XLS workbooks.
+#     This is the default type for Fixed format files, also.
 #
-# Note that COBOL files will explicitly have bytes values, not
-# string values.
+#     Note that COBOL files will explicitly have bytes values, not
+#     string values.
 #
 # ::
 
@@ -277,11 +278,11 @@ class TextCell( Cell ):
 #
 # ..  py:class:: NumberCell
 #
-# A ``NumberCell`` implements the cells with a float value.
-# :py:mod:`xlrd` may report them as a type ``XL_CELL_NUMBER``.
-# A variety of conversions make sense for a number value.
-# Note that the ``to_datetime()`` conversion depends on ``xlrd``.
-# This may be a faulty assumption for some species of workbooks.
+#     A ``NumberCell`` implements the cells with a float value.
+#     :py:mod:`xlrd` may report them as a type ``XL_CELL_NUMBER``.
+#     A variety of conversions make sense for a number value.
+#     Note that the ``to_datetime()`` conversion depends on ``xlrd``.
+#     This may be a faulty assumption for some species of workbooks.
 #
 # ::
 
@@ -322,9 +323,9 @@ class NumberCell( Cell ):
 #
 # ..  py:class:: FloatDateCell
 #
-# A ``FloatDateCell`` implements the cells with ``XL_CELL_DATE``.
-# Since the conversions are all identical to number,
-# we simply inherit the features of a number.
+#     A ``FloatDateCell`` implements the cells with ``XL_CELL_DATE``.
+#     Since the conversions are all identical to number,
+#     we simply inherit the features of a number.
 #
 # ::
 
@@ -340,9 +341,9 @@ class FloatDateCell( NumberCell ):
 #
 # ..  py:class:: BooleanCell
 #
-# A ``BooleanCell`` implements the cells with ``XL_CELL_BOOLEAN``.
-# Since the conversions are all identical to number,
-# we simply inherit the features.
+#     A ``BooleanCell`` implements the cells with ``XL_CELL_BOOLEAN``.
+#     Since the conversions are all identical to number,
+#     we simply inherit the features.
 #
 # ::
 
@@ -355,9 +356,9 @@ class BooleanCell( NumberCell ):
 #
 # ..  py:class:: ErrorCell
 #
-# An ``ErrorCell`` implements the cells with ``XL_CELL_ERROR``.
-# The only sensible conversion is :py:meth:`ErrorCell.to_str` which reports
-# the error string for the cell.
+#     An ``ErrorCell`` implements the cells with ``XL_CELL_ERROR``.
+#     The only sensible conversion is :py:meth:`ErrorCell.to_str` which reports
+#     the error string for the cell.
 #
 # ::
 
@@ -381,12 +382,12 @@ class ErrorCell( Cell ):
 #
 # ..  py:class:: DateCell
 #
-# A ``DateCell`` implements a cell with a proper date-time value.
-# This is a value which did not come from a workbook float value.
+#     A ``DateCell`` implements a cell with a proper date-time value.
+#     This is a value which did not come from a workbook float value.
 #
-# This could be a parsed string, for example.
+#     This could be a parsed string, for example.
 #
-# A variety of conversions make sense for a proper date value.
+#     A variety of conversions make sense for a proper date value.
 #
 # ::
 
@@ -430,10 +431,14 @@ class DateCell( Cell ):
 # Dates
 # --------
 #
-# The function :py:func:`date_from_string` is a closure based on a format string
-# that returns a single-argument conversion function.
 #
 # ..  py:function:: date_from_string(format)
+#
+#     A closure based on a format string
+#     that returns a single-argument conversion function.
+#    
+#     :param format: the format string to use.
+#
 #
 # ::
 
@@ -445,6 +450,12 @@ def date_from_string( format ):
 # This forms the factory for the :py:class:`cell.DateCell` class.
 #
 # ..  py:function:: datecell_from_string(format)
+#
+#     A closure based on a format string
+#     that returns a single-argument conversion function.
+#    
+#     :param format: the format string to use.
+#
 #
 # ::
 
@@ -463,7 +474,13 @@ def datecell_from_string( format ):
 #
 # The function :py:func:`date_from_float` is an additional closure based on a ``workbook.datemode`` that returns a single-argument conversion function.
 #
-# ..  py:function:: date_from_float(format)
+# ..  py:function:: date_from_float(datemode)
+#
+#     A closure based on a datemode setting
+#     that returns a single-argument conversion function.
+#    
+#     :param datemode: the data mode for the workbook document as a whole.
+#
 #
 # ::
 

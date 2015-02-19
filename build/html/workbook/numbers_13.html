@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -86,13 +86,13 @@ Instead, we&#8217;ll simply import a local snappy and protobuf reader.</p>
 <dl class="class">
 <dt id="workbook.Numbers13_Workbook">
 <em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">Numbers13_Workbook</tt><a class="headerlink" href="#workbook.Numbers13_Workbook" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Extract sheets, rows and cells from a Numbers &#8216;13 format file.</p>
+<p>The <tt class="docutils literal"><span class="pre">.numbers</span></tt> &#8220;file&#8221; is a directory bundle or package.</p>
+<p>The <tt class="file docutils literal"><span class="pre">index.zip</span></tt> file is the interesting part of the bundle.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Numbers13_Workbook</span><span class="p">(</span> <span class="n">Workbook</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Mac OS X Numbers Workbook for iWork &#39;13.</span>
-
-<span class="sd">    The ``.numbers`` &quot;file&quot; is a directory bundle or package.</span>
-<span class="sd">    The ``index.zip`` file is the interesting part of the bundle.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">file_object</span><span class="o">=</span><span class="bp">None</span> <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Prepare the workbook for reading.</span>
@@ -104,7 +104,7 @@ Instead, we&#8217;ll simply import a local snappy and protobuf reader.</p>
 <span class="sd">        it as a proper directory. But we don&#39;t.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span> <span class="n">name</span><span class="p">,</span> <span class="bp">None</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">archive</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_archive</span><span class="p">(</span> <span class="n">name</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">archive</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_archive</span><span class="p">(</span> <span class="n">name</span> <span class="p">)</span>
 </pre></div>
 </div>
 <p>Read the archive to get the serialized messages. This method deserializes
@@ -114,7 +114,7 @@ processing.</p>
 each of which is tied to a specific class of message. That would parallel the
 way protobuf really works.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@staticmethod</span>
-<span class="k">def</span> <span class="nf">load_archive</span><span class="p">(</span> <span class="n">filename</span> <span class="p">):</span>
+<span class="k">def</span> <span class="nf">_load_archive</span><span class="p">(</span> <span class="n">filename</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extract all the protobuf-serialized Archived messages.</span>
 <span class="sd">    We don&#39;t actually need to read **all** of them.</span>
 <span class="sd">    We really only need Index/Document.iwa, Index/CalculationEngine.iwa, and</span>
@@ -238,6 +238,14 @@ TST.TableModelArchive references a DataStore.</p>
 This includes text cells with references to the data lists string literals.
 It includes number, date and boolean cells with numeric-looking data.</dd>
 </dl>
+<dl class="method">
+<dt id="workbook.Numbers13_Workbook.sheets">
+<tt class="descclassname">Numbers13_Workbook.</tt><tt class="descname">sheets</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.Numbers13_Workbook.sheets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of &#8220;sheets&#8221; (actually underlying tables.)</p>
+<p>The &#8220;sheets&#8221; are <tt class="docutils literal"><span class="pre">[</span> <span class="pre">(</span></tt> <em>workspace</em><cite>,</cite> <em>table</em> <tt class="docutils literal"><span class="pre">),</span> <span class="pre">...</span> <span class="pre">]</span></tt> pairs.</p>
+<p>Picking a sheet involves matching a two-part name: (workspace, table).</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">sheets</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
     <span class="n">sheet_list</span><span class="o">=</span> <span class="p">[]</span>
     <span class="n">document</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">archive</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -281,7 +289,7 @@ It includes number, date and boolean cells with numeric-looking data.</dd>
         <span class="n">v</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">EmptyCell</span><span class="p">(</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="bp">self</span> <span class="p">)</span>
     <span class="k">elif</span> <span class="n">celltype</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
         <span class="n">v</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span> <span class="n">value</span><span class="p">,</span> <span class="bp">self</span> <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">celltype</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span> <span class="c"># Automatic??</span>
+    <span class="k">elif</span> <span class="n">celltype</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span> <span class="c"># Text and Rich Text</span>
         <span class="n">v</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span> <span class="n">strings</span><span class="p">[</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;UTF-8&quot;</span><span class="p">),</span> <span class="bp">self</span> <span class="p">)</span>
     <span class="k">elif</span> <span class="n">celltype</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
         <span class="n">seconds</span><span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -302,6 +310,12 @@ It includes number, date and boolean cells with numeric-looking data.</dd>
     <span class="k">return</span> <span class="n">v</span>
 </pre></div>
 </div>
+<dl class="method">
+<dt id="workbook.Numbers13_Workbook.rows_of">
+<tt class="descclassname">Numbers13_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.Numbers13_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterator through all rows.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">rows_of</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Iterator over rows.</span>
 

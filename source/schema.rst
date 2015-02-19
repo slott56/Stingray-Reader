@@ -256,22 +256,22 @@ Schema Class
 
 ..  py:class:: Schema
 
-The core Schema definition is an extension to ``list``. In addition to 
-a sequence of attributes, it also has an "info" object that's a dictionary
-of additional keywords.
+    The core Schema definition is an extension to ``list``. In addition to 
+    a sequence of attributes, it also has an "info" object that's a dictionary
+    of additional keywords.
 
-The :py:meth:`schema.Schema.rows_as_dict_iter` method uses the sheet's
-:py:meth:`sheet.Sheet.rows` iterator to create simple row-as-list values.
-These are transformed into the row-as-dict values.  If the attribute names
-involve duplicates, then one of the duplicated values will be chosen; the
-choice is arbitrary.
+    The :py:meth:`schema.Schema.rows_as_dict_iter` method uses the sheet's
+    :py:meth:`sheet.Sheet.rows` iterator to create simple row-as-list values.
+    These are transformed into the row-as-dict values.  If the attribute names
+    involve duplicates, then one of the duplicated values will be chosen; the
+    choice is arbitrary.
 
-:info:
-    Dict of additional information about this schema. Meta-metadata.
-    For COBOL schema, this includes the source DDE.
+    :info:
+        Dict of additional information about this schema. Meta-metadata.
+        For COBOL schema, this includes the source DDE.
     
-:names:
-    Attribute names for rows_as_dict_iter()
+    :names:
+        Attribute names for rows_as_dict_iter()
 
 ::
 
@@ -341,34 +341,34 @@ Attribute Class
 
 ..  py:class:: Attribute
 
-An Attribute definition has a required value of a name and a class that will
-be created to hold the data.
+    An Attribute definition has a required value of a name and a class that will
+    be created to hold the data.
 
-Here are the essential attributes of an Attribute.
+    Here are the essential attributes of an Attribute.
 
-:name: 
-    The attribute name. Typically always available for most kinds of schema.
+    :name: 
+        The attribute name. Typically always available for most kinds of schema.
 
-:create: Cell class to create.  If omitted, the class-level
-    :py:data:`Attribute.default_cell` will be used.
-    By default, this refers to :py:class:`stingray.cell.TextCell`.
+    :create: Cell class to create.  If omitted, the class-level
+        :py:data:`Attribute.default_cell` will be used.
+        By default, this refers to :py:class:`stingray.cell.TextCell`.
 
-The additional
-values commonly provided by simple fixed format file schemata.
+    The additional
+    values commonly provided by simple fixed format file schemata.
 
-:offset: 
-    Optional offset into a buffer. For simple fixed-layout files,
-    this is a constant. For COBOL files with Occurs Depending On,
-    however, this must be a function based on the actual record
-    being processed.
+    :offset: 
+        Optional offset into a buffer. For simple fixed-layout files,
+        this is a constant. For COBOL files with Occurs Depending On,
+        however, this must be a function based on the actual record
+        being processed.
 
-:size: 
-    Optional size within the buffer.
+    :size: 
+        Optional size within the buffer.
 
-:position: 
-    Optional sequential position.
+    :position: 
+        Optional sequential position.
 
-A subclass might introduce yet more attributes.
+    A subclass might introduce yet more attributes.
 
 ::
 

@@ -197,6 +197,8 @@ version.
 
 ..  py:function:: make_builder(args)
 
+    Create a builder object from the args.
+
     :param args: schema version
     :returns: appropriate builder function for the schema
         
@@ -410,6 +412,8 @@ the following.
 
 ..  py:function:: process_sheet( sheet, builder )
 
+    Process the given sheet using the given builder.
+
 ..  parsed-literal::
         
     def process_sheet( sheet, builder=builder_1 ):
@@ -439,7 +443,9 @@ Workbook Processing
 
 The overall processing of a given workbook input looks like this.
 
-..  py:function:: process_workbook( sheet, builder )
+..  py:function:: process_workbook( source, builder )
+
+    Process all sheets of the workbook using the given builder.
 
 ..  parsed-literal::
 

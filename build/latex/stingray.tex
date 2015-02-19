@@ -14,8 +14,8 @@
 
 
 \title{The Stingray Schema-Based File Reader}
-\date{May 24, 2014}
-\release{4.4.4}
+\date{February 19, 2015}
+\release{4.4.5}
 \author{S. Lott}
 \newcommand{\sphinxlogo}{}
 \renewcommand{\releasename}{Release}
@@ -32,66 +32,66 @@
     \PYG@it{\PYG@bf{\PYG@ff{#1}}}}}}}
 \def\PYG#1#2{\PYG@reset\PYG@toks#1+\relax+\PYG@do{#2}}
 
-\expandafter\def\csname PYG@tok@gt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
-\expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
-\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
+\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
 \expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
 \expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
 \expandafter\def\csname PYG@tok@no\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.38,0.68,0.84}{##1}}}
 \expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
 \expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
-\expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
 \expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
 \expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
-\expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
+\expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
+\expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
 \expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@si\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.44,0.63,0.82}{##1}}}
-\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
-\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
-\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
 \expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
 \expandafter\def\csname PYG@tok@gs\endcsname{\let\PYG@bf=\textbf}
-\expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
-\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
-\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
 \expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@gt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
+\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
 \expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
 \expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
+\expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
 
 \def\PYGZbs{\char`\\}
 \def\PYGZus{\char`\_}
@@ -172,7 +172,7 @@ schema.
 \label{index:the-stingray-schema-based-file-reader}\label{index:contents}
 
 \section{Introduction}
-\label{introduction:introduction}\label{introduction:intro}\label{introduction::doc}
+\label{introduction:intro}\label{introduction:introduction}\label{introduction::doc}
 Given a workbook -- or any other ``flat'' file -- how is it organized?  What does it \emph{mean}?
 
 How can we ignore details that are merely physical?
@@ -912,7 +912,7 @@ using protobuf.
 
 
 \subsection{stingray \texttt{\_\_init\_\_.py}}
-\label{stingray_init:stingray-init}\label{stingray_init::doc}\label{stingray_init:stingray-init-py}
+\label{stingray_init:stingray-init-py}\label{stingray_init:stingray-init}\label{stingray_init::doc}
 This is approximately pure overhead required to make a Python package.
 \phantomsection\label{stingray_init:module-__init__}\index{\_\_init\_\_ (module)}
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -921,12 +921,12 @@ This is approximately pure overhead required to make a Python package.
 
 \PYG{l+s+sd}{Requires Python 3.3, xlrd 0.9.2}
 \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-\PYG{n}{\PYGZus{}\PYGZus{}version\PYGZus{}\PYGZus{}} \PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{4.4.4}\PYG{l+s}{\PYGZdq{}}
+\PYG{n}{\PYGZus{}\PYGZus{}version\PYGZus{}\PYGZus{}} \PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{4.4.5}\PYG{l+s}{\PYGZdq{}}
 \end{Verbatim}
 
 
 \section{Cell Module -- Data Element Containers and Conversions}
-\label{cell:module-cell}\label{cell:cells}\label{cell:cell-module-data-element-containers-and-conversions}\label{cell::doc}\index{cell (module)}
+\label{cell:module-cell}\label{cell:cell-module-data-element-containers-and-conversions}\label{cell::doc}\label{cell:cells}\index{cell (module)}
 The point of a {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} is two-fold.
 \begin{itemize}
 \item {} 
@@ -1208,12 +1208,12 @@ work, we establish a default locale.
 
 \begin{fulllineitems}
 \phantomsection\label{cell:cell.Cell}\pysigline{\strong{class }\code{cell.}\bfcode{Cell}}
-\end{fulllineitems}
-
-
 The {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} class hierarchy extends this base class.  Note that we have
 a relatively short list of built-in conversions.
 For more complex, application-specific conversions, the raw \code{value} is available as a property.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Cell}\PYG{p}{(} \PYG{n}{Hashable} \PYG{p}{)}\PYG{p}{:}
@@ -1272,10 +1272,11 @@ Test hashable interface of Cell
 
 \begin{fulllineitems}
 \phantomsection\label{cell:cell.EmptyCell}\pysigline{\strong{class }\code{cell.}\bfcode{EmptyCell}}
+An \code{EmptyCell} implements empty cells.  \code{xlrd} may report them as a type \code{XL\_CELL\_EMPTY}.
+A Numbers spreadsheet may use the \code{\textless{}o\textgreater{}} or \code{\textless{}g\textgreater{}} tag.
+
 \end{fulllineitems}
 
-
-An \code{EmptyCell} implements empty cells.  \code{xlrd} may report them as a type \code{XL\_CELL\_EMPTY}. A Numbers spreadsheet may use the \code{\textless{}o\textgreater{}} or \code{\textless{}g\textgreater{}} tag.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{EmptyCell}\PYG{p}{(} \PYG{n}{Cell} \PYG{p}{)}\PYG{p}{:}
@@ -1295,9 +1296,6 @@ An \code{EmptyCell} implements empty cells.  \code{xlrd} may report them as a ty
 
 \begin{fulllineitems}
 \phantomsection\label{cell:cell.TextCell}\pysigline{\strong{class }\code{cell.}\bfcode{TextCell}}
-\end{fulllineitems}
-
-
 A \code{TextCell} implements the cells with text values.
 \code{xlrd} may report them as a type \code{XL\_CELL\_TEXT}.
 It's often possible to interpret the text as some other value,
@@ -1308,6 +1306,9 @@ This is the default type for Fixed format files, also.
 
 Note that COBOL files will explicitly have bytes values, not
 string values.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{TextCell}\PYG{p}{(} \PYG{n}{Cell} \PYG{p}{)}\PYG{p}{:}
@@ -1339,14 +1340,14 @@ string values.
 
 \begin{fulllineitems}
 \phantomsection\label{cell:cell.NumberCell}\pysigline{\strong{class }\code{cell.}\bfcode{NumberCell}}
-\end{fulllineitems}
-
-
 A \code{NumberCell} implements the cells with a float value.
 \code{xlrd} may report them as a type \code{XL\_CELL\_NUMBER}.
 A variety of conversions make sense for a number value.
 Note that the \code{to\_datetime()} conversion depends on \code{xlrd}.
 This may be a faulty assumption for some species of workbooks.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{NumberCell}\PYG{p}{(} \PYG{n}{Cell} \PYG{p}{)}\PYG{p}{:}
@@ -1388,12 +1389,12 @@ This may be a faulty assumption for some species of workbooks.
 
 \begin{fulllineitems}
 \phantomsection\label{cell:cell.FloatDateCell}\pysigline{\strong{class }\code{cell.}\bfcode{FloatDateCell}}
-\end{fulllineitems}
-
-
 A \code{FloatDateCell} implements the cells with \code{XL\_CELL\_DATE}.
 Since the conversions are all identical to number,
 we simply inherit the features of a number.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{FloatDateCell}\PYG{p}{(} \PYG{n}{NumberCell} \PYG{p}{)}\PYG{p}{:}
@@ -1410,12 +1411,12 @@ dressed-up floating-point numbers.
 
 \begin{fulllineitems}
 \phantomsection\label{cell:cell.BooleanCell}\pysigline{\strong{class }\code{cell.}\bfcode{BooleanCell}}
-\end{fulllineitems}
-
-
 A \code{BooleanCell} implements the cells with \code{XL\_CELL\_BOOLEAN}.
 Since the conversions are all identical to number,
 we simply inherit the features.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{BooleanCell}\PYG{p}{(} \PYG{n}{NumberCell} \PYG{p}{)}\PYG{p}{:}
@@ -1429,12 +1430,12 @@ we simply inherit the features.
 
 \begin{fulllineitems}
 \phantomsection\label{cell:cell.ErrorCell}\pysigline{\strong{class }\code{cell.}\bfcode{ErrorCell}}
-\end{fulllineitems}
-
-
 An \code{ErrorCell} implements the cells with \code{XL\_CELL\_ERROR}.
 The only sensible conversion is \code{ErrorCell.to\_str()} which reports
 the error string for the cell.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{ErrorCell}\PYG{p}{(} \PYG{n}{Cell} \PYG{p}{)}\PYG{p}{:}
@@ -1459,15 +1460,15 @@ the error string for the cell.
 
 \begin{fulllineitems}
 \phantomsection\label{cell:cell.DateCell}\pysigline{\strong{class }\code{cell.}\bfcode{DateCell}}
-\end{fulllineitems}
-
-
 A \code{DateCell} implements a cell with a proper date-time value.
 This is a value which did not come from a workbook float value.
 
 This could be a parsed string, for example.
 
 A variety of conversions make sense for a proper date value.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{DateCell}\PYG{p}{(} \PYG{n}{Cell} \PYG{p}{)}\PYG{p}{:}
@@ -1509,13 +1510,18 @@ These can also be applied to CSV or TAB files to create cells other than the def
 
 
 \subsubsection{Dates}
-\label{cell:dates}
-The function {\hyperref[cell:cell.date_from_string]{\code{date\_from\_string()}}} is a closure based on a format string
-that returns a single-argument conversion function.
-\index{date\_from\_string() (in module cell)}
+\label{cell:dates}\index{date\_from\_string() (in module cell)}
 
 \begin{fulllineitems}
 \phantomsection\label{cell:cell.date_from_string}\pysiglinewithargsret{\code{cell.}\bfcode{date\_from\_string}}{\emph{format}}{}
+A closure based on a format string
+that returns a single-argument conversion function.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\textbf{format} -- the format string to use.
+
+\end{description}\end{quote}
+
 \end{fulllineitems}
 
 
@@ -1531,6 +1537,14 @@ This forms the factory for the {\hyperref[cell:cell.DateCell]{\code{cell.DateCel
 
 \begin{fulllineitems}
 \phantomsection\label{cell:cell.datecell_from_string}\pysiglinewithargsret{\code{cell.}\bfcode{datecell\_from\_string}}{\emph{format}}{}
+A closure based on a format string
+that returns a single-argument conversion function.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\textbf{format} -- the format string to use.
+
+\end{description}\end{quote}
+
 \end{fulllineitems}
 
 
@@ -1553,7 +1567,15 @@ The function {\hyperref[cell:cell.date_from_float]{\code{date\_from\_float()}}} 
 \index{date\_from\_float() (in module cell)}
 
 \begin{fulllineitems}
-\phantomsection\label{cell:cell.date_from_float}\pysiglinewithargsret{\code{cell.}\bfcode{date\_from\_float}}{\emph{format}}{}
+\phantomsection\label{cell:cell.date_from_float}\pysiglinewithargsret{\code{cell.}\bfcode{date\_from\_float}}{\emph{datemode}}{}
+A closure based on a datemode setting
+that returns a single-argument conversion function.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\textbf{datemode} -- the data mode for the workbook document as a whole.
+
+\end{description}\end{quote}
+
 \end{fulllineitems}
 
 
@@ -1593,7 +1615,7 @@ this to {\hyperref[cobol:cobol]{\emph{The COBOL Package}}}.
 
 
 \section{Sheet Module -- Sheet and Row Access}
-\label{sheet:sheet-module-sheet-and-row-access}\label{sheet:module-sheet}\label{sheet::doc}\label{sheet:sheets}\index{sheet (module)}
+\label{sheet:sheet-module-sheet-and-row-access}\label{sheet:module-sheet}\label{sheet:sheets}\label{sheet::doc}\index{sheet (module)}
 A \emph{Sheet} is a generator
 of \emph{Row} objects.  A \emph{Row} is a sequence of {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} instances, identified by position.
 
@@ -1816,11 +1838,11 @@ objects passed around as arguments.
 
 \begin{fulllineitems}
 \phantomsection\label{sheet:sheet.Sheet}\pysigline{\strong{class }\code{sheet.}\bfcode{Sheet}}
+An iterator over the rows of data in a workbook.
+Subclasses implement different bindings for the sheet's schema information.
+
 \end{fulllineitems}
 
-
-A {\hyperref[sheet:sheet.Sheet]{\code{sheet.Sheet}}} is an iterator over the rows of data in a workbook.
-Subclasses implement different bindings for the sheet's schema information.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Sheet}\PYG{p}{:}
@@ -1846,9 +1868,6 @@ Subclasses implement different bindings for the sheet's schema information.
 
 \begin{fulllineitems}
 \phantomsection\label{sheet:sheet.Row}\pysigline{\strong{class }\code{sheet.}\bfcode{Row}}
-\end{fulllineitems}
-
-
 A single row in Sheet; a sequence of {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} instances.
 
 A Sheet produces this simple row-as-list.  A Schema can transform this
@@ -1864,6 +1883,9 @@ Some Workbooks have cell content identified by position.
 Some Workbooks have cell content identified by size, offset and encoding.
 Therefore, we must provide the Attribute details to the Workbook
 to get the Cell's value.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Row}\PYG{p}{(} \PYG{n}{Sequence} \PYG{p}{)}\PYG{p}{:}
@@ -1929,9 +1951,6 @@ to the Attribute to compute the required offset into the source data.
 
 \begin{fulllineitems}
 \phantomsection\label{sheet:sheet.LazyRow}\pysigline{\strong{class }\code{sheet.}\bfcode{LazyRow}}
-\end{fulllineitems}
-
-
 When we can't eagerly build all {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} instances for a given
 row, this class provides the proper API.
 
@@ -1945,6 +1964,9 @@ offset until we can access actual data.
 For these reasons, we have a {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}}, which conforms to the
 interface for a {\hyperref[sheet:sheet.Row]{\code{Row}}}, but isn't an actual sequence. No data is
 processed until the \code{LazyRow.\_\_getitem\_\_()} method is used.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{LazyRow}\PYG{p}{(} \PYG{n}{Sequence} \PYG{p}{)}\PYG{p}{:}
@@ -2003,9 +2025,6 @@ method.
 
 \begin{fulllineitems}
 \phantomsection\label{sheet:sheet.ExternalSchemaSheet}\pysigline{\strong{class }\code{sheet.}\bfcode{ExternalSchemaSheet}}
-\end{fulllineitems}
-
-
 A Sheet with an external schema can be one of two kinds.
 \begin{itemize}
 \item {} 
@@ -2020,6 +2039,9 @@ Instead, the Sheet (which has schema information) must
 provide a LazyRow with deferred Cell conversions.
 
 \end{itemize}
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{ExternalSchemaSheet}\PYG{p}{(} \PYG{n}{Sheet} \PYG{p}{)}\PYG{p}{:}
@@ -2044,12 +2066,12 @@ provide a LazyRow with deferred Cell conversions.
 
 \begin{fulllineitems}
 \phantomsection\label{sheet:sheet.EmbeddedSchemaSheet}\pysigline{\strong{class }\code{sheet.}\bfcode{EmbeddedSchemaSheet}}
-\end{fulllineitems}
-
-
 A sheet with an embedded schema must have a loader class provided.  The loader
 is invoked to build a {\hyperref[schema:schema.Schema]{\code{schema.Schema}}} object.
 It's also used to return the rest of the rows; those that weren't used to build the schema.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{EmbeddedSchemaSheet}\PYG{p}{(} \PYG{n}{ExternalSchemaSheet} \PYG{p}{)}\PYG{p}{:}
@@ -2138,7 +2160,7 @@ This assures proper packed decimal conversion of redefined fields.
 
 
 \section{Schema Package -- Schema and Attribute Definitions}
-\label{schema:schema-package-schema-and-attribute-definitions}\label{schema:module-schema}\label{schema::doc}\label{schema:schema}\index{schema (module)}
+\label{schema:schema-package-schema-and-attribute-definitions}\label{schema:schema}\label{schema::doc}\label{schema:module-schema}\index{schema (module)}
 A \emph{Schema} contains data descriptions.  It's a collection of \emph{Attribute} specifications.
 
 For our purposes, we're trying to cover the following bases:
@@ -2412,9 +2434,6 @@ A schema depends only on the definitions in {\hyperref[cell:module-cell]{\code{c
 
 \begin{fulllineitems}
 \phantomsection\label{schema:schema.Schema}\pysigline{\strong{class }\code{schema.}\bfcode{Schema}}
-\end{fulllineitems}
-
-
 The core Schema definition is an extension to \code{list}. In addition to
 a sequence of attributes, it also has an ``info'' object that's a dictionary
 of additional keywords.
@@ -2425,14 +2444,17 @@ These are transformed into the row-as-dict values.  If the attribute names
 involve duplicates, then one of the duplicated values will be chosen; the
 choice is arbitrary.
 \begin{quote}\begin{description}
-\item[{info}] \leavevmode
+\item[{Info}] \leavevmode
 Dict of additional information about this schema. Meta-metadata.
 For COBOL schema, this includes the source DDE.
 
-\item[{names}] \leavevmode
+\item[{Names}] \leavevmode
 Attribute names for rows\_as\_dict\_iter()
 
 \end{description}\end{quote}
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Schema}\PYG{p}{(} \PYG{n+nb}{list} \PYG{p}{)}\PYG{p}{:}
@@ -2510,18 +2532,15 @@ we create the a ``schema dictionary'' using simple names and path names.
 
 \begin{fulllineitems}
 \phantomsection\label{schema:schema.Attribute}\pysigline{\strong{class }\code{schema.}\bfcode{Attribute}}
-\end{fulllineitems}
-
-
 An Attribute definition has a required value of a name and a class that will
 be created to hold the data.
 
 Here are the essential attributes of an Attribute.
 \begin{quote}\begin{description}
-\item[{name}] \leavevmode
+\item[{Name}] \leavevmode
 The attribute name. Typically always available for most kinds of schema.
 
-\item[{create}] \leavevmode
+\item[{Create}] \leavevmode
 Cell class to create.  If omitted, the class-level
 \code{Attribute.default\_cell} will be used.
 By default, this refers to \code{stingray.cell.TextCell}.
@@ -2531,21 +2550,24 @@ By default, this refers to \code{stingray.cell.TextCell}.
 The additional
 values commonly provided by simple fixed format file schemata.
 \begin{quote}\begin{description}
-\item[{offset}] \leavevmode
+\item[{Offset}] \leavevmode
 Optional offset into a buffer. For simple fixed-layout files,
 this is a constant. For COBOL files with Occurs Depending On,
 however, this must be a function based on the actual record
 being processed.
 
-\item[{size}] \leavevmode
+\item[{Size}] \leavevmode
 Optional size within the buffer.
 
-\item[{position}] \leavevmode
+\item[{Position}] \leavevmode
 Optional sequential position.
 
 \end{description}\end{quote}
 
 A subclass might introduce yet more attributes.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Attribute}\PYG{p}{:}
@@ -2589,7 +2611,7 @@ Attribute( name= ``mm-dd-yy'', size= \emph{n}, offset= \emph{m},
 
 
 \section{Schema Loader Module -- Load Embedded or External Schema}
-\label{schema_loader:module-schema.loader}\label{schema_loader:schema-loader}\label{schema_loader::doc}\label{schema_loader:schema-loader-module-load-embedded-or-external-schema}\index{schema.loader (module)}
+\label{schema_loader:schema-loader-module-load-embedded-or-external-schema}\label{schema_loader:schema-loader}\label{schema_loader::doc}\label{schema_loader:module-schema.loader}\index{schema.loader (module)}
 A \emph{Schema Loader} loads the attributes of a schema from a source document.
 There are a variety of sources.
 \begin{itemize}
@@ -2746,18 +2768,13 @@ an empty sheet is desirable.
 
 \begin{fulllineitems}
 \phantomsection\label{schema_loader:schema.loader.SchemaLoader}\pysigline{\strong{class }\code{schema.loader.}\bfcode{SchemaLoader}}
+A Schema Loader has one mandatory contract: It must load the schema.
+
+A subclass may add a second contract, For example,
+an embedded schema loader will also return the non-schema rows.
+
 \end{fulllineitems}
 
-
-A Schema Loader has one mandatory contract.  A subclass may add a second contract.
-\begin{enumerate}
-\item {} 
-It must load the schema.
-
-\item {} 
-An embedded schema loader will also return the non-schema rows.
-
-\end{enumerate}
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{SchemaLoader}\PYG{p}{:}
@@ -2783,9 +2800,6 @@ An embedded schema loader will also return the non-schema rows.
 
 \begin{fulllineitems}
 \phantomsection\label{schema_loader:schema.loader.HeadingRowSchemaLoader}\pysigline{\strong{class }\code{schema.loader.}\bfcode{HeadingRowSchemaLoader}}
-\end{fulllineitems}
-
-
 In many cases, the schema is first-row column titles or something similar.
 As we noted above, \code{csv.DictReader} supports this simple case.
 
@@ -2795,6 +2809,9 @@ complex schema definitions buried in the rows of a sheet.
 
 This means that we must make the schema parsing an application-provided
 plug-in that the Workbook uses when instantiating each Sheet.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{HeadingRowSchemaLoader}\PYG{p}{(} \PYG{n}{SchemaLoader} \PYG{p}{)}\PYG{p}{:}
@@ -2847,9 +2864,6 @@ or Fixed format files, since an ``empty'' row may be difficult to discern.
 
 \begin{fulllineitems}
 \phantomsection\label{schema_loader:schema.loader.ExternalSchemaLoader}\pysigline{\strong{class }\code{schema.loader.}\bfcode{ExternalSchemaLoader}}
-\end{fulllineitems}
-
-
 In some cases, the data workbook is described by a separate schema workbook, or a separate
 sheet within the data workbook.  In these cases, the other sheet (or file) must be
 parsed to locate schema information.
@@ -2880,6 +2894,9 @@ that iterates over application objects built from application dictionaries.
 
 \end{enumerate}
 
+\end{fulllineitems}
+
+
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{ExternalSchemaLoader}\PYG{p}{(} \PYG{n}{SchemaLoader} \PYG{p}{)}\PYG{p}{:}
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Open a workbook file in a well\PYGZhy{}known format.}
@@ -2909,14 +2926,14 @@ that iterates over application objects built from application dictionaries.
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{workbook}\PYG{o}{.}\PYG{n}{sheet}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{sheet\PYGZus{}name}\PYG{p}{,} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{EmbeddedSchemaSheet}\PYG{p}{,}
         \PYG{n}{loader\PYGZus{}class}\PYG{o}{=} \PYG{n}{HeadingRowSchemaLoader} \PYG{p}{)}
 \end{Verbatim}
-
-There's potential for a great deal of variability in schema definition.
-Consequently, this \code{build\_attr} method is merely a sample that
-covers one common case.
 \index{build\_attr() (schema.loader.ExternalSchemaLoader method)}
 
 \begin{fulllineitems}
 \phantomsection\label{schema_loader:schema.loader.ExternalSchemaLoader.build_attr}\pysiglinewithargsret{\code{ExternalSchemaLoader.}\bfcode{build\_attr}}{\emph{row}}{}
+There's potential for a great deal of variability in schema definition.
+Consequently, this \code{build\_attr} method is merely a sample that
+covers one common case.
+
 \end{fulllineitems}
 
 
@@ -2976,6 +2993,8 @@ Building each {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} from
 
 \begin{fulllineitems}
 \phantomsection\label{schema_loader:schema.loader.ExternalSchemaLoader.attr_dict_iter}\pysiglinewithargsret{\code{ExternalSchemaLoader.}\bfcode{attr\_dict\_iter}}{\emph{sheet}}{}
+Iterate over application dicts based on raw dicts built by the schema of the sheet.
+
 \end{fulllineitems}
 
 
@@ -2992,6 +3011,13 @@ Building each {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} from
 
 \begin{fulllineitems}
 \phantomsection\label{schema_loader:schema.loader.ExternalSchemaLoader.schema}\pysiglinewithargsret{\code{ExternalSchemaLoader.}\bfcode{schema}}{}{}
+Scan a file to get the schema.
+\begin{quote}\begin{description}
+\item[{Returns}] \leavevmode
+a \code{Schema} object
+
+\end{description}\end{quote}
+
 \end{fulllineitems}
 
 
@@ -3013,11 +3039,11 @@ Building each {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} from
 
 \begin{fulllineitems}
 \phantomsection\label{schema_loader:schema.loader.BareExternalSchemaLoader}\pysigline{\strong{class }\code{schema.loader.}\bfcode{BareExternalSchemaLoader}}
-\end{fulllineitems}
-
-
 This is a degenerate case loader where the schema sheet (or file) doesn't have
 an embedded schema on line one of the sheet.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{BareExternalSchemaLoader}\PYG{p}{(} \PYG{n}{SchemaLoader} \PYG{p}{)}\PYG{p}{:}
@@ -3051,13 +3077,13 @@ more complex than simply loading rows from a sheet of a workbook.
 
 
 \section{Workbook Package -- Uniform Wrappers for Workbooks}
-\label{workbook/index:workbook}\label{workbook/index::doc}\label{workbook/index:workbook-package-uniform-wrappers-for-workbooks}
+\label{workbook/index:workbook}\label{workbook/index:workbook-package-uniform-wrappers-for-workbooks}\label{workbook/index::doc}
 This package includes a base definition module plus a module for
 each physical format.
 
 
 \subsection{Workbook \_\_init\_\_ Module -- Wrapper for all implementations}
-\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}\label{workbook/init:module-workbook}\label{workbook/init::doc}\label{workbook/init:workbook-init}\index{workbook (module)}
+\label{workbook/init:module-workbook}\label{workbook/init::doc}\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}\label{workbook/init:workbook-init}\index{workbook (module)}
 A \emph{Workbook} is a collection of \emph{Sheets}.  It's also a set of decoding
 rules required to translate bytes (or XML text) into meaningful \emph{Cell} instances.
 
@@ -3374,11 +3400,11 @@ a member of a larger archive.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/init:workbook.No_Schema}\pysigline{\strong{class }\code{workbook.}\bfcode{No\_Schema}}
-\end{fulllineitems}
-
-
 The {\hyperref[workbook/init:workbook.No_Schema]{\code{No\_Schema}}} exception is raised if there's a problem
 loading a schema.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{No\PYGZus{}Schema}\PYG{p}{(} \PYG{n+ne}{Exception} \PYG{p}{)}\PYG{p}{:}
@@ -3389,11 +3415,11 @@ loading a schema.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/init:workbook.Opener}\pysigline{\strong{class }\code{workbook.}\bfcode{Opener}}
-\end{fulllineitems}
-
-
 An opener \textbf{Factory} class.  A subclass can extend this to handle other file
 extensions and physical formats.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Opener}\PYG{p}{:}
@@ -3443,11 +3469,30 @@ extensions and physical formats.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/init:workbook.open_workbook}\pysiglinewithargsret{\code{workbook.}\bfcode{open\_workbook}}{\emph{name}, \emph{file\_object}, \emph{schema\_path}, \emph{schema\_sheet}}{}
-\end{fulllineitems}
+Open a workbook.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{name} -- The name of the file.
 
+\item {} 
+\textbf{file\_object} -- (optional) already opened file object.
+
+\item {} 
+\textbf{schema\_path} -- (optional) filename for an external schema file.
+
+\item {} 
+\textbf{schema\_sheet} -- (optional) name of a sheet with a schema.
+
+\end{itemize}
+
+\end{description}\end{quote}
 
 The default {\hyperref[workbook/init:workbook.open_workbook]{\code{workbook.open\_workbook()}}} is simply an instance
 of the {\hyperref[workbook/init:workbook.Opener]{\code{workbook.Opener}}}.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n}{open\PYGZus{}workbook}\PYG{o}{=} \PYG{n}{Opener}\PYG{p}{(}\PYG{p}{)}
@@ -3466,22 +3511,24 @@ for binding file and schema.  See below for the {\hyperref[schema_loader:schema.
 
 
 \subsection{Workbook Base Definition}
-\label{workbook/base:workbook-base-definition}\label{workbook/base:workbook-base}\label{workbook/base::doc}
+\label{workbook/base:workbook-base}\label{workbook/base::doc}\label{workbook/base:workbook-base-definition}
+These are the definitions shared by all Workbook subclass definitions.
+\phantomsection\label{workbook/base:module-workbook}\index{workbook (module)}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{os}
 
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
 \end{Verbatim}
-\phantomsection\label{workbook/base:module-workbook}\index{workbook (module)}\index{Workbook (class in workbook)}
+\index{Workbook (class in workbook)}
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/base:workbook.Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{Workbook}}
+All physical workbook formats all encode a single, common data structure.
+Here are some abstract definitions.
+
 \end{fulllineitems}
 
-
-We note that these physical formats all encode a single, common data structure.
-Here are some abstract definitions.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Workbook}\PYG{p}{:}
@@ -3520,6 +3567,8 @@ absence of a schema.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/base:workbook.Workbook.sheets}\pysiglinewithargsret{\code{Workbook.}\bfcode{sheets}}{}{}
+The list of sheet names.
+
 \end{fulllineitems}
 
 
@@ -3546,6 +3595,8 @@ The Context Manager interface.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/base:workbook.Workbook.rows_of}\pysiglinewithargsret{\code{Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+An iterator over rows of a given sheet.
+
 \end{fulllineitems}
 
 
@@ -3558,6 +3609,10 @@ The Context Manager interface.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/base:workbook.Workbook.row_get}\pysiglinewithargsret{\code{Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
+Get a value from the current row using the current attribute.
+This is the essential, underlying implementation to fetch data
+from a row of a workbook.
+
 \end{fulllineitems}
 
 
@@ -3577,7 +3632,7 @@ each line into cells.
 
 
 \subsection{CSV Workbook}
-\label{workbook/csv:csv-workbook}\label{workbook/csv::doc}\label{workbook/csv:workbook-csv}
+\label{workbook/csv:csv-workbook}\label{workbook/csv:workbook-csv}\label{workbook/csv::doc}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{csv}
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
@@ -3591,12 +3646,16 @@ each line into cells.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/csv:workbook.CSV_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{CSV\_Workbook}}
-\end{fulllineitems}
+Extract sheets, rows and cells from a CSV file.
 
-
-We're wrapping the \code{csv.reader()}.  We need to create proper
+A wrapper for \code{csv.reader()}.  This will create proper
 {\hyperref[cell:cell.TextCell]{\code{cell.TextCell}}} instances instead of the default string values
 that \code{csv} normally creates.
+
+There's only a single sheet and it matches the filename.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{CSV\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{Workbook} \PYG{p}{)}\PYG{p}{:}
@@ -3627,6 +3686,8 @@ the conversions until the callback to {\hyperref[workbook/base:workbook.Workbook
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/csv:workbook.CSV_Workbook.rows_of}\pysiglinewithargsret{\code{CSV\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+Iterator through all rows. The sheet is ignored.
+
 \end{fulllineitems}
 
 
@@ -3644,6 +3705,8 @@ the conversions until the callback to {\hyperref[workbook/base:workbook.Workbook
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/csv:workbook.CSV_Workbook.row_get}\pysiglinewithargsret{\code{CSV\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
+Concrete implementation to get an attribute's value from a given row.
+
 \end{fulllineitems}
 
 
@@ -3672,12 +3735,14 @@ is easy.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/xls:workbook.XLS_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{XLS\_Workbook}}
-\end{fulllineitems}
-
+Extract sheets, rows and cells from an XLS format file.
 
 This definition of a workbook wraps \code{xlrd} so that it fits the Stingray framework.
 We'll use proper {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} subclass instances instead of the default \code{xlrd.Cell}
 values that \code{xlrd} normally creates.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{XLS\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{Workbook} \PYG{p}{)}\PYG{p}{:}
@@ -3700,6 +3765,8 @@ values that \code{xlrd} normally creates.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/xls:workbook.XLS_Workbook.sheets}\pysiglinewithargsret{\code{XLS\_Workbook.}\bfcode{sheets}}{}{}
+Return the list of sheets for this workbook.
+
 \end{fulllineitems}
 
 
@@ -3716,6 +3783,8 @@ until the callback to {\hyperref[workbook/xls:workbook.XLS_Workbook.row_get]{\co
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/xls:workbook.XLS_Workbook.rows_of}\pysiglinewithargsret{\code{XLS\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+Iterate through rows of the given sheet.
+
 \end{fulllineitems}
 
 
@@ -3732,6 +3801,8 @@ until the callback to {\hyperref[workbook/xls:workbook.XLS_Workbook.row_get]{\co
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/xls:workbook.XLS_Workbook.row_get}\pysiglinewithargsret{\code{XLS\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
+Low-level get of a particular attribute from the given row.
+
 \end{fulllineitems}
 
 
@@ -3740,11 +3811,17 @@ until the callback to {\hyperref[workbook/xls:workbook.XLS_Workbook.row_get]{\co
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Create a Cell from the row\PYGZsq{}s data.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{k}{return} \PYG{n}{row}\PYG{p}{[}\PYG{n}{attribute}\PYG{o}{.}\PYG{n}{position}\PYG{p}{]}
 \end{Verbatim}
+\index{cell() (workbook.XLS\_Workbook method)}
 
+\begin{fulllineitems}
+\phantomsection\label{workbook/xls:workbook.XLS_Workbook.cell}\pysiglinewithargsret{\code{XLS\_Workbook.}\bfcode{cell}}{\emph{row}, \emph{xlrd\_cell}}{}
 In {\hyperref[workbook/xls:workbook.XLS_Workbook.rows_of]{\code{XLS\_Workbook.rows\_of()}}} we built a row eagerly.
 That way, returning an individual Cell is easy.
 
 Convert a single \code{xlrd.Cell} to a proper subclass of {\hyperref[cell:cell.Cell]{\code{cell.Cell}}}
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{cell}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{xlrd\PYGZus{}cell} \PYG{p}{)}\PYG{p}{:}
@@ -3769,7 +3846,7 @@ Convert a single \code{xlrd.Cell} to a proper subclass of {\hyperref[cell:cell.C
 
 
 \subsection{XLSX or XLSM Workbook}
-\label{workbook/xlsx:workbook-xlsx}\label{workbook/xlsx::doc}\label{workbook/xlsx:xlsx-or-xlsm-workbook}
+\label{workbook/xlsx::doc}\label{workbook/xlsx:workbook-xlsx}\label{workbook/xlsx:xlsx-or-xlsm-workbook}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -3786,8 +3863,7 @@ Convert a single \code{xlrd.Cell} to a proper subclass of {\hyperref[cell:cell.C
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/xlsx:workbook.XLSX_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{XLSX\_Workbook}}
-\end{fulllineitems}
-
+Extract sheets, rows and cells from an XLSX format file.
 
 We're opening a ZIP archive and parsing the various XML documents
 that we find therein.
@@ -3800,6 +3876,9 @@ See \href{http://effbot.org/zone/element-iterparse.htm}{http://effbot.org/zone/e
 
 The class as a whole defines some handy constants like XML namespaces
 and a pattern for parsing Cell ID's to separate the letters from the numbers.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{XLSX\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{Workbook} \PYG{p}{)}\PYG{p}{:}
@@ -3909,6 +3988,8 @@ with tempfile.TemporaryFile( ) as temp:
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/xlsx:workbook.XLSX_Workbook.sheets}\pysiglinewithargsret{\code{XLSX\_Workbook.}\bfcode{sheets}}{}{}
+Return the list of sheets for this workbook.
+
 \end{fulllineitems}
 
 
@@ -3963,6 +4044,8 @@ enough information to build the Cell instance.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/xlsx:workbook.XLSX_Workbook.rows_of}\pysiglinewithargsret{\code{XLSX\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+Iterate through rows of the given sheet.
+
 \end{fulllineitems}
 
 
@@ -4021,6 +4104,8 @@ enough information to build the Cell instance.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/xlsx:workbook.XLSX_Workbook.row_get}\pysiglinewithargsret{\code{XLSX\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
+Low-level get of a particular attribute from the given row.
+
 \end{fulllineitems}
 
 
@@ -4029,9 +4114,15 @@ enough information to build the Cell instance.
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Create a Cell from the row\PYGZsq{}s data.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{k}{return} \PYG{n}{row}\PYG{p}{[}\PYG{n}{attribute}\PYG{o}{.}\PYG{n}{position}\PYG{p}{]}
 \end{Verbatim}
+\index{cell() (workbook.XLSX\_Workbook method)}
 
+\begin{fulllineitems}
+\phantomsection\label{workbook/xlsx:workbook.XLSX_Workbook.cell}\pysiglinewithargsret{\code{XLSX\_Workbook.}\bfcode{cell}}{\emph{row}, \emph{element}}{}
 Build a subclass of {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} from the current value tag content plus the
 containing cell type information.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{cell}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{element} \PYG{p}{)}\PYG{p}{:}
@@ -4082,15 +4173,17 @@ containing cell type information.
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.sheet}
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.cell}
 \end{Verbatim}
-\phantomsection\label{workbook/ods:module-workbook}\index{workbook (module)}\index{ODS\_Workbook (class in workbook)}
+\phantomsection\label{workbook/ods:module-workbook}\index{workbook (module)}
+We should use \code{iterparse} rather than simply parsing the entire XML document.
+If the document is large, then we can't hold it all in memory.
+\index{ODS\_Workbook (class in workbook)}
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/ods:workbook.ODS_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{ODS\_Workbook}}
+Extract sheets, rows and cells from a OOO ODS format file.
+
 \end{fulllineitems}
 
-
-We should use \code{iterparse} rather than simply parsing the entire document.
-If the document is large, then we can't hold it all in memory.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{ODS\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{Workbook} \PYG{p}{)}\PYG{p}{:}
@@ -4144,6 +4237,8 @@ the name attribute from that tag.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/ods:workbook.ODS_Workbook.sheets}\pysiglinewithargsret{\code{ODS\_Workbook.}\bfcode{sheets}}{}{}
+Return the list of sheets for this workbook.
+
 \end{fulllineitems}
 
 
@@ -4172,7 +4267,9 @@ it can be a mixed content value of the element.  There are three cases.
 \index{rows\_of() (workbook.ODS\_Workbook method)}
 
 \begin{fulllineitems}
-\phantomsection\label{workbook/ods:workbook.ODS_Workbook.rows_of}\pysiglinewithargsret{\code{ODS\_Workbook.}\bfcode{rows\_of}}{}{}
+\phantomsection\label{workbook/ods:workbook.ODS_Workbook.rows_of}\pysiglinewithargsret{\code{ODS\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+Iterate through rows of the given sheet.
+
 \end{fulllineitems}
 
 
@@ -4190,6 +4287,8 @@ it can be a mixed content value of the element.  There are three cases.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/ods:workbook.ODS_Workbook.row_get}\pysiglinewithargsret{\code{ODS\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
+Low-level get of a particular attribute from the given row.
+
 \end{fulllineitems}
 
 
@@ -4278,7 +4377,7 @@ At \code{\textless{}table-cell} end: finalize the accumulated value.
 
 
 \subsection{Numbers 09 Workbook}
-\label{workbook/numbers_09:numbers-09-workbook}\label{workbook/numbers_09:workbook-number09}\label{workbook/numbers_09::doc}
+\label{workbook/numbers_09:numbers-09-workbook}\label{workbook/numbers_09::doc}\label{workbook/numbers_09:workbook-number09}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4301,15 +4400,18 @@ Numbers `13 is entirely different. See {\hyperref[workbook/numbers_13:workbook-n
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/numbers_09:workbook.Numbers09_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{Numbers09\_Workbook}}
+Extract sheets, rows and cells from a Numbers `09 format file.
+
+The \code{.numbers} ``file'' is a ZIP file.
+
+The \code{index.xml} element the interesting part of the archive.
+
 \end{fulllineitems}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Numbers09\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{Workbook} \PYG{p}{)}\PYG{p}{:}
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Mac OS X Numbers Workbook for iWork 09.}
-
-\PYG{l+s+sd}{    The {}`{}`.numbers{}`{}` \PYGZdq{}file\PYGZdq{} is a ZIP file.}
-\PYG{l+s+sd}{    The index.xml is the interesting part of this.}
 \PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{n}{NUMBERS\PYGZus{}NS} \PYG{o}{=} \PYG{p}{\PYGZob{}}
     \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{ls}\PYG{l+s}{\PYGZdq{}}\PYG{p}{:}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{http://developer.apple.com/namespaces/ls}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}
@@ -4376,8 +4478,14 @@ Locate a ``data source'' within the XML document. Create \code{Cell} instances.
         \PYG{k}{yield} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{cell}\PYG{p}{(} \PYG{n}{cell\PYGZus{}doc} \PYG{p}{)}
     \PYG{c}{\PYGZsh{} or return map( self.cell, datasource )}
 \end{Verbatim}
+\index{cell() (workbook.Numbers09\_Workbook method)}
 
+\begin{fulllineitems}
+\phantomsection\label{workbook/numbers_09:workbook.Numbers09_Workbook.cell}\pysiglinewithargsret{\code{Numbers09\_Workbook.}\bfcode{cell}}{\emph{cell}}{}
 Create a \code{Cell} instance from the decoded data.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{cell}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{cell} \PYG{p}{)}\PYG{p}{:}
@@ -4571,8 +4679,18 @@ Rewrite a number format from Numbers to Python
     \PYG{k}{return} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}digits\PYGZcb{}\PYGZob{}comma\PYGZcb{}.\PYGZob{}precision\PYGZcb{}f}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}
         \PYG{n}{digits}\PYG{o}{=} \PYG{n}{digits}\PYG{p}{,} \PYG{n}{comma}\PYG{o}{=}\PYG{n}{comma}\PYG{p}{,} \PYG{n}{precision}\PYG{o}{=}\PYG{n}{precision} \PYG{p}{)}
 \end{Verbatim}
+\index{sheets() (workbook.Numbers09\_Workbook method)}
 
-The ``sheets'' are the \code{{[} (} \emph{workspace}\emph{,} \emph{table} \code{), ... {]}} pairs.
+\begin{fulllineitems}
+\phantomsection\label{workbook/numbers_09:workbook.Numbers09_Workbook.sheets}\pysiglinewithargsret{\code{Numbers09\_Workbook.}\bfcode{sheets}}{}{}
+Return a list of ``sheets'' (actually underlying tables.)
+
+The ``sheets'' are \code{{[} (} \emph{workspace}\emph{,} \emph{table} \code{), ... {]}} pairs.
+
+Picking a sheet involves matching a two-part name: (workspace, table).
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{sheets}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
@@ -4584,8 +4702,14 @@ The ``sheets'' are the \code{{[} (} \emph{workspace}\emph{,} \emph{table} \code{
             \PYG{n}{sheet\PYGZus{}list}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(} \PYG{p}{(}\PYG{n}{w\PYGZus{}name}\PYG{p}{,} \PYG{n}{t\PYGZus{}name}\PYG{p}{)} \PYG{p}{)}
     \PYG{k}{return} \PYG{n}{sheet\PYGZus{}list}
 \end{Verbatim}
+\index{rows\_of() (workbook.Numbers09\_Workbook method)}
 
-Picking a sheet involves matching a two-part name: (workspace, table).
+\begin{fulllineitems}
+\phantomsection\label{workbook/numbers_09:workbook.Numbers09_Workbook.rows_of}\pysiglinewithargsret{\code{Numbers09\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+Iterator through all rows of a sheet.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{rows\PYGZus{}of}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet} \PYG{p}{)}\PYG{p}{:}
@@ -4636,7 +4760,7 @@ Picking a sheet involves matching a two-part name: (workspace, table).
 
 
 \subsection{Numbers 13 Workbook}
-\label{workbook/numbers_13:numbers-13-workbook}\label{workbook/numbers_13::doc}\label{workbook/numbers_13:workbook-number13}
+\label{workbook/numbers_13:numbers-13-workbook}\label{workbook/numbers_13:workbook-number13}\label{workbook/numbers_13::doc}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4673,15 +4797,18 @@ Instead, we'll simply import a local snappy and protobuf reader.
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/numbers_13:workbook.Numbers13_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{Numbers13\_Workbook}}
+Extract sheets, rows and cells from a Numbers `13 format file.
+
+The \code{.numbers} ``file'' is a directory bundle or package.
+
+The \code{index.zip} file is the interesting part of the bundle.
+
 \end{fulllineitems}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Numbers13\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{Workbook} \PYG{p}{)}\PYG{p}{:}
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Mac OS X Numbers Workbook for iWork \PYGZsq{}13.}
-
-\PYG{l+s+sd}{    The {}`{}`.numbers{}`{}` \PYGZdq{}file\PYGZdq{} is a directory bundle or package.}
-\PYG{l+s+sd}{    The {}`{}`index.zip{}`{}` file is the interesting part of the bundle.}
 \PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{name}\PYG{p}{,} \PYG{n}{file\PYGZus{}object}\PYG{o}{=}\PYG{n+nb+bp}{None} \PYG{p}{)}\PYG{p}{:}
         \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Prepare the workbook for reading.}
@@ -4693,7 +4820,7 @@ Instead, we'll simply import a local snappy and protobuf reader.
 \PYG{l+s+sd}{        it as a proper directory. But we don\PYGZsq{}t.}
 \PYG{l+s+sd}{        \PYGZdq{}\PYGZdq{}\PYGZdq{}}
         \PYG{n+nb}{super}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n+nb+bp}{None} \PYG{p}{)}
-        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{load\PYGZus{}archive}\PYG{p}{(} \PYG{n}{name} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{archive}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}load\PYGZus{}archive}\PYG{p}{(} \PYG{n}{name} \PYG{p}{)}
 \end{Verbatim}
 
 Read the archive to get the serialized messages. This method deserializes
@@ -4706,7 +4833,7 @@ way protobuf really works.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n+nd}{@staticmethod}
-\PYG{k}{def} \PYG{n+nf}{load\PYGZus{}archive}\PYG{p}{(} \PYG{n}{filename} \PYG{p}{)}\PYG{p}{:}
+\PYG{k}{def} \PYG{n+nf}{\PYGZus{}load\PYGZus{}archive}\PYG{p}{(} \PYG{n}{filename} \PYG{p}{)}\PYG{p}{:}
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Extract all the protobuf\PYGZhy{}serialized Archived messages.}
 \PYG{l+s+sd}{    We don\PYGZsq{}t actually need to read **all** of them.}
 \PYG{l+s+sd}{    We really only need Index/Document.iwa, Index/CalculationEngine.iwa, and}
@@ -4834,6 +4961,18 @@ This includes text cells with references to the data lists string literals.
 It includes number, date and boolean cells with numeric-looking data.
 
 \end{description}
+\index{sheets() (workbook.Numbers13\_Workbook method)}
+
+\begin{fulllineitems}
+\phantomsection\label{workbook/numbers_13:workbook.Numbers13_Workbook.sheets}\pysiglinewithargsret{\code{Numbers13\_Workbook.}\bfcode{sheets}}{}{}
+Return a list of ``sheets'' (actually underlying tables.)
+
+The ``sheets'' are \code{{[} (} \emph{workspace}\emph{,} \emph{table} \code{), ... {]}} pairs.
+
+Picking a sheet involves matching a two-part name: (workspace, table).
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{sheets}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
@@ -4882,7 +5021,7 @@ enum CellType \PYGZob{}
         \PYG{n}{v}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{EmptyCell}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
     \PYG{k}{elif} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{2}\PYG{p}{:}
         \PYG{n}{v}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{NumberCell}\PYG{p}{(} \PYG{n}{value}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
-    \PYG{k}{elif} \PYG{n}{celltype} \PYG{o+ow}{in} \PYG{p}{(}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{l+m+mi}{9}\PYG{p}{)}\PYG{p}{:} \PYG{c}{\PYGZsh{} Automatic??}
+    \PYG{k}{elif} \PYG{n}{celltype} \PYG{o+ow}{in} \PYG{p}{(}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{l+m+mi}{9}\PYG{p}{)}\PYG{p}{:} \PYG{c}{\PYGZsh{} Text and Rich Text}
         \PYG{n}{v}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{TextCell}\PYG{p}{(} \PYG{n}{strings}\PYG{p}{[}\PYG{n}{value}\PYG{p}{]}\PYG{o}{.}\PYG{n}{decode}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{UTF\PYGZhy{}8}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{n+nb+bp}{self} \PYG{p}{)}
     \PYG{k}{elif} \PYG{n}{celltype} \PYG{o}{==} \PYG{l+m+mi}{5}\PYG{p}{:}
         \PYG{n}{seconds}\PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{value}\PYG{p}{)}
@@ -4902,6 +5041,14 @@ enum CellType \PYGZob{}
     \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZus{}cell \PYGZob{}0\PYGZcb{} = \PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(} \PYG{n}{cell}\PYG{p}{,} \PYG{n}{v}\PYG{p}{)} \PYG{p}{)}
     \PYG{k}{return} \PYG{n}{v}
 \end{Verbatim}
+\index{rows\_of() (workbook.Numbers13\_Workbook method)}
+
+\begin{fulllineitems}
+\phantomsection\label{workbook/numbers_13:workbook.Numbers13_Workbook.rows_of}\pysiglinewithargsret{\code{Numbers13\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+Iterator through all rows.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{rows\PYGZus{}of}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet} \PYG{p}{)}\PYG{p}{:}
@@ -4952,6 +5099,13 @@ enum CellType \PYGZob{}
 
 \subsection{Fixed-Format Workbook}
 \label{workbook/fixed:fixed-format-workbook}\label{workbook/fixed::doc}\label{workbook/fixed:workbook-fixed}
+Like a CSV workbook, this is a kind of degenerate case.  We don't have
+a lot of sheets, or a lot of data types.
+
+A subclass might do EBCDIC conversion and possibly even decode
+packed decimal numbers.  To do this, a COBOL-language DDE would be
+required as the schema definition. See {\hyperref[cobol:cobol]{\emph{The COBOL Package}}}.
+
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4964,15 +5118,14 @@ enum CellType \PYGZob{}
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/fixed:workbook.Fixed_Workbook}\pysigline{\strong{class }\code{workbook.}\bfcode{Fixed\_Workbook}}
+Extract sheets, rows and cells from a fixed-format file.
+
+The schema must have size and offset information to locate the fields.
+
+There's only a single sheet and it matches the filename.
+
 \end{fulllineitems}
 
-
-Like a CSV workbook, this is a kind of degenerate case.  We don't have
-a lot of sheets, or a lot of data types.
-
-A subclass might do EBCDIC conversion and possibly even decode
-packed decimal numbers.  To do this, a COBOL-language DDE would be
-required as the schema definition. See {\hyperref[cobol:cobol]{\emph{The COBOL Package}}}.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Fixed\PYGZus{}Workbook}\PYG{p}{(} \PYG{n}{Workbook} \PYG{p}{)}\PYG{p}{:}
@@ -5005,6 +5158,10 @@ required as the schema definition. See {\hyperref[cobol:cobol]{\emph{The COBOL P
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/fixed:workbook.Fixed_Workbook.sheet}\pysiglinewithargsret{\code{Fixed\_Workbook.}\bfcode{sheet}}{\emph{sheet}}{}
+Create a sheet for this workbook.
+The \code{sheet\_type} attribute of the class ignored.
+This must return a {\hyperref[sheet:sheet.ExternalSchemaSheet]{\code{sheet.ExternalSchemaSheet}}}.
+
 \end{fulllineitems}
 
 
@@ -5024,6 +5181,8 @@ Or {\hyperref[cobol_init:cobol.COBOL_File.row_get]{\code{cobol.COBOL\_File.row\_
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/fixed:workbook.Fixed_Workbook.rows_of}\pysiglinewithargsret{\code{Fixed\_Workbook.}\bfcode{rows\_of}}{\emph{sheet}}{}
+Iterator through all rows. The sheet's schema is required to decompose the rows.
+
 \end{fulllineitems}
 
 
@@ -5042,6 +5201,8 @@ Or {\hyperref[cobol_init:cobol.COBOL_File.row_get]{\code{cobol.COBOL\_File.row\_
 
 \begin{fulllineitems}
 \phantomsection\label{workbook/fixed:workbook.Fixed_Workbook.row_get}\pysiglinewithargsret{\code{Fixed\_Workbook.}\bfcode{row\_get}}{\emph{row}, \emph{attribute}}{}
+Concrete implementation to get an attribute's value from a given row.
+
 \end{fulllineitems}
 
 
@@ -5054,7 +5215,7 @@ Or {\hyperref[cobol_init:cobol.COBOL_File.row_get]{\code{cobol.COBOL\_File.row\_
 
 
 \section{The iWork `13 Numbers Modules}
-\label{iwork13:iwork13}\label{iwork13::doc}\label{iwork13:the-iwork-13-numbers-modules}
+\label{iwork13:the-iwork-13-numbers-modules}\label{iwork13:iwork13}\label{iwork13::doc}
 There are two digressive modules that are part of reading iWork `13 Numbers files.
 We could depend on other implementations. Instead, we've provided our own
 implementation to reduce the dependencies.
@@ -5070,7 +5231,7 @@ Stingray.
 
 
 \subsection{Snappy Module -- Unpacking iWork 13 files.}
-\label{snappy:snappy}\label{snappy::doc}\label{snappy:snappy-module-unpacking-iwork-13-files}
+\label{snappy:snappy-module-unpacking-iwork-13-files}\label{snappy::doc}\label{snappy:snappy}
 This is not a full implementation of the Snappy compression protocol.
 It's a minimal implementation, enough to unpack iWork `13 files.
 \phantomsection\label{snappy:module-snappy}\index{snappy (module)}
@@ -5136,10 +5297,18 @@ Some overheads
 
 \begin{fulllineitems}
 \phantomsection\label{snappy:snappy.bytes_int}\pysiglinewithargsret{\code{snappy.}\bfcode{bytes\_int}}{\emph{seq}}{}
+Decode a sequence of bytes into an integer.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\textbf{seq} -- sequence of bytes; the entire sequence is consumed.
+
+\item[{Returns}] \leavevmode
+integer
+
+\end{description}\end{quote}
+
 \end{fulllineitems}
 
-
-Function to decode bytes into an integer
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{bytes\PYGZus{}int}\PYG{p}{(} \PYG{n}{seq} \PYG{p}{)}\PYG{p}{:}
@@ -5156,10 +5325,18 @@ Function to decode bytes into an integer
 
 \begin{fulllineitems}
 \phantomsection\label{snappy:snappy.varint}\pysiglinewithargsret{\code{snappy.}\bfcode{varint}}{\emph{stream}}{}
+Decode varint-encoded sequence of bytes.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\textbf{seq} -- sequence of bytes; consume bytes to decode the int.
+
+\item[{Returns}] \leavevmode
+integer
+
+\end{description}\end{quote}
+
 \end{fulllineitems}
 
-
-Function to decode varint-encoded bytes.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{varint}\PYG{p}{(} \PYG{n}{stream} \PYG{p}{)}\PYG{p}{:}
@@ -5178,14 +5355,8 @@ Function to decode varint-encoded bytes.
         \PYG{n}{v} \PYG{o}{+}\PYG{o}{=} \PYG{p}{(}\PYG{n}{b} \PYG{o}{\PYGZam{}} \PYG{l+m+mh}{0x7F}\PYG{p}{)}\PYG{o}{\PYGZlt{}\PYGZlt{}}\PYG{n}{shift}
     \PYG{k}{return} \PYG{n}{v}
 \end{Verbatim}
-\index{Snappy (class in snappy)}
 
-\begin{fulllineitems}
-\phantomsection\label{snappy:snappy.Snappy}\pysigline{\strong{class }\code{snappy.}\bfcode{Snappy}}
-\end{fulllineitems}
-
-
-The snappy decode class has two parts.
+The snappy protocol has two levels.
 \begin{itemize}
 \item {} 
 The LZ77 decoder which expands the tags to create the data.
@@ -5248,7 +5419,31 @@ except that the offset is stored as a 32-bit integer instead of a
 
 \item {} 
 The higher-level framing protocol.
-There is just one kind of frame, type ``0'' (Compressed Data) frame with a
+\begin{itemize}
+\item {} 
+type ``0'' (Compressed Data) frame with a  three-byte length.
+
+\item {} 
+Other types are possible in principle. Numbers `13 doesn't use them.
+
+\end{itemize}
+
+\end{itemize}
+\index{Snappy (class in snappy)}
+
+\begin{fulllineitems}
+\phantomsection\label{snappy:snappy.Snappy}\pysigline{\strong{class }\code{snappy.}\bfcode{Snappy}}
+\end{fulllineitems}
+
+
+Implement the two-level snappy protocol used by Numbers `13.
+\begin{itemize}
+\item {} 
+The LZ77 decoder which expands the tags to create the data.
+
+\item {} 
+The higher-level framing protocol
+with just one kind of frame, type ``0'' (Compressed Data) with a
 three-byte length.
 
 \end{itemize}
@@ -5258,12 +5453,18 @@ three-byte length.
     \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}init\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{log}\PYG{o}{=} \PYG{n}{logging}\PYG{o}{.}\PYG{n}{getLogger}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}class\PYGZus{}\PYGZus{}}\PYG{o}{.}\PYG{n}{\PYGZus{}\PYGZus{}qualname\PYGZus{}\PYGZus{}} \PYG{p}{)}
 \end{Verbatim}
+\index{lz77() (snappy.Snappy method)}
 
+\begin{fulllineitems}
+\phantomsection\label{snappy:snappy.Snappy.lz77}\pysiglinewithargsret{\code{Snappy.}\bfcode{lz77}}{\emph{frame}}{}
 The LZ77 decoder. This locates the \textbf{varint} size header.  That's followed by
 a sequence of tags.  The literal tag has data. The other three tags repeat
 previously output bytes.
 
 Because of the framing protocol, we're limited to a buffer of only 64K bytes.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{lz77}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{frame} \PYG{p}{)}\PYG{p}{:}
@@ -5336,9 +5537,15 @@ Because of the framing protocol, we're limited to a buffer of only 64K bytes.
     \PYG{k}{assert} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n+nb}{buffer}\PYG{p}{)} \PYG{o}{==} \PYG{n}{size}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{len(buffer) \PYGZob{}0\PYGZcb{} != size \PYGZob{}1\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n+nb}{buffer}\PYG{p}{)}\PYG{p}{,}\PYG{n}{size}\PYG{p}{)}
     \PYG{k}{return} \PYG{n+nb}{buffer}
 \end{Verbatim}
+\index{decompress() (snappy.Snappy method)}
 
+\begin{fulllineitems}
+\phantomsection\label{snappy:snappy.Snappy.decompress}\pysiglinewithargsret{\code{Snappy.}\bfcode{decompress}}{\emph{file\_object}}{}
 The Framing protocol required to decode. The frames contain up to 64K of compressed
 data. This defines a sequence of windows over the stream of data.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{decompress}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{file\PYGZus{}object} \PYG{p}{)}\PYG{p}{:}
@@ -5380,7 +5587,7 @@ data. This defines a sequence of windows over the stream of data.
 \subsection{Protobuf Module -- Unpacking iWork 13 files.}
 \label{protobuf:protobuf-module-unpacking-iwork-13-files}\label{protobuf:protobuf}\label{protobuf::doc}
 This is not a full implementation of Protobuf object representation.
-It's a minimal implementation, enough to unpack iWork `13 files.
+This is a minimal implementation of protobuf parsing, enough to unpack iWork `13 files.
 \phantomsection\label{protobuf:module-protobuf}\index{protobuf (module)}
 
 \subsubsection{The iWork `13 use of protobuf}
@@ -5526,14 +5733,14 @@ Some Overheads
 
 \begin{fulllineitems}
 \phantomsection\label{protobuf:protobuf.Message}\pysigline{\strong{class }\code{protobuf.}\bfcode{Message}}
-\end{fulllineitems}
-
-
 A definition of a generic protobuf message. This is both an instance
 and it also as staticmethods that build instances from a buffer of bytes.
 
 We don't use subclasses of \code{Message}. The proper way to use
 Protobuf is to compile \code{.proto} files into Message class definitions.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Message}\PYG{p}{:}
@@ -5552,9 +5759,16 @@ Protobuf is to compile \code{.proto} files into Message class definitions.
     \PYG{k}{def} \PYG{n+nf}{\PYGZus{}\PYGZus{}getitem\PYGZus{}\PYGZus{}}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{index} \PYG{p}{)}\PYG{p}{:}
         \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{fields}\PYG{o}{.}\PYG{n}{get}\PYG{p}{(}\PYG{n}{index}\PYG{p}{,}\PYG{p}{[}\PYG{p}{]}\PYG{p}{)}
 \end{Verbatim}
+\index{parse\_protobuf\_iter() (protobuf.Message method)}
 
+\begin{fulllineitems}
+\phantomsection\label{protobuf:protobuf.Message.parse_protobuf_iter}\pysiglinewithargsret{\code{Message.}\bfcode{parse\_protobuf\_iter}}{\emph{message\_bytes}}{}
 An iterative parser for the top-level (name, value) pairs in the protobuf stream.
-This yields all of the pairs that are parsed.
+This yields all of the pairs that are parsed. This a static method which builds
+message instances.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n+nd}{@staticmethod}
@@ -5590,10 +5804,16 @@ This yields all of the pairs that are parsed.
             \PYG{n}{item}\PYG{p}{,} \PYG{n}{field\PYGZus{}number}\PYG{p}{,} \PYG{n}{wire\PYGZus{}type}\PYG{p}{,} \PYG{n}{item\PYGZus{}size}\PYG{p}{,} \PYG{n}{field\PYGZus{}value}\PYG{p}{)} \PYG{p}{)}
         \PYG{k}{yield} \PYG{n}{field\PYGZus{}number}\PYG{p}{,} \PYG{n}{field\PYGZus{}value}
 \end{Verbatim}
+\index{parse\_protobuf() (protobuf.Message method)}
 
+\begin{fulllineitems}
+\phantomsection\label{protobuf:protobuf.Message.parse_protobuf}\pysiglinewithargsret{\code{Message.}\bfcode{parse\_protobuf}}{\emph{message\_bytes}}{}
 Create a bag in the form of a mapping \code{\{name: {[}value,value,value{]}, ... \}}. This will
 contain the top-level identifiers and the bytes that could be used to parse
 lower-level messages.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n+nd}{@staticmethod}
@@ -5617,11 +5837,11 @@ create many \code{Message} instances.
 
 \begin{fulllineitems}
 \phantomsection\label{protobuf:protobuf.Archive_Reader}\pysigline{\strong{class }\code{protobuf.}\bfcode{Archive\_Reader}}
-\end{fulllineitems}
-
-
 A Reader for IWA archives. This requires that the archive has been
 processed by the {\hyperref[snappy:snappy.Snappy]{\code{snappy.Snappy}}} decompressor.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Archive\PYGZus{}Reader}\PYG{p}{:}
@@ -5661,6 +5881,12 @@ directory.
     \PYG{p}{)}
     \PYG{k}{return} \PYG{n}{tsp\PYGZus{}names}
 \end{Verbatim}
+\index{make\_message() (protobuf.Archive\_Reader method)}
+
+\begin{fulllineitems}
+\phantomsection\label{protobuf:protobuf.Archive_Reader.make_message}\pysiglinewithargsret{\code{Archive\_Reader.}\bfcode{make\_message}}{\emph{messageInfo}, \emph{payload}}{}
+\end{fulllineitems}
+
 
 Create the payload message from a MessageInfo instance and the payload bytes.
 
@@ -5669,6 +5895,12 @@ Create the payload message from a MessageInfo instance and the payload bytes.
     \PYG{n}{name}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{tsp\PYGZus{}names}\PYG{p}{[}\PYG{n}{messageInfo}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{]}
     \PYG{k}{return} \PYG{n}{Message}\PYG{p}{(} \PYG{n}{name}\PYG{p}{,} \PYG{n}{payload} \PYG{p}{)}
 \end{Verbatim}
+\index{archive\_iter() (protobuf.Archive\_Reader method)}
+
+\begin{fulllineitems}
+\phantomsection\label{protobuf:protobuf.Archive_Reader.archive_iter}\pysiglinewithargsret{\code{Archive\_Reader.}\bfcode{archive\_iter}}{\emph{data}}{}
+\end{fulllineitems}
+
 
 Iterate through all messages in this IWA archive. Locate the ArchiveInfo,
 MessageInfo and Payload. Parse the payload to create the final message
@@ -5713,16 +5945,38 @@ that's associated with the ID in the ArchiveInfo.
 
 \section{The COBOL Package}
 \label{cobol:the-cobol-package}\label{cobol::doc}\label{cobol:cobol}
-Or.  ``How do I access COBOL-defined data from Python''?
+If you're interested in the implementation, you can cut to the chase.
+See {\hyperref[cobol:cobol-impl]{\emph{COBOL Implementation}}}.
+\begin{itemize}
+\item {} 
+{\hyperref[cobol_init:cobol-init]{\emph{COBOL Package -- Extend Schema to Handle EBCDIC}}}.
+
+\item {} 
+{\hyperref[cobol_loader:cobol-loader]{\emph{COBOL Loader Module -- Parse COBOL Source to Load a Schema}}}.
+
+\item {} 
+{\hyperref[cobol_defs:cobol-defs]{\emph{COBOL Definitions Module -- Handle COBOL DDE's}}}.
+
+\end{itemize}
+
+This section answers the following question:
+\begin{quote}
+
+``How do I access COBOL-defined data from Python''?
+\end{quote}
 
 We have three problems to solve to get COBOL data into Python applications.
 \begin{itemize}
 \item {} 
+How do we represent the data?
+
 Most of the {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} subclasses aren't really appropriate for
 data coming from COBOL applications.
 Indeed, only {\hyperref[cell:cell.TextCell]{\code{cell.TextCell}}} is really appropriate.
 
 \item {} 
+How do we represent the schema?
+
 The schema more complex than the
 flat-file schema expected by {\hyperref[schema:module-schema]{\code{schema}}}.
 \begin{itemize}
@@ -5748,6 +6002,8 @@ expected to be in the field, the actual data may not match the definition.
 \end{itemize}
 
 \item {} 
+How do we build the schema?
+
 The schema is encoded in COBOL.  That is the subject of {\hyperref[cobol_loader:cobol-loader]{\emph{COBOL Loader Module -- Parse COBOL Source to Load a Schema}}}.
 
 \end{itemize}
@@ -6339,8 +6595,8 @@ defined by the Usage and Picture classes.
 The {\hyperref[cobol_defs:cobol.defs.ErrorCell]{\code{cobol.defs.ErrorCell}}} includes the raw bytes, but a value of \code{None}.
 
 
-\subsection{Implementation}
-\label{cobol:implementation}
+\subsection{COBOL Implementation}
+\label{cobol:cobol-implementation}\label{cobol:cobol-impl}
 These are the modules that extend the core functionality of Stingray
 to handle COBOL files and EBCDIC data.
 
@@ -6370,7 +6626,7 @@ to create a schema.
 
 \paragraph{Module Overheads}
 \label{cobol_init:module-overheads}\label{cobol_init:module-cobol}\index{cobol (module)}
-We depend on {\hyperref[cell:module-cell]{\code{cell}}}, {\hyperref[schema:module-schema]{\code{schema}}}, and {\hyperref[workbook/xlsx:module-workbook]{\code{workbook}}}.
+We depend on {\hyperref[cell:module-cell]{\code{cell}}}, {\hyperref[schema:module-schema]{\code{schema}}}, and {\hyperref[workbook/numbers_13:module-workbook]{\code{workbook}}}.
 We'll also import one class definition from {\hyperref[cobol_defs:module-cobol.defs]{\code{cobol.defs}}}.
 
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -6506,6 +6762,8 @@ from the picture.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.RepeatingAttribute}\pysigline{\strong{class }\code{cobol.}\bfcode{RepeatingAttribute}}
+An attribute with dimensionality. Not all COBOL items repeat.
+
 \end{fulllineitems}
 
 
@@ -6534,9 +6792,6 @@ from the picture.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.RepeatingAttribute.index}\pysiglinewithargsret{\code{RepeatingAttribute.}\bfcode{index}}{\emph{*values}}{}
-\end{fulllineitems}
-
-
 If the number of index values matches the dimensionality, we'll return a tweaked
 attribute which has just the offset required and a dimensionality of \code{tuple()}.
 
@@ -6558,6 +6813,9 @@ Second, the {\hyperref[cobol_init:cobol.COBOL_File]{\code{COBOL\_File}}} will su
 creating yet more temporary  {\hyperref[cobol_init:cobol.IndexedAttribute]{\code{cobol.IndexedAttribute}}} based on the initial offset.
 
 \end{itemize}
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{index}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{o}{*}\PYG{n}{values} \PYG{p}{)}\PYG{p}{:}
@@ -6628,15 +6886,15 @@ generic {\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{cobol.RepeatingAtt
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.IndexedAttribute}\pysigline{\strong{class }\code{cobol.}\bfcode{IndexedAttribute}}
-\end{fulllineitems}
-
-
 The IndexedAttribute is a subclass of {\hyperref[cobol_init:cobol.RepeatingAttribute]{\code{cobol.RepeatingAttribute}}}
 with (some) indices applied. Since this inherits the {\hyperref[cobol_init:cobol.RepeatingAttribute.index]{\code{cobol.RepeatingAttribute.index()}}}
 method, we can apply indices incrementally.
 
 This class is not built directly, but only created by {\hyperref[cobol_init:cobol.RepeatingAttribute.index]{\code{cobol.RepeatingAttribute.index()}}}
 with some (or all) indices applied.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{IndexedAttribute}\PYG{p}{(} \PYG{n}{RepeatingAttribute} \PYG{p}{)}\PYG{p}{:}
@@ -6669,11 +6927,11 @@ sizes and offsets for COBOL.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.ODO_LazyRow}\pysigline{\strong{class }\code{cobol.}\bfcode{ODO\_LazyRow}}
-\end{fulllineitems}
-
-
 This subclass of {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}} to provide add the feature to recompute sizes
 and offsets in the case of a variable-located DDE due to an Occurs Depending On.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{ODO\PYGZus{}LazyRow}\PYG{p}{(} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{sheet}\PYG{o}{.}\PYG{n}{LazyRow} \PYG{p}{)}\PYG{p}{:}
@@ -6699,10 +6957,7 @@ and offsets in the case of a variable-located DDE due to an Occurs Depending On.
 \label{cobol_init:dump-a-record}\index{dump\_iter() (in module cobol)}
 
 \begin{fulllineitems}
-\phantomsection\label{cobol_init:cobol.dump_iter}\pysiglinewithargsret{\code{cobol.}\bfcode{dump\_iter}}{}{}
-\end{fulllineitems}
-
-
+\phantomsection\label{cobol_init:cobol.dump_iter}\pysiglinewithargsret{\code{cobol.}\bfcode{dump\_iter}}{\emph{aDDE}, \emph{aRow}}{}
 To support dumping raw data from a record, this will iterate through all items
 in an original DDE. It will a five-tuple with (dde, attribute, indices, bytes, Cell)
 for each DDE.
@@ -6714,6 +6969,9 @@ may turn out to be a lot of combinations.
 The bytes is the raw bytes for non-FILLER and non-group elements.
 
 The Cell will be a Cell object, either with valid data or an {\hyperref[cobol_defs:cobol.defs.ErrorCell]{\code{cobol.defs.ErrorCell}}}.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{dump\PYGZus{}iter}\PYG{p}{(} \PYG{n}{aDDE}\PYG{p}{,} \PYG{n}{aRow} \PYG{p}{)}\PYG{p}{:}
@@ -6743,11 +7001,11 @@ The Cell will be a Cell object, either with valid data or an {\hyperref[cobol_de
 \index{dump() (in module cobol)}
 
 \begin{fulllineitems}
-\phantomsection\label{cobol_init:cobol.dump}\pysiglinewithargsret{\code{cobol.}\bfcode{dump}}{}{}
+\phantomsection\label{cobol_init:cobol.dump}\pysiglinewithargsret{\code{cobol.}\bfcode{dump}}{\emph{schema}, \emph{row}}{}
+Dump data from a record, driven by the original DDE structure.
+
 \end{fulllineitems}
 
-
-Dump data from a record, driven by the original DDE structure.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{dump}\PYG{p}{(} \PYG{n}{schema}\PYG{p}{,} \PYG{n}{aRow} \PYG{p}{)}\PYG{p}{:}
@@ -6853,11 +7111,11 @@ http://yuml.me/diagram/scruffy;/class/
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.COBOL_File}\pysigline{\strong{class }\code{cobol.}\bfcode{COBOL\_File}}
-\end{fulllineitems}
-
-
 This class introduces the expanded version of \code{row\_get} that honors
 a schema attribute with dimensionality.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{COBOL\PYGZus{}File}\PYG{p}{(} \PYG{n}{Fixed\PYGZus{}Workbook} \PYG{p}{)}\PYG{p}{:}
@@ -6878,9 +7136,6 @@ a schema attribute with dimensionality.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.COBOL_File.row_get_index}\pysiglinewithargsret{\code{COBOL\_File.}\bfcode{row\_get\_index}}{\emph{row}, \emph{attr}, \emph{*index}}{}
-\end{fulllineitems}
-
-
 Returning a particular Cell from a row, however, is more interesting for COBOL
 because the Attribute may contains an ``OCCURS'' clause.  In which case, we may need
 to assemble a tuple of values.
@@ -6894,6 +7149,9 @@ of dimensionality.
 If too few index values are provided, a tuple of results is built around the missing values.
 
 If enough values are provided, a single result object will be built.
+
+\end{fulllineitems}
+
 
 \begin{notice}{important}{Important:}
 Performance
@@ -6938,14 +7196,14 @@ a huge improvement.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.COBOL_File.row_get}\pysiglinewithargsret{\code{COBOL\_File.}\bfcode{row\_get}}{\emph{row}, \emph{attr}}{}
-\end{fulllineitems}
-
-
 The API method will get data from a row described by an attribute.
 If the attribute has dimensions, then indices are used or multiple values are returned
 by {\hyperref[cobol_init:cobol.COBOL_File.row_get_index]{\code{cobol.COBOL\_File.row\_get\_index()}}}.
 
 If the attribute is has no dimensions, then it's simply pulled from the source row.
+
+\end{fulllineitems}
+
 
 \begin{notice}{important}{Important:}
 Performance
@@ -6978,14 +7236,14 @@ Z/OS RECFM parameter used to define the file.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.COBOL_File.subrow}\pysiglinewithargsret{\code{COBOL\_File.}\bfcode{subrow}}{\emph{subschema}, \emph{text\_cell}}{}
-\end{fulllineitems}
-
-
 In some COBOL files, there can be 01-level ``subrecords'' buried within an 01-level record.
 
 We can use \code{wb.subrow(subschema, row.cell(schema\_header\_dict{[}'GENERIC-FIELD'{]}))}
 to map a particular field (`GENERIC-FIELD') to an entire 01-level schema, creating
 a ``subrow'' from a single field within the parent row.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{subrow}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{subschema}\PYG{p}{,} \PYG{n}{text\PYGZus{}cell} \PYG{p}{)}\PYG{p}{:}
@@ -7003,14 +7261,14 @@ a ``subrow'' from a single field within the parent row.
 
 
 \subparagraph{Character File}
-\label{cobol_init:character-file}
-This is subclass of {\hyperref[cobol_init:cobol.COBOL_File]{\code{COBOL\_File}}} that handles COBOL data parsing
-where the underlying file is text. Since the file is text, Python handles
-any OS-level bytes-to-text conversions.
-\index{Character\_File (class in cobol)}
+\label{cobol_init:character-file}\index{Character\_File (class in cobol)}
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.Character_File}\pysigline{\strong{class }\code{cobol.}\bfcode{Character\_File}}
+This is subclass of {\hyperref[cobol_init:cobol.COBOL_File]{\code{COBOL\_File}}} that handles COBOL data parsing
+where the underlying file is text. Since the file is text, Python handles
+any OS-level bytes-to-text conversions.
+
 \end{fulllineitems}
 
 
@@ -7158,10 +7416,10 @@ Note: ``IBM z/Architecture mainframes are all big-endian''.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.RECFM_Parser}\pysigline{\strong{class }\code{cobol.}\bfcode{RECFM\_Parser}}
+This class hierarchy breaks up EBCDIC files into records.
+
 \end{fulllineitems}
 
-
-This class hierarchy breaks up EBCDIC files into records.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{RECFM\PYGZus{}Parser}\PYG{p}{:}
@@ -7180,10 +7438,10 @@ This class hierarchy breaks up EBCDIC files into records.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.RECFM_F}\pysigline{\strong{class }\code{cobol.}\bfcode{RECFM\_F}}
+Simple fixed-length records. No header words.
+
 \end{fulllineitems}
 
-
-Simple fixed-length records. No header words.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{RECFM\PYGZus{}F}\PYG{p}{(}\PYG{n}{RECFM\PYGZus{}Parser}\PYG{p}{)}\PYG{p}{:}
@@ -7210,10 +7468,10 @@ Simple fixed-length records. No header words.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.RECFM_FB}\pysigline{\strong{class }\code{cobol.}\bfcode{RECFM\_FB}}
+Simple fixed-blocked records. No header words.
+
 \end{fulllineitems}
 
-
-Simple fixed-blocked records. No header words.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{RECFM\PYGZus{}FB}\PYG{p}{(} \PYG{n}{RECFM\PYGZus{}F} \PYG{p}{)}\PYG{p}{:}
@@ -7227,10 +7485,10 @@ Simple fixed-blocked records. No header words.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.RECFM_V}\pysigline{\strong{class }\code{cobol.}\bfcode{RECFM\_V}}
+Variable-length records. Each record has an RDW header word with the length.
+
 \end{fulllineitems}
 
-
-Variable-length records. Each record has an RDW header word with the length.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{RECFM\PYGZus{}V}\PYG{p}{(}\PYG{n}{RECFM\PYGZus{}Parser}\PYG{p}{)}\PYG{p}{:}
@@ -7265,11 +7523,11 @@ used against the RDW size.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.RECFM_VB}\pysigline{\strong{class }\code{cobol.}\bfcode{RECFM\_VB}}
-\end{fulllineitems}
-
-
 Variable-length, blocked records. Each block has a BDW; each record has an RDW header word.
 These BDW and RDW describe the structure of the file.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{RECFM\PYGZus{}VB}\PYG{p}{(}\PYG{n}{RECFM\PYGZus{}Parser}\PYG{p}{)}\PYG{p}{:}
@@ -7295,7 +7553,7 @@ These BDW and RDW describe the structure of the file.
         \PYG{k}{while} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{bdw}\PYG{p}{)} \PYG{o}{!=} \PYG{l+m+mi}{0}\PYG{p}{:}
             \PYG{n}{blksize} \PYG{o}{=} \PYG{n}{struct}\PYG{o}{.}\PYG{n}{unpack}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZgt{}H2x}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{bdw} \PYG{p}{)}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
             \PYG{n}{block\PYGZus{}data}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{source}\PYG{o}{.}\PYG{n}{read}\PYG{p}{(} \PYG{n}{blksize}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{4} \PYG{p}{)}
-            \PYG{k}{yield} \PYG{n}{bdw}\PYG{o}{+}\PYG{n}{data}
+            \PYG{k}{yield} \PYG{n}{bdw}\PYG{o}{+}\PYG{n}{block\PYGZus{}data}
             \PYG{n}{bdw}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{source}\PYG{o}{.}\PYG{n}{read}\PYG{p}{(}\PYG{l+m+mi}{4}\PYG{p}{)}
     \PYG{k}{def} \PYG{n+nf}{\PYGZus{}data\PYGZus{}iter}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
         \PYG{n}{bdw}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{source}\PYG{o}{.}\PYG{n}{read}\PYG{p}{(}\PYG{l+m+mi}{4}\PYG{p}{)}
@@ -7318,11 +7576,11 @@ used against the RDW size and raise an exception in the event of a mismatch.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.RECFM_N}\pysigline{\strong{class }\code{cobol.}\bfcode{RECFM\_N}}
-\end{fulllineitems}
-
-
 Variable-length records without RDW's. Exasperating because we have to feed
 bytes to the buffer as needed until the record is complete.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{RECFM\PYGZus{}N}\PYG{p}{:}
@@ -7349,13 +7607,13 @@ bytes to the buffer as needed until the record is complete.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.EBCDIC_File}\pysigline{\strong{class }\code{cobol.}\bfcode{EBCDIC\_File}}
-\end{fulllineitems}
-
-
 This subclass handles EBCDIC conversion and COMP-3
 packed decimal numbers.  For this to work, the schema needs to use slightly different Cell-type conversions.
 
 Otherwise, this is similar to processing simple character data.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{EBCDIC\PYGZus{}File}\PYG{p}{(} \PYG{n}{Character\PYGZus{}File} \PYG{p}{)}\PYG{p}{:}
@@ -7395,9 +7653,6 @@ Otherwise, this is similar to processing simple character data.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.EBCDIC_File.rows_of}\pysiglinewithargsret{\code{EBCDIC\_File.}\bfcode{rows\_of}}{\emph{sheet}}{}
-\end{fulllineitems}
-
-
 We must extend the \code{workbook.Character\_File.rows\_of()} method to deal with
 two issues:
 \begin{itemize}
@@ -7432,6 +7687,9 @@ any size and offset calculations, the \code{row.\_size} shows how many bytes wer
 actually used.
 
 \end{itemize}
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{rows\PYGZus{}of}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{sheet} \PYG{p}{)}\PYG{p}{:}
@@ -7479,15 +7737,25 @@ This is left as a future extension.
 
 
 \subsubsection{COBOL Loader Module -- Parse COBOL Source to Load a Schema}
-\label{cobol_loader:cobol-loader}\label{cobol_loader:cobol-loader-module-parse-cobol-source-to-load-a-schema}\label{cobol_loader::doc}\label{cobol_loader:module-cobol.loader}\index{cobol.loader (module)}
+\label{cobol_loader:module-cobol.loader}\label{cobol_loader:cobol-loader}\label{cobol_loader::doc}\label{cobol_loader:cobol-loader-module-parse-cobol-source-to-load-a-schema}\index{cobol.loader (module)}
 Parsing a spreadsheet schema is relatively easy: see {\hyperref[schema_loader:schema-loader]{\emph{Schema Loader Module -- Load Embedded or External Schema}}}.
-Parsing a COBOL schema, however, is a bit more complex.
+Parsing a COBOL schema, however, is a bit more complex. We need to parse
+COBOL sources code to decode Data Definition Elements (DDE's) and create
+a usable representation of the DDE that matches the Stingray schema model.
 
-Two of the three problems associated with COBOL are solved in  {\hyperref[cobol:cobol]{\emph{The COBOL Package}}}.
-What remains is parsing the COBOL source to extract a schema.
+We'll wind up with two representations of the COBOL schema:
+\begin{itemize}
+\item {} 
+The original DDE hierarchy. See {\hyperref[cobol_loader:dde-loader-design]{DDE Loader Design}} for details.
+
+\item {} 
+A flattened version that's a  {\hyperref[schema:schema.Schema]{\code{schema.Schema}}} instance.
+
+\end{itemize}
 
 A new {\hyperref[schema_loader:schema.loader.ExternalSchemaLoader]{\code{schema.loader.ExternalSchemaLoader}}} subclass is required
-to parse the DDE sublanguage of COBOL.   This loader will build the hierarchical
+to parse the DDE sublanguage of COBOL.  The {\hyperref[cobol_loader:cobol-schema-loader-class]{COBOL Schema Loader Class}} section
+details this. A loader will build the hierarchical
 DDE from the COBOL source, decorate this with size and offset information,
 then flatten it into a simple {\hyperref[schema:schema.Schema]{\code{schema.Schema}}} instance.
 
@@ -7692,14 +7960,20 @@ factory.
 This will use a different record factory to elaborate the details of the DDE.
 
 
-\paragraph{Design}
-\label{cobol_loader:design}
+\paragraph{DDE Loader Design}
+\label{cobol_loader:dde-loader-design}
 A DDE contains a recursive definition of a COBOL group-level DDE.
 There are two basic species of COBOL DDE's: elemetary items, which have a \code{PICTURE} clause,
 and group-level items, which contain lower-level items.  There are several optional
 features of every DDE, including an \code{OCCURS} clause and a \code{REDEFINES} clause.
 In addition to the required picture clause, elementary items have an optional \code{USAGE} clause,
 and optional \code{SIGN} clause.
+
+A single class, {\hyperref[cobol_defs:cobol.defs.DDE]{\code{cobol.defs.DDE}}}, defines the features of a group-level item.  It supports
+the occurs and redefines features.  It can contain a number of DDE items.
+The leaves of the tree define the features of an elementary item.
+
+See {\hyperref[cobol_defs:cobol-defs]{\emph{COBOL Definitions Module -- Handle COBOL DDE's}}} for details.
 
 The \code{PICTURE} clause specifies how to interpret a sequence of bytes.  The picture
 clause interacts with the optional \code{USAGE} clause, \code{SIGN} clause and \code{SYNCHRONIZED} clause
@@ -7719,36 +7993,6 @@ a previously defined field \emph{F}, the storage bytes are used for both \emph{R
 The record structure itself does not provide a way to disambiguate the interpretation of the bytes.
 Program logic must be examined to determine the conditions under which each interpretation is valid.
 It's entirely possible either interpretation has invalid fields.
-
-
-\subparagraph{DDE Class}
-\label{cobol_loader:dde-class}
-The parent class, \code{DDE}, defines the features of a group-level item.  It supports
-the occurs and redefines features.  It can contain a number of DDE items.
-The leaves of the tree define the features of an elementary item.
-
-We could have a class hierarchy with group and elementary subclasses.
-The group level item could have a container for lower level items.
-The elementary class definition \emph{could} add support for the picture clause, but remove
-the container for lower-level items.
-
-On balance, it seems simpler to have one generic DDE node class and use
-optional fields than to create a proper subclass.
-There isn't a \emph{good} reason for this.   An \textbf{if}
-statement to look for an optional picture-clause is fairly rare.
-
-The various optional clauses are handled using a variety of design patterns.
-The usage information, for instance, is used to create a \textbf{Strategy} object
-that is used to extract a field from a record's bytes.
-
-The redefines information is used to create a \textbf{Strategy} object that
-computes the offset to a field.  There are two variant strategies: locate the basis
-field and use that field's offset or use the end of the previous element as
-the offset.
-
-This is further compounded by the Occurs Depending On (ODO) calculation
-which cannot be done statically or eagerly, but must be done dynamically and lazily based on
-live data.
 
 
 \subparagraph{DDE Post-processing}
@@ -7844,8 +8088,8 @@ Additional types include COMP-1 and COMP-2 which are single- and double-precisio
 They're rare enough that we ignore them.
 
 
-\subparagraph{Additional Requirements}
-\label{cobol_loader:additional-requirements}
+\subparagraph{Occurs Depending On}
+\label{cobol_loader:occurs-depending-on}
 Support for Occurs Depending On is based several features of COBOL.
 
 The syntax for ODO is more complex: \code{OCCURS {[}int TO{]} int {[}TIMES{]} DEPENDING {[}ON{]} name}.
@@ -7963,11 +8207,11 @@ A module-level logger.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.SyntaxError}\pysigline{\strong{class }\code{cobol.loader.}\bfcode{SyntaxError}}
-\end{fulllineitems}
-
-
 These are compilation problems.  We have syntax which
 is utterly baffling.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{SyntaxError}\PYG{p}{(} \PYG{n+ne}{Exception} \PYG{p}{)}\PYG{p}{:}
@@ -7985,7 +8229,9 @@ It could be done in the parser, also.
 \index{Picture (class in cobol.loader)}
 
 \begin{fulllineitems}
-\phantomsection\label{cobol_loader:cobol.loader.Picture}\pysigline{\strong{class }\code{cobol.loader.}\bfcode{Picture}}~\begin{quote}\begin{description}
+\phantomsection\label{cobol_loader:cobol.loader.Picture}\pysigline{\strong{class }\code{cobol.loader.}\bfcode{Picture}}
+Define the various attribtes of a COBOL PICTURE clause.
+\begin{quote}\begin{description}
 \item[{Final}] \leavevmode
 the final picture
 
@@ -8020,6 +8266,8 @@ boolean; True if any \code{"S"}, \code{"-"} or related
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.picture_parser}\pysiglinewithargsret{\code{cobol.loader.}\bfcode{picture\_parser}}{\emph{pic}}{}
+Parse the text of a PICTURE definition.
+
 \end{fulllineitems}
 
 
@@ -8074,7 +8322,7 @@ boolean; True if any \code{"S"}, \code{"-"} or related
 
     \PYG{n}{final}\PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{join}\PYG{p}{(} \PYG{n}{out} \PYG{p}{)}
     \PYG{n}{alpha}\PYG{o}{=} \PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{A}\PYG{l+s}{\PYGZsq{}} \PYG{o+ow}{in} \PYG{n}{final}\PYG{p}{)} \PYG{o+ow}{or} \PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{X}\PYG{l+s}{\PYGZsq{}} \PYG{o+ow}{in} \PYG{n}{final}\PYG{p}{)} \PYG{o+ow}{or} \PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{/}\PYG{l+s}{\PYGZsq{}} \PYG{o+ow}{in} \PYG{n}{final}\PYG{p}{)}
-    \PYG{n}{logger}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{PIC \PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{} \PYGZob{}2\PYGZcb{} \PYGZob{}3\PYGZcb{} \PYGZob{}4\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{pic}\PYG{p}{,} \PYG{n}{final}\PYG{p}{,} \PYG{n}{alpha}\PYG{p}{,} \PYG{n}{scale}\PYG{p}{,} \PYG{n}{precision}\PYG{p}{)} \PYG{p}{)}
+    \PYG{n}{logger}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{PIC \PYGZob{}0\PYGZcb{} \PYGZob{}1\PYGZcb{} alpha=\PYGZob{}2\PYGZcb{} scale=\PYGZob{}3\PYGZcb{} prec=\PYGZob{}4\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{pic}\PYG{p}{,} \PYG{n}{final}\PYG{p}{,} \PYG{n}{alpha}\PYG{p}{,} \PYG{n}{scale}\PYG{p}{,} \PYG{n}{precision}\PYG{p}{)} \PYG{p}{)}
     \PYG{c}{\PYGZsh{} Note: Actual bytes consumed depends on len(final) and usage!}
     \PYG{k}{return} \PYG{n}{Picture}\PYG{p}{(} \PYG{n}{final}\PYG{p}{,} \PYG{n}{alpha}\PYG{p}{,} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{final}\PYG{p}{)}\PYG{p}{,} \PYG{n}{scale}\PYG{p}{,}
         \PYG{n}{precision}\PYG{p}{,} \PYG{n}{signed}\PYG{p}{,} \PYG{n}{decimal}\PYG{p}{)}
@@ -8094,10 +8342,10 @@ These are simply noise that may appear in the source.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.Lexer}\pysigline{\strong{class }\code{cobol.loader.}\bfcode{Lexer}}
+Basic lexer that simply removes comments and the first six positions of each line.
+
 \end{fulllineitems}
 
-
-Basic lexer that simply removes comments and the first six positions of each line.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Lexer}\PYG{p}{:}
@@ -8113,6 +8361,8 @@ Basic lexer that simply removes comments and the first six positions of each lin
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.Lexer.clean}\pysiglinewithargsret{\code{Lexer.}\bfcode{clean}}{\emph{line}}{}
+The default process for cleaning a line. Simply rstrip trailing spaces.
+
 \end{fulllineitems}
 
 
@@ -8125,6 +8375,8 @@ Basic lexer that simply removes comments and the first six positions of each lin
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.Lexer.scan}\pysiglinewithargsret{\code{Lexer.}\bfcode{scan}}{\emph{text}}{}
+Locate the sequence of tokens in the input stream.
+
 \end{fulllineitems}
 
 
@@ -8175,12 +8427,12 @@ Basic lexer that simply removes comments and the first six positions of each lin
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.Lexer_Long_Lines}\pysigline{\strong{class }\code{cobol.loader.}\bfcode{Lexer\_Long\_Lines}}
-\end{fulllineitems}
-
-
 More sophisticated lexer that removes the first six positions of each line.
 If the line is over 72 positions, it also removes positions {[}71:80{]}.
 Since it's an extension to {\hyperref[cobol_loader:cobol.loader.Lexer]{\code{cobol.loader.Lexer}}}, it also removes comments.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Lexer\PYGZus{}Long\PYGZus{}Lines}\PYG{p}{(} \PYG{n}{Lexer} \PYG{p}{)}\PYG{p}{:}
@@ -8215,16 +8467,14 @@ element parsing methods and
 complete record layout parsing.
 
 \end{enumerate}
-
-Parsing a record layout involves parsing a sequence of elements and
-assembling them into a proper structure.  Each element consists of a sequence of
-individual clauses.
-
-The picture clauses are parsed separately by the DDE during its initialization.
 \index{RecordFactory (class in cobol.loader)}
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.RecordFactory}\pysigline{\strong{class }\code{cobol.loader.}\bfcode{RecordFactory}}
+Parse a record layout. This means parsing a sequence of DDE's and
+assembling them into a proper structure.  Each element consists of a sequence of
+individual clauses.
+
 \end{fulllineitems}
 
 
@@ -8448,9 +8698,6 @@ It may be that we have to absorb all non-keyword values.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.RecordFactory.dde_iter}\pysiglinewithargsret{\code{RecordFactory.}\bfcode{dde\_iter}}{\emph{lexer}}{}
-\end{fulllineitems}
-
-
 Iterate over all DDE's in the stream of tokens from the given lexer.
 These DDE's can then be assembled into an overall record
 definition.
@@ -8458,6 +8705,9 @@ definition.
 Note that we do not define special cases for 66, 77 or 88-level items.
 These level numbers have special significance. For our purposes, however,
 the numbers can be ignored.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{dde\PYGZus{}iter}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{lexer} \PYG{p}{)}\PYG{p}{:}
@@ -8548,9 +8798,6 @@ source is proper COBOL and was actually used to create the source file.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.RecordFactory.makeRecord}\pysiglinewithargsret{\code{RecordFactory.}\bfcode{makeRecord}}{\emph{lexer}}{}
-\end{fulllineitems}
-
-
 This overall is iterator
 that yields the top-level records.
 
@@ -8560,6 +8807,9 @@ hierarchy of individual DDE instances.
 This will yield a sequence of \code{01}-level records that are parsed.
 
 The 77-level and 66-level items are not treated specially.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{makeRecord}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{lexer} \PYG{p}{)}\PYG{p}{:}
@@ -8605,9 +8855,6 @@ The 77-level and 66-level items are not treated specially.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.RecordFactory.decorate}\pysiglinewithargsret{\code{RecordFactory.}\bfcode{decorate}}{\emph{top}}{}
-\end{fulllineitems}
-
-
 The final stages of compilation:
 \begin{itemize}
 \item {} 
@@ -8628,6 +8875,9 @@ Occurs Depending On.
 
 \end{itemize}
 
+\end{fulllineitems}
+
+
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{decorate}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{top} \PYG{p}{)}\PYG{p}{:}
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Three post\PYGZhy{}processing steps: resolver, size and offset, dimensionality.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
@@ -8641,8 +8891,8 @@ Occurs Depending On.
 \end{Verbatim}
 
 
-\paragraph{COBOL Schema Loader}
-\label{cobol_loader:cobol-schema-loader}
+\paragraph{COBOL Schema Loader Class}
+\label{cobol_loader:cobol-schema-loader-class}
 Given a DDE, create a proper {\hyperref[schema:schema.Schema]{\code{schema.Schema}}} object which contains
 proper {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} objects for each group and elementary item
 in the DDE.
@@ -8663,10 +8913,17 @@ http://yuml.me/diagram/scruffy;/class/
 \end{Verbatim}
 
 \includegraphics{cobol_final.png}
+
+We have a number of supporting functions that make this work.
 \index{make\_attr() (in module cobol.loader)}
 
 \begin{fulllineitems}
-\phantomsection\label{cobol_loader:cobol.loader.make_attr}\pysiglinewithargsret{\code{cobol.loader.}\bfcode{make\_attr}}{}{}
+\phantomsection\label{cobol_loader:cobol.loader.make_attr}\pysiglinewithargsret{\code{cobol.loader.}\bfcode{make\_attr}}{\emph{aDDE}}{}
+Transform a {\hyperref[cobol_defs:cobol.defs.DDE]{\code{cobol.defs.DDE}}} into an  \code{stingray.cobol.RepeatingAttribute}.
+This will include a weakref to the DDE so that the source information (like parents and children)
+is available. It will also build a weak reference from the original DDE to the resulting
+attribute.
+
 \end{fulllineitems}
 
 
@@ -8687,15 +8944,15 @@ http://yuml.me/diagram/scruffy;/class/
 \index{make\_schema() (in module cobol.loader)}
 
 \begin{fulllineitems}
-\phantomsection\label{cobol_loader:cobol.loader.make_schema}\pysiglinewithargsret{\code{cobol.loader.}\bfcode{make\_schema}}{}{}
-\end{fulllineitems}
-
-
+\phantomsection\label{cobol_loader:cobol.loader.make_schema}\pysiglinewithargsret{\code{cobol.loader.}\bfcode{make\_schema}}{\emph{dde\_iter}}{}
 The {\hyperref[schema:schema.Schema]{\code{schema.Schema}}} -- as a whole -- is built by a function
-that converts the DDE's into attributes.
+that converts the individual DDE's into attributes.
 
 This may need to be extended in case other DDE names (i.e. paths)
 are required in addition to the elementary names.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{make\PYGZus{}schema}\PYG{p}{(} \PYG{n}{dde\PYGZus{}iter} \PYG{p}{)}\PYG{p}{:}
@@ -8711,13 +8968,11 @@ are required in addition to the elementary names.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.COBOLSchemaLoader}\pysigline{\strong{class }\code{cobol.loader.}\bfcode{COBOLSchemaLoader}}
+The overall schema loader process: parse and then build a schema.
+This is consistent with the {\hyperref[schema_loader:schema.loader.ExternalSchemaLoader]{\code{schema.loader.ExternalSchemaLoader}}}.
+
 \end{fulllineitems}
 
-
-Here's the overall schema loader process: parse and then build a schema.
-This is consistent with the {\hyperref[schema_loader:schema.loader.ExternalSchemaLoader]{\code{schema.loader.ExternalSchemaLoader}}}.
-However, this is rarely precisely what we want. We're almost always going
-to break this down into separate steps.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{COBOLSchemaLoader}\PYG{p}{(} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{ExternalSchemaLoader} \PYG{p}{)}\PYG{p}{:}
@@ -8736,6 +8991,10 @@ to break this down into separate steps.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.COBOLSchemaLoader.load}\pysiglinewithargsret{\code{COBOLSchemaLoader.}\bfcode{load}}{}{}
+Use the {\hyperref[cobol_loader:cobol.loader.RecordFactory.makeRecord]{\code{RecordFactory.makeRecord()}}} method to iterate through
+the top-level DDE's. Use {\hyperref[cobol_loader:cobol.loader.make_schema]{\code{make\_schema()}}} to build a single schema
+from the DDE(s).
+
 \end{fulllineitems}
 
 
@@ -8753,15 +9012,30 @@ COBOL allows replacement text to permit reuse without name clashes.
 Note that we provide the ``replacing'' option to the underlying Lexer.
 The lexical scanning includes any replacement text.
 
+
+\paragraph{Top-Level Schema Loader Functions}
+\label{cobol_loader:top-level-schema-loader-functions}
+The simplest use case is to create an instance of {\hyperref[cobol_loader:cobol.loader.COBOLSchemaLoader]{\code{COBOLSchemaLoader}}}.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{with} \PYG{n+nb}{open}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{sample/zipcty.cob}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{r}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{k}{as} \PYG{n}{cobol}\PYG{p}{:}
+    \PYG{n}{schema}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{COBOLSchemaLoader}\PYG{p}{(} \PYG{n}{cobol} \PYG{p}{)}\PYG{o}{.}\PYG{n}{load}\PYG{p}{(}\PYG{p}{)}
+\end{Verbatim}
+
+In some cases, we need to subclass the SchemaLoader to change the lexer.
+Here's the example from {\hyperref[cobol_loader:extensions-and-special-cases]{Extensions and Special Cases}}.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{class} \PYG{n+nc}{MySchemaLoader}\PYG{p}{(} \PYG{n}{cobol}\PYG{o}{.}\PYG{n}{COBOLSchemaLoader} \PYG{p}{)}\PYG{p}{:}
+    \PYG{n}{lexer\PYGZus{}class}\PYG{o}{=} \PYG{n}{cobol}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{Lexer\PYGZus{}Long\PYGZus{}Lines}
+\end{Verbatim}
+
 In some cases, we want to see the intermediate COBOL record definitions.
 In this case, we want to do something like the following function.
 \index{COBOL\_schema() (in module cobol.loader)}
 
 \begin{fulllineitems}
-\phantomsection\label{cobol_loader:cobol.loader.COBOL_schema}\pysiglinewithargsret{\code{cobol.loader.}\bfcode{COBOL\_schema}}{\emph{source}, \emph{replacing=None}}{}
-\end{fulllineitems}
-
-
+\phantomsection\label{cobol_loader:cobol.loader.COBOL_schema}\pysiglinewithargsret{\code{cobol.loader.}\bfcode{COBOL\_schema}}{\emph{source}, \emph{lexer\_class=Lexer}, \emph{replacing=None}}{}
 This function will parse the COBOL copybook, returning a list of the parsed COBOL
 01-level records as well as a final schema.
 
@@ -8780,10 +9054,33 @@ schema object.
 We may need to revise this function because we need a different lexer.
 We might have some awful formatting issue with the source that needs to be
 tweaked.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{source} -- file-like object that is the open source file.
+
+\item {} 
+\textbf{lexer\_class} -- Lexer to use. The default is \code{cobol.load.Lexer}.
+
+\item {} 
+\textbf{replacing} -- replacing argument to provide to the lexer.
+This is \code{None} by default.
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+2-tuple (dde\_list, schema).
+The first item is a list of 01-level \code{cobol.def.DDE} objects.
+The second item is a \code{cobol.defs.Schema} object.
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{def} \PYG{n+nf}{COBOL\PYGZus{}schema}\PYG{p}{(} \PYG{n}{source}\PYG{p}{,} \PYG{n}{replacing}\PYG{o}{=}\PYG{n+nb+bp}{None} \PYG{p}{)}\PYG{p}{:}
-    \PYG{n}{lexer}\PYG{o}{=} \PYG{n}{Lexer}\PYG{p}{(} \PYG{n}{replacing} \PYG{p}{)}
+\PYG{k}{def} \PYG{n+nf}{COBOL\PYGZus{}schema}\PYG{p}{(} \PYG{n}{source}\PYG{p}{,} \PYG{n}{lexer\PYGZus{}class}\PYG{o}{=}\PYG{n}{Lexer}\PYG{p}{,} \PYG{n}{replacing}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}  \PYG{p}{)}\PYG{p}{:}
+    \PYG{n}{lexer}\PYG{o}{=} \PYG{n}{lexer\PYGZus{}class}\PYG{p}{(} \PYG{n}{replacing} \PYG{p}{)}
     \PYG{n}{parser}\PYG{o}{=} \PYG{n}{RecordFactory}\PYG{p}{(}\PYG{p}{)}
     \PYG{n}{dde\PYGZus{}list}\PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(} \PYG{n}{parser}\PYG{o}{.}\PYG{n}{makeRecord}\PYG{p}{(} \PYG{n}{lexer}\PYG{o}{.}\PYG{n}{scan}\PYG{p}{(}\PYG{n}{source}\PYG{p}{)} \PYG{p}{)} \PYG{p}{)}
     \PYG{n}{schema}\PYG{o}{=} \PYG{n}{make\PYGZus{}schema}\PYG{p}{(} \PYG{n}{dde\PYGZus{}list} \PYG{p}{)}
@@ -8793,9 +9090,6 @@ tweaked.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_loader:cobol.loader.COBOL_schemata}\pysiglinewithargsret{\code{cobol.loader.}\bfcode{COBOL\_schemata}}{\emph{source}, \emph{replacing=None}}{}
-\end{fulllineitems}
-
-
 This function will parse the COBOL copybook, returning two lists:
 \begin{itemize}
 \item {} 
@@ -8807,22 +9101,42 @@ a list of final schemata, one for each 01-level definition.
 \end{itemize}
 
 This is a peculiar extension in the rare case that we have multiple 01-levels
-in a single file and we don't (or can't) use them as a single schema.
+in a single file and we don't want to (or can't) use them as a single schema.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode\begin{itemize}
+\item {} 
+\textbf{source} -- file-like object that is the open source file.
 
-We may need to revise this function because we need a different lexer.
-We might have some awful formatting issue with the source that needs to be
-tweaked.
+\item {} 
+\textbf{lexer\_class} -- Lexer to use. The default is \code{cobol.load.Lexer}.
+
+\item {} 
+\textbf{replacing} -- replacing argument to provide to the lexer.
+This is \code{None} by default.
+
+\end{itemize}
+
+\item[{Returns}] \leavevmode
+2-tuple (dde\_list, schema).
+The first item is a list of 01-level \code{cobol.def.DDE} objects.
+The second item is list of \code{cobol.defs.Schema} objects, one for
+each 01-level DDE.
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
-\PYG{k}{def} \PYG{n+nf}{COBOL\PYGZus{}schemata}\PYG{p}{(} \PYG{n}{source}\PYG{p}{,} \PYG{n}{replacing}\PYG{o}{=}\PYG{n+nb+bp}{None} \PYG{p}{)}\PYG{p}{:}
-    \PYG{n}{lexer}\PYG{o}{=} \PYG{n}{Lexer}\PYG{p}{(} \PYG{n}{replacing} \PYG{p}{)}
+\PYG{k}{def} \PYG{n+nf}{COBOL\PYGZus{}schemata}\PYG{p}{(} \PYG{n}{source}\PYG{p}{,} \PYG{n}{replacing}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,} \PYG{n}{lexer\PYGZus{}class}\PYG{o}{=}\PYG{n}{Lexer} \PYG{p}{)}\PYG{p}{:}
+    \PYG{n}{lexer}\PYG{o}{=} \PYG{n}{lexer\PYGZus{}class}\PYG{p}{(} \PYG{n}{replacing} \PYG{p}{)}
     \PYG{n}{parser}\PYG{o}{=} \PYG{n}{RecordFactory}\PYG{p}{(}\PYG{p}{)}
     \PYG{n}{dde\PYGZus{}list}\PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(} \PYG{n}{parser}\PYG{o}{.}\PYG{n}{makeRecord}\PYG{p}{(} \PYG{n}{lexer}\PYG{o}{.}\PYG{n}{scan}\PYG{p}{(}\PYG{n}{source}\PYG{p}{)} \PYG{p}{)} \PYG{p}{)}
     \PYG{n}{schema\PYGZus{}list}\PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(} \PYG{n}{make\PYGZus{}schema}\PYG{p}{(} \PYG{n}{dde} \PYG{p}{)} \PYG{k}{for} \PYG{n}{dde} \PYG{o+ow}{in} \PYG{n}{dde\PYGZus{}list} \PYG{p}{)}
     \PYG{k}{return} \PYG{n}{dde\PYGZus{}list}\PYG{p}{,} \PYG{n}{schema\PYGZus{}list}
 \end{Verbatim}
 
-This gives us two API alternatives for parsing super-complex copybooks.
+This function gives us two API alternatives for parsing super-complex copybooks.
 
 There's a ``Low-Level API'' that looks like this:
 
@@ -8832,7 +9146,7 @@ When opening the workbook, one of the schema must be chosen as the ``official'' 
 
 
 \subsubsection{COBOL Definitions Module -- Handle COBOL DDE's}
-\label{cobol_defs:module-cobol.defs}\label{cobol_defs:cobol-defs}\label{cobol_defs:cobol-definitions-module-handle-cobol-dde-s}\label{cobol_defs::doc}\index{cobol.defs (module)}
+\label{cobol_defs:module-cobol.defs}\label{cobol_defs:cobol-definitions-module-handle-cobol-dde-s}\label{cobol_defs::doc}\label{cobol_defs:cobol-defs}\index{cobol.defs (module)}
 This is a small set of class definitions and functions
 that are used by {\hyperref[cobol_loader:module-cobol.loader]{\code{cobol.loader}}} as well as
 {\hyperref[cobol_init:module-cobol]{\code{cobol}}}.
@@ -8988,11 +9302,11 @@ A module-level logger.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.UnsupportedError}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{UnsupportedError}}
+A syntax which expresses an unsupported feature
+of the COBOL language.
+
 \end{fulllineitems}
 
-
-We have syntax which expresses an unsupported feature
-of the COBOL language.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{UnsupportedError}\PYG{p}{(} \PYG{n+ne}{Exception} \PYG{p}{)}\PYG{p}{:}
@@ -9057,6 +9371,8 @@ of Workbook as a factory. These are rarely built any other way.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.TextCell}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{TextCell}}
+A cell which contains COBOL Alphanumeric data.
+
 \end{fulllineitems}
 
 
@@ -9071,10 +9387,10 @@ of Workbook as a factory. These are rarely built any other way.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.NumberCell}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{NumberCell}}
+This is an abstraction to simply hold all the standard conversions
+
 \end{fulllineitems}
 
-
-This is an abstraction to simply hold all the standard conversions
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{NumberCell}\PYG{p}{(} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cell}\PYG{o}{.}\PYG{n}{NumberCell} \PYG{p}{)}\PYG{p}{:}
@@ -9088,6 +9404,8 @@ This is an abstraction to simply hold all the standard conversions
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.NumberDisplayCell}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{NumberDisplayCell}}
+A COBOL numeric item with USAGE DISPLAY.
+
 \end{fulllineitems}
 
 
@@ -9102,6 +9420,8 @@ This is an abstraction to simply hold all the standard conversions
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.NumberCompCell}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{NumberCompCell}}
+A COBOL numeric item with USAGE COMPUTATIONAL.
+
 \end{fulllineitems}
 
 
@@ -9118,6 +9438,8 @@ This is an abstraction to simply hold all the standard conversions
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.NumberComp3Cell}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{NumberComp3Cell}}
+A COBOL numeric item with USAGE COMPUTATIONAL-3.
+
 \end{fulllineitems}
 
 
@@ -9132,6 +9454,8 @@ This is an abstraction to simply hold all the standard conversions
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.ErrorCell}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{ErrorCell}}
+A COBOL numeric item with invalid data.
+
 \end{fulllineitems}
 
 
@@ -9213,9 +9537,6 @@ http://yuml.me/diagram/scruffy;/class/
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Usage}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{Usage}}
-\end{fulllineitems}
-
-
 The Usage class provides detailed representation and conversion support
 for a given DDE. A {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} will refer to a
 {\hyperref[cobol_defs:cobol.defs.DDE]{\code{cobol.defs.DDE}}}. This DDE will have a {\hyperref[cobol_defs:cobol.defs.Usage]{\code{Usage}}} object that shows
@@ -9227,6 +9548,9 @@ to creating a {\hyperref[cobol_defs:cobol.defs.ErrorCell]{\code{ErrorCell}}}. If
 an error is required.
 
 The superclass of \code{Usage} is abstract and doesn't compute a proper size.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Usage}\PYG{p}{:}
@@ -9256,6 +9580,9 @@ The superclass of \code{Usage} is abstract and doesn't compute a proper size.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Usage.create_func}\pysiglinewithargsret{\code{Usage.}\bfcode{create\_func}}{}{}
+Create a CELL object. Use the raw bytes to build an Cell described
+by the given Attribute.
+
 \end{fulllineitems}
 
 
@@ -9270,10 +9597,10 @@ The superclass of \code{Usage} is abstract and doesn't compute a proper size.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Usage.size}\pysiglinewithargsret{\code{Usage.}\bfcode{size}}{\emph{picture}}{}
+The count is in bytes.  Not characters.
+
 \end{fulllineitems}
 
-
-The count is in bytes.  Not characters.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{size}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{picture} \PYG{p}{)}\PYG{p}{:}
@@ -9284,10 +9611,10 @@ The count is in bytes.  Not characters.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.UsageDisplay}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{UsageDisplay}}
+Usage ``DISPLAY'' is the COBOL language default.  It's also assumed for group-level items.
+
 \end{fulllineitems}
 
-
-Usage ``DISPLAY'' is the COBOL language default.  It's also assumed for group-level items.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{UsageDisplay}\PYG{p}{(} \PYG{n}{Usage} \PYG{p}{)}\PYG{p}{:}
@@ -9310,10 +9637,10 @@ Usage ``DISPLAY'' is the COBOL language default.  It's also assumed for group-le
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.UsageComp}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{UsageComp}}
+Usage ``COMPUTATIONAL'' is binary-encoded data.
+
 \end{fulllineitems}
 
-
-Usage ``COMPUTATIONAL'' is binary-encoded data.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{UsageComp}\PYG{p}{(} \PYG{n}{Usage} \PYG{p}{)}\PYG{p}{:}
@@ -9339,10 +9666,10 @@ Usage ``COMPUTATIONAL'' is binary-encoded data.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.UsageComp3}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{UsageComp3}}
+Usage ``COMP-3'' is packed-decimal encoded data.
+
 \end{fulllineitems}
 
-
-Usage ``COMP-3'' is packed-decimal encoded data.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{UsageComp3}\PYG{p}{(} \PYG{n}{Usage} \PYG{p}{)}\PYG{p}{:}
@@ -9410,11 +9737,11 @@ http://yuml.me/diagram/scruffy;/class/
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Allocation}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{Allocation}}
-\end{fulllineitems}
-
-
 The {\hyperref[cobol_defs:cobol.defs.Allocation]{\code{Allocation}}} superclass defines an abstract base
 class for the various allocation strategies.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Allocation}\PYG{p}{:}
@@ -9428,14 +9755,14 @@ class for the various allocation strategies.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Redefines}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{Redefines}}
-\end{fulllineitems}
-
-
 The {\hyperref[cobol_defs:cobol.defs.Redefines]{\code{Redefines}}} subclass depends on another element. It uses
 the referenced name to look up the offset and total size information.
 
 For this to work, the name must be resolved via the {\hyperref[cobol_defs:cobol.defs.Redefines.resolve]{\code{Redefines.resolve()}}} method.
 The {\hyperref[cobol_defs:cobol.defs.resolver]{\code{resolver()}}} function applies the {\hyperref[cobol_defs:cobol.defs.Redefines.resolve]{\code{Redefines.resolve()}}} method throughout the structure.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Redefines}\PYG{p}{(}\PYG{n}{Allocation}\PYG{p}{)}\PYG{p}{:}
@@ -9451,6 +9778,9 @@ The {\hyperref[cobol_defs:cobol.defs.resolver]{\code{resolver()}}} function appl
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Redefines.resolve}\pysiglinewithargsret{\code{Redefines.}\bfcode{resolve}}{\emph{aDDE}}{}
+Resolve a DDE name. See our \code{self.refers\_to} to refer to a DDE within
+the given structure.
+
 \end{fulllineitems}
 
 
@@ -9466,11 +9796,11 @@ The {\hyperref[cobol_defs:cobol.defs.resolver]{\code{resolver()}}} function appl
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Redefines.offset}\pysiglinewithargsret{\code{Redefines.}\bfcode{offset}}{\emph{offset}}{}
-\end{fulllineitems}
-
-
 For a redefines, this uses the resolved \code{refers\_to} name and fetches
 the offset.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{offset}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{offset} \PYG{p}{)}\PYG{p}{:}
@@ -9483,6 +9813,8 @@ the offset.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Redefines.totalSize}\pysiglinewithargsret{\code{Redefines.}\bfcode{totalSize}}{}{}
+Returns the total size.
+
 \end{fulllineitems}
 
 
@@ -9503,13 +9835,13 @@ an 01-level REDEFINES is irrelevant with respect to offset and size calculations
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Successor}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{Successor}}
-\end{fulllineitems}
-
-
 The {\hyperref[cobol_defs:cobol.defs.Successor]{\code{Successor}}}
 subclass does not depend on a named element, it depends on the immediate
 predecessor. It uses that contextual offset and size information provided by
 the {\hyperref[cobol_defs:cobol.defs.setSizeAndOffset]{\code{setSizeAndOffset()}}} function.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Successor}\PYG{p}{(}\PYG{n}{Allocation}\PYG{p}{)}\PYG{p}{:}
@@ -9526,9 +9858,6 @@ the {\hyperref[cobol_defs:cobol.defs.setSizeAndOffset]{\code{setSizeAndOffset()}
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Successor.offset}\pysiglinewithargsret{\code{Successor.}\bfcode{offset}}{\emph{offset}}{}
-\end{fulllineitems}
-
-
 For a successor, we use the predecessor in the \code{refers\_to} field
 to track down the offset of the predecessor.
 
@@ -9536,6 +9865,9 @@ This field's offset is predecessor offset + predecessor total size.
 
 The predecessor may have to do some thinking to get its total size or
 offset because of an Occurs Depending On situation.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{offset}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{offset} \PYG{p}{)}\PYG{p}{:}
@@ -9548,11 +9880,11 @@ offset because of an Occurs Depending On situation.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Successor.totalSize}\pysiglinewithargsret{\code{Successor.}\bfcode{totalSize}}{}{}
-\end{fulllineitems}
-
-
 The total size of a field with occurs depending on requires a record with live data.
 Otherwise, the total size is trivially computed from the DDE definition.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{totalSize}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
@@ -9565,13 +9897,12 @@ Otherwise, the total size is trivially computed from the DDE definition.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Group}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{Group}}
-\end{fulllineitems}
-
-
-The \code{GROUP}
-subclass does not depend on a named element, it depends on the immediate
+This subclass does not depend on a named element, it depends on the immediate
 parent group. It uses that contextual offset and size information provided by
 the {\hyperref[cobol_defs:cobol.defs.setSizeAndOffset]{\code{setSizeAndOffset()}}} function.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{Group}\PYG{p}{(}\PYG{n}{Allocation}\PYG{p}{)}\PYG{p}{:}
@@ -9586,9 +9917,6 @@ the {\hyperref[cobol_defs:cobol.defs.setSizeAndOffset]{\code{setSizeAndOffset()}
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Group.offset}\pysiglinewithargsret{\code{Group.}\bfcode{offset}}{\emph{offset}}{}
-\end{fulllineitems}
-
-
 For the first item in a group, we use the group parent in the \code{dde} field
 to track down the offset of the group we're a member of.
 
@@ -9596,6 +9924,9 @@ This field's offset is the group offset, since this field is first in the group.
 
 The group may have to do some recursive processing to get its predecessor's total size or
 offset because of an Occurs Depending On situation.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{offset}\PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{offset} \PYG{p}{)}\PYG{p}{:}
@@ -9608,12 +9939,12 @@ offset because of an Occurs Depending On situation.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Group.totalSize}\pysiglinewithargsret{\code{Group.}\bfcode{totalSize}}{}{}
-\end{fulllineitems}
-
-
 This is essentially the same as the successor -- it's merely an item within a DDE,
 we just track the first items separately with this subclass so that they
 can refer to the parent to walk up the tree.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{totalSize}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
@@ -9667,6 +9998,8 @@ The overall top-most parent DDE associated with this object is \code{self.dde().
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.Occurs}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{Occurs}}
+Abstract superclass for an Occurs clause.
+
 \end{fulllineitems}
 
 
@@ -9686,6 +10019,8 @@ The overall top-most parent DDE associated with this object is \code{self.dde().
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.OccursFixed}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{OccursFixed}}
+Occurs clause with a simple fixed number of occurrences.
+
 \end{fulllineitems}
 
 
@@ -9707,6 +10042,8 @@ The overall top-most parent DDE associated with this object is \code{self.dde().
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.OccursDependingOn}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{OccursDependingOn}}
+Occurs clause with a DEPENDING ON option.
+
 \end{fulllineitems}
 
 
@@ -9738,9 +10075,6 @@ The overall top-most parent DDE associated with this object is \code{self.dde().
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.OccursDependingOnLimit}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{OccursDependingOnLimit}}
-\end{fulllineitems}
-
-
 This is an extension to OccursDependingOn. It limits the ODO clause to the defined
 upper bound.
 
@@ -9761,6 +10095,9 @@ See \href{http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.jsp?topic=\%2Fcom
 Based on this (and bad data seen in the wild) we deduce that this upper limit
 clamping \textbf{may} be a language  feature.
 
+\end{fulllineitems}
+
+
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{OccursDependingOnLimit}\PYG{p}{(} \PYG{n}{OccursDependingOn} \PYG{p}{)}\PYG{p}{:}
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}OCCURS TO n TIMES DEPENDING ON name. Data is required.}
@@ -9779,9 +10116,6 @@ clamping \textbf{may} be a language  feature.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.DDE}\pysigline{\strong{class }\code{cobol.defs.}\bfcode{DDE}}
-\end{fulllineitems}
-
-
 The {\hyperref[cobol_defs:cobol.defs.DDE]{\code{DDE}}} class itself defines a single element (group or elementary) of a
 record.  There are several broad areas of functionality for a DDE:
 (1) construction, (2) reporting and decoration, (3) processing record data.
@@ -9805,48 +10139,48 @@ Occurs and Redefines can occur at any level.
 
 Each entry is defined by the following attributes:
 \begin{quote}\begin{description}
-\item[{level}] \leavevmode
+\item[{Level}] \leavevmode
 COBOL level number 01 to 49, 66 or 88.
 
-\item[{myName}] \leavevmode
+\item[{MyName}] \leavevmode
 COBOL variable name
 
-\item[{occurs}] \leavevmode
+\item[{Occurs}] \leavevmode
 An instance of {\hyperref[cobol_defs:cobol.defs.Occurs]{\code{Occurs}}}.
 the number of occurrences. The default is 1, which we call ``format 0''.
 There are two defined formats: format 1 has a fixed number of occurrences;
 format 2 is the Occurs Depending On with a variable number of occurrences.
 
-\item[{picture}] \leavevmode
+\item[{Picture}] \leavevmode
 the exploded picture clause, with ()'s expanded
 
-\item[{initValue}] \leavevmode
+\item[{InitValue}] \leavevmode
 any initial value provided
 
-\item[{allocation}] \leavevmode
+\item[{Allocation}] \leavevmode
 an instance of {\hyperref[cobol_defs:cobol.defs.Allocation]{\code{Allocation}}} used to compute the offset and total size.
 
-\item[{usage}] \leavevmode
+\item[{Usage}] \leavevmode
 an instance of {\hyperref[cobol_defs:cobol.defs.Usage]{\code{Usage}}} to delegate data conversion properly.
 The actual conversion is handled by the workbook.
 
-\item[{contains}] \leavevmode
+\item[{Contains}] \leavevmode
 the list of contained fields within a group
 
-\item[{parent}] \leavevmode
+\item[{Parent}] \leavevmode
 A weakref to the immediate parent DDE
 
-\item[{top}] \leavevmode
+\item[{Top}] \leavevmode
 A weakref to the overall record definition DDE.
 
 \end{description}\end{quote}
 
 The following decorations are applied by functions that traverse the DDE structure.
 \begin{quote}\begin{description}
-\item[{sizeScalePrecision}] \leavevmode
+\item[{SizeScalePrecision}] \leavevmode
 \code{Picture} namedtuple with details derived from parsing the PICTURE clause
 
-\item[{size}] \leavevmode
+\item[{Size}] \leavevmode
 the size of an individual occurrence
 
 \end{description}\end{quote}
@@ -9854,16 +10188,16 @@ the size of an individual occurrence
 The following features may have to be computed lazily if there's an Occurs
 Depending On. Otherwise they can be computed eagerly.
 \begin{quote}\begin{description}
-\item[{variably\_located}] \leavevmode
+\item[{Variably\_located}] \leavevmode
 Variably Located if any this element or any child has Occurs Depending On.
 Otherwise (no ODO) the DDE is Statically Located.
 Actually, only element \textbf{after} the ODO element are variably located. But it's simpler
 to treat the whole record as variable.
 
-\item[{offset}] \leavevmode
+\item[{Offset}] \leavevmode
 offset to this field from start of record.
 
-\item[{totalSize}] \leavevmode
+\item[{TotalSize}] \leavevmode
 overall size of this item, including all occurrences.
 
 \end{description}\end{quote}
@@ -9873,10 +10207,13 @@ a {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} and a DDE. It's 
 to depend on a DDE, but the reverse isn't proper. However, we DDE
 referring to an attribute anyway.
 \begin{quote}\begin{description}
-\item[{attribute}] \leavevmode
+\item[{Attribute}] \leavevmode
 weakref to the {\hyperref[schema:schema.Attribute]{\code{schema.Attribute}}} built from this DDE.
 
 \end{description}\end{quote}
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{DDE}\PYG{p}{:}
@@ -10062,11 +10399,11 @@ data.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.report}\pysiglinewithargsret{\code{cobol.defs.}\bfcode{report}}{\emph{top}}{}
-\end{fulllineitems}
-
-
 Report the structure of this DDE in COBOL-like notation enriched with
 offsets and sizes.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{report}\PYG{p}{(} \PYG{n}{top} \PYG{p}{)}\PYG{p}{:}
@@ -10086,10 +10423,10 @@ offsets and sizes.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.source}\pysiglinewithargsret{\code{cobol.defs.}\bfcode{source}}{\emph{top}}{}
+Print a version of the source.
+
 \end{fulllineitems}
 
-
-Print a version of the source.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{source}\PYG{p}{(} \PYG{n}{top} \PYG{p}{)}\PYG{p}{:}
@@ -10101,11 +10438,11 @@ Print a version of the source.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.search}\pysiglinewithargsret{\code{cobol.defs.}\bfcode{search}}{\emph{top}, \emph{aName}}{}
-\end{fulllineitems}
-
-
 Search the structure for a given name.
 This returns the found value or \code{None}.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{search}\PYG{p}{(} \PYG{n}{top}\PYG{p}{,} \PYG{n}{aName} \PYG{p}{)}\PYG{p}{:}
@@ -10118,12 +10455,12 @@ This returns the found value or \code{None}.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.resolver}\pysiglinewithargsret{\code{cobol.defs.}\bfcode{resolver}}{\emph{top}}{}
-\end{fulllineitems}
-
-
 Apply \code{Allocation.resolve()} throughout the structure.
 For each \code{REDEFINES} or \code{OCCURS DEPENDING ON} clause, locate the DDE to which
 it refers, saving a repeated searches.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{resolver}\PYG{p}{(} \PYG{n}{top} \PYG{p}{)}\PYG{p}{:}
@@ -10151,14 +10488,14 @@ to resolve before proceeding.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.setDimensionality}\pysiglinewithargsret{\code{cobol.defs.}\bfcode{setDimensionality}}{\emph{top}}{}
-\end{fulllineitems}
-
-
 Set Dimensionality for each DDE.
 This will be the sequence of the non-default \code{OCCURS} clauses that apply to each item.
 This is the item's, plus any belonging to the parents of the item.
 
 The order is from top down to the elementary item.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{setDimensionality}\PYG{p}{(} \PYG{n}{top} \PYG{p}{)}\PYG{p}{:}
@@ -10198,12 +10535,12 @@ to remove isinstance() nonsense.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_defs:cobol.defs.setSizeAndOffset}\pysiglinewithargsret{\code{cobol.defs.}\bfcode{setSizeAndOffset}}{\emph{aDDE}, \emph{aRow=None}, \emph{base=0}}{}
-\end{fulllineitems}
-
-
 This can be used with or without a row. The common case of all statically
 located items does not require a row.
 It must be used with a row for the case of OCCURS Depending On.
+
+\end{fulllineitems}
+
 
 \begin{notice}{note}{Todo}
 
@@ -10270,7 +10607,7 @@ See {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}}.
 
 
 \section{The \textbf{Stingray} Developer's Guide}
-\label{developer:the-stingray-developer-s-guide}\label{developer::doc}\label{developer:developer}
+\label{developer:developer}\label{developer:the-stingray-developer-s-guide}\label{developer::doc}
 We use \textbf{Stingray} to work with data files where the schema is
 either external or complex (or both). We can tackle this question:
 \begin{quote}
@@ -10495,7 +10832,9 @@ version.
 \index{make\_builder() (built-in function)}
 
 \begin{fulllineitems}
-\phantomsection\label{developer:make_builder}\pysiglinewithargsret{\bfcode{make\_builder}}{\emph{args}}{}~\begin{quote}\begin{description}
+\phantomsection\label{developer:make_builder}\pysiglinewithargsret{\bfcode{make\_builder}}{\emph{args}}{}
+Create a builder object from the args.
+\begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode
 \textbf{args} -- schema version
 
@@ -10720,6 +11059,8 @@ the following.
 
 \begin{fulllineitems}
 \phantomsection\label{developer:process_sheet}\pysiglinewithargsret{\bfcode{process\_sheet}}{\emph{sheet}, \emph{builder}}{}
+Process the given sheet using the given builder.
+
 \end{fulllineitems}
 
 \begin{alltt}
@@ -10753,7 +11094,9 @@ The overall processing of a given workbook input looks like this.
 \index{process\_workbook() (built-in function)}
 
 \begin{fulllineitems}
-\phantomsection\label{developer:process_workbook}\pysiglinewithargsret{\bfcode{process\_workbook}}{\emph{sheet}, \emph{builder}}{}
+\phantomsection\label{developer:process_workbook}\pysiglinewithargsret{\bfcode{process\_workbook}}{\emph{source}, \emph{builder}}{}
+Process all sheets of the workbook using the given builder.
+
 \end{fulllineitems}
 
 \begin{alltt}
@@ -11356,6 +11699,8 @@ For this demo, here's a sample builder function:
 
 \begin{fulllineitems}
 \phantomsection\label{demo/data_quality:some_builder}\pysiglinewithargsret{\bfcode{some\_builder}}{\emph{aRow}}{}
+Build a Python dict from the row of data.
+
 \end{fulllineitems}
 
 
@@ -11477,6 +11822,8 @@ For this demo, here's a sample sheet process function:
 
 \begin{fulllineitems}
 \phantomsection\label{demo/data_quality:process_some_sheet}\pysiglinewithargsret{\bfcode{process\_some\_sheet}}{\emph{sheet}}{}
+Process all rows of the named sheet.
+
 \end{fulllineitems}
 
 
@@ -11554,7 +11901,7 @@ OK
 
 
 \subsection{Application Level Data Validation Technique}
-\label{demo/validation:application-level-data-validation-technique}\label{demo/validation:demo-validate}\label{demo/validation::doc}
+\label{demo/validation::doc}\label{demo/validation:demo-validate}\label{demo/validation:application-level-data-validation-technique}
 We validate that that a file actually matches a schema through a three-part valiation process.
 We looked at the first two parts in {\hyperref[demo/data_quality:demo-sqa]{\emph{Unit Level Validation for Application and Data}}}.
 \begin{itemize}
@@ -12045,7 +12392,7 @@ doesn't match the schema required by the application.
 
 
 \subsection{Data Profiling Demonstration}
-\label{demo/profile:demo-profile}\label{demo/profile::doc}\label{demo/profile:data-profiling-demonstration}
+\label{demo/profile:data-profiling-demonstration}\label{demo/profile:demo-profile}\label{demo/profile::doc}
 This is a simple data profiling application that can be applied
 to workbooks to examine the data prior to creating builders.
 
@@ -12382,7 +12729,7 @@ type
 
 
 \subsection{Reading COBOL Files}
-\label{demo/cobol_reader:demo-cobol}\label{demo/cobol_reader::doc}\label{demo/cobol_reader:reading-cobol-files}
+\label{demo/cobol_reader:reading-cobol-files}\label{demo/cobol_reader:demo-cobol}\label{demo/cobol_reader::doc}
 For sample data, we're using data found here:
 \href{http://wonder.cdc.gov/wonder/sci\_data/codes/fips/type\_txt/cntyxref.asp}{http://wonder.cdc.gov/wonder/sci\_data/codes/fips/type\_txt/cntyxref.asp}
 
@@ -12627,8 +12974,8 @@ we can pass the file object created by \code{ZipFile.open()} as the second argum
 
 
 \section{History}
-\label{history::doc}\label{history:history}\label{history:id1}
-Latest release is 4.4.4.
+\label{history:id1}\label{history:history}\label{history::doc}
+Latest release is 4.4.5.
 
 
 \subsection{Version 4}
@@ -12753,6 +13100,14 @@ The idea is that we can do
 \code{subrow= data.subrow( self.segment\_abc, row.cell(schema\_header\_dict{[}'GENERIC-FIELD'{]})  )}
 to map a field, \code{GENERIC-FIELD}, to an 01-level schema, \code{self.segment\_abc}.
 We can then pick fields out of \code{subrow} using fields defined in \code{self.segment\_abc}.
+
+\item {} 
+Add {\hyperref[cobol_loader:cobol.loader.COBOL_schema]{\code{cobol.loader.COBOL\_schema()}}} and {\hyperref[cobol_loader:cobol.loader.COBOL_schemata]{\code{cobol.loader.COBOL\_schemata()}}}
+functions to provide a higher-level API for building a record schema or
+a (less common) multiple schemata.
+
+\item {} 
+Fix a bug in cobol.RECFM\_VB.bdw\_iter() function.
 
 \end{itemize}
 
@@ -12919,7 +13274,7 @@ and easy-to-use \code{suite()} function that returns the module's suite.
 
 
 \subsection{Cell Module Tests}
-\label{testing/cell:cell-module-tests}\label{testing/cell::doc}\label{testing/cell:test-cells}
+\label{testing/cell:test-cells}\label{testing/cell::doc}\label{testing/cell:cell-module-tests}
 A Cell is the unit of data.  These unit tests exercise the classes in the
 {\hyperref[cell:module-cell]{\code{cell}}} module.  For more information, see {\hyperref[cell:cells]{\emph{Cell Module -- Data Element Containers and Conversions}}}.
 
@@ -13176,7 +13531,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Sheet Module Tests}
-\label{testing/sheet:sheet-module-tests}\label{testing/sheet::doc}
+\label{testing/sheet::doc}\label{testing/sheet:sheet-module-tests}
 A Sheet is a collection of Cells, with a structure imposed by a Schema.
 These unit tests exercise the classes in the
 {\hyperref[sheet:module-sheet]{\code{sheet}}} module.  For more information, see {\hyperref[sheet:sheets]{\emph{Sheet Module -- Sheet and Row Access}}}.
@@ -13358,7 +13713,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Schema Module Tests}
-\label{testing/schema:schema-module-tests}\label{testing/schema::doc}
+\label{testing/schema::doc}\label{testing/schema:schema-module-tests}
 A Schema is little more than a list of Attributes,
 and an Attribute is little more than a named tuple.
 
@@ -13505,7 +13860,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Schema Loader Testing}
-\label{testing/schema_loader:schema-loader-testing}\label{testing/schema_loader::doc}
+\label{testing/schema_loader::doc}\label{testing/schema_loader:schema-loader-testing}
 A Schema Loader will build a schema from a variety of sources.
 \begin{itemize}
 \item {} 
@@ -13772,7 +14127,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Workbook Testing}
-\label{testing/workbook::doc}\label{testing/workbook:workbook-testing}
+\label{testing/workbook:workbook-testing}\label{testing/workbook::doc}
 There are many types of workbooks.  See {\hyperref[workbook/index:workbook]{\emph{Workbook Package -- Uniform Wrappers for Workbooks}}} for details.
 
 These tests use actual files in the \code{sample} directory.
@@ -14659,7 +15014,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{COBOL Schema Loader Unit Tests}
-\label{testing/cobol_loader:cobol-schema-loader-unit-tests}\label{testing/cobol_loader::doc}
+\label{testing/cobol_loader::doc}\label{testing/cobol_loader:cobol-schema-loader-unit-tests}
 These are unit tests of various parts of the COBOL schema loader.  See {\hyperref[cobol_loader:cobol-loader]{\emph{COBOL Loader Module -- Parse COBOL Source to Load a Schema}}}.
 
 
@@ -16955,7 +17310,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{stingray.test \texttt{\_\_init\_\_.py}}
-\label{testing/test_init:stingray-test-init-py}\label{testing/test_init::doc}
+\label{testing/test_init::doc}\label{testing/test_init:stingray-test-init-py}
 Overheads.
 
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -17146,10 +17501,10 @@ Unittest top-level test runner.
 
 \begin{fulllineitems}
 \phantomsection\label{build:sphinx_build}\pysiglinewithargsret{\bfcode{sphinx\_build}}{\emph{srcdir}, \emph{outdir}, \emph{buildername='html'}}{}
+Handle the simple use case for the \code{sphinx-build} script.
+
 \end{fulllineitems}
 
-
-This function handles the simple use case for the \code{sphinx-build} script.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{sphinx\PYGZus{}build}\PYG{p}{(} \PYG{n}{srcdir}\PYG{p}{,} \PYG{n}{outdir}\PYG{p}{,} \PYG{n}{buildername}\PYG{o}{=}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{html}\PYG{l+s}{\PYGZsq{}} \PYG{p}{)}\PYG{p}{:}
@@ -17168,12 +17523,12 @@ This function handles the simple use case for the \code{sphinx-build} script.
 
 \begin{fulllineitems}
 \phantomsection\label{build:pylit_build}\pysiglinewithargsret{\bfcode{pylit\_build}}{\emph{srcdir}, \emph{outdir}}{}
-\end{fulllineitems}
-
-
-This function handles the simple use case for PyLit.
+Handle the simple use case for PyLit.
 
 This also handles the necessary rewrite to modify standard paths to Windows paths.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{pylit\PYGZus{}build}\PYG{p}{(} \PYG{n}{infile}\PYG{p}{,} \PYG{n}{outfile} \PYG{p}{)}\PYG{p}{:}
@@ -17194,13 +17549,13 @@ This also handles the necessary rewrite to modify standard paths to Windows path
 
 \begin{fulllineitems}
 \phantomsection\label{build:mkdir}\pysiglinewithargsret{\bfcode{mkdir}}{\emph{path}}{}
-\end{fulllineitems}
-
-
-This function handles the simple use case for assuring that the directory
+Handles the simple use case for assuring that the directory
 tree exists.
 
 This also handles a rewrite to modify standard paths to Windows paths.
+
+\end{fulllineitems}
+
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{mkdir}\PYG{p}{(} \PYG{n}{path} \PYG{p}{)}\PYG{p}{:}
@@ -17222,10 +17577,10 @@ This also handles a rewrite to modify standard paths to Windows paths.
 
 \begin{fulllineitems}
 \phantomsection\label{build:copy_file}\pysiglinewithargsret{\bfcode{copy\_file}}{\emph{srcdir}, \emph{outdir}}{}
+Handles the simple use case for copying a file.
+
 \end{fulllineitems}
 
-
-This function handles the simple use case for copying a file
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{copy\PYGZus{}file}\PYG{p}{(} \PYG{n}{srcdir}\PYG{p}{,} \PYG{n}{outdir} \PYG{p}{)}\PYG{p}{:}
@@ -17239,10 +17594,10 @@ This function handles the simple use case for copying a file
 
 \begin{fulllineitems}
 \phantomsection\label{build:run_test}\pysiglinewithargsret{\bfcode{run\_test}}{}{}
+In effect, this does \code{python3 test/main.py}
+
 \end{fulllineitems}
 
-
-In effect, this does \code{python3 test/main.py}
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{def} \PYG{n+nf}{run\PYGZus{}test}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}
@@ -17437,7 +17792,7 @@ if sys.version\PYGZus{}info \PYGZlt{} (3,3):
 
 setup(
     name=\PYGZsq{}stingray\PYGZsq{},
-    version=\PYGZsq{}4.4.4\PYGZsq{},
+    version=\PYGZsq{}4.4.5\PYGZsq{},
     description=\PYGZsq{}Schema\PYGZhy{}Based File Reader, COBOL, EBCDIC Conversion, ETL, Data Profiling\PYGZsq{},
     author=\PYGZsq{}S.Lott\PYGZsq{},
     author\PYGZus{}email=\PYGZsq{}s\PYGZus{}lott@yahoo.com\PYGZsq{},
@@ -17504,7 +17859,7 @@ Refactor setSizeAndOffset() into the {\hyperref[index:cobol.defs.Allocation]{\co
 to remove isinstance() nonsense.
 \end{notice}
 
-(The {\hyperref[cobol_defs:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_defs.rst, line 1168.)
+(The {\hyperref[cobol_defs:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_defs.rst, line 1196.)
 
 \begin{notice}{note}{Todo}
 
@@ -17514,14 +17869,7 @@ This is called once per row: it needs to be simpler and
 faster. Some refactoring can eliminate the if statements.
 \end{notice}
 
-(The {\hyperref[cobol_defs:index-1]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_defs.rst, line 1180.)
-
-\begin{notice}{note}{Todo}
-
-88-level items could create boolean-valued properties.
-\end{notice}
-
-(The {\hyperref[cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_loader.rst, line 397.)
+(The {\hyperref[cobol_defs:index-1]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_defs.rst, line 1208.)
 
 \begin{notice}{note}{Todo}
 
@@ -17580,19 +17928,26 @@ all the modules in the package that extend this base definition.
 
 \begin{notice}{note}{Todo}
 
+Refactor this, it feels clunky.
+\end{notice}
+
+(The {\hyperref[workbook/ods:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/ods.rst, line 128.)
+
+\begin{notice}{note}{Todo}
+
+88-level items could create boolean-valued properties.
+\end{notice}
+
+(The {\hyperref[cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_loader.rst, line 381.)
+
+\begin{notice}{note}{Todo}
+
 Additional Numbers13\_Workbook Feature
 
 Translate Formula and Formula error to Text
 \end{notice}
 
 (The {\hyperref[workbook/numbers_13:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/numbers\_13.rst, line 27.)
-
-\begin{notice}{note}{Todo}
-
-Refactor this, it feels clunky.
-\end{notice}
-
-(The {\hyperref[workbook/ods:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/ods.rst, line 120.)
 
 
 \chapter{Indices and Tables}
@@ -17631,7 +17986,7 @@ Refactor this, it feels clunky.
 \item {\texttt{snappy}}, \pageref{snappy:module-snappy}
 \indexspace
 \bigletter{w}
-\item {\texttt{workbook}}, \pageref{workbook/xlsx:module-workbook}
+\item {\texttt{workbook}}, \pageref{workbook/numbers_13:module-workbook}
 \end{theindex}
 
 \renewcommand{\indexname}{Index}

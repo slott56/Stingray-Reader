@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -106,9 +106,19 @@ The 4 byte header is not included in the chunk length.</p>
 <dl class="function">
 <dt id="snappy.bytes_int">
 <tt class="descclassname">snappy.</tt><tt class="descname">bytes_int</tt><big>(</big><em>seq</em><big>)</big><a class="headerlink" href="#snappy.bytes_int" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Decode a sequence of bytes into an integer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seq</strong> &#8211; sequence of bytes; the entire sequence is consumed.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">integer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
-<p>Function to decode bytes into an integer</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">bytes_int</span><span class="p">(</span> <span class="n">seq</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;8-bit encoded integer as sequence of 1 to 4 bytes, little-endian.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -123,9 +133,19 @@ The 4 byte header is not included in the chunk length.</p>
 <dl class="function">
 <dt id="snappy.varint">
 <tt class="descclassname">snappy.</tt><tt class="descname">varint</tt><big>(</big><em>stream</em><big>)</big><a class="headerlink" href="#snappy.varint" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Decode varint-encoded sequence of bytes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seq</strong> &#8211; sequence of bytes; consume bytes to decode the int.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">integer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
-<p>Function to decode varint-encoded bytes.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">varint</span><span class="p">(</span> <span class="n">stream</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;7-bit encoded integer as a sequence of bytes, little-endian.</span>
 <span class="sd">    MSB is used to indicate if more bytes are part of this value.</span>
@@ -143,12 +163,7 @@ The 4 byte header is not included in the chunk length.</p>
     <span class="k">return</span> <span class="n">v</span>
 </pre></div>
 </div>
-<dl class="class">
-<dt id="snappy.Snappy">
-<em class="property">class </em><tt class="descclassname">snappy.</tt><tt class="descname">Snappy</tt><a class="headerlink" href="#snappy.Snappy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>The snappy decode class has two parts.</p>
+<p>The snappy protocol has two levels.</p>
 <ul>
 <li><p class="first">The LZ77 decoder which expands the tags to create the data.
 There are four kinds of tags.</p>
@@ -196,20 +211,39 @@ except that the offset is stored as a 32-bit integer instead of a
 </li>
 </ul>
 </li>
-<li><p class="first">The higher-level framing protocol.
-There is just one kind of frame, type &#8220;0&#8221; (Compressed Data) frame with a
-three-byte length.</p>
+<li><p class="first">The higher-level framing protocol.</p>
+<ul class="simple">
+<li>type &#8220;0&#8221; (Compressed Data) frame with a  three-byte length.</li>
+<li>Other types are possible in principle. Numbers &#8216;13 doesn&#8217;t use them.</li>
+</ul>
 </li>
+</ul>
+<dl class="class">
+<dt id="snappy.Snappy">
+<em class="property">class </em><tt class="descclassname">snappy.</tt><tt class="descname">Snappy</tt><a class="headerlink" href="#snappy.Snappy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Implement the two-level snappy protocol used by Numbers &#8216;13.</p>
+<ul class="simple">
+<li>The LZ77 decoder which expands the tags to create the data.</li>
+<li>The higher-level framing protocol
+with just one kind of frame, type &#8220;0&#8221; (Compressed Data) with a
+three-byte length.</li>
 </ul>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Snappy</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__qualname__</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>The LZ77 decoder. This locates the <strong>varint</strong> size header.  That&#8217;s followed by
+<dl class="method">
+<dt id="snappy.Snappy.lz77">
+<tt class="descclassname">Snappy.</tt><tt class="descname">lz77</tt><big>(</big><em>frame</em><big>)</big><a class="headerlink" href="#snappy.Snappy.lz77" title="Permalink to this definition">¶</a></dt>
+<dd><p>The LZ77 decoder. This locates the <strong>varint</strong> size header.  That&#8217;s followed by
 a sequence of tags.  The literal tag has data. The other three tags repeat
 previously output bytes.</p>
 <p>Because of the framing protocol, we&#8217;re limited to a buffer of only 64K bytes.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">lz77</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Decode one frame of a Snappy LZ77-encoded stream.</span>
 
@@ -281,8 +315,13 @@ previously output bytes.</p>
     <span class="k">return</span> <span class="nb">buffer</span>
 </pre></div>
 </div>
-<p>The Framing protocol required to decode. The frames contain up to 64K of compressed
+<dl class="method">
+<dt id="snappy.Snappy.decompress">
+<tt class="descclassname">Snappy.</tt><tt class="descname">decompress</tt><big>(</big><em>file_object</em><big>)</big><a class="headerlink" href="#snappy.Snappy.decompress" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Framing protocol required to decode. The frames contain up to 64K of compressed
 data. This defines a sequence of windows over the stream of data.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">decompress</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">file_object</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Decompress a snappy file object. Locate each frame in the snappy</span>
 <span class="sd">    framing protocol that&#39;s used by iWork (not precisely as specified</span>

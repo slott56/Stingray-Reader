@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -56,6 +56,11 @@
             
   <div class="section" id="fixed-format-workbook">
 <span id="workbook-fixed"></span><h1>8.9. Fixed-Format Workbook<a class="headerlink" href="#fixed-format-workbook" title="Permalink to this headline">¶</a></h1>
+<p>Like a CSV workbook, this is a kind of degenerate case.  We don&#8217;t have
+a lot of sheets, or a lot of data types.</p>
+<p>A subclass might do EBCDIC conversion and possibly even decode
+packed decimal numbers.  To do this, a COBOL-language DDE would be
+required as the schema definition. See <a class="reference internal" href="../cobol.html#cobol"><em>The COBOL Package</em></a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pprint</span>
 
@@ -67,13 +72,11 @@
 <span class="target" id="module-workbook"></span><dl class="class">
 <dt id="workbook.Fixed_Workbook">
 <em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">Fixed_Workbook</tt><a class="headerlink" href="#workbook.Fixed_Workbook" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Extract sheets, rows and cells from a fixed-format file.</p>
+<p>The schema must have size and offset information to locate the fields.</p>
+<p>There&#8217;s only a single sheet and it matches the filename.</p>
+</dd></dl>
 
-<p>Like a CSV workbook, this is a kind of degenerate case.  We don&#8217;t have
-a lot of sheets, or a lot of data types.</p>
-<p>A subclass might do EBCDIC conversion and possibly even decode
-packed decimal numbers.  To do this, a COBOL-language DDE would be
-required as the schema definition. See <a class="reference internal" href="../cobol.html#cobol"><em>The COBOL Package</em></a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Fixed_Workbook</span><span class="p">(</span> <span class="n">Workbook</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A file with fixed-sized, no-punctuation fields.</span>
 
@@ -104,7 +107,10 @@ required as the schema definition. See <a class="reference internal" href="../co
 <dl class="method">
 <dt id="workbook.Fixed_Workbook.sheet">
 <tt class="descclassname">Fixed_Workbook.</tt><tt class="descname">sheet</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.Fixed_Workbook.sheet" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create a sheet for this workbook.
+The <tt class="xref py py-data docutils literal"><span class="pre">sheet_type</span></tt> attribute of the class ignored.
+This must return a <a class="reference internal" href="../sheet.html#sheet.ExternalSchemaSheet" title="sheet.ExternalSchemaSheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.ExternalSchemaSheet</span></tt></a>.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">sheet</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet_name</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;sheet_type is ignored; it must be an external schema.&quot;&quot;&quot;</span>
@@ -119,7 +125,8 @@ Or <a class="reference internal" href="../cobol_init.html#cobol.COBOL_File.row_g
 <dl class="method">
 <dt id="workbook.Fixed_Workbook.rows_of">
 <tt class="descclassname">Fixed_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.Fixed_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Iterator through all rows. The sheet&#8217;s schema is required to decompose the rows.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">rows_of</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An iterator over all rows of the named sheet.</span>
@@ -135,7 +142,8 @@ Or <a class="reference internal" href="../cobol_init.html#cobol.COBOL_File.row_g
 <dl class="method">
 <dt id="workbook.Fixed_Workbook.row_get">
 <tt class="descclassname">Fixed_Workbook.</tt><tt class="descname">row_get</tt><big>(</big><em>row</em>, <em>attribute</em><big>)</big><a class="headerlink" href="#workbook.Fixed_Workbook.row_get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Concrete implementation to get an attribute&#8217;s value from a given row.</p>
+</dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">row_get</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">attr</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a :py:class:`cell.Cell` from the row&#39;s data.&quot;&quot;&quot;</span>

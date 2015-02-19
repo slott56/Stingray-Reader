@@ -4,15 +4,30 @@
 The COBOL Package
 ######################################
 
-Or.  "How do I access COBOL-defined data from Python"?
+If you're interested in the implementation, you can cut to the chase.
+See :ref:`cobol_impl`.
+
+-   :ref:`cobol_init`.
+
+-   :ref:`cobol_loader`.
+
+-   :ref:`cobol_defs`.
+
+This section answers the following question:
+
+    "How do I access COBOL-defined data from Python"?
 
 We have three problems to solve to get COBOL data into Python applications.
 
--   Most of the :py:class:`cell.Cell` subclasses aren't really appropriate for    
+-   How do we represent the data?
+
+    Most of the :py:class:`cell.Cell` subclasses aren't really appropriate for    
     data coming from COBOL applications.   
     Indeed, only :py:class:`cell.TextCell` is really appropriate.  
     
--   The schema more complex than the 
+-   How do we represent the schema?
+
+    The schema more complex than the 
     flat-file schema expected by :py:mod:`schema`.
     
     -   The structure is hierarchical.
@@ -29,7 +44,9 @@ We have three problems to solve to get COBOL data into Python applications.
         The USAGE information indicates the encoding of the data which is 
         expected to be in the field, the actual data may not match the definition.
     
--   The schema is encoded in COBOL.  That is the subject of :ref:`cobol_loader`.
+-   How do we build the schema?
+
+    The schema is encoded in COBOL.  That is the subject of :ref:`cobol_loader`.
 
 Requirements
 ==============
@@ -523,8 +540,10 @@ defined by the Usage and Picture classes.
 
 The :py:class:`cobol.defs.ErrorCell` includes the raw bytes, but a value of ``None``.
 
-Implementation
-===============
+..  _`cobol_impl`: 
+
+COBOL Implementation
+======================
 
 These are the modules that extend the core functionality of Stingray
 to handle COBOL files and EBCDIC data.

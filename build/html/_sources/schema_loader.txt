@@ -155,11 +155,10 @@ Schema Loader
 
 ..  py:class:: SchemaLoader
 
-A Schema Loader has one mandatory contract.  A subclass may add a second contract.
-
-1.  It must load the schema.
-
-2.  An embedded schema loader will also return the non-schema rows.
+    A Schema Loader has one mandatory contract: It must load the schema.
+    
+    A subclass may add a second contract, For example, 
+    an embedded schema loader will also return the non-schema rows.
 
 ::
 
@@ -184,15 +183,15 @@ Embedded Schema Loader
 
 ..  py:class:: HeadingRowSchemaLoader
 
-In many cases, the schema is first-row column titles or something similar.
-As we noted above, :py:class:`csv.DictReader` supports this simple case.
+    In many cases, the schema is first-row column titles or something similar.
+    As we noted above, :py:class:`csv.DictReader` supports this simple case.
 
-All other cases have to be handled with something a bit more sophisticated.
-The :py:class:`schema.loader.SchemaLoader` can be further subclassed to provide for more 
-complex schema definitions buried in the rows of a sheet.
+    All other cases have to be handled with something a bit more sophisticated.
+    The :py:class:`schema.loader.SchemaLoader` can be further subclassed to provide for more 
+    complex schema definitions buried in the rows of a sheet.
 
-This means that we must make the schema parsing an application-provided
-plug-in that the Workbook uses when instantiating each Sheet.
+    This means that we must make the schema parsing an application-provided
+    plug-in that the Workbook uses when instantiating each Sheet.
 
 ::
       
@@ -245,30 +244,30 @@ External Schema Loader
 
 ..  py:class:: ExternalSchemaLoader
 
-In some cases, the data workbook is described by a separate schema workbook, or a separate
-sheet within the data workbook.  In these cases, the other sheet (or file) must be
-parsed to locate schema information.
+    In some cases, the data workbook is described by a separate schema workbook, or a separate
+    sheet within the data workbook.  In these cases, the other sheet (or file) must be
+    parsed to locate schema information.
 
-In the case of a fixed format file, we must examine a separate
-file to load schema information.  This additional schems file may be in 
-COBOL notation, leading to a more complex parser.  See :ref:`cobol_loader`. 
+    In the case of a fixed format file, we must examine a separate
+    file to load schema information.  This additional schems file may be in 
+    COBOL notation, leading to a more complex parser.  See :ref:`cobol_loader`. 
 
-The layout of the schema, of course, will be highly variable, 
-so the "meta-schema" must be adjusted to the actual file.
+    The layout of the schema, of course, will be highly variable, 
+    so the "meta-schema" must be adjusted to the actual file.
 
-Note, also, that the schema loader is -- itself -- a typical of schema-based reader.  It has a number of common features.
+    Note, also, that the schema loader is -- itself -- a typical of schema-based reader.  It has a number of common features.
 
-1.  A dictionary-based "builder", :py:meth:`schema.loader.ExternalSchemaLoader.build_attr`, to handle Logical Layout.  
-    This transforms the input "raw" dictionary of :py:class:`cell.Cell` instances to an application dictionary of proper Python objects.
-    See :ref:`developer`.
+    1.  A dictionary-based "builder", :py:meth:`schema.loader.ExternalSchemaLoader.build_attr`, to handle Logical Layout.  
+        This transforms the input "raw" dictionary of :py:class:`cell.Cell` instances to an application dictionary of proper Python objects.
+        See :ref:`developer`.
     
-2.  An iterator, :py:meth:`schema.loader.ExternalSchemaLoader.attr_dict_iter`, 
-    that provides "raw" dictionaries from each row (based on the schema) to the 
-    builder to create application dictionaries.
+    2.  An iterator, :py:meth:`schema.loader.ExternalSchemaLoader.attr_dict_iter`, 
+        that provides "raw" dictionaries from each row (based on the schema) to the 
+        builder to create application dictionaries.
 
-3.  The overall function,
-    :py:meth:`schema.loader.ExternalSchemaLoader.schema`,
-    that iterates over application objects built from application dictionaries.
+    3.  The overall function,
+        :py:meth:`schema.loader.ExternalSchemaLoader.schema`,
+        that iterates over application objects built from application dictionaries.
 
 ::
 
@@ -300,11 +299,11 @@ Note, also, that the schema loader is -- itself -- a typical of schema-based rea
             self.sheet= self.workbook.sheet( self.sheet_name, stingray.sheet.EmbeddedSchemaSheet, 
             loader_class= HeadingRowSchemaLoader )
 
-There's potential for a great deal of variability in schema definition.
-Consequently, this ``build_attr`` method is merely a sample that 
-covers one common case.  
-
 ..  py:method:: ExternalSchemaLoader.build_attr( row )
+
+    There's potential for a great deal of variability in schema definition.
+    Consequently, this ``build_attr`` method is merely a sample that 
+    covers one common case.  
 
 ::
 
@@ -353,6 +352,8 @@ Schema loading involves a process of
 
 ..  py:method:: ExternalSchemaLoader.attr_dict_iter( sheet )
 
+    Iterate over application dicts based on raw dicts built by the schema of the sheet.
+
 ::
 
         def attr_dict_iter( self, sheet ):
@@ -364,6 +365,10 @@ Schema loading involves a process of
             )
 
 ..  py:method:: ExternalSchemaLoader.schema(  )
+
+    Scan a file to get the schema.
+
+    :return: a :py:class:`Schema` object
 
 ::
 
@@ -383,8 +388,8 @@ Worst-Case Loader
 
 ..  py:class:: BareExternalSchemaLoader
 
-This is a degenerate case loader where the schema sheet (or file) doesn't have
-an embedded schema on line one of the sheet.
+    This is a degenerate case loader where the schema sheet (or file) doesn't have
+    an embedded schema on line one of the sheet.
 
 ::
     

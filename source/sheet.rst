@@ -204,8 +204,8 @@ Sheet Class
 
 ..  py:class:: Sheet
 
-A :py:class:`sheet.Sheet` is an iterator over the rows of data in a workbook.
-Subclasses implement different bindings for the sheet's schema information.
+    An iterator over the rows of data in a workbook.
+    Subclasses implement different bindings for the sheet's schema information.
 
 ::
 
@@ -230,21 +230,21 @@ Row Class
 
 ..  py:class:: Row
 
-A single row in Sheet; a sequence of :py:class:`cell.Cell` instances.
+    A single row in Sheet; a sequence of :py:class:`cell.Cell` instances.
 
-A Sheet produces this simple row-as-list.  A Schema can transform this
-into row-as-dict or some even more elaborate structure.
+    A Sheet produces this simple row-as-list.  A Schema can transform this
+    into row-as-dict or some even more elaborate structure.
 
-A row depends on details of an :py:class:`schema.Attribute` 
-and a :py:class:`workbook.Workbook`.  
-This feels circular. But this Sheet/Row schema definition is really
-just a convenient wrapper around the Workbook details.
+    A row depends on details of an :py:class:`schema.Attribute` 
+    and a :py:class:`workbook.Workbook`.  
+    This feels circular. But this Sheet/Row schema definition is really
+    just a convenient wrapper around the Workbook details.
 
-The :py:class:`cell.Cell` conversions are handled by the :py:class:`workbook.Workbook`.
-Some Workbooks have cell content identified by position.
-Some Workbooks have cell content identified by size, offset and encoding.
-Therefore, we must provide the Attribute details to the Workbook
-to get the Cell's value.
+    The :py:class:`cell.Cell` conversions are handled by the :py:class:`workbook.Workbook`.
+    Some Workbooks have cell content identified by position.
+    Some Workbooks have cell content identified by size, offset and encoding.
+    Therefore, we must provide the Attribute details to the Workbook
+    to get the Cell's value.
 
 ::
 
@@ -305,19 +305,19 @@ Which one do we mean?  And how do we specify this selection?
 
 ..  py:class:: LazyRow
 
-When we can't eagerly build all :py:class:`cell.Cell` instances for a given
-row, this class provides the proper API.
+    When we can't eagerly build all :py:class:`cell.Cell` instances for a given
+    row, this class provides the proper API.
 
-A COBOL REDEFINES clause may make the bytes invalid in all but one of the
-aliases for an attribute.  Also, there's no formal ``NULL`` value in COBOL, so
-optional fields can have invalid data.
+    A COBOL REDEFINES clause may make the bytes invalid in all but one of the
+    aliases for an attribute.  Also, there's no formal ``NULL`` value in COBOL, so
+    optional fields can have invalid data.
 
-Further, we may have Occurs Depending On. This means we can't set size and
-offset until we can access actual data.
+    Further, we may have Occurs Depending On. This means we can't set size and
+    offset until we can access actual data.
 
-For these reasons, we have a :py:class:`sheet.LazyRow`, which conforms to the
-interface for a :py:class:`Row`, but isn't an actual sequence. No data is
-processed until the :py:meth:`LazyRow.__getitem__` method is used.
+    For these reasons, we have a :py:class:`sheet.LazyRow`, which conforms to the
+    interface for a :py:class:`Row`, but isn't an actual sequence. No data is
+    processed until the :py:meth:`LazyRow.__getitem__` method is used.
 
 ::
 
@@ -375,16 +375,16 @@ ExternalSchemaSheet Class
 
 ..  py:class:: ExternalSchemaSheet
 
-A Sheet with an external schema can be one of two kinds.
+    A Sheet with an external schema can be one of two kinds.
 
--   A Sheet that doesn't have row headers to embed the schema information.
-    In this case, an eager Workbook Row can create a sequence of :py:class:`cell.Cell` instances.  
-    The Schema information can be associated by position.
+    -   A Sheet that doesn't have row headers to embed the schema information.
+        In this case, an eager Workbook Row can create a sequence of :py:class:`cell.Cell` instances.  
+        The Schema information can be associated by position.
 
--   A Sheet that is really a COBOL or Fixed format file.
-    In this case, the Workbook cannot create a sequence of :py:class:`cell.Cell` instances.  
-    Instead, the Sheet (which has schema information) must
-    provide a LazyRow with deferred Cell conversions.
+    -   A Sheet that is really a COBOL or Fixed format file.
+        In this case, the Workbook cannot create a sequence of :py:class:`cell.Cell` instances.  
+        Instead, the Sheet (which has schema information) must
+        provide a LazyRow with deferred Cell conversions.
 
 ::
 
@@ -408,9 +408,9 @@ EmbeddedSchemaSheet Class
 
 ..  py:class:: EmbeddedSchemaSheet
 
-A sheet with an embedded schema must have a loader class provided.  The loader
-is invoked to build a :py:class:`schema.Schema` object.
-It's also used to return the rest of the rows; those that weren't used to build the schema.
+    A sheet with an embedded schema must have a loader class provided.  The loader
+    is invoked to build a :py:class:`schema.Schema` object.
+    It's also used to return the rest of the rows; those that weren't used to build the schema.
 
 ::
 

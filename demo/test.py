@@ -78,6 +78,8 @@ import stingray.schema.loader
 #
 # ..  py:function:: some_builder(aRow)
 #
+#     Build a Python dict from the row of data.
+#
 # ::
 
 def some_builder( aRow ):
@@ -194,6 +196,8 @@ class Test_Builder_2_Live( unittest.TestCase ):
 # For this demo, here's a sample sheet process function:
 #
 # ..  py:function:: process_some_sheet(sheet)
+#
+#     Process all rows of the named sheet.
 #
 # ::
 

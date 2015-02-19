@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.4',
+        VERSION:     '4.4.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -54,7 +54,7 @@
             
   <div class="section" id="history">
 <span id="id1"></span><h1>13. History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
-<p>Latest release is 4.4.4.</p>
+<p>Latest release is 4.4.5.</p>
 <div class="section" id="version-4">
 <h2>13.1. Version 4<a class="headerlink" href="#version-4" title="Permalink to this headline">¶</a></h2>
 <p>Version 4 dates from March, 2014. It switches to Python3.3</p>
@@ -147,6 +147,12 @@ The idea is that we can do
 <tt class="docutils literal"><span class="pre">subrow=</span> <span class="pre">data.subrow(</span> <span class="pre">self.segment_abc,</span> <span class="pre">row.cell(schema_header_dict['GENERIC-FIELD'])</span>&nbsp; <span class="pre">)</span></tt>
 to map a field, <tt class="docutils literal"><span class="pre">GENERIC-FIELD</span></tt>, to an 01-level schema, <tt class="docutils literal"><span class="pre">self.segment_abc</span></tt>.
 We can then pick fields out of <tt class="docutils literal"><span class="pre">subrow</span></tt> using fields defined in <tt class="docutils literal"><span class="pre">self.segment_abc</span></tt>.</p>
+</li>
+<li><p class="first">Add <a class="reference internal" href="cobol_loader.html#cobol.loader.COBOL_schema" title="cobol.loader.COBOL_schema"><tt class="xref py py-func docutils literal"><span class="pre">cobol.loader.COBOL_schema()</span></tt></a> and <a class="reference internal" href="cobol_loader.html#cobol.loader.COBOL_schemata" title="cobol.loader.COBOL_schemata"><tt class="xref py py-func docutils literal"><span class="pre">cobol.loader.COBOL_schemata()</span></tt></a>
+functions to provide a higher-level API for building a record schema or
+a (less common) multiple schemata.</p>
+</li>
+<li><p class="first">Fix a bug in cobol.RECFM_VB.bdw_iter() function.</p>
 </li>
 </ul>
 </div>
