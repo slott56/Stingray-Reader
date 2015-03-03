@@ -402,22 +402,34 @@ Record Descriptor Word (RDW).
     class TestEBCDICFile_VariableBlocked( TestEBCDICFile_Fixed ):
         def test_should_get_cells( self ):
             """Data has 4 byte BDW and 4 byte RDW in front of the row."""
-            # Build 2 blocks.
+            # Build 2 blocks each with two records.
             self.data= io.BytesIO( 
-            b"\x00\x1d\x00\x00" #BDW
-                b"\x00\x19\x00\x00" # RDW
+            b"\x00\x36\x00\x00" #BDW: 54= 4+sum of RDW's
+                b"\x00\x19\x00\x00" # RDW: 25=4+len(data)
                     b"\xe9\xd6\xe2" # WORD="ZOS"
                     b"\xf1\xf2\xf3K\xf4\xf5" # NUMBER-1="123.45"
                     b"\xf6\xf7\xf8\xf9\xf0" # NUMBER-2="678.90"
                     b"\x00\x00\x12\x34" # NUMBER-3=4660
                     b"\x98\x76\x5d" # NUMBER-4=-987.65                
-            b"\x00\x1d\x00\x00" #BDW
                 b"\x00\x19\x00\x00" # RDW
                     b"\xe9\xd6\xe2" # WORD="ZOS"
-                    b"\xf1\xf2\xf3K\xf4\xf5" # NUMBER-1="123.45"
+                    b"\xf1\xf2\xf3K\xf4\xf6" # NUMBER-1="123.46"
+                    b"\xf6\xf7\xf8\xf9\xf0" # NUMBER-2="678.90"
+                    b"\x00\x00\x12\x34" # NUMBER-3=4660
+                    b"\x98\x76\x5d" # NUMBER-4=-987.65                
+            b"\x00\x36\x00\x00" #BDW
+                b"\x00\x19\x00\x00" # RDW
+                    b"\xe9\xd6\xe2" # WORD="ZOS"
+                    b"\xf1\xf2\xf3K\xf4\xf7" # NUMBER-1="123.47"
                     b"\xf6\xf7\xf8\xf9\xf0" # NUMBER-2="678.90"
                     b"\x00\x00\x12\x34" # NUMBER-3=4660
                     b"\x98\x76\x5d" # NUMBER-4=-987.65
+                b"\x00\x19\x00\x00" # RDW
+                    b"\xe9\xd6\xe2" # WORD="ZOS"
+                    b"\xf1\xf2\xf3K\xf4\xf8" # NUMBER-1="123.48"
+                    b"\xf6\xf7\xf8\xf9\xf0" # NUMBER-2="678.90"
+                    b"\x00\x00\x12\x34" # NUMBER-3=4660
+                    b"\x98\x76\x5d" # NUMBER-4=-987.65                
             )
             self.wb= stingray.cobol.EBCDIC_File( "name", self.data, self.schema, RECFM="VB" )
             row_iter= self.wb.sheet( "IGNORED" ).rows()
@@ -429,8 +441,13 @@ Record Descriptor Word (RDW).
             self.assertEqual( decimal.Decimal('4660'), row.cell( self.attr_comp ).value )
             self.assertEqual( decimal.Decimal('-987.65'), row.cell( self.attr_comp3 ).value )
             row2= next( row_iter )
+            self.assertEqual( decimal.Decimal('123.46'), row2.cell( self.attr_num1 ).value )
+            row3= next( row_iter )
+            self.assertEqual( decimal.Decimal('123.47'), row3.cell( self.attr_num1 ).value )
+            row4= next( row_iter )
+            self.assertEqual( decimal.Decimal('123.48'), row4.cell( self.attr_num1 ).value )
             with self.assertRaises(StopIteration):
-                row3= next( row_iter )
+                next(row_iter)
 
 Given a schema and some data, pick apart the row of a fake EBCDIC File.
 This file has a RECFM of V, but not Record Descriptor Word (RDW).
