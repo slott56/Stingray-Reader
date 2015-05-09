@@ -210,6 +210,15 @@ class TestPictureParser( unittest.TestCase ):
         self.assertEqual( 0, pic.precision )
         self.assertTrue( pic.signed )
         self.assertEqual( "V", pic.decimal )
+    def test_should_handle_multiple_repeats( self ):
+        pic= stingray.cobol.loader.picture_parser( "9(6).9(3)" )
+        self.assertEqual( "999999.999", pic.final )
+        self.assertFalse( pic.alpha )
+        self.assertEqual( 10, pic.length )
+        self.assertEqual( 0, pic.scale )
+        self.assertEqual( 3, pic.precision )
+        self.assertFalse( pic.signed )
+        self.assertEqual( ".", pic.decimal )
 
 # Usage
 # =========

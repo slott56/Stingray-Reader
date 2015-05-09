@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '4.4.5',
+        VERSION:     '4.4.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -178,8 +178,8 @@ format provides zero guidance on field structure and data type conversions.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestLazyRow</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
     <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">=</span> <span class="n">MockSchema</span><span class="p">(</span>
-            <span class="n">MockAttribute</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;col1&quot;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span> <span class="p">),</span>
-            <span class="n">MockAttribute</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;col2&quot;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">1</span> <span class="p">),</span>
+            <span class="n">MockAttribute</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;col1&quot;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">signed</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="p">),</span>
+            <span class="n">MockAttribute</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;col2&quot;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">signed</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="p">),</span>
             <span class="n">dde</span><span class="o">=</span><span class="p">[]</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">=</span> <span class="n">MockLazyWorkbook</span><span class="p">(</span> <span class="p">)</span>

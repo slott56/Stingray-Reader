@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.5',
+        VERSION:     '4.4.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -385,10 +385,15 @@ from COBOL source instead of some other source.</p>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">weakref</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">import</span> <span class="nn">stingray.schema.loader</span>
 <span class="kn">import</span> <span class="nn">stingray.cobol</span>
 <span class="kn">import</span> <span class="nn">stingray.cobol.defs</span>
+</pre></div>
+</div>
+<p>We&#8217;ll put in a version number, just to support some debugging.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">__version__</span> <span class="o">=</span> <span class="s">&quot;4.4.6&quot;</span>
 </pre></div>
 </div>
 <p>A module-level logger.</p>
@@ -416,6 +421,11 @@ is utterly baffling.</p>
 <p>Picture clause parsing is done as the DDE element is created.  Not for a great
 reason.  It&#8217;s derived data from the source picture clause.</p>
 <p>It could be done in the parser, also.</p>
+<p>Since <tt class="docutils literal"><span class="pre">9(5)V99</span></tt> is common, precision is easily the characters after the &#8221;.&#8221; or &#8220;V&#8221;.
+However, there can be several ()&#8217;d groups of numbers <tt class="docutils literal"><span class="pre">9(5)V9(3)</span></tt> kind of of thing.
+So precision in the latter case is 3, making things a little more complex.</p>
+<p>Also, we don&#8217;t handle separate sign very gracefully. It seems little-used, so
+we&#8217;re comfortable ignoring it.</p>
 <dl class="class">
 <dt id="cobol.loader.Picture">
 <em class="property">class </em><tt class="descclassname">cobol.loader.</tt><tt class="descname">Picture</tt><a class="headerlink" href="#cobol.loader.Picture" title="Permalink to this definition">¶</a></dt>
@@ -455,7 +465,8 @@ reason.  It&#8217;s derived data from the source picture clause.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">picture_parser</span><span class="p">(</span> <span class="n">pic</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Rewrite a picture clause to eliminate ()&#39;s, S&#39;s, V&#39;s, P&#39;s, etc.</span>
 <span class="sd">    :param pic: Sounce text.</span>
-<span class="sd">    :returns: Picture instance.</span>
+<span class="sd">    :returns: Picture instance: final, alpha, len(final), scale,</span>
+<span class="sd">        precision, signed, decimal</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">out</span><span class="o">=</span> <span class="p">[]</span>
     <span class="n">scale</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">signed</span><span class="p">,</span> <span class="n">decimal</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">None</span>
@@ -484,6 +495,7 @@ reason.  It&#8217;s derived data from the source picture clause.</p>
                 <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span> <span class="s">&quot;picture error in {0!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pic</span><span class="p">)</span> <span class="p">)</span>
             <span class="k">assert</span> <span class="n">c</span> <span class="o">==</span> <span class="s">&#39;)&#39;</span><span class="p">,</span>  <span class="s">&quot;picture error in {0!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pic</span><span class="p">)</span>
             <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">irpt</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">out</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="n">decimal</span><span class="p">:</span> <span class="n">precision</span> <span class="o">+=</span> <span class="n">irpt</span><span class="o">-</span><span class="mi">1</span>
         <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="s">&#39;S&#39;</span><span class="p">:</span>
             <span class="c"># silently drop an &quot;S&quot;.</span>
             <span class="c"># Note that &#39;S&#39; plus a SIGN SEPARATE option increases the size of the picture!</span>

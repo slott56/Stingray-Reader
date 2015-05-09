@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '4.4.5',
+        VERSION:     '4.4.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -69,7 +69,7 @@ more sophisticated COBOL-based workbooks.</li>
 to create a schema.</p>
 <div class="section" id="module-cobol">
 <span id="module-overheads"></span><h2>10.2.1.1. Module Overheads<a class="headerlink" href="#module-cobol" title="Permalink to this headline">¶</a></h2>
-<p>We depend on <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>, <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>, and <a class="reference internal" href="workbook/numbers_13.html#module-workbook" title="workbook"><tt class="xref py py-mod docutils literal"><span class="pre">workbook</span></tt></a>.
+<p>We depend on <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>, <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>, and <a class="reference internal" href="workbook/xlsx.html#module-workbook" title="workbook"><tt class="xref py py-mod docutils literal"><span class="pre">workbook</span></tt></a>.
 We&#8217;ll also import one class definition from <a class="reference internal" href="cobol_defs.html#module-cobol.defs" title="cobol.defs"><tt class="xref py py-mod docutils literal"><span class="pre">cobol.defs</span></tt></a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;stingray.cobol -- Extend the core Stingray definitions to handle COBOL</span>
 <span class="sd">DDE&#39;s and COBOL files, including packed decimal and EBCDIC data.</span>
@@ -629,23 +629,25 @@ Text is easy, Python&#8217;s <tt class="docutils literal"><span class="pre">io.o
     <span class="k">return</span> <span class="nb">buffer</span>
 </pre></div>
 </div>
-<p>Numeric data with usage <tt class="docutils literal"><span class="pre">DISPLAY</span></tt> requires handling implicit decimal points.</p>
+<p>Numeric data with usage <tt class="docutils literal"><span class="pre">DISPLAY</span></tt> is essentially text. In some cases, the
+picture has <tt class="docutils literal"><span class="pre">V</span></tt>, which means that we must handle this implicit decimal point.
+The &#8220;display&#8221; feature is the COBOL default: everything is plain text.</p>
+<p>Here&#8217;s the core rule for character files:</p>
+<ul class="simple">
+<li>Leading separate sign is the default for character files.</li>
+</ul>
+<p>COBOL can support other kinds of signs. This conversion doesn&#8217;t.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">number_display</span><span class="p">(</span> <span class="nb">buffer</span><span class="p">,</span> <span class="n">attr</span> <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Extract a numeric field&#39;s value.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Extract a numeric field&#39;s value.</span>
+<span class="sd">    Based on leading, separate sign.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">final</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">signed</span><span class="p">,</span> <span class="n">dec_sign</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">size_scale_precision</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">precision</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">dec_sign</span> <span class="o">==</span> <span class="s">&#39;.&#39;</span> <span class="ow">or</span> <span class="n">precision</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">display</span><span class="o">=</span> <span class="nb">buffer</span>
-                <span class="k">return</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span> <span class="nb">buffer</span> <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span> <span class="c"># dec_sign == &quot;V&quot; or None</span>
-                <span class="c"># Insert the implied decimal point.</span>
-                <span class="n">display</span><span class="o">=</span> <span class="nb">buffer</span><span class="p">[:</span><span class="o">-</span><span class="n">precision</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;.&quot;</span><span class="o">+</span><span class="nb">buffer</span><span class="p">[</span><span class="o">-</span><span class="n">precision</span><span class="p">:]</span>
-                <span class="k">return</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span> <span class="n">display</span> <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span> <span class="c"># precision == 0:</span>
-            <span class="n">display</span><span class="o">=</span> <span class="nb">buffer</span>
-            <span class="k">return</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span> <span class="nb">buffer</span> <span class="p">)</span>
+        <span class="n">display</span><span class="o">=</span><span class="nb">buffer</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">precision</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">dec_sign</span> <span class="o">==</span> <span class="s">&#39;V&#39;</span><span class="p">:</span>
+            <span class="n">display</span><span class="o">=</span> <span class="n">display</span><span class="p">[:</span><span class="o">-</span><span class="n">precision</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;.&quot;</span><span class="o">+</span><span class="n">display</span><span class="p">[</span><span class="o">-</span><span class="n">precision</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span> <span class="n">display</span> <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="n">Character_File</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span> <span class="s">&quot;Can&#39;t process {0!r} from {1!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">display</span><span class="p">,</span><span class="nb">buffer</span><span class="p">)</span> <span class="p">)</span>
         <span class="k">raise</span>
@@ -696,7 +698,7 @@ demonstrably faster and avoids object creation to the extent possible.</p>
 </div>
 <p>COMP in proper character files may not make any sense, either.
 A codec would make a hash of the bit patterns required.
-Gagin, we&#8217;ve defined it here because that&#8217;s relatively simple to extend.</p>
+Again, we&#8217;ve defined it here because that&#8217;s relatively simple to extend.</p>
 <p>We&#8217;re simply going to unpack big-ending bytes.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">number_comp</span><span class="p">(</span> <span class="nb">buffer</span><span class="p">,</span> <span class="n">attr</span> <span class="p">):</span>
@@ -1000,11 +1002,29 @@ Text requires using a codec to translate EBCDIC-encoded characters.</p>
     <span class="k">return</span> <span class="n">text</span>
 </pre></div>
 </div>
+<p>When a number usage is <tt class="docutils literal"><span class="pre">DISPLAY</span></tt>, it&#8217;s text:
+we simply convert the bytes from EBCDIC to Unicode
+and treat them more-or-less like a text field.</p>
+<p>Note the subtlety around &#8220;Signed&#8221; display fields. The last byte
+will include a sign in addition to the digit.</p>
+<ul class="simple">
+<li>The last EBCDIC character might be &#8216;xF1&#8217; to &#8216;xF9&#8217; which is unsigned.</li>
+<li>The last EBCDIC character might be &#8216;xC1&#8217; to &#8216;xC9&#8217; which is positive.</li>
+<li>The last EBCDIC character might be &#8216;xD1&#8217; to &#8216;xD9&#8217; which is negative.</li>
+</ul>
+<p>Really.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">number_display</span><span class="p">(</span> <span class="nb">buffer</span><span class="p">,</span> <span class="n">attr</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extract a numeric field&#39;s value.&quot;&quot;&quot;</span>
-    <span class="n">text</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">EBCDIC_File</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="nb">buffer</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">Character_File</span><span class="o">.</span><span class="n">number_display</span><span class="p">(</span> <span class="n">text</span><span class="p">,</span> <span class="n">attr</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">size_scale_precision</span><span class="o">.</span><span class="n">signed</span><span class="p">:</span>
+        <span class="c"># Fiddle bits to make EBCDIC char from signed digit.</span>
+        <span class="n">last_digit</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span> <span class="p">[(</span><span class="nb">buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0x0F</span><span class="p">)</span> <span class="o">|</span> <span class="mh">0xF0</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="s">&#39;-&#39;</span> <span class="k">if</span> <span class="nb">buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="mi">4</span> <span class="o">==</span> <span class="mh">0xD</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+        <span class="n">text</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">EBCDIC_File</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">last_digit</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">buffer</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="nb">buffer</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">last_digit</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Character_File</span><span class="o">.</span><span class="n">number_display</span><span class="p">(</span> <span class="n">sign</span><span class="o">+</span><span class="n">text</span><span class="p">,</span> <span class="n">attr</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">text</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">EBCDIC_File</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="nb">buffer</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Character_File</span><span class="o">.</span><span class="n">number_display</span><span class="p">(</span> <span class="n">text</span><span class="p">,</span> <span class="n">attr</span> <span class="p">)</span>
 </pre></div>
 </div>
 </div>

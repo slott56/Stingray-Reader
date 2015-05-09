@@ -411,10 +411,17 @@ from COBOL source instead of some other source.
     import logging
     import weakref
     import warnings
+    import sys
     
     import stingray.schema.loader
     import stingray.cobol
     import stingray.cobol.defs
+    
+We'll put in a version number, just to support some debugging.
+
+::
+
+    __version__ = "4.4.6"
     
 A module-level logger.
 
@@ -445,6 +452,13 @@ reason.  It's derived data from the source picture clause.
 
 It could be done in the parser, also.
 
+Since ``9(5)V99`` is common, precision is easily the characters after the "." or "V".
+However, there can be several ()'d groups of numbers ``9(5)V9(3)`` kind of of thing.  
+So precision in the latter case is 3, making things a little more complex.
+
+Also, we don't handle separate sign very gracefully. It seems little-used, so
+we're comfortable ignoring it.
+
 ..  py:class:: Picture
 
     Define the various attribtes of a COBOL PICTURE clause.
@@ -471,7 +485,8 @@ It could be done in the parser, also.
     def picture_parser( pic ):
         """Rewrite a picture clause to eliminate ()'s, S's, V's, P's, etc.
         :param pic: Sounce text.
-        :returns: Picture instance.
+        :returns: Picture instance: final, alpha, len(final), scale,
+            precision, signed, decimal
         """
         out= []
         scale, precision, signed, decimal = 0, 0, False, None
@@ -500,6 +515,7 @@ It could be done in the parser, also.
                     raise SyntaxError( "picture error in {0!r}".format(pic) )
                 assert c == ')',  "picture error in {0!r}".format(pic)
                 out.append( (irpt-1)*out[-1] )
+                if decimal: precision += irpt-1
             elif c == 'S':
                 # silently drop an "S".
                 # Note that 'S' plus a SIGN SEPARATE option increases the size of the picture!

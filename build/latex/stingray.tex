@@ -14,8 +14,8 @@
 
 
 \title{The Stingray Schema-Based File Reader}
-\date{March 03, 2015}
-\release{4.4.5}
+\date{May 06, 2015}
+\release{4.4.6}
 \author{S. Lott}
 \newcommand{\sphinxlogo}{}
 \renewcommand{\releasename}{Release}
@@ -32,66 +32,66 @@
     \PYG@it{\PYG@bf{\PYG@ff{#1}}}}}}}
 \def\PYG#1#2{\PYG@reset\PYG@toks#1+\relax+\PYG@do{#2}}
 
-\expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
-\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@gt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
-\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
-\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
-\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
 \expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
 \expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
-\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@gt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
 \expandafter\def\csname PYG@tok@gs\endcsname{\let\PYG@bf=\textbf}
-\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
 \expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
+\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
+\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
 \expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
-\expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
-\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
-\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
+\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
+\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
 \expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
-\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
-\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
-\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
 \expandafter\def\csname PYG@tok@no\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.38,0.68,0.84}{##1}}}
 \expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
+\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
+\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
+\expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
+\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
+\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 \expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@si\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.44,0.63,0.82}{##1}}}
-\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
-\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
 \expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
 
 \def\PYGZbs{\char`\\}
 \def\PYGZus{\char`\_}
@@ -172,7 +172,7 @@ schema.
 \label{index:contents}\label{index:the-stingray-schema-based-file-reader}
 
 \section{Introduction}
-\label{introduction::doc}\label{introduction:intro}\label{introduction:introduction}
+\label{introduction:intro}\label{introduction::doc}\label{introduction:introduction}
 Given a workbook -- or any other ``flat'' file -- how is it organized?  What does it \emph{mean}?
 
 How can we ignore details that are merely physical?
@@ -783,7 +783,7 @@ definition for the file.  A schema can be built from the parsed DDE.
 
 
 \section{Licensing}
-\label{license::doc}\label{license:licensing}
+\label{license:licensing}\label{license::doc}
 See \href{http://creativecommons.org/licenses/by-nc-sa/4.0/}{http://creativecommons.org/licenses/by-nc-sa/4.0/}
 
 This work is made available under the Creative Commons
@@ -817,7 +817,7 @@ Commercial use will involve a proper licensing fee and a different license.
 
 
 \section{The \texttt{stingray} Package}
-\label{package:the-stingray-package}\label{package::doc}
+\label{package::doc}\label{package:the-stingray-package}
 The \code{stingray} package implements a Schema-based File Reader.
 This allows us to use flat-file and workbook data from Python without having
 to clone an application for each physical file format or logical layout.
@@ -912,7 +912,7 @@ using protobuf.
 
 
 \subsection{stingray \texttt{\_\_init\_\_.py}}
-\label{stingray_init::doc}\label{stingray_init:stingray-init}\label{stingray_init:stingray-init-py}
+\label{stingray_init:stingray-init}\label{stingray_init::doc}\label{stingray_init:stingray-init-py}
 This is approximately pure overhead required to make a Python package.
 \phantomsection\label{stingray_init:module-__init__}\index{\_\_init\_\_ (module)}
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -921,12 +921,12 @@ This is approximately pure overhead required to make a Python package.
 
 \PYG{l+s+sd}{Requires Python 3.3, xlrd 0.9.2}
 \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-\PYG{n}{\PYGZus{}\PYGZus{}version\PYGZus{}\PYGZus{}} \PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{4.4.5}\PYG{l+s}{\PYGZdq{}}
+\PYG{n}{\PYGZus{}\PYGZus{}version\PYGZus{}\PYGZus{}} \PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{4.4.6}\PYG{l+s}{\PYGZdq{}}
 \end{Verbatim}
 
 
 \section{Cell Module -- Data Element Containers and Conversions}
-\label{cell:cells}\label{cell::doc}\label{cell:cell-module-data-element-containers-and-conversions}\label{cell:module-cell}\index{cell (module)}
+\label{cell:module-cell}\label{cell:cell-module-data-element-containers-and-conversions}\label{cell::doc}\label{cell:cells}\index{cell (module)}
 The point of a {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} is two-fold.
 \begin{itemize}
 \item {} 
@@ -1190,9 +1190,9 @@ This is the easiest way to read legacy Microsoft \code{.XLS} files.
 \PYG{k+kn}{import} \PYG{n+nn}{locale}
 \PYG{k+kn}{import} \PYG{n+nn}{decimal}
 \PYG{k+kn}{import} \PYG{n+nn}{datetime}
-\PYG{k+kn}{import} \PYG{n+nn}{xlrd}
 \PYG{k+kn}{import} \PYG{n+nn}{time}
 \PYG{k+kn}{from} \PYG{n+nn}{collections} \PYG{k+kn}{import} \PYG{n}{Hashable}
+\PYG{k+kn}{import} \PYG{n+nn}{xlrd}
 \end{Verbatim}
 
 Just to be sure that any locale-based processing will actually
@@ -1615,7 +1615,7 @@ this to {\hyperref[cobol:cobol]{\emph{The COBOL Package}}}.
 
 
 \section{Sheet Module -- Sheet and Row Access}
-\label{sheet::doc}\label{sheet:sheets}\label{sheet:sheet-module-sheet-and-row-access}\label{sheet:module-sheet}\index{sheet (module)}
+\label{sheet:sheet-module-sheet-and-row-access}\label{sheet:module-sheet}\label{sheet:sheets}\label{sheet::doc}\index{sheet (module)}
 A \emph{Sheet} is a generator
 of \emph{Row} objects.  A \emph{Row} is a sequence of {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} instances, identified by position.
 
@@ -2160,7 +2160,7 @@ This assures proper packed decimal conversion of redefined fields.
 
 
 \section{Schema Package -- Schema and Attribute Definitions}
-\label{schema:module-schema}\label{schema::doc}\label{schema:schema}\label{schema:schema-package-schema-and-attribute-definitions}\index{schema (module)}
+\label{schema:module-schema}\label{schema:schema}\label{schema::doc}\label{schema:schema-package-schema-and-attribute-definitions}\index{schema (module)}
 A \emph{Schema} contains data descriptions.  It's a collection of \emph{Attribute} specifications.
 
 For our purposes, we're trying to cover the following bases:
@@ -3077,13 +3077,13 @@ more complex than simply loading rows from a sheet of a workbook.
 
 
 \section{Workbook Package -- Uniform Wrappers for Workbooks}
-\label{workbook/index::doc}\label{workbook/index:workbook-package-uniform-wrappers-for-workbooks}\label{workbook/index:workbook}
+\label{workbook/index:workbook-package-uniform-wrappers-for-workbooks}\label{workbook/index::doc}\label{workbook/index:workbook}
 This package includes a base definition module plus a module for
 each physical format.
 
 
 \subsection{Workbook \_\_init\_\_ Module -- Wrapper for all implementations}
-\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}\label{workbook/init:workbook-init}\label{workbook/init::doc}\label{workbook/init:module-workbook}\index{workbook (module)}
+\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}\label{workbook/init:module-workbook}\label{workbook/init::doc}\label{workbook/init:workbook-init}\index{workbook (module)}
 A \emph{Workbook} is a collection of \emph{Sheets}.  It's also a set of decoding
 rules required to translate bytes (or XML text) into meaningful \emph{Cell} instances.
 
@@ -3511,7 +3511,7 @@ for binding file and schema.  See below for the {\hyperref[schema_loader:schema.
 
 
 \subsection{Workbook Base Definition}
-\label{workbook/base:workbook-base}\label{workbook/base::doc}\label{workbook/base:workbook-base-definition}
+\label{workbook/base::doc}\label{workbook/base:workbook-base}\label{workbook/base:workbook-base-definition}
 These are the definitions shared by all Workbook subclass definitions.
 \phantomsection\label{workbook/base:module-workbook}\index{workbook (module)}
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -3632,7 +3632,7 @@ each line into cells.
 
 
 \subsection{CSV Workbook}
-\label{workbook/csv::doc}\label{workbook/csv:workbook-csv}\label{workbook/csv:csv-workbook}
+\label{workbook/csv:csv-workbook}\label{workbook/csv:workbook-csv}\label{workbook/csv::doc}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{csv}
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
@@ -3721,7 +3721,7 @@ is easy.
 
 
 \subsection{XLS Workbook}
-\label{workbook/xls:workbook-xls}\label{workbook/xls::doc}\label{workbook/xls:xls-workbook}
+\label{workbook/xls:xls-workbook}\label{workbook/xls::doc}\label{workbook/xls:workbook-xls}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{xlrd}
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
@@ -4161,7 +4161,7 @@ containing cell type information.
 
 
 \subsection{ODS Workbook}
-\label{workbook/ods::doc}\label{workbook/ods:workbook-ods}\label{workbook/ods:ods-workbook}
+\label{workbook/ods:workbook-ods}\label{workbook/ods:ods-workbook}\label{workbook/ods::doc}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4377,7 +4377,7 @@ At \code{\textless{}table-cell} end: finalize the accumulated value.
 
 
 \subsection{Numbers 09 Workbook}
-\label{workbook/numbers_09:numbers-09-workbook}\label{workbook/numbers_09::doc}\label{workbook/numbers_09:workbook-number09}
+\label{workbook/numbers_09:workbook-number09}\label{workbook/numbers_09::doc}\label{workbook/numbers_09:numbers-09-workbook}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4760,7 +4760,7 @@ Iterator through all rows of a sheet.
 
 
 \subsection{Numbers 13 Workbook}
-\label{workbook/numbers_13:workbook-number13}\label{workbook/numbers_13::doc}\label{workbook/numbers_13:numbers-13-workbook}
+\label{workbook/numbers_13:workbook-number13}\label{workbook/numbers_13:numbers-13-workbook}\label{workbook/numbers_13::doc}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -5098,7 +5098,7 @@ Iterator through all rows.
 
 
 \subsection{Fixed-Format Workbook}
-\label{workbook/fixed:workbook-fixed}\label{workbook/fixed::doc}\label{workbook/fixed:fixed-format-workbook}
+\label{workbook/fixed::doc}\label{workbook/fixed:workbook-fixed}\label{workbook/fixed:fixed-format-workbook}
 Like a CSV workbook, this is a kind of degenerate case.  We don't have
 a lot of sheets, or a lot of data types.
 
@@ -5215,7 +5215,7 @@ Concrete implementation to get an attribute's value from a given row.
 
 
 \section{The iWork `13 Numbers Modules}
-\label{iwork13::doc}\label{iwork13:iwork13}\label{iwork13:the-iwork-13-numbers-modules}
+\label{iwork13:iwork13}\label{iwork13::doc}\label{iwork13:the-iwork-13-numbers-modules}
 There are two digressive modules that are part of reading iWork `13 Numbers files.
 We could depend on other implementations. Instead, we've provided our own
 implementation to reduce the dependencies.
@@ -5231,7 +5231,7 @@ Stingray.
 
 
 \subsection{Snappy Module -- Unpacking iWork 13 files.}
-\label{snappy:snappy}\label{snappy:snappy-module-unpacking-iwork-13-files}\label{snappy::doc}
+\label{snappy:snappy-module-unpacking-iwork-13-files}\label{snappy::doc}\label{snappy:snappy}
 This is not a full implementation of the Snappy compression protocol.
 It's a minimal implementation, enough to unpack iWork `13 files.
 \phantomsection\label{snappy:module-snappy}\index{snappy (module)}
@@ -5585,7 +5585,7 @@ data. This defines a sequence of windows over the stream of data.
 
 
 \subsection{Protobuf Module -- Unpacking iWork 13 files.}
-\label{protobuf:protobuf}\label{protobuf::doc}\label{protobuf:protobuf-module-unpacking-iwork-13-files}
+\label{protobuf:protobuf-module-unpacking-iwork-13-files}\label{protobuf:protobuf}\label{protobuf::doc}
 This is not a full implementation of Protobuf object representation.
 This is a minimal implementation of protobuf parsing, enough to unpack iWork `13 files.
 \phantomsection\label{protobuf:module-protobuf}\index{protobuf (module)}
@@ -5944,7 +5944,7 @@ that's associated with the ID in the ArchiveInfo.
 
 
 \section{The COBOL Package}
-\label{cobol:cobol}\label{cobol::doc}\label{cobol:the-cobol-package}
+\label{cobol:the-cobol-package}\label{cobol::doc}\label{cobol:cobol}
 If you're interested in the implementation, you can cut to the chase.
 See {\hyperref[cobol:cobol-impl]{\emph{COBOL Implementation}}}.
 \begin{itemize}
@@ -6596,13 +6596,13 @@ The {\hyperref[cobol_defs:cobol.defs.ErrorCell]{\code{cobol.defs.ErrorCell}}} in
 
 
 \subsection{COBOL Implementation}
-\label{cobol:cobol-impl}\label{cobol:cobol-implementation}
+\label{cobol:cobol-implementation}\label{cobol:cobol-impl}
 These are the modules that extend the core functionality of Stingray
 to handle COBOL files and EBCDIC data.
 
 
 \subsubsection{COBOL Package -- Extend Schema to Handle EBCDIC}
-\label{cobol_init:cobol-package-extend-schema-to-handle-ebcdic}\label{cobol_init::doc}\label{cobol_init:cobol-init}
+\label{cobol_init:cobol-init}\label{cobol_init:cobol-package-extend-schema-to-handle-ebcdic}\label{cobol_init::doc}
 The COBOL package is a (large) Python \code{\_\_init\_\_.py} module which
 includes much of the public API for working with COBOL files.
 
@@ -6625,8 +6625,8 @@ to create a schema.
 
 
 \paragraph{Module Overheads}
-\label{cobol_init:module-cobol}\label{cobol_init:module-overheads}\index{cobol (module)}
-We depend on {\hyperref[cell:module-cell]{\code{cell}}}, {\hyperref[schema:module-schema]{\code{schema}}}, and {\hyperref[workbook/numbers_13:module-workbook]{\code{workbook}}}.
+\label{cobol_init:module-overheads}\label{cobol_init:module-cobol}\index{cobol (module)}
+We depend on {\hyperref[cell:module-cell]{\code{cell}}}, {\hyperref[schema:module-schema]{\code{schema}}}, and {\hyperref[workbook/xlsx:module-workbook]{\code{workbook}}}.
 We'll also import one class definition from {\hyperref[cobol_defs:module-cobol.defs]{\code{cobol.defs}}}.
 
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -7289,25 +7289,31 @@ Text is easy, Python's \code{io.open} has already handled this.
     \PYG{k}{return} \PYG{n+nb}{buffer}
 \end{Verbatim}
 
-Numeric data with usage \code{DISPLAY} requires handling implicit decimal points.
+Numeric data with usage \code{DISPLAY} is essentially text. In some cases, the
+picture has \code{V}, which means that we must handle this implicit decimal point.
+The ``display'' feature is the COBOL default: everything is plain text.
+
+Here's the core rule for character files:
+\begin{itemize}
+\item {} 
+Leading separate sign is the default for character files.
+
+\end{itemize}
+
+COBOL can support other kinds of signs. This conversion doesn't.
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n+nd}{@staticmethod}
 \PYG{k}{def} \PYG{n+nf}{number\PYGZus{}display}\PYG{p}{(} \PYG{n+nb}{buffer}\PYG{p}{,} \PYG{n}{attr} \PYG{p}{)}\PYG{p}{:}
-    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Extract a numeric field\PYGZsq{}s value.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+    \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Extract a numeric field\PYGZsq{}s value.}
+\PYG{l+s+sd}{    Based on leading, separate sign.}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{n}{final}\PYG{p}{,} \PYG{n}{alpha}\PYG{p}{,} \PYG{n}{length}\PYG{p}{,} \PYG{n}{scale}\PYG{p}{,} \PYG{n}{precision}\PYG{p}{,} \PYG{n}{signed}\PYG{p}{,} \PYG{n}{dec\PYGZus{}sign} \PYG{o}{=} \PYG{n}{attr}\PYG{o}{.}\PYG{n}{size\PYGZus{}scale\PYGZus{}precision}
     \PYG{k}{try}\PYG{p}{:}
-        \PYG{k}{if} \PYG{n}{precision} \PYG{o}{!=} \PYG{l+m+mi}{0}\PYG{p}{:}
-            \PYG{k}{if} \PYG{n}{dec\PYGZus{}sign} \PYG{o}{==} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZsq{}} \PYG{o+ow}{or} \PYG{n}{precision} \PYG{o}{==} \PYG{l+m+mi}{0}\PYG{p}{:}
-                \PYG{n}{display}\PYG{o}{=} \PYG{n+nb}{buffer}
-                \PYG{k}{return} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(} \PYG{n+nb}{buffer} \PYG{p}{)}
-            \PYG{k}{else}\PYG{p}{:} \PYG{c}{\PYGZsh{} dec\PYGZus{}sign == \PYGZdq{}V\PYGZdq{} or None}
-                \PYG{c}{\PYGZsh{} Insert the implied decimal point.}
-                \PYG{n}{display}\PYG{o}{=} \PYG{n+nb}{buffer}\PYG{p}{[}\PYG{p}{:}\PYG{o}{\PYGZhy{}}\PYG{n}{precision}\PYG{p}{]}\PYG{o}{+}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZdq{}}\PYG{o}{+}\PYG{n+nb}{buffer}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{n}{precision}\PYG{p}{:}\PYG{p}{]}
-                \PYG{k}{return} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(} \PYG{n}{display} \PYG{p}{)}
-        \PYG{k}{else}\PYG{p}{:} \PYG{c}{\PYGZsh{} precision == 0:}
-            \PYG{n}{display}\PYG{o}{=} \PYG{n+nb}{buffer}
-            \PYG{k}{return} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(} \PYG{n+nb}{buffer} \PYG{p}{)}
+        \PYG{n}{display}\PYG{o}{=}\PYG{n+nb}{buffer}\PYG{o}{.}\PYG{n}{strip}\PYG{p}{(}\PYG{p}{)}
+        \PYG{k}{if} \PYG{n}{precision} \PYG{o}{!=} \PYG{l+m+mi}{0} \PYG{o+ow}{and} \PYG{n}{dec\PYGZus{}sign} \PYG{o}{==} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZsq{}}\PYG{p}{:}
+            \PYG{n}{display}\PYG{o}{=} \PYG{n}{display}\PYG{p}{[}\PYG{p}{:}\PYG{o}{\PYGZhy{}}\PYG{n}{precision}\PYG{p}{]}\PYG{o}{+}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZdq{}}\PYG{o}{+}\PYG{n}{display}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{n}{precision}\PYG{p}{:}\PYG{p}{]}
+        \PYG{k}{return} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(} \PYG{n}{display} \PYG{p}{)}
     \PYG{k}{except} \PYG{n+ne}{Exception}\PYG{p}{:}
         \PYG{n}{Character\PYGZus{}File}\PYG{o}{.}\PYG{n}{log}\PYG{o}{.}\PYG{n}{debug}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Can}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{t process \PYGZob{}0!r\PYGZcb{} from \PYGZob{}1!r\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{display}\PYG{p}{,}\PYG{n+nb}{buffer}\PYG{p}{)} \PYG{p}{)}
         \PYG{k}{raise}
@@ -7361,7 +7367,7 @@ demonstrably faster and avoids object creation to the extent possible.
 
 COMP in proper character files may not make any sense, either.
 A codec would make a hash of the bit patterns required.
-Gagin, we've defined it here because that's relatively simple to extend.
+Again, we've defined it here because that's relatively simple to extend.
 
 We're simply going to unpack big-ending bytes.
 
@@ -7720,12 +7726,39 @@ Text requires using a codec to translate EBCDIC-encoded characters.
     \PYG{k}{return} \PYG{n}{text}
 \end{Verbatim}
 
+When a number usage is \code{DISPLAY}, it's text:
+we simply convert the bytes from EBCDIC to Unicode
+and treat them more-or-less like a text field.
+
+Note the subtlety around ``Signed'' display fields. The last byte
+will include a sign in addition to the digit.
+\begin{itemize}
+\item {} 
+The last EBCDIC character might be `xF1' to `xF9' which is unsigned.
+
+\item {} 
+The last EBCDIC character might be `xC1' to `xC9' which is positive.
+
+\item {} 
+The last EBCDIC character might be `xD1' to `xD9' which is negative.
+
+\end{itemize}
+
+Really.
+
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{n+nd}{@staticmethod}
 \PYG{k}{def} \PYG{n+nf}{number\PYGZus{}display}\PYG{p}{(} \PYG{n+nb}{buffer}\PYG{p}{,} \PYG{n}{attr} \PYG{p}{)}\PYG{p}{:}
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Extract a numeric field\PYGZsq{}s value.\PYGZdq{}\PYGZdq{}\PYGZdq{}}
-    \PYG{n}{text}\PYG{p}{,} \PYG{n}{size} \PYG{o}{=} \PYG{n}{EBCDIC\PYGZus{}File}\PYG{o}{.}\PYG{n}{decoder}\PYG{p}{(}\PYG{n+nb}{buffer}\PYG{p}{)}
-    \PYG{k}{return} \PYG{n}{Character\PYGZus{}File}\PYG{o}{.}\PYG{n}{number\PYGZus{}display}\PYG{p}{(} \PYG{n}{text}\PYG{p}{,} \PYG{n}{attr} \PYG{p}{)}
+    \PYG{k}{if} \PYG{n}{attr}\PYG{o}{.}\PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{.}\PYG{n}{signed}\PYG{p}{:}
+        \PYG{c}{\PYGZsh{} Fiddle bits to make EBCDIC char from signed digit.}
+        \PYG{n}{last\PYGZus{}digit} \PYG{o}{=} \PYG{n+nb}{bytes}\PYG{p}{(} \PYG{p}{[}\PYG{p}{(}\PYG{n+nb}{buffer}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{\PYGZam{}} \PYG{l+m+mh}{0x0F}\PYG{p}{)} \PYG{o}{\textbar{}} \PYG{l+m+mh}{0xF0}\PYG{p}{]} \PYG{p}{)}
+        \PYG{n}{sign} \PYG{o}{=} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{\PYGZhy{}}\PYG{l+s}{\PYGZsq{}} \PYG{k}{if} \PYG{n+nb}{buffer}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{\PYGZgt{}\PYGZgt{}} \PYG{l+m+mi}{4} \PYG{o}{==} \PYG{l+m+mh}{0xD} \PYG{k}{else} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{\PYGZsq{}}
+        \PYG{n}{text}\PYG{p}{,} \PYG{n}{size} \PYG{o}{=} \PYG{n}{EBCDIC\PYGZus{}File}\PYG{o}{.}\PYG{n}{decoder}\PYG{p}{(}\PYG{n}{last\PYGZus{}digit} \PYG{k}{if} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n+nb}{buffer}\PYG{p}{)} \PYG{o}{==} \PYG{l+m+mi}{1} \PYG{k}{else} \PYG{n+nb}{buffer}\PYG{p}{[}\PYG{p}{:}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{+} \PYG{n}{last\PYGZus{}digit}\PYG{p}{)}
+        \PYG{k}{return} \PYG{n}{Character\PYGZus{}File}\PYG{o}{.}\PYG{n}{number\PYGZus{}display}\PYG{p}{(} \PYG{n}{sign}\PYG{o}{+}\PYG{n}{text}\PYG{p}{,} \PYG{n}{attr} \PYG{p}{)}
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{n}{text}\PYG{p}{,} \PYG{n}{size} \PYG{o}{=} \PYG{n}{EBCDIC\PYGZus{}File}\PYG{o}{.}\PYG{n}{decoder}\PYG{p}{(}\PYG{n+nb}{buffer}\PYG{p}{)}
+        \PYG{k}{return} \PYG{n}{Character\PYGZus{}File}\PYG{o}{.}\PYG{n}{number\PYGZus{}display}\PYG{p}{(} \PYG{n}{text}\PYG{p}{,} \PYG{n}{attr} \PYG{p}{)}
 \end{Verbatim}
 
 
@@ -7737,7 +7770,7 @@ This is left as a future extension.
 
 
 \subsubsection{COBOL Loader Module -- Parse COBOL Source to Load a Schema}
-\label{cobol_loader:cobol-loader-module-parse-cobol-source-to-load-a-schema}\label{cobol_loader::doc}\label{cobol_loader:cobol-loader}\label{cobol_loader:module-cobol.loader}\index{cobol.loader (module)}
+\label{cobol_loader:cobol-loader}\label{cobol_loader:cobol-loader-module-parse-cobol-source-to-load-a-schema}\label{cobol_loader::doc}\label{cobol_loader:module-cobol.loader}\index{cobol.loader (module)}
 Parsing a spreadsheet schema is relatively easy: see {\hyperref[schema_loader:schema-loader]{\emph{Schema Loader Module -- Load Embedded or External Schema}}}.
 Parsing a COBOL schema, however, is a bit more complex. We need to parse
 COBOL sources code to decode Data Definition Elements (DDE's) and create
@@ -8189,10 +8222,17 @@ from COBOL source instead of some other source.
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{weakref}
 \PYG{k+kn}{import} \PYG{n+nn}{warnings}
+\PYG{k+kn}{import} \PYG{n+nn}{sys}
 
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.schema.loader}
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.cobol}
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.cobol.defs}
+\end{Verbatim}
+
+We'll put in a version number, just to support some debugging.
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{\PYGZus{}\PYGZus{}version\PYGZus{}\PYGZus{}} \PYG{o}{=} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{4.4.6}\PYG{l+s}{\PYGZdq{}}
 \end{Verbatim}
 
 A module-level logger.
@@ -8226,6 +8266,13 @@ Picture clause parsing is done as the DDE element is created.  Not for a great
 reason.  It's derived data from the source picture clause.
 
 It could be done in the parser, also.
+
+Since \code{9(5)V99} is common, precision is easily the characters after the ''.'' or ``V''.
+However, there can be several ()'d groups of numbers \code{9(5)V9(3)} kind of of thing.
+So precision in the latter case is 3, making things a little more complex.
+
+Also, we don't handle separate sign very gracefully. It seems little-used, so
+we're comfortable ignoring it.
 \index{Picture (class in cobol.loader)}
 
 \begin{fulllineitems}
@@ -8275,7 +8322,8 @@ Parse the text of a PICTURE definition.
 \PYG{k}{def} \PYG{n+nf}{picture\PYGZus{}parser}\PYG{p}{(} \PYG{n}{pic} \PYG{p}{)}\PYG{p}{:}
     \PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}Rewrite a picture clause to eliminate ()\PYGZsq{}s, S\PYGZsq{}s, V\PYGZsq{}s, P\PYGZsq{}s, etc.}
 \PYG{l+s+sd}{    :param pic: Sounce text.}
-\PYG{l+s+sd}{    :returns: Picture instance.}
+\PYG{l+s+sd}{    :returns: Picture instance: final, alpha, len(final), scale,}
+\PYG{l+s+sd}{        precision, signed, decimal}
 \PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
     \PYG{n}{out}\PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
     \PYG{n}{scale}\PYG{p}{,} \PYG{n}{precision}\PYG{p}{,} \PYG{n}{signed}\PYG{p}{,} \PYG{n}{decimal} \PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{n+nb+bp}{None}
@@ -8304,6 +8352,7 @@ Parse the text of a PICTURE definition.
                 \PYG{k}{raise} \PYG{n+ne}{SyntaxError}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{picture error in \PYGZob{}0!r\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{pic}\PYG{p}{)} \PYG{p}{)}
             \PYG{k}{assert} \PYG{n}{c} \PYG{o}{==} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{)}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,}  \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{picture error in \PYGZob{}0!r\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{o}{.}\PYG{n}{format}\PYG{p}{(}\PYG{n}{pic}\PYG{p}{)}
             \PYG{n}{out}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(} \PYG{p}{(}\PYG{n}{irpt}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{o}{*}\PYG{n}{out}\PYG{p}{[}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{p}{)}
+            \PYG{k}{if} \PYG{n}{decimal}\PYG{p}{:} \PYG{n}{precision} \PYG{o}{+}\PYG{o}{=} \PYG{n}{irpt}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}
         \PYG{k}{elif} \PYG{n}{c} \PYG{o}{==} \PYG{l+s}{\PYGZsq{}}\PYG{l+s}{S}\PYG{l+s}{\PYGZsq{}}\PYG{p}{:}
             \PYG{c}{\PYGZsh{} silently drop an \PYGZdq{}S\PYGZdq{}.}
             \PYG{c}{\PYGZsh{} Note that \PYGZsq{}S\PYGZsq{} plus a SIGN SEPARATE option increases the size of the picture!}
@@ -9146,7 +9195,7 @@ When opening the workbook, one of the schema must be chosen as the ``official'' 
 
 
 \subsubsection{COBOL Definitions Module -- Handle COBOL DDE's}
-\label{cobol_defs:cobol-defs}\label{cobol_defs:cobol-definitions-module-handle-cobol-dde-s}\label{cobol_defs::doc}\label{cobol_defs:module-cobol.defs}\index{cobol.defs (module)}
+\label{cobol_defs:module-cobol.defs}\label{cobol_defs:cobol-defs}\label{cobol_defs:cobol-definitions-module-handle-cobol-dde-s}\label{cobol_defs::doc}\index{cobol.defs (module)}
 This is a small set of class definitions and functions
 that are used by {\hyperref[cobol_loader:module-cobol.loader]{\code{cobol.loader}}} as well as
 {\hyperref[cobol_init:module-cobol]{\code{cobol}}}.
@@ -10607,7 +10656,7 @@ See {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}}.
 
 
 \section{The \textbf{Stingray} Developer's Guide}
-\label{developer::doc}\label{developer:the-stingray-developer-s-guide}\label{developer:developer}
+\label{developer:the-stingray-developer-s-guide}\label{developer::doc}\label{developer:developer}
 We use \textbf{Stingray} to work with data files where the schema is
 either external or complex (or both). We can tackle this question:
 \begin{quote}
@@ -11593,7 +11642,7 @@ This should permit skipping past the junk.
 
 
 \section{\textbf{Stingray} Demo Applications}
-\label{demo/index:stingray-demo-applications}\label{demo/index::doc}\label{demo/index:demo}
+\label{demo/index:demo}\label{demo/index::doc}\label{demo/index:stingray-demo-applications}
 Perhaps the most important use case for \textbf{Stingray} is to write data extract
 applications. This is shown below in {\hyperref[demo/validation:demo-validate]{\emph{Application Level Data Validation Technique}}}.
 We can also handle COBOL file conversions. This is shown below in {\hyperref[demo/cobol_reader:demo-cobol]{\emph{Reading COBOL Files}}}.
@@ -11612,7 +11661,7 @@ More importantly, how do we confirm that an application can successfully use a f
 
 
 \subsection{Unit Level Validation for Application and Data}
-\label{demo/data_quality::doc}\label{demo/data_quality:demo-sqa}\label{demo/data_quality:unit-level-validation-for-application-and-data}
+\label{demo/data_quality:unit-level-validation-for-application-and-data}\label{demo/data_quality:demo-sqa}\label{demo/data_quality::doc}
 We validate that a given file actually matches the required schema through a three-part valiation process.
 \begin{enumerate}
 \item {} 
@@ -12392,7 +12441,7 @@ doesn't match the schema required by the application.
 
 
 \subsection{Data Profiling Demonstration}
-\label{demo/profile:demo-profile}\label{demo/profile::doc}\label{demo/profile:data-profiling-demonstration}
+\label{demo/profile:demo-profile}\label{demo/profile:data-profiling-demonstration}\label{demo/profile::doc}
 This is a simple data profiling application that can be applied
 to workbooks to examine the data prior to creating builders.
 
@@ -12729,7 +12778,7 @@ type
 
 
 \subsection{Reading COBOL Files}
-\label{demo/cobol_reader:demo-cobol}\label{demo/cobol_reader::doc}\label{demo/cobol_reader:reading-cobol-files}
+\label{demo/cobol_reader:demo-cobol}\label{demo/cobol_reader:reading-cobol-files}\label{demo/cobol_reader::doc}
 For sample data, we're using data found here:
 \href{http://wonder.cdc.gov/wonder/sci\_data/codes/fips/type\_txt/cntyxref.asp}{http://wonder.cdc.gov/wonder/sci\_data/codes/fips/type\_txt/cntyxref.asp}
 
@@ -12975,7 +13024,7 @@ we can pass the file object created by \code{ZipFile.open()} as the second argum
 
 \section{History}
 \label{history:history}\label{history::doc}\label{history:id1}
-Latest release is 4.4.5.
+Latest release is 4.4.6.
 
 
 \subsection{Version 4}
@@ -13108,6 +13157,12 @@ a (less common) multiple schemata.
 
 \item {} 
 Fix a bug in cobol.RECFM\_VB.bdw\_iter() function.
+
+\item {} 
+Fix a bug in handling signed usage display EBCDIC numbers.
+
+\item {} 
+Fix a bug in handling complex picture clauses with \code{9(x)v9(y)} syntax.
 
 \end{itemize}
 
@@ -13671,8 +13726,8 @@ format provides zero guidance on field structure and data type conversions.
 \PYG{k}{class} \PYG{n+nc}{TestLazyRow}\PYG{p}{(} \PYG{n}{unittest}\PYG{o}{.}\PYG{n}{TestCase} \PYG{p}{)}\PYG{p}{:}
     \PYG{k}{def} \PYG{n+nf}{setUp}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{=} \PYG{n}{MockSchema}\PYG{p}{(}
-            \PYG{n}{MockAttribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{col1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{position}\PYG{o}{=}\PYG{l+m+mi}{0} \PYG{p}{)}\PYG{p}{,}
-            \PYG{n}{MockAttribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{col2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{position}\PYG{o}{=}\PYG{l+m+mi}{1} \PYG{p}{)}\PYG{p}{,}
+            \PYG{n}{MockAttribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{col1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{position}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{signed}\PYG{o}{=}\PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{p}{)}\PYG{p}{,}
+            \PYG{n}{MockAttribute}\PYG{p}{(} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{col2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{position}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{signed}\PYG{o}{=}\PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{p}{)}\PYG{p}{,}
             \PYG{n}{dde}\PYG{o}{=}\PYG{p}{[}\PYG{p}{]}
         \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{=} \PYG{n}{MockLazyWorkbook}\PYG{p}{(} \PYG{p}{)}
@@ -14127,7 +14182,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Workbook Testing}
-\label{testing/workbook::doc}\label{testing/workbook:workbook-testing}
+\label{testing/workbook:workbook-testing}\label{testing/workbook::doc}
 There are many types of workbooks.  See {\hyperref[workbook/index:workbook]{\emph{Workbook Package -- Uniform Wrappers for Workbooks}}} for details.
 
 These tests use actual files in the \code{sample} directory.
@@ -14443,7 +14498,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{COBOL Schema Testing}
-\label{testing/cobol::doc}\label{testing/cobol:cobol-schema-testing}
+\label{testing/cobol:cobol-schema-testing}\label{testing/cobol::doc}
 Processing COBOL (and possibly EBCDIC) files requires a more sophisticated
 schema.  And a more sophisticated schema loader.
 
@@ -14462,6 +14517,7 @@ See {\hyperref[cobol:cobol]{\emph{The COBOL Package}}}.
 \PYG{k+kn}{import} \PYG{n+nn}{types}
 
 \PYG{k+kn}{import} \PYG{n+nn}{stingray.cobol}
+\PYG{k+kn}{from} \PYG{n+nn}{stingray.cobol.loader} \PYG{k+kn}{import} \PYG{n}{Picture}
 \end{Verbatim}
 
 
@@ -14738,13 +14794,13 @@ the \code{open()}.
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{parent}\PYG{o}{=} \PYG{n}{MockDDE}\PYG{p}{(} \PYG{n}{level}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{01}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{PARENT}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{variably\PYGZus{}located}\PYG{o}{=} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}word}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{WORD}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n}{MockTextCell}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{XXX}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{n+nb+bp}{None}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{XXX}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{n+nb+bp}{None}\PYG{p}{)}\PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}num1}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NUMBER\PYGZhy{}1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{6}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n}{MockDisplayCell}\PYG{p}{,} \PYG{n}{picture}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999.99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999.99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999.99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}num2}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NUMBER\PYGZhy{}2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{9}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{5}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n}{MockDisplayCell}\PYG{p}{,} \PYG{n}{picture}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{S999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{=} \PYG{n}{MockSchema}\PYG{p}{(}
             \PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}word}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}num1}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}num2}
             \PYG{p}{)}\PYG{p}{,}
@@ -14772,19 +14828,19 @@ This file has the default RECFM of F -- no blocking and no header words.
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{parent}\PYG{o}{=} \PYG{n}{MockDDE}\PYG{p}{(} \PYG{n}{level}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{01}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{PARENT}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{variably\PYGZus{}located}\PYG{o}{=} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}word}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{WORD}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n}{MockTextCell}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{XXX}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{n+nb+bp}{None}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{XXX}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{n+nb+bp}{None}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}num1}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NUMBER\PYGZhy{}1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{6}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n}{MockDisplayCell}\PYG{p}{,} \PYG{n}{picture}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999.99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999.99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999.99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}num2}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NUMBER\PYGZhy{}2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{9}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{5}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n}{MockDisplayCell}\PYG{p}{,} \PYG{n}{picture}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{S999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}comp}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NUMBER\PYGZhy{}3}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{14}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n}{MockCompCell}\PYG{p}{,} \PYG{n}{picture}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{S99999999}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{5}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}comp3}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NUMBER\PYGZhy{}4}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{18}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n}{MockComp3Cell}\PYG{p}{,} \PYG{n}{picture}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{S999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{=} \PYG{n}{MockSchema}\PYG{p}{(}
             \PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}word}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}num1}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}num2}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}comp}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}comp3}
             \PYG{p}{)}\PYG{p}{,}
@@ -14942,19 +14998,19 @@ Cell definitions and real Usage definitions because the real Usage definitions t
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{comp3}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{UsageComp3}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{COMP\PYGZhy{}3}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}word}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{WORD}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{defs}\PYG{o}{.}\PYG{n}{TextCell}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{XXX}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{n+nb+bp}{None}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{XXX}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{n+nb+bp}{None}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}num1}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NUMBER\PYGZhy{}1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{6}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{display}\PYG{o}{.}\PYG{n}{create\PYGZus{}func}\PYG{p}{,} \PYG{n}{picture}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999.99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999.99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999.99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}num2}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NUMBER\PYGZhy{}2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{9}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{5}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{display}\PYG{o}{.}\PYG{n}{create\PYGZus{}func}\PYG{p}{,} \PYG{n}{picture}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{S999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}comp}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NUMBER\PYGZhy{}3}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{14}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{comp}\PYG{o}{.}\PYG{n}{create\PYGZus{}func}\PYG{p}{,} \PYG{n}{picture}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{S99999999}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}comp3}\PYG{o}{=} \PYG{n}{MockAttribute}\PYG{p}{(}
             \PYG{n}{name}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{NUMBER\PYGZhy{}4}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{offset}\PYG{o}{=}\PYG{l+m+mi}{18}\PYG{p}{,} \PYG{n}{size}\PYG{o}{=}\PYG{l+m+mi}{5}\PYG{p}{,} \PYG{n}{create}\PYG{o}{=}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{comp3}\PYG{o}{.}\PYG{n}{create\PYGZus{}func}\PYG{p}{,} \PYG{n}{picture}\PYG{o}{=}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{S999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{dimensionality}\PYG{o}{=}\PYG{n+nb+bp}{None}\PYG{p}{,}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision}\PYG{o}{=}\PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999V99}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{n+nb+bp}{False}\PYG{p}{,}\PYG{l+m+mi}{6}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{,}\PYG{n+nb+bp}{True}\PYG{p}{,}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{,} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{schema}\PYG{o}{=} \PYG{n}{MockSchema}\PYG{p}{(}
             \PYG{p}{(} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}word}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}num1}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}num2}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}comp}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{attr\PYGZus{}comp3}
             \PYG{p}{)}\PYG{p}{,}
@@ -14983,6 +15039,9 @@ Cell definitions and real Usage definitions because the real Usage definitions t
 \subsubsection{Test Conversions}
 \label{testing/cobol:test-conversions}
 The various PIC and USAGE format subtleties lead to a number of conversion test cases.
+The attributes are a shortcut for the DDE. This includes some explicit
+attributes, plus the picture\_parser return value. It's
+a Picture instance, a tuple of (final, alpha, len(final), scale, precision, signed, decimal)
 
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k}{class} \PYG{n+nc}{TestNumberConversion}\PYG{p}{(} \PYG{n}{unittest}\PYG{o}{.}\PYG{n}{TestCase} \PYG{p}{)}\PYG{p}{:}
@@ -14990,24 +15049,33 @@ The various PIC and USAGE format subtleties lead to a number of conversion test 
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{EBCDIC\PYGZus{}File}
     \PYG{k}{def} \PYG{n+nf}{test\PYGZus{}should\PYGZus{}convert\PYGZus{}display}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{)}\PYG{p}{:}
         \PYG{n}{attr1}\PYG{o}{=} \PYG{n}{types}\PYG{o}{.}\PYG{n}{SimpleNamespace}\PYG{p}{(}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision} \PYG{o}{=} \PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{999v99}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n+nb+bp}{True}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision} \PYG{o}{=} \PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{999v99}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n+nb+bp}{True}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{p}{)}
         \PYG{n}{n1}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{.}\PYG{n}{number\PYGZus{}display}\PYG{p}{(} \PYG{n}{b}\PYG{l+s}{\PYGZsq{}}\PYG{l+s+se}{\PYGZbs{}xf1}\PYG{l+s+se}{\PYGZbs{}xf2}\PYG{l+s+se}{\PYGZbs{}xf3}\PYG{l+s+se}{\PYGZbs{}xf4}\PYG{l+s+se}{\PYGZbs{}xf5}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{attr1} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{123.45}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,} \PYG{n}{n1} \PYG{p}{)}
         \PYG{n}{attr2}\PYG{o}{=} \PYG{n}{types}\PYG{o}{.}\PYG{n}{SimpleNamespace}\PYG{p}{(}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision} \PYG{o}{=} \PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{99999V}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n+nb+bp}{True}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision} \PYG{o}{=} \PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{99999V}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n+nb+bp}{True}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{p}{)}
         \PYG{n}{n2}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{.}\PYG{n}{number\PYGZus{}display}\PYG{p}{(} \PYG{n}{b}\PYG{l+s}{\PYGZsq{}}\PYG{l+s+se}{\PYGZbs{}xf1}\PYG{l+s+se}{\PYGZbs{}xf2}\PYG{l+s+se}{\PYGZbs{}xf3}\PYG{l+s+se}{\PYGZbs{}xf4}\PYG{l+s+se}{\PYGZbs{}xf5}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{attr2} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{12345}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,} \PYG{n}{n2} \PYG{p}{)}
         \PYG{n}{attr3}\PYG{o}{=} \PYG{n}{types}\PYG{o}{.}\PYG{n}{SimpleNamespace}\PYG{p}{(}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision} \PYG{o}{=} \PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{999.99}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n+nb+bp}{True}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision} \PYG{o}{=} \PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{999.99}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n+nb+bp}{True}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{p}{)}
         \PYG{n}{n3}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{.}\PYG{n}{number\PYGZus{}display}\PYG{p}{(} \PYG{n}{b}\PYG{l+s}{\PYGZsq{}}\PYG{l+s+se}{\PYGZbs{}xf1}\PYG{l+s+se}{\PYGZbs{}xf2}\PYG{l+s+se}{\PYGZbs{}xf3}\PYG{l+s}{K}\PYG{l+s+se}{\PYGZbs{}xf4}\PYG{l+s+se}{\PYGZbs{}xf5}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{attr3} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{123.45}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,} \PYG{n}{n3} \PYG{p}{)}
+
+    \PYG{k}{def} \PYG{n+nf}{test\PYGZus{}should\PYGZus{}convert\PYGZus{}display\PYGZus{}2}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{)}\PYG{p}{:}
+        \PYG{n}{attr1}\PYG{o}{=} \PYG{n}{types}\PYG{o}{.}\PYG{n}{SimpleNamespace}\PYG{p}{(}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision} \PYG{o}{=} \PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{9}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n+nb+bp}{True}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{p}{)}
+        \PYG{n}{n1}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{.}\PYG{n}{number\PYGZus{}display}\PYG{p}{(} \PYG{n}{b}\PYG{l+s}{\PYGZsq{}}\PYG{l+s+se}{\PYGZbs{}xc4}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{attr1} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{4}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,} \PYG{n}{n1} \PYG{p}{)}
+        \PYG{n}{n2}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{.}\PYG{n}{number\PYGZus{}display}\PYG{p}{(} \PYG{n}{b}\PYG{l+s}{\PYGZsq{}}\PYG{l+s+se}{\PYGZbs{}xd4}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{attr1} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{\PYGZhy{}4}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,} \PYG{n}{n2} \PYG{p}{)}
+
     \PYG{k}{def} \PYG{n+nf}{test\PYGZus{}should\PYGZus{}convert\PYGZus{}comp3}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{)}\PYG{p}{:}
         \PYG{n}{attr1}\PYG{o}{=} \PYG{n}{types}\PYG{o}{.}\PYG{n}{SimpleNamespace}\PYG{p}{(}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision} \PYG{o}{=} \PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{999v99}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n+nb+bp}{True}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision} \PYG{o}{=} \PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{999v99}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{,} \PYG{n+nb+bp}{True}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{p}{)}
         \PYG{n}{n1}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{.}\PYG{n}{number\PYGZus{}comp3}\PYG{p}{(} \PYG{n}{b}\PYG{l+s}{\PYGZsq{}}\PYG{l+s+se}{\PYGZbs{}x12}\PYG{l+s+se}{\PYGZbs{}x34}\PYG{l+s+se}{\PYGZbs{}x98}\PYG{l+s+se}{\PYGZbs{}x76}\PYG{l+s+se}{\PYGZbs{}x5d}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{attr1} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{\PYGZhy{}1234987.65}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,} \PYG{n}{n1} \PYG{p}{)}
         \PYG{n}{attr2}\PYG{o}{=} \PYG{n}{types}\PYG{o}{.}\PYG{n}{SimpleNamespace}\PYG{p}{(}
-            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision} \PYG{o}{=} \PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{99999V}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n+nb+bp}{True}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{p}{)}
+            \PYG{n}{size\PYGZus{}scale\PYGZus{}precision} \PYG{o}{=} \PYG{n}{Picture}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{99999V}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{l+m+mi}{5}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n+nb+bp}{True}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)} \PYG{p}{)}
         \PYG{n}{n2}\PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{wb}\PYG{o}{.}\PYG{n}{number\PYGZus{}comp3}\PYG{p}{(} \PYG{n}{b}\PYG{l+s}{\PYGZsq{}}\PYG{l+s+se}{\PYGZbs{}x12}\PYG{l+s+se}{\PYGZbs{}x34}\PYG{l+s+se}{\PYGZbs{}x98}\PYG{l+s+se}{\PYGZbs{}x76}\PYG{l+s+se}{\PYGZbs{}x5d}\PYG{l+s}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{attr2} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{n}{decimal}\PYG{o}{.}\PYG{n}{Decimal}\PYG{p}{(}\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{\PYGZhy{}123498765}\PYG{l+s}{\PYGZsq{}}\PYG{p}{)}\PYG{p}{,} \PYG{n}{n2} \PYG{p}{)}
 \end{Verbatim}
@@ -15254,6 +15322,15 @@ boolean
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{pic}\PYG{o}{.}\PYG{n}{precision} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertTrue}\PYG{p}{(} \PYG{n}{pic}\PYG{o}{.}\PYG{n}{signed} \PYG{p}{)}
         \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{V}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{pic}\PYG{o}{.}\PYG{n}{decimal} \PYG{p}{)}
+    \PYG{k}{def} \PYG{n+nf}{test\PYGZus{}should\PYGZus{}handle\PYGZus{}multiple\PYGZus{}repeats}\PYG{p}{(} \PYG{n+nb+bp}{self} \PYG{p}{)}\PYG{p}{:}
+        \PYG{n}{pic}\PYG{o}{=} \PYG{n}{stingray}\PYG{o}{.}\PYG{n}{cobol}\PYG{o}{.}\PYG{n}{loader}\PYG{o}{.}\PYG{n}{picture\PYGZus{}parser}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{9(6).9(3)}\PYG{l+s}{\PYGZdq{}} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{999999.999}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{pic}\PYG{o}{.}\PYG{n}{final} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertFalse}\PYG{p}{(} \PYG{n}{pic}\PYG{o}{.}\PYG{n}{alpha} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{10}\PYG{p}{,} \PYG{n}{pic}\PYG{o}{.}\PYG{n}{length} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n}{pic}\PYG{o}{.}\PYG{n}{scale} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{pic}\PYG{o}{.}\PYG{n}{precision} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertFalse}\PYG{p}{(} \PYG{n}{pic}\PYG{o}{.}\PYG{n}{signed} \PYG{p}{)}
+        \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{assertEqual}\PYG{p}{(} \PYG{l+s}{\PYGZdq{}}\PYG{l+s}{.}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{pic}\PYG{o}{.}\PYG{n}{decimal} \PYG{p}{)}
 \end{Verbatim}
 
 
@@ -17147,7 +17224,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Test Snappy and Protobuf}
-\label{testing/snappy_protobuf::doc}\label{testing/snappy_protobuf:test-snappy-and-protobuf}\label{testing/snappy_protobuf:test-snappy-protobuf}
+\label{testing/snappy_protobuf:test-snappy-and-protobuf}\label{testing/snappy_protobuf::doc}\label{testing/snappy_protobuf:test-snappy-protobuf}
 These are tests for the snappy decompression and the protobuf object encoding.
 
 
@@ -17370,7 +17447,7 @@ To enable logging.
 
 
 \section{Stingray Build}
-\label{build::doc}\label{build:build}\label{build:stingray-build}
+\label{build:build}\label{build::doc}\label{build:stingray-build}
 The source for \code{stingray} is a Sphinx project that depends on PyLit.
 Yes.  The documentation spawns the code.
 
@@ -17621,7 +17698,9 @@ In effect, this does \code{python3 test/main.py}
     \PYG{k+kn}{from} \PYG{n+nn}{test.main} \PYG{k+kn}{import} \PYG{n}{suite}
     \PYG{k+kn}{from} \PYG{n+nn}{test} \PYG{k+kn}{import} \PYG{n}{Logger}
     \PYG{k}{with} \PYG{n}{Logger}\PYG{p}{(} \PYG{n}{stream}\PYG{o}{=}\PYG{n}{sys}\PYG{o}{.}\PYG{n}{stdout}\PYG{p}{,} \PYG{n}{level}\PYG{o}{=}\PYG{n}{logging}\PYG{o}{.}\PYG{n}{WARN} \PYG{p}{)}\PYG{p}{:}
-        \PYG{n}{unittest}\PYG{o}{.}\PYG{n}{TextTestRunner}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{run}\PYG{p}{(}\PYG{n}{suite}\PYG{p}{(}\PYG{p}{)}\PYG{p}{)}
+        \PYG{n}{result}\PYG{o}{=} \PYG{n}{unittest}\PYG{o}{.}\PYG{n}{TextTestRunner}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{run}\PYG{p}{(}\PYG{n}{suite}\PYG{p}{(}\PYG{p}{)}\PYG{p}{)}
+    \PYG{k}{if} \PYG{n}{result}\PYG{o}{.}\PYG{n}{failures}\PYG{p}{:}
+        \PYG{n}{sys}\PYG{o}{.}\PYG{n}{exit}\PYG{p}{(}\PYG{n}{result}\PYG{o}{.}\PYG{n}{failures}\PYG{p}{)}
 \end{Verbatim}
 
 
@@ -17809,7 +17888,7 @@ if sys.version\PYGZus{}info \PYGZlt{} (3,3):
 
 setup(
     name=\PYGZsq{}stingray\PYGZsq{},
-    version=\PYGZsq{}4.4.5\PYGZsq{},
+    version=\PYGZsq{}4.4.6\PYGZsq{},
     description=\PYGZsq{}Schema\PYGZhy{}Based File Reader, COBOL, EBCDIC Conversion, ETL, Data Profiling\PYGZsq{},
     author=\PYGZsq{}S.Lott\PYGZsq{},
     author\PYGZus{}email=\PYGZsq{}s\PYGZus{}lott@yahoo.com\PYGZsq{},
@@ -17890,6 +17969,13 @@ faster. Some refactoring can eliminate the if statements.
 
 \begin{notice}{note}{Todo}
 
+88-level items could create boolean-valued properties.
+\end{notice}
+
+(The {\hyperref[cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_loader.rst, line 381.)
+
+\begin{notice}{note}{Todo}
+
 Index by name and path, also.
 
 This will eliminate some complexity in COBOL schema handling where
@@ -17900,10 +17986,17 @@ we create the a ``schema dictionary'' using simple names and path names.
 
 \begin{notice}{note}{Todo}
 
+EBCDIC File V format with Occurs Depending On to show the combination.
+\end{notice}
+
+(The {\hyperref[testing/cobol:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/testing/cobol.rst, line 489.)
+
+\begin{notice}{note}{Todo}
+
 Test EXTERNAL, GLOBAL as Skipped Words, too.
 \end{notice}
 
-(The {\hyperref[testing/cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/testing/cobol\_loader.rst, line 997.)
+(The {\hyperref[testing/cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/testing/cobol\_loader.rst, line 1006.)
 
 \begin{notice}{note}{Todo}
 
@@ -17938,20 +18031,6 @@ all the modules in the package that extend this base definition.
 
 \begin{notice}{note}{Todo}
 
-Refactor this, it feels clunky.
-\end{notice}
-
-(The {\hyperref[workbook/ods:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/ods.rst, line 128.)
-
-\begin{notice}{note}{Todo}
-
-88-level items could create boolean-valued properties.
-\end{notice}
-
-(The {\hyperref[cobol_loader:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/cobol\_loader.rst, line 381.)
-
-\begin{notice}{note}{Todo}
-
 Additional Numbers13\_Workbook Feature
 
 Translate Formula and Formula error to Text
@@ -17961,10 +18040,10 @@ Translate Formula and Formula error to Text
 
 \begin{notice}{note}{Todo}
 
-EBCDIC File V format with Occurs Depending On to show the combination.
+Refactor this, it feels clunky.
 \end{notice}
 
-(The {\hyperref[testing/cobol:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/testing/cobol.rst, line 489.)
+(The {\hyperref[workbook/ods:index-0]{\emph{original entry}}} is located in  /Users/slott/Documents/Projects/Stingray-4.4/source/workbook/ods.rst, line 128.)
 
 
 \chapter{Indices and Tables}
@@ -18003,7 +18082,7 @@ EBCDIC File V format with Occurs Depending On to show the combination.
 \item {\texttt{snappy}}, \pageref{snappy:module-snappy}
 \indexspace
 \bigletter{w}
-\item {\texttt{workbook}}, \pageref{workbook/numbers_13:module-workbook}
+\item {\texttt{workbook}}, \pageref{workbook/xlsx:module-workbook}
 \end{theindex}
 
 \renewcommand{\indexname}{Index}

@@ -614,26 +614,30 @@ class Character_File( COBOL_File ):
         """Extract a text field's value."""
         return buffer 
 
-# Numeric data with usage ``DISPLAY`` requires handling implicit decimal points.
+# Numeric data with usage ``DISPLAY`` is essentially text. In some cases, the
+# picture has ``V``, which means that we must handle this implicit decimal point.
+# The "display" feature is the COBOL default: everything is plain text.
 #
+# Here's the core rule for character files:
+#
+# -   Leading separate sign is the default for character files.
+#    
+# COBOL can support other kinds of signs. This conversion doesn't.
+#    
+#    
 # ::
 
     @staticmethod
     def number_display( buffer, attr ):
-        """Extract a numeric field's value."""
+        """Extract a numeric field's value.
+        Based on leading, separate sign.
+        """
         final, alpha, length, scale, precision, signed, dec_sign = attr.size_scale_precision
         try:
-            if precision != 0:
-                if dec_sign == '.' or precision == 0:
-                    display= buffer
-                    return decimal.Decimal( buffer )
-                else: # dec_sign == "V" or None
-                    # Insert the implied decimal point.
-                    display= buffer[:-precision]+"."+buffer[-precision:] 
-                    return decimal.Decimal( display )
-            else: # precision == 0:
-                display= buffer
-                return decimal.Decimal( buffer )
+            display=buffer.strip()
+            if precision != 0 and dec_sign == 'V':
+                display= display[:-precision]+"."+display[-precision:]
+            return decimal.Decimal( display )
         except Exception:
             Character_File.log.debug( "Can't process {0!r} from {1!r}".format(display,buffer) )
             raise
@@ -687,7 +691,7 @@ class Character_File( COBOL_File ):
     
 # COMP in proper character files may not make any sense, either. 
 # A codec would make a hash of the bit patterns required.  
-# Gagin, we've defined it here because that's relatively simple to extend.
+# Again, we've defined it here because that's relatively simple to extend.
 #
 # We're simply going to unpack big-ending bytes.
 #
@@ -1000,13 +1004,36 @@ class EBCDIC_File( Character_File ):
         text, size = EBCDIC_File.decoder(buffer)
         return text
 
+# When a number usage is ``DISPLAY``, it's text: 
+# we simply convert the bytes from EBCDIC to Unicode
+# and treat them more-or-less like a text field.
+#
+# Note the subtlety around "Signed" display fields. The last byte
+# will include a sign in addition to the digit.
+#
+# -   The last EBCDIC character might be '\xF1' to '\xF9' which is unsigned.
+#    
+# -   The last EBCDIC character might be '\xC1' to '\xC9' which is positive.
+#
+# -   The last EBCDIC character might be '\xD1' to '\xD9' which is negative.
+#    
+# Really.
+#
+#
 # ::
 
     @staticmethod
     def number_display( buffer, attr ):
         """Extract a numeric field's value."""
-        text, size = EBCDIC_File.decoder(buffer)
-        return Character_File.number_display( text, attr )        
+        if attr.size_scale_precision.signed:
+            # Fiddle bits to make EBCDIC char from signed digit.
+            last_digit = bytes( [(buffer[-1] & 0x0F) | 0xF0] )
+            sign = '-' if buffer[-1] >> 4 == 0xD else ''
+            text, size = EBCDIC_File.decoder(last_digit if len(buffer) == 1 else buffer[:-1] + last_digit)
+            return Character_File.number_display( sign+text, attr )
+        else:
+            text, size = EBCDIC_File.decoder(buffer)
+            return Character_File.number_display( text, attr )        
 
 # ASCII File
 # ------------------

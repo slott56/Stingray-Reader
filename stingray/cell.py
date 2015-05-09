@@ -145,9 +145,9 @@ A cell has a value, it's part of a workbook.
 import locale
 import decimal
 import datetime
-import xlrd
 import time
 from collections import Hashable
+import xlrd
 
 # Just to be sure that any locale-based processing will actually
 # work, we establish a default locale.

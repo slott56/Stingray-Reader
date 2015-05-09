@@ -17,4 +17,4 @@ This is approximately pure overhead required to make a Python package.
     
     Requires Python 3.3, xlrd 0.9.2
     """
-    __version__ = "4.4.5"
+    __version__ = "4.4.6"

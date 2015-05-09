@@ -143,8 +143,8 @@ class MockAttribute:
 class TestLazyRow( unittest.TestCase ):
     def setUp( self ):
         self.schema= MockSchema(
-            MockAttribute( name="col1", position=0 ),
-            MockAttribute( name="col2", position=1 ),
+            MockAttribute( name="col1", position=0, signed=False, ),
+            MockAttribute( name="col2", position=1, signed=False, ),
             dde=[]
         )
         self.wb= MockLazyWorkbook( )

@@ -12,10 +12,10 @@
 # ..  important:: PyLit Feature
 #
 #     The first line of each file should be ``..    #!/usr/bin/env python3``.
-#    
+#   
 #     The four spaces between ``..`` and ``#!`` defines the indent used for
 #     each line of code in the file.  
-#    
+#   
 #     Four spaces.
 #
 # Stingray depends on the following
@@ -40,7 +40,7 @@
 #
 #     easy_install xlrd
 #     easy_install sphinx
-#    
+#   
 # In the case of having Python2 and Python3 installed, ``easy_install-3.3`` may be required.
 # On most systems, ``sudo`` is also required.
 #
@@ -52,30 +52,30 @@
 # 1.  Bootstrap the :file:`build.py` script by running PyLit.
 #
 #     ..  code-block:: bash
-#    
+#   
 #         python3 -m pylit -t source/build.rst build.py
 #
 #     This reports that an extract was written to :file:`build.py`.
-#    
+#   
 # 2.  Use the :file:`build.py` script to create the ``stingray`` source, unit
 #     tests, demonstration applications.  
 #     Build the Sphinx documentation.  
 #     And run the unit test, too.
 #
 #     ..  code-block:: bash
-#    
+#   
 #         python3 build.py
-#        
+#       
 #     At the end of this step, the directory tree will include the following.
-#    
+#   
 #     -   :file:`build`.  The documentation.  In HTML.
 #     -   :file:`demo`.   Some demonstration applications that use ``stingray``. 
 #         See :ref:`demo`.
 #     -   :file:`stingray`.  The Python library, ready for installation.
 #     -   :file:`test`.  The unit test script.
 #
-#     This reports, also, that 139 tests were run.
-#    
+#     This reports, also, that 174 tests were run.
+#   
 # In general (i.e., any OS except Windows), it's sensible to do this:
 #
 # ..    code-block:: bash
@@ -87,8 +87,8 @@
 # ..    code-block:: bash
 #
 #     ./build.py 
-#    
-#    
+#   
+#   
 # Build Script Design
 # =====================
 #
@@ -126,7 +126,7 @@ import shutil
 #
 # ..  py:function:: sphinx_build( srcdir, outdir, buildername='html' )
 #
-# This function handles the simple use case for the ``sphinx-build`` script.
+#     Handle the simple use case for the ``sphinx-build`` script.
 #
 # ::
 
@@ -144,15 +144,15 @@ def sphinx_build( srcdir, outdir, buildername='html' ):
 #
 # ..  py:function:: pylit_build( srcdir, outdir )
 #
-# This function handles the simple use case for PyLit.
+#     Handle the simple use case for PyLit.
 #
-# This also handles the necessary rewrite to modify standard paths to Windows paths.
+#     This also handles the necessary rewrite to modify standard paths to Windows paths.
 #
 # ::
 
 def pylit_build( infile, outfile ):
     """Essentially: ``python3 -m pylit -t source/demo/data_quality.rst demo/test.py``
-    
+  
     The issue here is that we need to provide platform-specific paths.
     """
     if os.sep != '/':
@@ -166,10 +166,10 @@ def pylit_build( infile, outfile ):
 #
 # ..  py:function:: mkdir( path )
 #
-# This function handles the simple use case for assuring that the directory
-# tree exists.
+#     Handles the simple use case for assuring that the directory
+#     tree exists.
 #
-# This also handles a rewrite to modify standard paths to Windows paths.
+#     This also handles a rewrite to modify standard paths to Windows paths.
 #
 # ::
 
@@ -190,7 +190,7 @@ def mkdir( path ):
 #
 # ..  py:function:: copy_file( srcdir, outdir )
 #
-# This function handles the simple use case for copying a file
+#     Handles the simple use case for copying a file.
 #
 # ::
 
@@ -203,7 +203,7 @@ def copy_file( srcdir, outdir ):
 #
 # ..  py:function:: run_test( )
 #
-# In effect, this does ``python3 test/main.py``
+#     In effect, this does ``python3 test/main.py``
 #
 # ::
 
@@ -211,7 +211,9 @@ def run_test():
     from test.main import suite
     from test import Logger
     with Logger( stream=sys.stdout, level=logging.WARN ):
-        unittest.TextTestRunner().run(suite())
+        result= unittest.TextTestRunner().run(suite())
+    if result.failures:
+        sys.exit(result.failures)
 
 # The Build Sequence
 # ---------------------
@@ -222,7 +224,7 @@ def build():
     mkdir( 'stingray/schema' )
     mkdir( 'stingray/cobol' )
     mkdir( 'stingray/workbook' )
-    
+  
     pylit_build( 'source/stingray_init.rst', 'stingray/__init__.py' )
     pylit_build( 'source/cell.rst', 'stingray/cell.py' )
     pylit_build( 'source/sheet.rst', 'stingray/sheet.py' )
@@ -243,12 +245,12 @@ def build():
     pylit_build( 'source/snappy.rst', 'stingray/snappy.py' )
     pylit_build( 'source/protobuf.rst', 'stingray/protobuf.py' )
     pylit_build( 'source/installation.rst', 'setup.py' )
-    
+  
     copy_file( 'source/Numbers.json', 'stingray/Numbers.json' )
     copy_file( 'source/Common.json', 'stingray/Common.json' )
-    
+  
     mkdir( 'test' )
-        
+      
     pylit_build( 'source/testing/test_init.rst', 'test/__init__.py' )
     pylit_build( 'source/testing/main.rst', 'test/main.py' )
     pylit_build( 'source/testing/cell.rst', 'test/cell.py' )
@@ -260,14 +262,14 @@ def build():
     pylit_build( 'source/testing/cobol_loader.rst', 'test/cobol_loader.py' )
     pylit_build( 'source/testing/cobol_2.rst', 'test/cobol_2.py' )
     pylit_build( 'source/testing/snappy_protobuf.rst', 'test/snappy_protobuf.py' )
-    
+  
     mkdir( 'demo' )
-        
+      
     pylit_build( 'source/demo/data_quality.rst', 'demo/test.py' )
     pylit_build( 'source/demo/validation.rst', 'demo/app.py' )
     pylit_build( 'source/demo/profile.rst', 'demo/profile.py' )
     pylit_build( 'source/demo/cobol_reader.rst', 'demo/cobol_reader.py' )
-    
+  
     run_test()
 
     sphinx_build( 'source', 'build/html', 'html' )
@@ -284,7 +286,7 @@ def build():
 
 if __name__ == "__main__":
     build()
-    
+  
 # Additional Builds
 # =====================
 #
@@ -295,7 +297,7 @@ if __name__ == "__main__":
 # ..  code-block:: bash
 #
 #     sphinx-build $* -b html source build/html
-#    
+#   
 # The LaTeX document is built with this command.
 #
 # ..  code-block:: bash

@@ -21,7 +21,7 @@ Overheads
     import types
     
     import stingray.cobol
-    
+    from stingray.cobol.loader import Picture
 
 
 Handy Mocks
@@ -300,13 +300,13 @@ the :py:func:`open`.
             self.parent= MockDDE( level="01", name="PARENT", variably_located= False, )
             self.attr_word= MockAttribute( 
                 name="WORD", offset=0, size=3, create=MockTextCell, dimensionality=None,
-                size_scale_precision=("XXX",True,3,0,0,False,None), )
+                size_scale_precision=Picture("XXX",True,3,0,0,False,None))
             self.attr_num1= MockAttribute( 
                 name="NUMBER-1", offset=3, size=6, create=MockDisplayCell, picture="999.99", dimensionality=None,
-                size_scale_precision=("999.99",False,6,0,2,True,"."), )
+                size_scale_precision=Picture("999.99",False,6,0,2,True,"."))
             self.attr_num2= MockAttribute( 
                 name="NUMBER-2", offset=9, size=5, create=MockDisplayCell, picture="S999V99", dimensionality=None,
-                size_scale_precision=("999V99",False,6,0,2,True,"V"), )
+                size_scale_precision=Picture("999V99",False,6,0,2,True,"V"))
             self.schema= MockSchema( 
                 ( self.attr_word, self.attr_num1, self.attr_num2
                 ),
@@ -333,20 +333,20 @@ This file has the default RECFM of F -- no blocking and no header words.
         def setUp( self ):
             self.parent= MockDDE( level="01", name="PARENT", variably_located= False, )
             self.attr_word= MockAttribute( 
-                name="WORD", offset=0, size=3, create=MockTextCell, dimensionality=None,
-                size_scale_precision=("XXX",True,3,0,0,False,None), )
+                name="WORD", offset=0, size=3, create=MockTextCell, dimensionality=None, 
+                size_scale_precision=Picture("XXX",True,3,0,0,False,None), )
             self.attr_num1= MockAttribute( 
-                name="NUMBER-1", offset=3, size=6, create=MockDisplayCell, picture="999.99", dimensionality=None,
-                size_scale_precision=("999.99",False,6,0,2,True,"."), )
+                name="NUMBER-1", offset=3, size=6, create=MockDisplayCell, picture="999.99", dimensionality=None, 
+                size_scale_precision=Picture("999.99",False,6,0,2,True,"."), )
             self.attr_num2= MockAttribute( 
-                name="NUMBER-2", offset=9, size=5, create=MockDisplayCell, picture="S999V99", dimensionality=None,
-                size_scale_precision=("999V99",False,5,0,2,True,"V"), )
+                name="NUMBER-2", offset=9, size=5, create=MockDisplayCell, picture="S999V99", dimensionality=None, 
+                size_scale_precision=Picture("999V99",False,5,0,2,True,"V"), )
             self.attr_comp= MockAttribute( 
-                name="NUMBER-3", offset=14, size=4, create=MockCompCell, picture="S99999999", dimensionality=None,
-                size_scale_precision=("999V99",False,5,0,2,True,"V"), )
+                name="NUMBER-3", offset=14, size=4, create=MockCompCell, picture="S99999999", dimensionality=None, 
+                size_scale_precision=Picture("999V99",False,5,0,2,True,"V"), )
             self.attr_comp3= MockAttribute( 
-                name="NUMBER-4", offset=18, size=3, create=MockComp3Cell, picture="S999V99", dimensionality=None,
-                size_scale_precision=("999V99",False,3,0,2,True,"V"), )
+                name="NUMBER-4", offset=18, size=3, create=MockComp3Cell, picture="S999V99", dimensionality=None, 
+                size_scale_precision=Picture("999V99",False,3,0,2,True,"V"), )
             self.schema= MockSchema( 
                 ( self.attr_word, self.attr_num1, self.attr_num2, self.attr_comp, self.attr_comp3
                 ),
@@ -502,19 +502,19 @@ Cell definitions and real Usage definitions because the real Usage definitions t
             self.comp3= stingray.cobol.defs.UsageComp3("COMP-3")
             self.attr_word= MockAttribute( 
                 name="WORD", offset=0, size=3, create=stingray.cobol.defs.TextCell, dimensionality=None,
-                size_scale_precision=("XXX",True,3,0,0,False,None), )
+                size_scale_precision=Picture("XXX",True,3,0,0,False,None), )
             self.attr_num1= MockAttribute( 
-                name="NUMBER-1", offset=3, size=6, create=self.display.create_func, picture="999.99", dimensionality=None,
-                size_scale_precision=("999.99",False,6,0,2,True,"."), )
+                name="NUMBER-1", offset=3, size=6, create=self.display.create_func, picture="999.99", dimensionality=None, 
+                size_scale_precision=Picture("999.99",False,6,0,2,True,"."), )
             self.attr_num2= MockAttribute( 
-                name="NUMBER-2", offset=9, size=5, create=self.display.create_func, picture="S999V99", dimensionality=None,
-                size_scale_precision=("999V99",False,6,0,2,True,"V"), )
+                name="NUMBER-2", offset=9, size=5, create=self.display.create_func, picture="S999V99", dimensionality=None, 
+                size_scale_precision=Picture("999V99",False,6,0,2,True,"V"), )
             self.attr_comp= MockAttribute( 
-                name="NUMBER-3", offset=14, size=4, create=self.comp.create_func, picture="S99999999", dimensionality=None,
-                size_scale_precision=("999V99",False,6,0,2,True,"V"), )
+                name="NUMBER-3", offset=14, size=4, create=self.comp.create_func, picture="S99999999", dimensionality=None, 
+                size_scale_precision=Picture("999V99",False,6,0,2,True,"V"), )
             self.attr_comp3= MockAttribute( 
-                name="NUMBER-4", offset=18, size=5, create=self.comp3.create_func, picture="S999V99", dimensionality=None,
-                size_scale_precision=("999V99",False,6,0,2,True,"V"), )
+                name="NUMBER-4", offset=18, size=5, create=self.comp3.create_func, picture="S999V99", dimensionality=None, 
+                size_scale_precision=Picture("999V99",False,6,0,2,True,"V"), )
             self.schema= MockSchema( 
                 ( self.attr_word, self.attr_num1, self.attr_num2, self.attr_comp, self.attr_comp3
                 ),
@@ -542,6 +542,10 @@ Test Conversions
 ==================
 
 The various PIC and USAGE format subtleties lead to a number of conversion test cases.
+The attributes are a shortcut for the DDE. This includes some explicit
+attributes, plus the picture_parser return value. It's
+a Picture instance, a tuple of (final, alpha, len(final), scale, precision, signed, decimal)
+
 
 ::
 
@@ -550,24 +554,33 @@ The various PIC and USAGE format subtleties lead to a number of conversion test 
             self.wb= stingray.cobol.EBCDIC_File
         def test_should_convert_display(self):
             attr1= types.SimpleNamespace(
-                size_scale_precision = ('999v99', False, 5, 0, 2, True, "V") )
+                size_scale_precision = Picture('999v99', False, 5, 0, 2, True, "V") )
             n1= self.wb.number_display( b'\xf1\xf2\xf3\xf4\xf5', attr1 )
             self.assertEqual( decimal.Decimal('123.45'), n1 )
             attr2= types.SimpleNamespace(
-                size_scale_precision = ('99999V', False, 5, 0, 0, True, "V") )
+                size_scale_precision = Picture('99999V', False, 5, 0, 0, True, "V") )
             n2= self.wb.number_display( b'\xf1\xf2\xf3\xf4\xf5', attr2 )
             self.assertEqual( decimal.Decimal('12345'), n2 )
             attr3= types.SimpleNamespace(
-                size_scale_precision = ('999.99', False, 5, 0, 2, True, ".") )
+                size_scale_precision = Picture('999.99', False, 5, 0, 2, True, ".") )
             n3= self.wb.number_display( b'\xf1\xf2\xf3K\xf4\xf5', attr3 )
             self.assertEqual( decimal.Decimal('123.45'), n3 )
+            
+        def test_should_convert_display_2(self):
+            attr1= types.SimpleNamespace(
+                size_scale_precision = Picture('9', False, 1, 0, 0, True, "V") )
+            n1= self.wb.number_display( b'\xc4', attr1 )
+            self.assertEqual( decimal.Decimal('4'), n1 )
+            n2= self.wb.number_display( b'\xd4', attr1 )
+            self.assertEqual( decimal.Decimal('-4'), n2 )
+
         def test_should_convert_comp3(self):
             attr1= types.SimpleNamespace(
-                size_scale_precision = ('999v99', False, 5, 0, 2, True, "V") )
+                size_scale_precision = Picture('999v99', False, 5, 0, 2, True, "V") )
             n1= self.wb.number_comp3( b'\x12\x34\x98\x76\x5d', attr1 )
             self.assertEqual( decimal.Decimal('-1234987.65'), n1 )
             attr2= types.SimpleNamespace(
-                size_scale_precision = ('99999V', False, 5, 0, 0, True, "V") )
+                size_scale_precision = Picture('99999V', False, 5, 0, 0, True, "V") )
             n2= self.wb.number_comp3( b'\x12\x34\x98\x76\x5d', attr2 )
             self.assertEqual( decimal.Decimal('-123498765'), n2 )
             

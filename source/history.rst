@@ -5,7 +5,7 @@
 History
 ##############
 
-Latest release is 4.4.5.
+Latest release is 4.4.6.
 
 Version 4
 ==========
@@ -116,6 +116,10 @@ Change Details:
     a (less common) multiple schemata.
     
 -   Fix a bug in cobol.RECFM_VB.bdw_iter() function.
+
+-   Fix a bug in handling signed usage display EBCDIC numbers.
+
+-   Fix a bug in handling complex picture clauses with ``9(x)v9(y)`` syntax.
     
 Version 3
 ==============

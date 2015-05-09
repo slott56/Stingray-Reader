@@ -145,9 +145,9 @@ This is the easiest way to read legacy Microsoft ``.XLS`` files.
     import locale
     import decimal
     import datetime
-    import xlrd
     import time
     from collections import Hashable
+    import xlrd
 
 Just to be sure that any locale-based processing will actually
 work, we establish a default locale.

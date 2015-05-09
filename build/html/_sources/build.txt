@@ -211,7 +211,9 @@ Run the Test Script
       from test.main import suite
       from test import Logger
       with Logger( stream=sys.stdout, level=logging.WARN ):
-          unittest.TextTestRunner().run(suite())
+          result= unittest.TextTestRunner().run(suite())
+      if result.failures:
+          sys.exit(result.failures)
 
 The Build Sequence
 ---------------------
