@@ -148,7 +148,7 @@ a usable schema.</li>
 <tt class="file docutils literal"><span class="pre">.csv</span></tt>, <tt class="file docutils literal"><span class="pre">.xls</span></tt>, <tt class="file docutils literal"><span class="pre">.xlsx</span></tt>, <tt class="file docutils literal"><span class="pre">.xlsm</span></tt>, <tt class="file docutils literal"><span class="pre">.ods</span></tt>,
 <tt class="file docutils literal"><span class="pre">.numbers</span></tt> describe the physical format.</p>
 <p>Our <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a>, <a class="reference internal" href="sheet.html#sheet.Sheet" title="sheet.Sheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Sheet</span></tt></a>, and
-<a class="reference internal" href="workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a> handles many physical format details nicely.</p>
+<a class="reference internal" href="workbook/base.html#workbook.base.Workbook" title="workbook.base.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.base.Workbook</span></tt></a> handles many physical format details nicely.</p>
 </div>
 <div class="section" id="data-attribute-mapping-using-a-schema">
 <h2>11.3. Data Attribute Mapping &#8211; Using a Schema<a class="headerlink" href="#data-attribute-mapping-using-a-schema" title="Permalink to this headline">¶</a></h2>
@@ -447,7 +447,7 @@ def process_workbook( source, builder ):
 <ul class="simple">
 <li>All sheets in the workbook have the same schema rules.
 In this example, it&#8217;s an embedded schema in each sheet and the schema is the heading row.
-We could easily use an ExternalSchemaSheet and an external schema.</li>
+We could easily use an <a class="reference internal" href="sheet.html#sheet.ExternalSchemaSheet" title="sheet.ExternalSchemaSheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.ExternalSchemaSheet</span></tt></a> and an external schema.</li>
 <li>A single <a class="reference internal" href="#process_sheet" title="process_sheet"><tt class="xref py py-func docutils literal"><span class="pre">process_sheet()</span></tt></a> function is appropriate for all sheets.</li>
 </ul>
 <p>If a workbook doesn&#8217;t meet these criteria, then a (potentially) more complex

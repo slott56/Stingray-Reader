@@ -27,7 +27,7 @@
 # which validate their input file and have a simple plug-in strategy for 
 # doing any final persistent processing on that file.
 #
-# ..  important:: Simple File Structures
+# ..  note:: Simple File Structures
 #
 #     This validation is designed for simple CSV files with embedded schema.
 #     The assumption is that each sheet within the workbook
@@ -339,7 +339,7 @@ def process_sheet( sheet, builder, persistence ):
 #
 # These are the functions that can be used for live-file unit testing
 # of the application as a whole. The :py:func:`validate` function
-# uses a context manager for validation only. THe :py:func:`process` function
+# uses a context manager for validation only. The :py:func:`process` function
 # uses the other context manager to that actual work is performed.
 #
 # ::
@@ -445,7 +445,7 @@ if __name__ == "__main__":
 #
 #     python3 demo/app.py -d -l 1 sample/\*.csv
 #    
-# This will apply builder with layout ``1`` against all of the :file:`sameple/*.csv` files.
+# This will apply builder with layout ``1`` against all of the :file:`sample/*.csv` files.
 #
 # The output looks like this
 #

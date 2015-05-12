@@ -212,7 +212,7 @@ class UnsupportedError( Exception ):
 # ..  image:: cobol_cell.png
 #     :width: 6in
 #
-# ..    important:: Non-Polymorphic.
+# ..  warning:: Non-Polymorphic.
 #
 #     These classes are profound extensions to the base definitions of :py:mod:`cell`.
 #     They are not polymorphic with the base classes.
@@ -722,7 +722,7 @@ class Group(Allocation):
 # This means that the ``number`` attribute must be derived EITHER from the definition
 # or a data record. For ODO, we need to bind the definition to a record.
 #    
-# ..  important:: Dependencies between DDE and Attribute
+# ..  warning:: Dependencies between DDE and Attribute
 #
 #     An OCCURS is a feature of the DDE.
 #     Data access, however, requires the :py:class:`schema.Attribute`.
@@ -867,49 +867,76 @@ class OccursDependingOnLimit( OccursDependingOn ):
 #
 #     Each entry is defined by the following attributes:
 #
-#     :level:
+#     ..  py:attribute:: level
+#    
 #         COBOL level number 01 to 49, 66 or 88.
-#     :myName:
+#
+#     ..  py:attribute:: myName
+#
 #         COBOL variable name
-#     :occurs:
+#
+#     ..  py:attribute:: occurs
+#
 #         An instance of :py:class:`Occurs`.
 #         the number of occurrences. The default is 1, which we call "format 0".
 #         There are two defined formats: format 1 has a fixed number of occurrences;
 #         format 2 is the Occurs Depending On with a variable number of occurrences.
-#     :picture:
+#
+#     ..  py:attribute:: picture
+#
 #         the exploded picture clause, with ()'s expanded
-#     :initValue:
+#
+#     ..  py:attribute:: initValue
+#
 #         any initial value provided
-#     :allocation:
+#
+#     ..  py:attribute:: allocation
+#
 #         an instance of :py:class:`Allocation` used to compute the offset and total size.
-#     :usage:
+#
+#     ..  py:attribute:: usage
+#
 #         an instance of :py:class:`Usage` to delegate data conversion properly.
 #         The actual conversion is handled by the workbook.
-#     :contains:
+#
+#     ..  py:attribute:: contains
+#
 #         the list of contained fields within a group
-#     :parent:
+#
+#     ..  py:attribute:: parent
+#
 #         A weakref to the immediate parent DDE
-#     :top:
+#
+#     ..  py:attribute:: top
+#
 #         A weakref to the overall record definition DDE.
 #    
 #     The following decorations are applied by functions that traverse the DDE structure.
 #
-#     :sizeScalePrecision:
+#     ..  py:attribute:: sizeScalePrecision
+#
 #         ``Picture`` namedtuple with details derived from parsing the PICTURE clause
-#     :size:
+#
+#     ..  py:attribute:: size
+#    
 #         the size of an individual occurrence
 #
 #     The following features may have to be computed lazily if there's an Occurs
 #     Depending On. Otherwise they can be computed eagerly.
 #
-#     :variably_located:
+#     ..  py:attribute:: variably_located
+#
 #         Variably Located if any this element or any child has Occurs Depending On.
 #         Otherwise (no ODO) the DDE is Statically Located.
 #         Actually, only element **after** the ODO element are variably located. But it's simpler
 #         to treat the whole record as variable.
-#     :offset:
+#
+#     ..  py:attribute:: offset
+#
 #         offset to this field from start of record.
-#     :totalSize:
+#
+#     ..  py:attribute:: totalSize
+#
 #         overall size of this item, including all occurrences.
 #
 #     Additionally, this item -- in a way -- breaks the dependencies between
@@ -917,7 +944,8 @@ class OccursDependingOnLimit( OccursDependingOn ):
 #     to depend on a DDE, but the reverse isn't proper. However, we DDE
 #     referring to an attribute anyway.
 #
-#     :attribute:
+#     ..  py:attribute:: attribute
+#
 #         weakref to the :py:class:`schema.Attribute` built from this DDE.
 #    
 # ::
@@ -965,7 +993,7 @@ class DDE:
         rc= self.allocation.source()
         return "{:<2s} {:<20s}{:s}{:s}{:s}{:s}.".format( self.level, self.name, rc, oc, pc, uc )
 
-# Construction occurs in three general steps: 
+# Construction occurs in these general steps: 
 #
 # (1) the DDE is created,
 #
@@ -1195,7 +1223,7 @@ def setDimensionality( top ):
 #
 # ..  todo:: refactor setSizeAndOffset()
 #
-#     Refactor setSizeAndOffset() into the :py:class:`Allocation` class methods 
+#     Refactor :py:func:`setSizeAndOffset` into the :py:class:`Allocation` class methods 
 #     to remove isinstance() nonsense.
 #
 # ..  py:function:: setSizeAndOffset( aDDE, aRow=None, base=0 )

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8.9. Fixed-Format Workbook &mdash; The Stingray Schema-Based File Reader</title>
+    <title>8.4.9. Fixed-Format (COBOL-style) Workbook &mdash; The Stingray Schema-Based File Reader</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
     <link rel="up" title="8. Workbook Package – Uniform Wrappers for Workbooks" href="index.html" />
-    <link rel="next" title="9. The iWork ‘13 Numbers Modules" href="../iwork13.html" />
-    <link rel="prev" title="8.8. Numbers 13 Workbook" href="numbers_13.html" /> 
+    <link rel="next" title="9. The “Other” Modules: snappy and protobuf" href="../iwork13.html" />
+    <link rel="prev" title="8.4.8. Apple iWorks Numbers ‘13 Workbook" href="numbers_13.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,10 +39,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../iwork13.html" title="9. The iWork ‘13 Numbers Modules"
+          <a href="../iwork13.html" title="9. The “Other” Modules: snappy and protobuf"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="numbers_13.html" title="8.8. Numbers 13 Workbook"
+          <a href="numbers_13.html" title="8.4.8. Apple iWorks Numbers ‘13 Workbook"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a> &raquo;</li> 
@@ -54,8 +54,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="fixed-format-workbook">
-<span id="workbook-fixed"></span><h1>8.9. Fixed-Format Workbook<a class="headerlink" href="#fixed-format-workbook" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="fixed-format-cobol-style-workbook">
+<span id="workbook-fixed"></span><h1>8.4.9. Fixed-Format (COBOL-style) Workbook<a class="headerlink" href="#fixed-format-cobol-style-workbook" title="Permalink to this headline">¶</a></h1>
 <p>Like a CSV workbook, this is a kind of degenerate case.  We don&#8217;t have
 a lot of sheets, or a lot of data types.</p>
 <p>A subclass might do EBCDIC conversion and possibly even decode
@@ -75,6 +75,14 @@ required as the schema definition. See <a class="reference internal" href="../co
 <dd><p>Extract sheets, rows and cells from a fixed-format file.</p>
 <p>The schema must have size and offset information to locate the fields.</p>
 <p>There&#8217;s only a single sheet and it matches the filename.</p>
+<p>In addition to the superclass attributes, some additional unique
+attributes are introduced here.</p>
+<dl class="attribute">
+<dt id="workbook.Fixed_Workbook.wb">
+<tt class="descname">wb</tt><a class="headerlink" href="#workbook.Fixed_Workbook.wb" title="Permalink to this definition">¶</a></dt>
+<dd><p>The underlying file.</p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Fixed_Workbook</span><span class="p">(</span> <span class="n">Workbook</span> <span class="p">):</span>
@@ -164,10 +172,10 @@ Or <a class="reference internal" href="../cobol_init.html#cobol.COBOL_File.row_g
             </a></p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="numbers_13.html"
-                        title="previous chapter">8.8. Numbers 13 Workbook</a></p>
+                        title="previous chapter">8.4.8. Apple iWorks Numbers &#8216;13 Workbook</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../iwork13.html"
-                        title="next chapter">9. The iWork &#8216;13 Numbers Modules</a></p>
+                        title="next chapter">9. The &#8220;Other&#8221; Modules: snappy and protobuf</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workbook/fixed.txt"
@@ -200,10 +208,10 @@ Or <a class="reference internal" href="../cobol_init.html#cobol.COBOL_File.row_g
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../iwork13.html" title="9. The iWork ‘13 Numbers Modules"
+          <a href="../iwork13.html" title="9. The “Other” Modules: snappy and protobuf"
              >next</a> |</li>
         <li class="right" >
-          <a href="numbers_13.html" title="8.8. Numbers 13 Workbook"
+          <a href="numbers_13.html" title="8.4.8. Apple iWorks Numbers ‘13 Workbook"
              >previous</a> |</li>
         <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
           <li><a href="index.html" >8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a> &raquo;</li> 

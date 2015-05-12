@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8.3. CSV Workbook &mdash; The Stingray Schema-Based File Reader</title>
+    <title>8.4.3. CSV Workbook &mdash; The Stingray Schema-Based File Reader</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
     <link rel="up" title="8. Workbook Package – Uniform Wrappers for Workbooks" href="index.html" />
-    <link rel="next" title="8.4. XLS Workbook" href="xls.html" />
-    <link rel="prev" title="8.2. Workbook Base Definition" href="base.html" /> 
+    <link rel="next" title="8.4.4. XLS Workbook" href="xls.html" />
+    <link rel="prev" title="8.4.2. Workbook Base Definition" href="base.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,10 +39,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="xls.html" title="8.4. XLS Workbook"
+          <a href="xls.html" title="8.4.4. XLS Workbook"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="base.html" title="8.2. Workbook Base Definition"
+          <a href="base.html" title="8.4.2. Workbook Base Definition"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a> &raquo;</li> 
@@ -55,7 +55,7 @@
           <div class="body">
             
   <div class="section" id="csv-workbook">
-<span id="workbook-csv"></span><h1>8.3. CSV Workbook<a class="headerlink" href="#csv-workbook" title="Permalink to this headline">¶</a></h1>
+<span id="workbook-csv"></span><h1>8.4.3. CSV Workbook<a class="headerlink" href="#csv-workbook" title="Permalink to this headline">¶</a></h1>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pprint</span>
@@ -65,14 +65,22 @@
 <span class="kn">import</span> <span class="nn">stingray.cell</span>
 </pre></div>
 </div>
-<span class="target" id="module-workbook"></span><dl class="class">
-<dt id="workbook.CSV_Workbook">
-<em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">CSV_Workbook</tt><a class="headerlink" href="#workbook.CSV_Workbook" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-workbook.csv"></span><dl class="class">
+<dt id="workbook.csv.CSV_Workbook">
+<em class="property">class </em><tt class="descclassname">workbook.csv.</tt><tt class="descname">CSV_Workbook</tt><a class="headerlink" href="#workbook.csv.CSV_Workbook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract sheets, rows and cells from a CSV file.</p>
 <p>A wrapper for <tt class="xref py py-func docutils literal"><span class="pre">csv.reader()</span></tt>.  This will create proper
 <a class="reference internal" href="../cell.html#cell.TextCell" title="cell.TextCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.TextCell</span></tt></a> instances instead of the default string values
 that <tt class="xref py py-mod docutils literal"><span class="pre">csv</span></tt> normally creates.</p>
 <p>There&#8217;s only a single sheet and it matches the filename.</p>
+<p>In addition to the superclass attributes, an additional unique
+attribute is introduced here.</p>
+<dl class="attribute">
+<dt id="workbook.csv.CSV_Workbook.rdr">
+<tt class="descname">rdr</tt><a class="headerlink" href="#workbook.csv.CSV_Workbook.rdr" title="Permalink to this definition">¶</a></dt>
+<dd><p>The csv reader for this file.</p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">CSV_Workbook</span><span class="p">(</span> <span class="n">Workbook</span> <span class="p">):</span>
@@ -98,10 +106,10 @@ that <tt class="xref py py-mod docutils literal"><span class="pre">csv</span></t
 <p>We can build an eager <a class="reference internal" href="../sheet.html#sheet.Row" title="sheet.Row"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Row</span></tt></a> or a <a class="reference internal" href="../sheet.html#sheet.LazyRow" title="sheet.LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">sheet.LazyRow</span></tt></a> from
 the available data.
 The eager Row includes the conversions.  The <a class="reference internal" href="../sheet.html#sheet.LazyRow" title="sheet.LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">sheet.LazyRow</span></tt></a> defers
-the conversions until the callback to <a class="reference internal" href="base.html#workbook.Workbook.row_get" title="workbook.Workbook.row_get"><tt class="xref py py-meth docutils literal"><span class="pre">workbook.Workbook.row_get()</span></tt></a>.</p>
+the conversions until the callback to <a class="reference internal" href="base.html#workbook.base.Workbook.row_get" title="workbook.base.Workbook.row_get"><tt class="xref py py-meth docutils literal"><span class="pre">workbook.base.Workbook.row_get()</span></tt></a>.</p>
 <dl class="method">
-<dt id="workbook.CSV_Workbook.rows_of">
-<tt class="descclassname">CSV_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.CSV_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.csv.CSV_Workbook.rows_of">
+<tt class="descclassname">CSV_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.csv.CSV_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterator through all rows. The sheet is ignored.</p>
 </dd></dl>
 
@@ -116,8 +124,8 @@ the conversions until the callback to <a class="reference internal" href="base.h
 </pre></div>
 </div>
 <dl class="method">
-<dt id="workbook.CSV_Workbook.row_get">
-<tt class="descclassname">CSV_Workbook.</tt><tt class="descname">row_get</tt><big>(</big><em>row</em>, <em>attribute</em><big>)</big><a class="headerlink" href="#workbook.CSV_Workbook.row_get" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.csv.CSV_Workbook.row_get">
+<tt class="descclassname">CSV_Workbook.</tt><tt class="descname">row_get</tt><big>(</big><em>row</em>, <em>attribute</em><big>)</big><a class="headerlink" href="#workbook.csv.CSV_Workbook.row_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concrete implementation to get an attribute&#8217;s value from a given row.</p>
 </dd></dl>
 
@@ -141,10 +149,10 @@ is easy.</p>
             </a></p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="base.html"
-                        title="previous chapter">8.2. Workbook Base Definition</a></p>
+                        title="previous chapter">8.4.2. Workbook Base Definition</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="xls.html"
-                        title="next chapter">8.4. XLS Workbook</a></p>
+                        title="next chapter">8.4.4. XLS Workbook</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workbook/csv.txt"
@@ -177,10 +185,10 @@ is easy.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="xls.html" title="8.4. XLS Workbook"
+          <a href="xls.html" title="8.4.4. XLS Workbook"
              >next</a> |</li>
         <li class="right" >
-          <a href="base.html" title="8.2. Workbook Base Definition"
+          <a href="base.html" title="8.4.2. Workbook Base Definition"
              >previous</a> |</li>
         <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
           <li><a href="index.html" >8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a> &raquo;</li> 

@@ -70,8 +70,10 @@ See <a class="reference internal" href="#cobol-impl"><em>COBOL Implementation</e
 <p>Most of the <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> subclasses aren&#8217;t really appropriate for
 data coming from COBOL applications.
 Indeed, only <a class="reference internal" href="cell.html#cell.TextCell" title="cell.TextCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.TextCell</span></tt></a> is really appropriate.</p>
+<p>Given that all raw data is bytes &#8211; often in EBCDIC &#8211; how do we understand what those
+bytes represent? For this, we&#8217;ll need a more complex schema.</p>
 </li>
-<li><p class="first">How do we represent the schema?</p>
+<li><p class="first">How do we represent this more complex schema?</p>
 <p>The schema more complex than the
 flat-file schema expected by <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>.</p>
 <ul class="simple">
@@ -85,11 +87,15 @@ These are defined by Occurs Depending On clauses.</li>
 The USAGE information indicates the encoding of the data which is
 expected to be in the field, the actual data may not match the definition.</li>
 </ul>
+<p>We&#8217;ll need to load this more complex schema.</p>
 </li>
 <li><p class="first">How do we build the schema?</p>
 <p>The schema is encoded in COBOL.  That is the subject of <a class="reference internal" href="cobol_loader.html#cobol-loader"><em>COBOL Loader Module &#8211; Parse COBOL Source to Load a Schema</em></a>.</p>
 </li>
 </ul>
+<p>Once we can load a schema, we can then use the schema to determine what a sequence
+of bytes represent. Once we know what the bytes represents, we can work with COBOL
+data.</p>
 <div class="section" id="requirements">
 <h2>10.1. Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>The essential COBOL use case is to create usable Python objects from the source file data.</p>
@@ -99,18 +105,24 @@ expected to be in the field, the actual data may not match the definition.</li>
 <li>Build Python objects from the Cells found in the row.
 Building Python objects is best done with a &#8220;builder&#8221; function,
 as shown above in <a class="reference internal" href="schema.html#schema"><em>Schema Package &#8211; Schema and Attribute Definitions</em></a>, <a class="reference internal" href="developer.html#developer"><em>The Stingray Developer&#8217;s Guide</em></a>, and <a class="reference internal" href="demo/index.html#demo"><em>Stingray Demo Applications</em></a>.</li>
+</ol>
+<p>This isn&#8217;t all. In order to locate the rows, we may have to understand overall
+file organization. This includes the following feature:</p>
+<ul class="simple">
 <li>Split the file into sections for parallel processing.
 The GNU/Linux <tt class="docutils literal"><span class="pre">split</span></tt> command won&#8217;t work with EBCDIC files, so
 we have to use the low-level RECFM definitions to parse and split
 a file.</li>
-</ol>
+</ul>
 <div class="section" id="high-level-processing">
 <h3>10.1.1. High-Level Processing<a class="headerlink" href="#high-level-processing" title="Permalink to this headline">¶</a></h3>
 <p>A <a class="reference internal" href="sheet.html#sheet.Row" title="sheet.Row"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Row</span></tt></a> appears to be a sequential collection of
 <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> instances.  The schema is
-used for <strong>lazy</strong>  creation of <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> instances.
-Cells may have bad data, and the use of <cite>REDEFINES</cite> means that
-a row cannot be built eagerly.</p>
+used for <strong>lazy</strong>  creation of <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> instances.</p>
+<p>A candidate cells may be based on bytes that aren&#8217;t valid for the
+cell&#8217;s detailed description. This is common when there is a <cite>REDEFINES</cite>.
+This means that a row cannot be built eagerly.</p>
+<p>Here&#8217;s our example code. This is generally how we want to proceed:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;sample/zipcty.cob&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cobol</span><span class="p">:</span>
     <span class="n">schema</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">COBOLSchemaLoader</span><span class="p">(</span> <span class="n">cobol</span> <span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
     <span class="c">#pprint.pprint( schema )</span>
@@ -121,8 +133,12 @@ a row cannot be built eagerly.</p>
         <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span> <span class="n">counts</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>The <tt class="xref py py-class docutils literal"><span class="pre">Character_File</span></tt> class is for files in all character (no packed decimal)
-encoded in ASCII.
+<p>We want to load a schema. Then we want to open and process a file based on this
+schema. This parallels an <a class="reference internal" href="sheet.html#sheet.ExternalSchemaSheet" title="sheet.ExternalSchemaSheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.ExternalSchemaSheet</span></tt></a>, with an
+<a class="reference internal" href="schema_loader.html#schema.loader.ExternalSchemaLoader" title="schema.loader.ExternalSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.ExternalSchemaLoader</span></tt></a>.</p>
+<p>The <a class="reference internal" href="cobol_init.html#cobol.Character_File" title="cobol.Character_File"><tt class="xref py py-class docutils literal"><span class="pre">cobol.Character_File</span></tt></a> class is for files in which all fields
+are  all character encoded in ASCII.
+No packed decimal. No EBCDIC.
 These kinds of files are expected to have proper <tt class="docutils literal"><span class="pre">'\n'</span></tt> characters at the end of each record.</p>
 <p>For an EBCDIC file, use the <a class="reference internal" href="cobol_init.html#cobol.EBCDIC_File" title="cobol.EBCDIC_File"><tt class="xref py py-class docutils literal"><span class="pre">cobol.EBCDIC_File</span></tt></a> class. These files
 lack a specific record delimiter character. If the &#8220;RECFM&#8221; (Record Format) is
@@ -229,9 +245,7 @@ a schema for this record.</p>
 </li>
 <li><p class="first">We have the <tt class="docutils literal"><span class="pre">ABC-SPECIFIC-RECORD</span></tt> and the <tt class="docutils literal"><span class="pre">DEF-ANOTHER-RECORD</span></tt>
 bound to a subset of bytes within the source record.</p>
-</li>
-</ul>
-<p>The second case requires Python code which vaguely parallels the COBOL
+<p>This case requires Python code which vaguely parallels the COBOL
 code.
 In effect, we&#8217;re creating a new <a class="reference internal" href="cobol_init.html#cobol.ODO_LazyRow" title="cobol.ODO_LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">cobol.ODO_LazyRow</span></tt></a> object from
 <tt class="docutils literal"><span class="pre">buffer=</span> <span class="pre">row.cell(</span> <span class="pre">schema_dict['GENERIC-FIELD']</span> <span class="pre">).raw</span></tt> and the
@@ -242,6 +256,8 @@ proper schema for that variant.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
+</li>
+</ul>
 <p>This is implemented as the <a class="reference internal" href="cobol_init.html#cobol.COBOL_File.subrow" title="cobol.COBOL_File.subrow"><tt class="xref py py-meth docutils literal"><span class="pre">cobol.COBOL_File.subrow()</span></tt></a> method.
 It allows us to work with a single field (<tt class="docutils literal"><span class="pre">schema_dict['GENERIC-FIELD']</span></tt>)
 as if it was a row with a given schema (<tt class="docutils literal"><span class="pre">subschema</span></tt>).</p>

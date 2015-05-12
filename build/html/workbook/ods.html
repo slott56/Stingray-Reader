@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8.6. ODS Workbook &mdash; The Stingray Schema-Based File Reader</title>
+    <title>8.4.6. ODS Workbook &mdash; The Stingray Schema-Based File Reader</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
     <link rel="up" title="8. Workbook Package – Uniform Wrappers for Workbooks" href="index.html" />
-    <link rel="next" title="8.7. Numbers 09 Workbook" href="numbers_09.html" />
-    <link rel="prev" title="8.5. XLSX or XLSM Workbook" href="xlsx.html" /> 
+    <link rel="next" title="8.4.7. Numbers 09 Workbook" href="numbers_09.html" />
+    <link rel="prev" title="8.4.5. XLSX or XLSM Workbook" href="xlsx.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,10 +39,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="numbers_09.html" title="8.7. Numbers 09 Workbook"
+          <a href="numbers_09.html" title="8.4.7. Numbers 09 Workbook"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="xlsx.html" title="8.5. XLSX or XLSM Workbook"
+          <a href="xlsx.html" title="8.4.5. XLSX or XLSM Workbook"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a> &raquo;</li> 
@@ -55,7 +55,7 @@
           <div class="body">
             
   <div class="section" id="ods-workbook">
-<span id="workbook-ods"></span><h1>8.6. ODS Workbook<a class="headerlink" href="#ods-workbook" title="Permalink to this headline">¶</a></h1>
+<span id="workbook-ods"></span><h1>8.4.6. ODS Workbook<a class="headerlink" href="#ods-workbook" title="Permalink to this headline">¶</a></h1>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pprint</span>
 <span class="kn">import</span> <span class="nn">xml.etree.cElementTree</span> <span class="kn">as</span> <span class="nn">dom</span>
@@ -67,12 +67,26 @@
 <span class="kn">import</span> <span class="nn">stingray.cell</span>
 </pre></div>
 </div>
-<span class="target" id="module-workbook"></span><p>We should use <tt class="docutils literal"><span class="pre">iterparse</span></tt> rather than simply parsing the entire XML document.
+<span class="target" id="module-workbook.ods"></span><p>We should use <tt class="docutils literal"><span class="pre">iterparse</span></tt> rather than simply parsing the entire XML document.
 If the document is large, then we can&#8217;t hold it all in memory.</p>
 <dl class="class">
-<dt id="workbook.ODS_Workbook">
-<em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">ODS_Workbook</tt><a class="headerlink" href="#workbook.ODS_Workbook" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.ods.ODS_Workbook">
+<em class="property">class </em><tt class="descclassname">workbook.ods.</tt><tt class="descname">ODS_Workbook</tt><a class="headerlink" href="#workbook.ods.ODS_Workbook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract sheets, rows and cells from a OOO ODS format file.</p>
+<p>In addition to the superclass attributes, some additional unique
+attributes are introduced here.</p>
+<dl class="attribute">
+<dt id="workbook.ods.ODS_Workbook.zip_archive">
+<tt class="descname">zip_archive</tt><a class="headerlink" href="#workbook.ods.ODS_Workbook.zip_archive" title="Permalink to this definition">¶</a></dt>
+<dd><p>A zip archive for this file.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="workbook.ods.ODS_Workbook.tables">
+<tt class="descname">tables</tt><a class="headerlink" href="#workbook.ods.ODS_Workbook.tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mapping that provides sheet names.</p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ODS_Workbook</span><span class="p">(</span> <span class="n">Workbook</span> <span class="p">):</span>
@@ -119,8 +133,8 @@ from the  <tt class="samp docutils literal"><span class="pre">&lt;table</span> <
 would look for start of <tt class="docutils literal"><span class="pre">table</span></tt> tags and then get
 the name attribute from that tag.</p>
 <dl class="method">
-<dt id="workbook.ODS_Workbook.sheets">
-<tt class="descclassname">ODS_Workbook.</tt><tt class="descname">sheets</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.ODS_Workbook.sheets" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.ods.ODS_Workbook.sheets">
+<tt class="descclassname">ODS_Workbook.</tt><tt class="descname">sheets</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.ods.ODS_Workbook.sheets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the list of sheets for this workbook.</p>
 </dd></dl>
 
@@ -130,7 +144,7 @@ the name attribute from that tag.</p>
 </div>
 <p>We can build an eager <a class="reference internal" href="../sheet.html#sheet.Row" title="sheet.Row"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Row</span></tt></a> or a <a class="reference internal" href="../sheet.html#sheet.LazyRow" title="sheet.LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">sheet.LazyRow</span></tt></a> from
 the available data.  The eager Row includes the conversions.
-The LazyRow defers the conversions to <a class="reference internal" href="#workbook.ODS_Workbook.row_get" title="workbook.ODS_Workbook.row_get"><tt class="xref py py-meth docutils literal"><span class="pre">ODS_Workbook.row_get()</span></tt></a>.</p>
+The LazyRow defers the conversions to <a class="reference internal" href="#workbook.ods.ODS_Workbook.row_get" title="workbook.ods.ODS_Workbook.row_get"><tt class="xref py py-meth docutils literal"><span class="pre">ODS_Workbook.row_get()</span></tt></a>.</p>
 <p>In ODS documents, the cell&#8217;s value can be carried in the value attribute or
 it can be a mixed content value of the element.  There are three cases.</p>
 <ul class="simple">
@@ -139,8 +153,8 @@ it can be a mixed content value of the element.  There are three cases.</p>
 <li><tt class="samp docutils literal"><span class="pre">&lt;table-cell</span> <span class="pre">value-type=&quot;</span><em><span class="pre">type</span></em><span class="pre">&quot;&gt;</span><em><span class="pre">value</span></em><span class="pre">&lt;/table-cell&gt;</span></tt></li>
 </ul>
 <dl class="method">
-<dt id="workbook.ODS_Workbook.rows_of">
-<tt class="descclassname">ODS_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.ODS_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.ods.ODS_Workbook.rows_of">
+<tt class="descclassname">ODS_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.ods.ODS_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate through rows of the given sheet.</p>
 </dd></dl>
 
@@ -155,8 +169,8 @@ it can be a mixed content value of the element.  There are three cases.</p>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="workbook.ODS_Workbook.row_get">
-<tt class="descclassname">ODS_Workbook.</tt><tt class="descname">row_get</tt><big>(</big><em>row</em>, <em>attribute</em><big>)</big><a class="headerlink" href="#workbook.ODS_Workbook.row_get" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.ods.ODS_Workbook.row_get">
+<tt class="descclassname">ODS_Workbook.</tt><tt class="descname">row_get</tt><big>(</big><em>row</em>, <em>attribute</em><big>)</big><a class="headerlink" href="#workbook.ods.ODS_Workbook.row_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Low-level get of a particular attribute from the given row.</p>
 </dd></dl>
 
@@ -242,10 +256,10 @@ For strings, start accumulating string values.</li>
             </a></p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="xlsx.html"
-                        title="previous chapter">8.5. XLSX or XLSM Workbook</a></p>
+                        title="previous chapter">8.4.5. XLSX or XLSM Workbook</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="numbers_09.html"
-                        title="next chapter">8.7. Numbers 09 Workbook</a></p>
+                        title="next chapter">8.4.7. Numbers 09 Workbook</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workbook/ods.txt"
@@ -278,10 +292,10 @@ For strings, start accumulating string values.</li>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="numbers_09.html" title="8.7. Numbers 09 Workbook"
+          <a href="numbers_09.html" title="8.4.7. Numbers 09 Workbook"
              >next</a> |</li>
         <li class="right" >
-          <a href="xlsx.html" title="8.5. XLSX or XLSM Workbook"
+          <a href="xlsx.html" title="8.4.5. XLSX or XLSM Workbook"
              >previous</a> |</li>
         <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
           <li><a href="index.html" >8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a> &raquo;</li> 

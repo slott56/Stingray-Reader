@@ -181,26 +181,55 @@ A separate subclass can handle this.</p>
 <h2>14.8.4. Picture Parsing<a class="headerlink" href="#picture-parsing" title="Permalink to this headline">¶</a></h2>
 <p>A picture clause has it&#8217;s own &#8220;sub-language&#8221; for describing an elementary
 piece of data.  From the picture clause, we extract a number of features.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">final:</th><td class="field-body">final picture with ()&#8217;s expanded.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">alpha:</th><td class="field-body">boolean alpha = True, numeric = False.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">length:</th><td class="field-body">len(final)</td>
-</tr>
-<tr class="field-even field"><th class="field-name">scale:</th><td class="field-body">count of &#8220;P&#8221; positions</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">precision:</th><td class="field-body">digits to the right of the decimal point</td>
-</tr>
-<tr class="field-even field"><th class="field-name">signed:</th><td class="field-body">boolean</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">decimal:</th><td class="field-body">&#8221;.&#8221; or &#8220;V&#8221; or None</td>
-</tr>
-</tbody>
-</table>
+<dl class="attribute">
+<dt id="final">
+<tt class="descname">final</tt><a class="headerlink" href="#final" title="Permalink to this definition">¶</a></dt>
+<dt>
+<tt class="descname">final picture with ()'s expanded.</tt></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="alpha">
+<tt class="descname">alpha</tt><a class="headerlink" href="#alpha" title="Permalink to this definition">¶</a></dt>
+<dt>
+<tt class="descname">boolean alpha = True, numeric = False.</tt></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="length">
+<tt class="descname">length</tt><a class="headerlink" href="#length" title="Permalink to this definition">¶</a></dt>
+<dt id="len">
+<tt class="descname">len</tt><big>(</big><em>final</em><big>)</big><a class="headerlink" href="#len" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="scale">
+<tt class="descname">scale</tt><a class="headerlink" href="#scale" title="Permalink to this definition">¶</a></dt>
+<dt>
+<tt class="descname">count of &quot;P&quot; positions</tt></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="precision">
+<tt class="descname">precision</tt><a class="headerlink" href="#precision" title="Permalink to this definition">¶</a></dt>
+<dt>
+<tt class="descname">digits to the right of the decimal point</tt></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="signed">
+<tt class="descname">signed</tt><a class="headerlink" href="#signed" title="Permalink to this definition">¶</a></dt>
+<dt id="boolean">
+<tt class="descname">boolean</tt><a class="headerlink" href="#boolean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="decimal">
+<tt class="descname">decimal</tt><a class="headerlink" href="#decimal" title="Permalink to this definition">¶</a></dt>
+<dt>
+<tt class="descname">&quot;.&quot; or &quot;V&quot; or None</tt></dt>
+<dd></dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestPictureParser</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
     <span class="k">def</span> <span class="nf">test_should_expand</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
         <span class="n">pic</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">picture_parser</span><span class="p">(</span> <span class="s">&quot;X(7)&quot;</span> <span class="p">)</span>

@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
-    <link rel="next" title="8.1. Workbook __init__ Module – Wrapper for all implementations" href="init.html" />
+    <link rel="next" title="8.4.1. Workbook __init__ Module – Wrapper for all implementations" href="init.html" />
     <link rel="prev" title="7. Schema Loader Module – Load Embedded or External Schema" href="../schema_loader.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="init.html" title="8.1. Workbook __init__ Module – Wrapper for all implementations"
+          <a href="init.html" title="8.4.1. Workbook __init__ Module – Wrapper for all implementations"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../schema_loader.html" title="7. Schema Loader Module – Load Embedded or External Schema"
@@ -52,22 +52,154 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="workbook-package-uniform-wrappers-for-workbooks">
-<span id="workbook"></span><h1>8. Workbook Package &#8211; Uniform Wrappers for Workbooks<a class="headerlink" href="#workbook-package-uniform-wrappers-for-workbooks" title="Permalink to this headline">¶</a></h1>
-<p>This package includes a base definition module plus a module for
-each physical format.</p>
+  <div class="section" id="module-workbook">
+<span id="workbook-package-uniform-wrappers-for-workbooks"></span><span id="workbook"></span><h1>8. Workbook Package &#8211; Uniform Wrappers for Workbooks<a class="headerlink" href="#module-workbook" title="Permalink to this headline">¶</a></h1>
+<p>A <em>Workbook</em> is a collection of <em>Sheets</em>.  It&#8217;s also a set of decoding
+rules required to translate bytes (or XML text) into meaningful <em>Cell</em> instances.</p>
+<p>Access to cells of a Workbook requires two levels of schema:</p>
+<ul class="simple">
+<li><em>Physical Format</em>.  The format required to locate cells.
+CSV, XLS, XLSX, ODS, are all well-known physical formats and the physical
+schema is implied by the file type.
+Fixed format and COBOL format, are not well-known, and a physical
+schema is required.</li>
+<li><em>Logical Layout</em>. The columns or data elements present in the file.
+This may depend on an embedded schema in the first rows of a Sheet.
+Or it may depend on an external schema defined in another Workbook.</li>
+</ul>
+<p>This package addresses the physical format issues. It provides a common
+abstraction over a number of forms of workbook data.  It makes the physical
+format largely transparent to an application.</p>
+<p>It&#8217;s difficult to make the logical layout transparent.
+See <a class="reference internal" href="../developer.html#developer"><em>The Stingray Developer&#8217;s Guide</em></a> for guidelines on developing applications that
+are flexible with respect to logical layout.</p>
+<p>In a way, a Workbook is a factory for <a class="reference internal" href="../sheet.html#sheet.Sheet" title="sheet.Sheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Sheet</span></tt></a> and
+<a class="reference internal" href="../sheet.html#sheet.Row" title="sheet.Row"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Row</span></tt></a> objects.</p>
+<p>More interestingly, a Workbook is a factory for <a class="reference internal" href="../cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> instances.
+This is because the decoding of bytes to create a cell is entirely a feature
+of the Workbook.</p>
+<div class="section" id="use-case">
+<h2>8.1. Use Case<a class="headerlink" href="#use-case" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference internal" href="../introduction.html#intro"><em>Introduction</em></a> for our physical-format independence use case.
+A <a class="reference internal" href="init.html#workbook.open_workbook" title="workbook.open_workbook"><tt class="xref py py-func docutils literal"><span class="pre">workbook.open_workbook()</span></tt></a> function allows a program to be
+independent of physical format.</p>
+<pre class="literal-block">
+def process_workbook_file( input ):
+    with workbook.open_workbook( input ) as source:
+        process_workbook( source );
+
+if __name__ == &quot;__main__&quot;:
+    <em>application startup</em>
+    for input in args.file:
+        process_workbook_file( input )
+</pre>
+<p>This does not address logical layout issues, however, which are handled by a
+<a class="reference internal" href="../schema.html#schema.Schema" title="schema.Schema"><tt class="xref py py-class docutils literal"><span class="pre">schema.Schema</span></tt></a>.  We might load an embedded schema or an external schema.</p>
+<pre class="literal-block">
+def process_workbook( source ):
+    for name in source.sheets():
+        sheet= source.sheet( name,
+            sheet.EmbeddedSchemaSheet,
+            loader_class=schema.loader.HeadingRowSchemaLoader )
+        counts= process_sheet( sheet )
+        pprint.pprint( counts )
+
+def process_sheet( sheet ):
+    &quot;&quot;&quot;Separated to facilitate unit testing&quot;&quot;&quot;
+    counts= defaultdict( int )
+    for rows in sheet.rows():
+        <em>process cells of this row</em>
+    return counts
+</pre>
+</div>
+<div class="section" id="physical-formats">
+<h2>8.2. Physical Formats<a class="headerlink" href="#physical-formats" title="Permalink to this headline">¶</a></h2>
+<p>Much data is transferred via formats
+tied to desktop spreadsheet software or
+informed by legacy mainframe design patterns.
+Data that comes from spreadsheet applications
+will have all the rich variety of desktop tools.</p>
+<ul>
+<li><p class="first"><a class="reference internal" href="csv.html#workbook-csv"><em>CSV Workbook</em></a>. This includes the &#8220;quote-comma&#8221; dialects as used by spreadsheets
+as well as &#8220;tab&#8221; or &#8220;pipe&#8221; dialects favored by Linux applications.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="ods.html#workbook-ods"><em>ODS Workbook</em></a>. This is a zipped archive of XML documents from which data can be extracted.
+This is an ECMA standard.  This is the Open Office Spreadsheet structure.
+Most of the relevant data is in a content.xml member.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="xlsx.html#workbook-xlsx"><em>XLSX or XLSM Workbook</em></a>.
+This is a zipped archive of XML documents from which data can be extracted.
+This is an ECMA standard.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="xls.html#workbook-xls"><em>XLS Workbook</em></a>.
+This is the proprietary &#8220;Horrible Spreadsheet Format&#8221; (HSSF) as used by
+Microsoft products.
+We require <a class="reference external" href="http://www.lexicon.net/sjmachin/xlrd.htm">xlrd</a>
+to extract data from these files.</p>
+<p>If we can&#8217;t import the <tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt> module, an error will be raised only when trying
+to open one of these files.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="numbers_09.html#workbook-number09"><em>Apple iWorks Numbers &#8216;09 Workbook</em></a>.
+The iWorks &#8216;09 physical format is a simple ZipFile with a big XML document.
+In many respects it&#8217;s similar to XLSX format.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="numbers_13.html#workbook-number13"><em>Apple iWorks Numbers &#8216;13 Workbook</em></a>.
+iWorks &#8216;13 physical format is the &#8220;bundle&#8221; or &#8220;package&#8221; format; the document
+is a directory, which contains a zip archive of .IWA files. These use snappy
+compression and protobuf object representation. The <a class="reference internal" href="../iwork13.html#other-modules"><em>The &#8220;Other&#8221; Modules: snappy and protobuf</em></a>
+are separate from this workbook module.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="fixed.html#workbook-fixed"><em>Fixed-Format (COBOL-style) Workbook</em></a>.
+Yes, these files still exist.  For
+these files, schema information is <em>required</em> to determine where
+the fields are, since there&#8217;s no puctuation. We can convert EBCDIC bytes or work
+in Unicode-compatible text. ASCII encoding is usually handled trivially by
+Python&#8217;s <tt class="docutils literal"><span class="pre">io</span></tt> module.</p>
+</li>
+<li><p class="first">JSON, YAML, XML. For example, an Omni Outliner outlines with a normalized format.
+This is a possible future direction.</p>
+</li>
+</ul>
+<p>We&#8217;ll call <tt class="docutils literal"><span class="pre">CSV</span></tt>, <tt class="docutils literal"><span class="pre">XLS</span></tt>, <tt class="docutils literal"><span class="pre">XLSX</span></tt> / <tt class="docutils literal"><span class="pre">XLSM</span></tt> and <tt class="docutils literal"><span class="pre">ODS</span></tt>
+the &#8220;well-known physical formats.&#8221;
+They don&#8217;t require physical schema information in order
+to identify the data items.</p>
+<p>The Fixed and COBOL format files, on the other hand, require physical schema information.
+We&#8217;ll look at COBOL in depth, in <a class="reference internal" href="../cobol.html#cobol"><em>The COBOL Package</em></a>.</p>
+</div>
+<div class="section" id="model">
+<h2>8.3. Model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre>http://yuml.me/diagram/scruffy;/class/
+#workbook,
+[Workbook]^[CSV_Workbook],
+[Workbook]^[XLS_Workbook],
+[Workbook]^[XLSX_Workbook],
+[Workbook]^[Fixed_Workbook],
+[Workbook]^[ODS_Workbook],
+[Workbook]&lt;&gt;-[Sheet],
+[Sheet]&lt;&gt;-[Row],
+[Workbook]-&gt;[Schema].
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/workbook.png"><img alt="../_images/workbook.png" src="../_images/workbook.png" style="width: 6in;" /></a>
+</div>
+<div class="section" id="workbook-implementation">
+<h2>8.4. Workbook Implementation<a class="headerlink" href="#workbook-implementation" title="Permalink to this headline">¶</a></h2>
+<p>These modules implement the various kinds of workbooks that Stingray
+can process.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="init.html">8.1. Workbook __init__ Module &#8211; Wrapper for all implementations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="base.html">8.2. Workbook Base Definition</a></li>
-<li class="toctree-l1"><a class="reference internal" href="csv.html">8.3. CSV Workbook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="xls.html">8.4. XLS Workbook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="xlsx.html">8.5. XLSX or XLSM Workbook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ods.html">8.6. ODS Workbook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="numbers_09.html">8.7. Numbers 09 Workbook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="numbers_13.html">8.8. Numbers 13 Workbook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fixed.html">8.9. Fixed-Format Workbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="init.html">8.4.1. Workbook __init__ Module &#8211; Wrapper for all implementations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">8.4.2. Workbook Base Definition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="csv.html">8.4.3. CSV Workbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xls.html">8.4.4. XLS Workbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xlsx.html">8.4.5. XLSX or XLSM Workbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ods.html">8.4.6. ODS Workbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numbers_09.html">8.4.7. Apple iWorks Numbers &#8216;09 Workbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numbers_13.html">8.4.8. Apple iWorks Numbers &#8216;13 Workbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fixed.html">8.4.9. Fixed-Format (COBOL-style) Workbook</a></li>
 </ul>
+</div>
 </div>
 </div>
 
@@ -80,12 +212,23 @@ each physical format.</p>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo"/>
             </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a><ul>
+<li><a class="reference internal" href="#use-case">8.1. Use Case</a></li>
+<li><a class="reference internal" href="#physical-formats">8.2. Physical Formats</a></li>
+<li><a class="reference internal" href="#model">8.3. Model</a></li>
+<li><a class="reference internal" href="#workbook-implementation">8.4. Workbook Implementation</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="../schema_loader.html"
                         title="previous chapter">7. Schema Loader Module &#8211; Load Embedded or External Schema</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="init.html"
-                        title="next chapter">8.1. Workbook __init__ Module &#8211; Wrapper for all implementations</a></p>
+                        title="next chapter">8.4.1. Workbook __init__ Module &#8211; Wrapper for all implementations</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workbook/index.txt"
@@ -118,7 +261,7 @@ each physical format.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="init.html" title="8.1. Workbook __init__ Module – Wrapper for all implementations"
+          <a href="init.html" title="8.4.1. Workbook __init__ Module – Wrapper for all implementations"
              >next</a> |</li>
         <li class="right" >
           <a href="../schema_loader.html" title="7. Schema Loader Module – Load Embedded or External Schema"

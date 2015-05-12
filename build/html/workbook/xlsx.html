@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8.5. XLSX or XLSM Workbook &mdash; The Stingray Schema-Based File Reader</title>
+    <title>8.4.5. XLSX or XLSM Workbook &mdash; The Stingray Schema-Based File Reader</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
     <link rel="up" title="8. Workbook Package – Uniform Wrappers for Workbooks" href="index.html" />
-    <link rel="next" title="8.6. ODS Workbook" href="ods.html" />
-    <link rel="prev" title="8.4. XLS Workbook" href="xls.html" /> 
+    <link rel="next" title="8.4.6. ODS Workbook" href="ods.html" />
+    <link rel="prev" title="8.4.4. XLS Workbook" href="xls.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,10 +39,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ods.html" title="8.6. ODS Workbook"
+          <a href="ods.html" title="8.4.6. ODS Workbook"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="xls.html" title="8.4. XLS Workbook"
+          <a href="xls.html" title="8.4.4. XLS Workbook"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a> &raquo;</li> 
@@ -55,7 +55,7 @@
           <div class="body">
             
   <div class="section" id="xlsx-or-xlsm-workbook">
-<span id="workbook-xlsx"></span><h1>8.5. XLSX or XLSM Workbook<a class="headerlink" href="#xlsx-or-xlsm-workbook" title="Permalink to this headline">¶</a></h1>
+<span id="workbook-xlsx"></span><h1>8.4.5. XLSX or XLSM Workbook<a class="headerlink" href="#xlsx-or-xlsm-workbook" title="Permalink to this headline">¶</a></h1>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pprint</span>
 <span class="kn">import</span> <span class="nn">xml.etree.cElementTree</span> <span class="kn">as</span> <span class="nn">dom</span>
@@ -68,9 +68,9 @@
 <span class="kn">import</span> <span class="nn">stingray.cell</span>
 </pre></div>
 </div>
-<span class="target" id="module-workbook"></span><dl class="class">
-<dt id="workbook.XLSX_Workbook">
-<em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">XLSX_Workbook</tt><a class="headerlink" href="#workbook.XLSX_Workbook" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-workbook.xlsx"></span><dl class="class">
+<dt id="workbook.xlsx.XLSX_Workbook">
+<em class="property">class </em><tt class="descclassname">workbook.xlsx.</tt><tt class="descname">XLSX_Workbook</tt><a class="headerlink" href="#workbook.xlsx.XLSX_Workbook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract sheets, rows and cells from an XLSX format file.</p>
 <p>We&#8217;re opening a ZIP archive and parsing the various XML documents
 that we find therein.</p>
@@ -80,6 +80,20 @@ the sometimes large XML documents.</p>
 <p>See <a class="reference external" href="http://effbot.org/zone/element-iterparse.htm">http://effbot.org/zone/element-iterparse.htm</a></p>
 <p>The class as a whole defines some handy constants like XML namespaces
 and a pattern for parsing Cell ID&#8217;s to separate the letters from the numbers.</p>
+<p>In addition to the superclass attributes, some additional unique
+attributes are introduced here.</p>
+<dl class="attribute">
+<dt id="workbook.xlsx.XLSX_Workbook.zip_archive">
+<tt class="descname">zip_archive</tt><a class="headerlink" href="#workbook.xlsx.XLSX_Workbook.zip_archive" title="Permalink to this definition">¶</a></dt>
+<dd><p>A zip archive for this file.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="workbook.xlsx.XLSX_Workbook.strings_dict">
+<tt class="descname">strings_dict</tt><a class="headerlink" href="#workbook.xlsx.XLSX_Workbook.strings_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>The strings in this workbook</p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">XLSX_Workbook</span><span class="p">(</span> <span class="n">Workbook</span> <span class="p">):</span>
@@ -179,8 +193,8 @@ with tempfile.TemporaryFile( ) as temp:
         <em>process event and element</em>
 </pre>
 <dl class="method">
-<dt id="workbook.XLSX_Workbook.sheets">
-<tt class="descclassname">XLSX_Workbook.</tt><tt class="descname">sheets</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.XLSX_Workbook.sheets" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.xlsx.XLSX_Workbook.sheets">
+<tt class="descclassname">XLSX_Workbook.</tt><tt class="descname">sheets</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.xlsx.XLSX_Workbook.sheets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the list of sheets for this workbook.</p>
 </dd></dl>
 
@@ -202,7 +216,7 @@ to proper 0-based Python index of <tt class="samp docutils literal"><span class=
 <p>We can build an eager <a class="reference internal" href="../sheet.html#sheet.Row" title="sheet.Row"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Row</span></tt></a> or a  <a class="reference internal" href="../sheet.html#sheet.LazyRow" title="sheet.LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">sheet.LazyRow</span></tt></a> from the available data.
 The eager <a class="reference internal" href="../sheet.html#sheet.Row" title="sheet.Row"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Row</span></tt></a> is built from <a class="reference internal" href="../cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> objects.
 The <a class="reference internal" href="../sheet.html#sheet.LazyRow" title="sheet.LazyRow"><tt class="xref py py-class docutils literal"><span class="pre">sheet.LazyRow</span></tt></a> delegates the creation
-of <a class="reference internal" href="../cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> objects to <a class="reference internal" href="base.html#workbook.Workbook.row_get" title="workbook.Workbook.row_get"><tt class="xref py py-meth docutils literal"><span class="pre">Workbook.row_get()</span></tt></a>.</p>
+of <a class="reference internal" href="../cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> objects to <tt class="xref py py-meth docutils literal"><span class="pre">Workbook.row_get()</span></tt>.</p>
 <p>This uses an incremental parser, also.  There are four kinds of tags that
 have to be located.</p>
 <ul class="simple">
@@ -218,8 +232,8 @@ mixed content model.</li>
 enough information to build the Cell instance.</li>
 </ul>
 <dl class="method">
-<dt id="workbook.XLSX_Workbook.rows_of">
-<tt class="descclassname">XLSX_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.XLSX_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.xlsx.XLSX_Workbook.rows_of">
+<tt class="descclassname">XLSX_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.xlsx.XLSX_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate through rows of the given sheet.</p>
 </dd></dl>
 
@@ -275,8 +289,8 @@ enough information to build the Cell instance.</li>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="workbook.XLSX_Workbook.row_get">
-<tt class="descclassname">XLSX_Workbook.</tt><tt class="descname">row_get</tt><big>(</big><em>row</em>, <em>attribute</em><big>)</big><a class="headerlink" href="#workbook.XLSX_Workbook.row_get" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.xlsx.XLSX_Workbook.row_get">
+<tt class="descclassname">XLSX_Workbook.</tt><tt class="descname">row_get</tt><big>(</big><em>row</em>, <em>attribute</em><big>)</big><a class="headerlink" href="#workbook.xlsx.XLSX_Workbook.row_get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Low-level get of a particular attribute from the given row.</p>
 </dd></dl>
 
@@ -286,8 +300,8 @@ enough information to build the Cell instance.</li>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="workbook.XLSX_Workbook.cell">
-<tt class="descclassname">XLSX_Workbook.</tt><tt class="descname">cell</tt><big>(</big><em>row</em>, <em>element</em><big>)</big><a class="headerlink" href="#workbook.XLSX_Workbook.cell" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.xlsx.XLSX_Workbook.cell">
+<tt class="descclassname">XLSX_Workbook.</tt><tt class="descname">cell</tt><big>(</big><em>row</em>, <em>element</em><big>)</big><a class="headerlink" href="#workbook.xlsx.XLSX_Workbook.cell" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a subclass of <a class="reference internal" href="../cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> from the current value tag content plus the
 containing cell type information.</p>
 </dd></dl>
@@ -339,10 +353,10 @@ containing cell type information.</p>
             </a></p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="xls.html"
-                        title="previous chapter">8.4. XLS Workbook</a></p>
+                        title="previous chapter">8.4.4. XLS Workbook</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="ods.html"
-                        title="next chapter">8.6. ODS Workbook</a></p>
+                        title="next chapter">8.4.6. ODS Workbook</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workbook/xlsx.txt"
@@ -375,10 +389,10 @@ containing cell type information.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ods.html" title="8.6. ODS Workbook"
+          <a href="ods.html" title="8.4.6. ODS Workbook"
              >next</a> |</li>
         <li class="right" >
-          <a href="xls.html" title="8.4. XLS Workbook"
+          <a href="xls.html" title="8.4.4. XLS Workbook"
              >previous</a> |</li>
         <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
           <li><a href="index.html" >8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a> &raquo;</li> 

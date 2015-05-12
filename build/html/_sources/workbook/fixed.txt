@@ -3,8 +3,8 @@
 .. _`workbook_fixed`:
 
 
-Fixed-Format Workbook
------------------------
+Fixed-Format (COBOL-style) Workbook
+------------------------------------
 
 Like a CSV workbook, this is a kind of degenerate case.  We don't have
 a lot of sheets, or a lot of data types.
@@ -30,7 +30,14 @@ required as the schema definition. See :ref:`cobol`.
     
     The schema must have size and offset information to locate the fields.
     
-    There's only a single sheet and it matches the filename.    
+    There's only a single sheet and it matches the filename.
+    
+    In addition to the superclass attributes, some additional unique
+    attributes are introduced here.
+        
+    ..  py:attribute:: wb
+    
+        The underlying file. 
 
 ::
 

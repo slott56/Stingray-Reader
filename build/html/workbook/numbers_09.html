@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8.7. Numbers 09 Workbook &mdash; The Stingray Schema-Based File Reader</title>
+    <title>8.4.7. Apple iWorks Numbers ‘09 Workbook &mdash; The Stingray Schema-Based File Reader</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="The Stingray Schema-Based File Reader" href="../index.html" />
     <link rel="up" title="8. Workbook Package – Uniform Wrappers for Workbooks" href="index.html" />
-    <link rel="next" title="8.8. Numbers 13 Workbook" href="numbers_13.html" />
-    <link rel="prev" title="8.6. ODS Workbook" href="ods.html" /> 
+    <link rel="next" title="8.4.8. Apple iWorks Numbers ‘13 Workbook" href="numbers_13.html" />
+    <link rel="prev" title="8.4.6. ODS Workbook" href="ods.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,10 +39,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="numbers_13.html" title="8.8. Numbers 13 Workbook"
+          <a href="numbers_13.html" title="8.4.8. Apple iWorks Numbers ‘13 Workbook"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="ods.html" title="8.6. ODS Workbook"
+          <a href="ods.html" title="8.4.6. ODS Workbook"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a> &raquo;</li> 
@@ -54,8 +54,22 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="numbers-09-workbook">
-<span id="workbook-number09"></span><h1>8.7. Numbers 09 Workbook<a class="headerlink" href="#numbers-09-workbook" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="apple-iworks-numbers-09-workbook">
+<span id="workbook-number09"></span><h1>8.4.7. Apple iWorks Numbers &#8216;09 Workbook<a class="headerlink" href="#apple-iworks-numbers-09-workbook" title="Permalink to this headline">¶</a></h1>
+<p>The Stingray model of sheet/row/cell structure does not
+easily fit the Numbers sheet/table/row/cell structure.
+How can we handle the extra layer of names introduced by
+Numbers?</p>
+<p>Option 1: navigation hierarchy.</p>
+<blockquote>
+<div>Workbook ➞ new layer (Numbers &#8220;Workspace&#8221;) ➞ Sheet (Numbers &#8220;Table&#8221;) ➞ Row ➞ Cell</div></blockquote>
+<p>Option 2: navigation hierarchy.</p>
+<blockquote>
+<div><p>Combine (Workspace,Table) into a 2-tuple, and call this a &#8220;sheet&#8221; name when working
+with Numbers documents.</p>
+<p>This will fit with Stingray acceptably.</p>
+</div></blockquote>
+<p>The imports required to process this kind of file.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pprint</span>
 <span class="kn">import</span> <span class="nn">xml.etree.cElementTree</span> <span class="kn">as</span> <span class="nn">dom</span>
@@ -68,16 +82,31 @@
 <span class="kn">import</span> <span class="nn">stingray.cell</span>
 </pre></div>
 </div>
-<span class="target" id="module-workbook"></span><p>The iWork 09 format is a (simpler) Zip file with an XML document inside it.
+<span class="target" id="module-workbook.numbers09"></span><p>The iWork Numbers 09 format is a Zip file with an XML document inside it.
 There may be slight variations between native Numbers &#8216;09 and Numbers &#8216;13 doing
-a &#8220;save as&#8221; in Numbers &#8216;09 format.</p>
-<p>Numbers &#8216;13 is entirely different. See <a class="reference internal" href="numbers_13.html#workbook-number13"><em>Numbers 13 Workbook</em></a>.</p>
+a &#8220;save as&#8221; in Numbers &#8216;09 format. It&#8217;s not clear; we haven&#8217;t done
+exhaustive checking.</p>
+<p>Numbers &#8216;13 is entirely different. See <a class="reference internal" href="numbers_13.html#workbook-number13"><em>Apple iWorks Numbers &#8216;13 Workbook</em></a>.</p>
 <dl class="class">
-<dt id="workbook.Numbers09_Workbook">
-<em class="property">class </em><tt class="descclassname">workbook.</tt><tt class="descname">Numbers09_Workbook</tt><a class="headerlink" href="#workbook.Numbers09_Workbook" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.numbers09.Numbers09_Workbook">
+<em class="property">class </em><tt class="descclassname">workbook.numbers09.</tt><tt class="descname">Numbers09_Workbook</tt><a class="headerlink" href="#workbook.numbers09.Numbers09_Workbook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract sheets, rows and cells from a Numbers &#8216;09 format file.</p>
 <p>The <tt class="docutils literal"><span class="pre">.numbers</span></tt> &#8220;file&#8221; is a ZIP file.</p>
 <p>The <tt class="file docutils literal"><span class="pre">index.xml</span></tt> element the interesting part of the archive.</p>
+<p>In addition to the superclass attributes, some additional unique
+attributes are introduced here.</p>
+<dl class="attribute">
+<dt id="workbook.numbers09.Numbers09_Workbook.zip_archive">
+<tt class="descname">zip_archive</tt><a class="headerlink" href="#workbook.numbers09.Numbers09_Workbook.zip_archive" title="Permalink to this definition">¶</a></dt>
+<dd><p>A zip archive for this file.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="workbook.numbers09.Numbers09_Workbook.workspace">
+<tt class="descname">workspace</tt><a class="headerlink" href="#workbook.numbers09.Numbers09_Workbook.workspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>The &#8220;workspaces&#8221;: pages with tables inside them.</p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Numbers09_Workbook</span><span class="p">(</span> <span class="n">Workbook</span> <span class="p">):</span>
@@ -143,8 +172,8 @@ get the tables within the workspaces.</p>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="workbook.Numbers09_Workbook.cell">
-<tt class="descclassname">Numbers09_Workbook.</tt><tt class="descname">cell</tt><big>(</big><em>cell</em><big>)</big><a class="headerlink" href="#workbook.Numbers09_Workbook.cell" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.numbers09.Numbers09_Workbook.cell">
+<tt class="descclassname">Numbers09_Workbook.</tt><tt class="descname">cell</tt><big>(</big><em>cell</em><big>)</big><a class="headerlink" href="#workbook.numbers09.Numbers09_Workbook.cell" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a <tt class="docutils literal"><span class="pre">Cell</span></tt> instance from the decoded data.</p>
 </dd></dl>
 
@@ -197,19 +226,19 @@ get the tables within the workspaces.</p>
 
     <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">general_tag</span><span class="p">:</span> <span class="c"># General?</span>
         <span class="k">return</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">EmptyCell</span><span class="p">(</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="bp">self</span> <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">number_tag</span><span class="p">:</span> <span class="c"># number</span>
+    <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">number_tag</span><span class="p">:</span> <span class="c"># Number</span>
         <span class="n">value</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_number</span><span class="p">(</span> <span class="n">cell</span> <span class="p">)</span>
         <span class="k">return</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span> <span class="n">value</span><span class="p">,</span> <span class="bp">self</span> <span class="p">)</span>
     <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">o_tag</span><span class="p">:</span> <span class="c">#??</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cell_warning</span><span class="p">(</span><span class="s">&quot;Unknown cell type&quot;</span><span class="p">,</span> <span class="n">cell</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">EmptyCell</span><span class="p">(</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="bp">self</span> <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">span_tag</span><span class="p">:</span> <span class="c">#span?</span>
+    <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">span_tag</span><span class="p">:</span> <span class="c"># Span?</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cell_warning</span><span class="p">(</span><span class="s">&quot;Unknown cell type&quot;</span><span class="p">,</span> <span class="n">cell</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">EmptyCell</span><span class="p">(</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="bp">self</span> <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">text_tag</span><span class="p">:</span> <span class="c"># text</span>
+    <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">text_tag</span><span class="p">:</span> <span class="c"># Text</span>
         <span class="n">value</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_text</span><span class="p">(</span> <span class="n">cell</span> <span class="p">)</span>
         <span class="k">return</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span> <span class="n">value</span><span class="p">,</span> <span class="bp">self</span> <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">bool_tag</span><span class="p">:</span> <span class="c"># boolean</span>
+    <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">bool_tag</span><span class="p">:</span> <span class="c"># Boolean</span>
         <span class="n">value</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_number</span><span class="p">(</span> <span class="n">cell</span> <span class="p">)</span>
         <span class="k">return</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">BooleanCell</span><span class="p">(</span> <span class="n">value</span><span class="p">,</span> <span class="bp">self</span> <span class="p">)</span>
     <span class="k">elif</span> <span class="n">cell</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">popup_menu_tag</span><span class="p">:</span> <span class="c"># popup menu</span>
@@ -247,8 +276,10 @@ get the tables within the workspaces.</p>
 
     <span class="n">fs</span><span class="o">=</span> <span class="bp">None</span> <span class="c"># cell_style.get(fs_attr) # Doesn&#39;t seem correct</span>
     <span class="n">fdp</span><span class="o">=</span> <span class="bp">None</span> <span class="c"># cell_style.get(fdp_attr) # Doesn&#39;t seem correct</span>
+
     <span class="c"># Transform fs into proper Python format, otherwise, use the number of</span>
     <span class="c"># decimal places.</span>
+
     <span class="k">if</span> <span class="n">fs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">fmt</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rewrite_fmt</span><span class="p">(</span> <span class="n">fs</span> <span class="p">)</span>
         <span class="c">#print( &quot;Decimal: {{0:{0}}}.format({1}) = &quot;.format( fmt, value_txt ), end=&quot;&quot; )</span>
@@ -335,8 +366,8 @@ precisely.</p>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="workbook.Numbers09_Workbook.sheets">
-<tt class="descclassname">Numbers09_Workbook.</tt><tt class="descname">sheets</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.Numbers09_Workbook.sheets" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.numbers09.Numbers09_Workbook.sheets">
+<tt class="descclassname">Numbers09_Workbook.</tt><tt class="descname">sheets</tt><big>(</big><big>)</big><a class="headerlink" href="#workbook.numbers09.Numbers09_Workbook.sheets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of &#8220;sheets&#8221; (actually underlying tables.)</p>
 <p>The &#8220;sheets&#8221; are <tt class="docutils literal"><span class="pre">[</span> <span class="pre">(</span></tt> <em>workspace</em><cite>,</cite> <em>table</em> <tt class="docutils literal"><span class="pre">),</span> <span class="pre">...</span> <span class="pre">]</span></tt> pairs.</p>
 <p>Picking a sheet involves matching a two-part name: (workspace, table).</p>
@@ -353,8 +384,8 @@ precisely.</p>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="workbook.Numbers09_Workbook.rows_of">
-<tt class="descclassname">Numbers09_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.Numbers09_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
+<dt id="workbook.numbers09.Numbers09_Workbook.rows_of">
+<tt class="descclassname">Numbers09_Workbook.</tt><tt class="descname">rows_of</tt><big>(</big><em>sheet</em><big>)</big><a class="headerlink" href="#workbook.numbers09.Numbers09_Workbook.rows_of" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterator through all rows of a sheet.</p>
 </dd></dl>
 
@@ -417,10 +448,10 @@ precisely.</p>
             </a></p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="ods.html"
-                        title="previous chapter">8.6. ODS Workbook</a></p>
+                        title="previous chapter">8.4.6. ODS Workbook</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="numbers_13.html"
-                        title="next chapter">8.8. Numbers 13 Workbook</a></p>
+                        title="next chapter">8.4.8. Apple iWorks Numbers &#8216;13 Workbook</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/workbook/numbers_09.txt"
@@ -453,10 +484,10 @@ precisely.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="numbers_13.html" title="8.8. Numbers 13 Workbook"
+          <a href="numbers_13.html" title="8.4.8. Apple iWorks Numbers ‘13 Workbook"
              >next</a> |</li>
         <li class="right" >
-          <a href="ods.html" title="8.6. ODS Workbook"
+          <a href="ods.html" title="8.4.6. ODS Workbook"
              >previous</a> |</li>
         <li><a href="../index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
           <li><a href="index.html" >8. Workbook Package &#8211; Uniform Wrappers for Workbooks</a> &raquo;</li> 

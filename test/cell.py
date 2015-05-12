@@ -25,14 +25,21 @@ import stingray.cell
 #
 # Mocks for sheet and workbook to test :py:class:`cell.Cell` features.
 # A :py:class:`cell.Cell` belongs to a :py:class:`sheet.Sheet` and a :py:class:`sheet.Sheet` belongs
-# to a :py:class:`workbook.Workbook`.  We need a mock for :py:class:`sheet.Sheet` and
-# :py:class:`workbook.Workbook`.
+# to a :py:class:`workbook.base.Workbook`.  We need a mock for :py:class:`sheet.Sheet` and
+# :py:class:`workbook.base.Workbook`.
 #
 # ::
 
 class CellMockWorkbook:
-    def __init__( self ):
+    def __init__( self, mock_date=None, mock_date_float=None ):
         self.datemode= 0
+        self.mock_date= mock_date
+        self.mock_date_float= mock_date_float
+    def date_to_float(self, value):
+        return self.mock_date_float
+    def float_to_date(self, value):
+        if value <= 1: raise ValueError()
+        return self.mock_date
         
 # :py:class:`cell.EmptyCell` is always ``None``.
 #
@@ -108,7 +115,7 @@ class TestTextCell( unittest.TestCase ):
 
 class TestNumberCell( unittest.TestCase ):
     def setUp( self ):
-        self.wb= CellMockWorkbook()
+        self.wb= CellMockWorkbook(datetime.datetime(1956, 9, 10), 20708)
         self.cell_numb= stingray.cell.NumberCell( 123.4, self.wb )
         self.cell_date= stingray.cell.NumberCell( 20708.0, self.wb )
     def test_should_be_nonempty( self ):
@@ -131,7 +138,7 @@ class TestNumberCell( unittest.TestCase ):
 
 class TestFloatDateCell( unittest.TestCase ):
     def setUp( self ):
-        self.wb= CellMockWorkbook()
+        self.wb= CellMockWorkbook(datetime.datetime(1956, 9, 10), 20708)
         self.cell_date= stingray.cell.FloatDateCell( 20708.0, self.wb )
     def test_should_be_nonempty( self ):
         self.assertFalse( self.cell_date.is_empty() )
@@ -153,7 +160,7 @@ class TestFloatDateCell( unittest.TestCase ):
 
 class TestBooleanCell( unittest.TestCase ):
     def setUp( self ):
-        self.wb= CellMockWorkbook()
+        self.wb= CellMockWorkbook(datetime.datetime(1956, 9, 10), 20708)
         self.cell_true= stingray.cell.BooleanCell( 1, self.wb )
         self.cell_false= stingray.cell.BooleanCell( 0, self.wb )
     def test_should_be_nonempty( self ):
@@ -185,7 +192,7 @@ class TestBooleanCell( unittest.TestCase ):
 
 class TestErrorCell( unittest.TestCase ):
     def setUp( self ):
-        self.wb= CellMockWorkbook()
+        self.wb= CellMockWorkbook(datetime.datetime(1956, 9, 10), 20708)
         self.cell_div0= stingray.cell.ErrorCell( '#DIV/0!', self.wb )
     def test_should_be_nonempty( self ):
         self.assertFalse( self.cell_div0.is_empty() )
@@ -212,7 +219,7 @@ class TestErrorCell( unittest.TestCase ):
 
 class TestDateCell( unittest.TestCase ):
     def setUp( self ):
-        self.wb= CellMockWorkbook()
+        self.wb= CellMockWorkbook(datetime.datetime(1956, 9, 10), 20708)
         now= datetime.datetime(1956, 9, 10, 0, 0, 0)
         self.cell_date= stingray.cell.DateCell( now, self.wb )
     def test_should_be_nonempty( self ):
@@ -239,7 +246,7 @@ class TestDateFromString( unittest.TestCase ):
         dt= convert( "9/10/1956" )
         self.assertEqual( datetime.datetime(1956, 9, 10), dt )
     def test_datecell_conversion( self ):
-        self.wb= CellMockWorkbook()
+        self.wb= CellMockWorkbook( datetime.datetime(1956, 9, 10), 20708 )
         create= stingray.cell.datecell_from_string( "%Y-%m-%d" )
         dc= create( "1956-09-10", self.wb )
         self.assertEqual( datetime.datetime(1956, 9, 10), dc.to_datetime() )

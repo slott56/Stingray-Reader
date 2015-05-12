@@ -106,7 +106,7 @@ class TestHeadingRowSchemaParser( unittest.TestCase ):
 # =======================
 #
 # An :py:class:`schema.loader.ExternalSchemaLoader`  builds
-# a :py:class:`schema.Schema`  from another :py:class:`workbook.Workbook`.   
+# a :py:class:`schema.Schema`  from another :py:class:`workbook.base.Workbook`.   
 #
 # ::
 
@@ -156,7 +156,7 @@ class TestExternalSchemaLoader( unittest.TestCase ):
 # An external schema can be loaded using an :py:class:`schema.loader.ExternalSchemaLoader`.
 # However, we can also hard-code a Schema.  Or build it some other way.
 #
-# A :py:class:`workbook.Workbook` uses this type to build each individual :py:class:`sheet.Sheet`,
+# A :py:class:`workbook.base.Workbook` uses this type to build each individual :py:class:`sheet.Sheet`,
 # attaching the schema (and column titles, etc.) to each :py:class:`sheet.Row`
 # that gets built.
 #

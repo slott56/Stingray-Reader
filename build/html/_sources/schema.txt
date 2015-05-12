@@ -14,7 +14,9 @@ For our purposes, we're trying to cover the following bases:
 
 -   Workbooks in a variety of forms: CSV, Tab, XLSX, ODS, etc.
     The common feature of these schema is that they're flat.  A single
-    index (or name) identifies each column.
+    index (or name) identifies each column. 
+    
+    The schema can be in a variety of places.
 
     -   The schema may be a header row within a sheet.
 
@@ -22,20 +24,19 @@ For our purposes, we're trying to cover the following bases:
         that's not the first row.
 
     -   The schema may be in a separate document.
-        It could be XSD, but this is vanishingly rare.
 
--   COBOL Files.  The schema is a separate document, encoded in
+-   COBOL Files. The schema is highly structured: a path must be 
+    used to unambiguously identify each field. Some COBOL schema are
+    designed so that all leaf names are unique.
+
+    The schema is a separate document, encoded in
     COBOL source code.
-    A COBOL schema is rarely a perfectly
-    flat structure.  However, using ``.``-path names allows us
-    to flatten a COBOL structure into a simpler structure that can be
-    compatible with workbooks.
-
+    
 We'll also happen to cover relational database table definitions.  However,
 this isn't our focus.  This is simply coincidence.
 
-Note that we are not trying to cover XML schemas or a complete relational
-database schema.
+Note that we are not trying to cover XML schemas or a **complete** relational
+database schema. There are a lot of possible features not present here.
 
 Load a Schema Use Case
 ===============================
@@ -71,8 +72,8 @@ External schema loading would look like this.
 
 ..  parsed-literal::
 
-    with *open schema* as swb:
-        esl = ExternalSchemaLoader( swb, 'Schema' )
+    with *open schema* as wb_s:
+        esl = ExternalSchemaLoader( wb_s, 'Schema' )
         schema = esl.load()
     with *open data* as wb:
         sheet = ExternalSchemaSheet( wb, 'Sheet1', schema )
@@ -137,12 +138,17 @@ requiring some indexing, as well as naming.
 
 3.  Find the cell value based on the attribute.
 
-The Builder
-==============
+Application Object Builder
+==========================
 
-Most applications are based on building Python objects from source file data.
+The whole point of this is to facilitate writing applications that work
+with objects encoded as rows in a spreadsheet. We're not merely picking
+a value from cells of a row: we're creating Python objects from the row
+as a whole. These application objects are also based on a common Conceptual Schema;
+they are yet another implementation of the concept.
+
 Experience indicates that the conceptual schema may have several variant
-logical layout implementations.  Because of the logical layout variability,
+logical layouts.  Because of the logical layout variability,
 a two-step dance is
 required between source rows and final Python objects.
 
@@ -221,6 +227,10 @@ It leads us builder functions that might look like this.
             value= value,
         )
 
+We've applied a number of input transformations to create Python objects. These
+objects are designed to fit as closely as possible to the conceptual schema.
+We can then output these in any required format.
+
 Model
 ======
 
@@ -266,11 +276,13 @@ Schema Class
     involve duplicates, then one of the duplicated values will be chosen; the
     choice is arbitrary.
 
-    :info:
+    ..  py:attribute:: info
+    
         Dict of additional information about this schema. Meta-metadata.
         For COBOL schema, this includes the source DDE.
     
-    :names:
+    ..  py:attribute:: names
+    
         Attribute names for rows_as_dict_iter()
 
 ::
@@ -314,12 +326,12 @@ This only works for records without an Occurs Depending On.
 
 A Schema needs to handle two common use cases.
 
--   Most formats. The items are defined by the physical format. Data can be fetched positionally.
+-   Cell values are defined by the physical format. Data can be fetched positionally.
     Names map to positions.
 
--   Fixed and COBOL.  The columns are not defined by the physical format, but by an external
+-   Fixed and COBOL.  The cell values are not defined by the physical format, but by an external
     schema associated with the :py:class:`sheet.Sheet`. Names map to offsets and sizes;
-    these  must be computed from the external schema. In the case of 
+    the bytes found there must be converted to Python objects. In the case of 
     Occurs Depending On (ODO), the offsets depend on both schema and data.
     
     COBOL data may have elements which are invalid, but unused due to application
@@ -346,26 +358,32 @@ Attribute Class
 
     Here are the essential attributes of an Attribute.
 
-    :name: 
+    ..  py:attribute:: name
+    
         The attribute name. Typically always available for most kinds of schema.
 
-    :create: Cell class to create.  If omitted, the class-level
+    ..  py:attribute:: create
+    
+        Cell class to create.  If omitted, the class-level
         :py:data:`Attribute.default_cell` will be used.
         By default, this refers to :py:class:`stingray.cell.TextCell`.
 
     The additional
     values commonly provided by simple fixed format file schemata.
 
-    :offset: 
+    ..  py:attribute:: offset
+    
         Optional offset into a buffer. For simple fixed-layout files,
         this is a constant. For COBOL files with Occurs Depending On,
         however, this must be a function based on the actual record
         being processed.
 
-    :size: 
+    ..  py:attribute:: size
+    
         Optional size within the buffer.
 
-    :position: 
+    ..  py:attribute:: position
+    
         Optional sequential position.
 
     A subclass might introduce yet more attributes.
@@ -392,7 +410,7 @@ Attribute Class
         def __repr__( self ):
             return "Attribute( name={0.name!r}, position={0.position}, offset={0.offset}, size={0.size} )".format( self )
 
-An :py:class:`schema.Attribute` is used by a :py:class:`workbook.Workbook` to
+An :py:class:`schema.Attribute` is used by a :py:class:`workbook.base.Workbook` to
 extract cell data from a row.
 
 The use case looks like this for a Fixed format workbook.  For other

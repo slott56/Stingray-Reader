@@ -18,7 +18,7 @@ ODS Workbook
     import stingray.sheet
     import stingray.cell
 
-..  py:module:: workbook
+..  py:module:: workbook.ods
 
 We should use ``iterparse`` rather than simply parsing the entire XML document.
 If the document is large, then we can't hold it all in memory.
@@ -26,6 +26,17 @@ If the document is large, then we can't hold it all in memory.
 ..  py:class:: ODS_Workbook
 
     Extract sheets, rows and cells from a OOO ODS format file.
+
+    In addition to the superclass attributes, some additional unique
+    attributes are introduced here.
+        
+    ..  py:attribute:: zip_archive
+    
+        A zip archive for this file.
+        
+    ..  py:attribute:: tables
+    
+        A mapping that provides sheet names.
 
 ::
 

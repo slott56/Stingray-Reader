@@ -39,6 +39,8 @@
 # Snappy
 # ===============================================
 #
+# Here's some more information on the snappy protocol.
+#
 # http://en.wikipedia.org/wiki/Snappy_(software)
 #
 # https://code.google.com/p/snappy/
@@ -186,6 +188,10 @@ class Snappy:
 #     The LZ77 decoder. This locates the **varint** size header.  That's followed by 
 #     a sequence of tags.  The literal tag has data. The other three tags repeat
 #     previously output bytes.
+#    
+#     We're building a ``bytearray`` buffer from the input. This means copying
+#     literals into the buffer. It also means copying part of the buffer into the buffer
+#     to add one of the three kinds of copies.
 #
 #     Because of the framing protocol, we're limited to a buffer of only 64K bytes.
 #        

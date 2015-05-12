@@ -9,7 +9,8 @@ Sheet Module -- Sheet and Row Access
 ..  py:module:: sheet
 
 A *Sheet* is a generator
-of *Row* objects.  A *Row* is a sequence of :py:class:`cell.Cell` instances, identified by position.
+of *Row* objects.  A *Row* is a sequence of :py:class:`cell.Cell` instances, 
+identified by position within the row.
 
 We have three variations on :py:class:`sheet.Sheet`.
 
@@ -32,7 +33,6 @@ We have three variations on :py:class:`sheet.Sheet`.
         Fixed or COBOL format files.
 
 A known physical format (like a workbook) can build :py:class:`sheet.Row` objects eagerly with or without a schema.
-
 In the case of COBOL and fixed-format files, however, a :py:class:`sheet.Row`
 cannot be built eagerly.  It must be a lazy
 object which only builds :py:class:`cell.Cell` as needed.
@@ -42,7 +42,7 @@ Get Embedded Schema Use Case
 ===============================
 
 For an :py:class:`sheet.EmbeddedSchemaSheet`, the application (or Workbook) must 
-do a three-step dance to get the schema that is embedded in the sheet.
+do a three-step dance to get the data using schema that is embedded in the sheet.
 
 1.  Build a :py:class:`sheet.EmbeddedSchemaSheet` with an
     "embedded schema loader" class.  (For example, :py:class:`schema.loader.HeadingRowSchemaLoader`.)
@@ -52,10 +52,12 @@ do a three-step dance to get the schema that is embedded in the sheet.
     The :py:class:`sheet.Sheet` will build an object of the loader class and use it to 
     gather the schema information.
     The schema loading may involve skipping irrelevant rows or
-    combining multi-line headings or anything else required to parse the sheet.
+    combining multi-line headings or anything else required to parse the schema.
 
 3.  Get the rows from the sheet.
     This will, also, invoke the attached loader to filter rows so that the header is not seen as data.
+
+The code might look like this:
 
 ..  parsed-literal::
 
@@ -63,14 +65,17 @@ do a three-step dance to get the schema that is embedded in the sheet.
         sheet = EmbeddedSchemaSheet( workbook, 'Sheet1', HeadingRowSchemaLoader )
         counts= process_sheet( sheet )
         pprint.pprint( counts )
+        
+The idea is to simply access a sheet with column titles, no matter how complex
+the column titles turn out to be.
 
 Get External Schema Use Case
 ===============================
 
 For an :py:class:`sheet.ExternalSchemaSheet`, the application (or Workbook) 
-must do a four-step dance to get the schema.
+must do a four-step dance to get data using schema.
 
-1.  Build a schema loader.
+1.  Build a :py:class:`schema.loader.ExternalSchemaLoader` as a schema loader.
     This loader will require a source workbook, sheet name and a reader object.
 
 2.  Get the Schema object from the loader.
@@ -83,6 +88,8 @@ And yes, the external source, is another
 spreadsheet!  Worse, the external source could be a fixed file or workbook
 for which a meta-schema is required to read the schema.
 
+The code might look like this:
+
 ..  parsed-literal::
 
     with *open schema* as swb:
@@ -92,6 +99,9 @@ for which a meta-schema is required to read the schema.
         sheet = ExternalSchemaSheet( wb, 'Sheet1', schema )
         counts= process_sheet( sheet )
         pprint.pprint( counts )
+
+The idea is to get a schema and then use the schema to access data.
+
 
 Get Rows Use Case
 ======================
@@ -116,7 +126,7 @@ As noted above, there are two candidate implementations of a Row.
 
 -   **Eager**.  Appropriate for most (but not all) Physical Formats.  The
     idea is to apply the schema immediately to create the row as a
-    tuple of cells.  :mod:`csv` does this, and it can be applied to
+    tuple of cells.  :py:mod:`csv` does this, and it can be applied to
     other workbook formats.  It can be applied to simple, flat
     Fixed format files.
 
@@ -194,7 +204,7 @@ Sheet and Row are essentially lazy sequences.
     from collections import Sequence
 
 There are two "implicit" dependencies, also.
-A row depends on details of an :py:class:`schema.Attribute` and a :py:class:`workbook.Workbook`.  
+A row depends on details of an :py:class:`schema.Attribute` and a :py:class:`workbook.base.Workbook`.  
 However, there's no real need to present a formal import for this.  
 The Attribute and Workbook are simply opaque
 objects passed around as arguments.
@@ -206,6 +216,18 @@ Sheet Class
 
     An iterator over the rows of data in a workbook.
     Subclasses implement different bindings for the sheet's schema information.
+    
+    This is largely abstract, since there's no schema binding available.
+    There are subclasses which have a schema binding.
+    See :py:class:`sheet.ExternalSchemaSheet` and :py:class:`sheet.EmbeddedSchemaSheet`.
+    
+    ..  py:attribute:: workbook
+    
+        The :py:class:`Workbook` which contains this Sheet.
+    
+    ..  py:attribute:: name
+    
+        The name of this sheet.
 
 ::
 
@@ -236,16 +258,24 @@ Row Class
     into row-as-dict or some even more elaborate structure.
 
     A row depends on details of an :py:class:`schema.Attribute` 
-    and a :py:class:`workbook.Workbook`.  
+    and a :py:class:`workbook.base.Workbook`.  
     This feels circular. But this Sheet/Row schema definition is really
     just a convenient wrapper around the Workbook details.
 
-    The :py:class:`cell.Cell` conversions are handled by the :py:class:`workbook.Workbook`.
+    The :py:class:`cell.Cell` conversions are handled by the :py:class:`workbook.base.Workbook`.
     Some Workbooks have cell content identified by position.
     Some Workbooks have cell content identified by size, offset and encoding.
     Therefore, we must provide the Attribute details to the Workbook
     to get the Cell's value.
-
+    
+    ..  py:attribute:: sheet
+    
+        The :py:class:`Sheet` which contains this row.
+    
+    ..  py:attribute:: data
+        
+        The sequence of :py:class:`Cell` values for this row. 
+    
 ::
 
     class Row( Sequence ):
@@ -264,6 +294,11 @@ Row Class
             :param attribute: The attribute's value to return.
             """
             return self.sheet.workbook.row_get( self, attribute )
+            
+Basic Sequence features
+
+::
+
         def __len__( self ):
             return len(self.data)
         def __iter__( self ):
@@ -297,11 +332,15 @@ Which one do we mean?  And how do we specify this selection?
     "occurs" by to construct the proper dimensionality of an attribute.
 
     It also means getting all of the values to create a tuple or nested
-    tuple-of-tuple structure for the various dimensions.
+    tuple-of-tuple structure for the various dimensions. Eager processing isn't
+    going to work out well.
 
 -   The :py:class:`schema.Attribute.index` method
     selects data from the row in the workbook.  This applies the indices
     to the Attribute to compute the required offset into the source data.
+    
+    We're constrained by the laziness requirement of COBOL to lean toward the 
+    this implementation.
 
 ..  py:class:: LazyRow
 
@@ -318,6 +357,16 @@ Which one do we mean?  And how do we specify this selection?
     For these reasons, we have a :py:class:`sheet.LazyRow`, which conforms to the
     interface for a :py:class:`Row`, but isn't an actual sequence. No data is
     processed until the :py:meth:`LazyRow.__getitem__` method is used.
+    
+    ..  py:attribute:: sheet
+    
+        The :py:class:`Sheet` to which this row belongs.
+    
+    ..  py:attribute:: _state
+    
+        The worksheet's internal state information, required
+        to perform lazy extraction of the cell values. The LazyRow
+        superclass doesn't use this. A subclass may need it.
 
 ::
 
@@ -340,6 +389,11 @@ Which one do we mean?  And how do we specify this selection?
             :param attribute: The attribute's value to return.
             """
             return self.sheet.workbook.row_get( self, attribute )
+
+Basic Sequence features
+
+::
+
         def __len__( self ):
             return len(self.sheet.schema)
         def __iter__( self ):
@@ -361,24 +415,30 @@ Which one do we mean?  And how do we specify this selection?
             return self.sheet.workbook.row_get( self, attribute )
 
 To approach the :py:class:`csv.DictReader` API (without the eager processing),
-we can make the ``Row`` API slightly more fluent with a ``by_name()``
-method.
+we could make the ``Row`` API slightly more fluent with a ``by_name()``
+method. 
 
 ..  parsed-literal::
 
         def by_name( self, name ):
             attr= self.sheet.schema.get_name(name)
-            return self.cell( attr )
+            return self.cell(attr)
+            
+This isn't implemented, because it doesn't seem very helpful.
 
 ExternalSchemaSheet Class
 ==========================
 
 ..  py:class:: ExternalSchemaSheet
 
-    A Sheet with an external schema can be one of two kinds.
+    A Sheet bound to a schema can be used to fetch data. This is a 
+    concrete subclass of :py:class:`Sheet`.
 
-    -   A Sheet that doesn't have row headers to embed the schema information.
-        In this case, an eager Workbook Row can create a sequence of :py:class:`cell.Cell` instances.  
+    A Sheet with an external schema can have one of two sources for
+    the bound schema.
+
+    -   An external sheet that doesn't have row headers to embed the schema information.
+        In this case, an eager Workbook Row can eagerly create a Sequence of :py:class:`cell.Cell` instances.  
         The Schema information can be associated by position.
 
     -   A Sheet that is really a COBOL or Fixed format file.
@@ -408,9 +468,20 @@ EmbeddedSchemaSheet Class
 
 ..  py:class:: EmbeddedSchemaSheet
 
-    A sheet with an embedded schema must have a loader class provided.  The loader
-    is invoked to build a :py:class:`schema.Schema` object.
-    It's also used to return the rest of the rows; those that weren't used to build the schema.
+    A sheet bound to a schema can be used to fetch data. This is a 
+    concrete subclass of :py:class:`Sheet`.
+
+    A sheet with an embedded schema must also have a :py:class:`schema.loader.SchemaLoader` class provided.  
+    The loader
+    is invoked to build the :py:class:`schema.Schema` object that's bound 
+    to the sheet. 
+    
+    The :py:class:`schema.loader.SchemaLoader` is also used to return the rest of the rows; 
+    those that weren't used to build the schema.
+
+    ..  py:attribute:: loader
+    
+        The :py:class:`Loader` used to build schema from rows in this sheet.
 
 ::
 
@@ -441,55 +512,56 @@ no further processing is required by the Sheet or the Loader.
 Rows of a Sheet
 ==================
 
-Note that the :mod:`csv` design pattern for each row involves two subclasses
+Note that the :py:mod:`csv` design pattern for each row involves two subclasses
 with the same method names but different results.  One
-returns a ``dict`` of cells, the other returns a ``list`` of cells.
+returns a ``dict`` of cells, keyed by field names, the other returns a ``list`` of cells,
+indexed by position.
 
-The dict-based processing has the advantage of clarity.  It has the
-disadvantage of not coping well with duplicate column names or data
+The dict-based processing has the advantage of clarity: cells are named row['cell'].  
+It has the disadvantage of not coping well with duplicate column names or data
 which breaks first normal form.
 
-Also, note that :mod:`csv` does eager creation of each row.  
-The :py:class:`csv.DictReader` does eager creation of a dictionary from each row.
+We can't follow the :mod:`csv` design pattern.  Instead we do the following.
 
-We don't follow the :mod:`csv` design pattern.  Instead we do the following.
+-   A :py:class:`sheet.Row` is a sequence of :py:class:`cell.Cell` instances.
+    It may be lazy or it may be eager.
 
--   A :py:class:`sheet.Row` can be a lazy sequence of :py:class:`cell.Cell` instances.
+-   To use names, a :py:class:`schema.Schema` must be used to fetch :py:class:`cell.Cell` 
+    instances from the :py:class:`sheet.Row` object. The schema translates names to positions.
 
--   A :py:class:`schema.Schema` must be used to fetch :py:class:`cell.Cell` 
-    instances from the :py:class:`sheet.Row`.
+-   To create dict-like access to :py:class:`cell.Cell`  instances, 
+    the :py:class:`schema.Schema` can be turned into a dictionary.  The row itself
+    is not a dictionary, just the schema. The row is still a Sequence.
+    
+    This "schema-as-dict" can still be used with a properly
+    lazy :py:class:`sheet.Row` to create :py:class:`cell.Cell` instances.
 
--   To create dict-like access to Cell instances, the schema can be turned into a dictionary.  
-    This "schema-as-dict" can then be used with a properly
-    lazy Row to create Cell instances.
-
-This lazy evaluation of a row that fetches data based on :py:class:`schema.Attribute`
-details  allows us to cope with COBOL ``REDEFINES``.  It also allows us to cope
+We need the lazy evaluation of a row that fetches data based on :py:class:`schema.Attribute`
+details in order to cope with COBOL ``REDEFINES``.  It also allows us to cope
 with the unfortunately common problem of duplicate column names in conventional
 spreadsheets.
 
-We can have application programming which looks like this to process rows in a number of ways.
-
-Row as sequence is the default.
+We can have application programming which looks like this to process a
+Row as sequence:
 
 ..  parsed-literal::
 
     for row in sheet.rows():
-        *Cell:* row[i]
-        *Schema Attribute Name:* sheet.schema[i].name
+        row[i] # instance of Cell
+        sheet.schema[i].name # name attribute of Schema Attribute
 
 Row as dict is a common alternative.  If we have unique column names in the schema,
 We can than use application programming that looks like this.
 
 ..  parsed-literal::
 
-    schema_dict = dict( (a.name, a) for a in sheet.schema )
+    schema_dict = dict((a.name, a) for a in sheet.schema)
     for row in sheet.rows():
-        *Cell:* row.cell(schema_dict['name'])
+        row.cell(schema_dict['name']) # instance of Cell
         row_as_dict= dict(
-            (a.name, row.cell(a)) for a in sheet.schema )
-        *Cell:* row_as_dict['name']
+            (a.name, row.cell(a)) for a in sheet.schema)
+        row_as_dict['name'] # instance of Cell
 
 This handles the COBOL case, where rows must be lazy.
-This includes COBOL ``REDEFINES`` and occurs clauses. 
+This includes the ``REDEFINES`` and occurs clauses. 
 This assures proper packed decimal conversion of redefined fields.

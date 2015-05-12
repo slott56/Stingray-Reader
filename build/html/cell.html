@@ -54,7 +54,7 @@
             
   <div class="section" id="module-cell">
 <span id="cell-module-data-element-containers-and-conversions"></span><span id="cells"></span><h1>4. Cell Module &#8211; Data Element Containers and Conversions<a class="headerlink" href="#module-cell" title="Permalink to this headline">¶</a></h1>
-<p>The point of a <a class="reference internal" href="#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> is two-fold.</p>
+<p>The point of a <a class="reference internal" href="#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> is two-fold:</p>
 <ul class="simple">
 <li><strong>Capture</strong>.  That is, decode the information in the source file into
 a Python object that represents the source spreadsheet value.
@@ -63,12 +63,20 @@ For CSV, all cells are text.
 For a fixed format file, we may have to exploit the physical format information
 to properly decode the bytes or characters.  We may even have to
 cope with EBCDIC or packed decimal conversions.</li>
-<li><strong>Convert</strong>. Provide the cell value coerced to another type.</li>
+<li><strong>Convert</strong>. Provide the cell value coerced to another Python type.
+This is rather open-ended; it&#8217;s hard to provide a comprehensive list of
+types to which data can be converted.</li>
 </ul>
 <div class="section" id="capture-use-case">
 <h2>4.1. Capture Use Case<a class="headerlink" href="#capture-use-case" title="Permalink to this headline">¶</a></h2>
-<p>The <strong>Capture</strong> use case is defined by our physical formats.
-<tt class="docutils literal"><span class="pre">xlrd</span></tt> identifies the follow cell types found in XLS workbooks.</p>
+<p>The <strong>Capture</strong> use case is defined by our physical formats. We have several places
+to look for source data formats:</p>
+<ul class="simple">
+<li><tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt>.</li>
+<li>XSLX (ECMA 376).</li>
+<li>Apple Numbers.</li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">xlrd</span></tt> identifies the follow cell types found in XLS workbooks.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="35%" />
@@ -150,7 +158,7 @@ cope with EBCDIC or packed decimal conversions.</li>
 <p>Dates formatted as strings are &#8211; always &#8211; a problem. There&#8217;s no generic solution.  An application may need to write suitable extensions to handle this.
 See below under <a class="reference internal" href="#conversion-functions">Conversion Functions</a>.</p>
 <p>We should depend on the <tt class="xref py py-mod docutils literal"><span class="pre">locale</span></tt> module to provide proper format strings for converting between date and string.</p>
-<p>A Numbers spreadsheet appears to have the following cell types. Some of the
+<p>An Apple Numbers spreadsheet appears to have the following cell types. Some of the
 tags appear to have no value, so their purpose is unclear.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -186,6 +194,56 @@ tags appear to have no value, so their purpose is unclear.</p>
 </tr>
 <tr class="row-odd"><td><tt class="docutils literal"><span class="pre">pm</span></tt> (Popup Menu)</td>
 <td>A popup menu of otherc cell values</td>
+</tr>
+</tbody>
+</table>
+<p>This provides a reasonably complete set of source data types. They vary by
+physical format. They all have a common history, starting with VisiCalc and including
+MultiPlan. Here&#8217;s a summary:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Type</th>
+<th class="head">XLRD</th>
+<th class="head">XLSX</th>
+<th class="head">Numbers</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Empty</td>
+<td>Two Varieties</td>
+<td>No</td>
+<td>Two Varieties</td>
+</tr>
+<tr class="row-odd"><td>Text</td>
+<td>Yes</td>
+<td>Three Varieties</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Number</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>Date</td>
+<td>Two Encodings</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Boolean</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr class="row-odd"><td>Error</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
 </tr>
 </tbody>
 </table>
@@ -234,10 +292,17 @@ We&#8217;ll address that under <a class="reference internal" href="developer.htm
 </div>
 <a class="reference internal image-reference" href="_images/cell.png"><img alt="_images/cell.png" src="_images/cell.png" style="width: 6in;" /></a>
 </div>
+<div class="section" id="circularity">
+<h2>4.4. Circularity<a class="headerlink" href="#circularity" title="Permalink to this headline">¶</a></h2>
+<p>Note that a Cell depends on a Workbook.</p>
+<p>And a Workbook (via a Sheet and a Row) depends on a Cell.</p>
+<p>In some languages, we&#8217;d be obligated to define interfaces so that these
+two classes could depend on each other sensibly. In Python, however,
+we don&#8217;t need to create an elaborate web of dependencies.</p>
+</div>
 <div class="section" id="overheads">
-<h2>4.4. Overheads<a class="headerlink" href="#overheads" title="Permalink to this headline">¶</a></h2>
-<p>We required <tt class="docutils literal"><span class="pre">xlrd</span></tt> from <a class="reference external" href="http://www.lexicon.net/sjmachin/xlrd.htm">http://www.lexicon.net/sjmachin/xlrd.htm</a></p>
-<p>This is the easiest way to read legacy Microsoft <tt class="docutils literal"><span class="pre">.XLS</span></tt> files.</p>
+<h2>4.5. Overheads<a class="headerlink" href="#overheads" title="Permalink to this headline">¶</a></h2>
+<p>Here are the module docstring and imports.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;stingray.cell -- Defines Cell as the atomic data element in a sheet</span>
 <span class="sd">of a workbook.</span>
 
@@ -249,7 +314,10 @@ We&#8217;ll address that under <a class="reference internal" href="developer.htm
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Hashable</span>
-<span class="kn">import</span> <span class="nn">xlrd</span>
+</pre></div>
+</div>
+<p>A version string.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">__version__</span> <span class="o">=</span> <span class="s">&quot;4.4.6&quot;</span>
 </pre></div>
 </div>
 <p>Just to be sure that any locale-based processing will actually
@@ -259,24 +327,39 @@ work, we establish a default locale.</p>
 </div>
 </div>
 <div class="section" id="cell">
-<h2>4.5. Cell<a class="headerlink" href="#cell" title="Permalink to this headline">¶</a></h2>
+<h2>4.6. Cell<a class="headerlink" href="#cell" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cell.Cell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">Cell</tt><a class="headerlink" href="#cell.Cell" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <a class="reference internal" href="#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> class hierarchy extends this base class.  Note that we have
 a relatively short list of built-in conversions.
-For more complex, application-specific conversions, the raw <tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt> is available as a property.</p>
+For more complex, application-specific conversions, the raw <a class="reference internal" href="#cell.Cell.value" title="cell.Cell.value"><tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt></a> is available as a property.</p>
+<dl class="attribute">
+<dt id="cell.Cell.value">
+<tt class="descname">value</tt><a class="headerlink" href="#cell.Cell.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The raw data, often a String from a workbook. May also be a
+sequence of bytes for COBOL.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cell.Cell.workbook">
+<tt class="descname">workbook</tt><a class="headerlink" href="#cell.Cell.workbook" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="workbook/base.html#workbook.base.Workbook" title="workbook.base.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.base.Workbook</span></tt></a> that created this Cell.
+This is largely used for Excel date conversions, but there
+could be other context needs for lazy access to data.</p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Cell</span><span class="p">(</span> <span class="n">Hashable</span> <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A class hierarchy for each kind of Cell.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A class hierarchy for each kind of Cell.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">workbook</span><span class="o">=</span><span class="bp">None</span> <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Build a new Cell; the atomic data element of a  workbook.</span>
 
-<span class="sd">        :param _value: the proper Python object, correctly converted from the source.</span>
-<span class="sd">        :param workbook: the :py:class:`workbook.Workbook` that created this Cell.</span>
-<span class="sd">            This is largely used for Excel date conversions, but there</span>
-<span class="sd">            could be other context needs.</span>
+<span class="sd">        :param value: Raw value, generally a string for most workbooks.</span>
+<span class="sd">        :param workbook: Parent workbook, required for some</span>
+<span class="sd">            conversions and for lazy access to data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">workbook</span> <span class="o">=</span> <span class="n">value</span><span class="p">,</span> <span class="n">workbook</span>
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
@@ -311,11 +394,11 @@ hashable.</p>
 </div>
 <div class="admonition-todo admonition" id="index-0">
 <p class="first admonition-title">Todo</p>
-<p class="last">Test hashable interface of Cell</p>
+<p class="last">Unit test cases for the hashable interface of Cell</p>
 </div>
 </div>
 <div class="section" id="emptycell">
-<h2>4.6. EmptyCell<a class="headerlink" href="#emptycell" title="Permalink to this headline">¶</a></h2>
+<h2>4.7. EmptyCell<a class="headerlink" href="#emptycell" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cell.EmptyCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">EmptyCell</tt><a class="headerlink" href="#cell.EmptyCell" title="Permalink to this definition">¶</a></dt>
@@ -336,7 +419,7 @@ A Numbers spreadsheet may use the <tt class="docutils literal"><span class="pre"
 </div>
 </div>
 <div class="section" id="textcell">
-<h2>4.7. TextCell<a class="headerlink" href="#textcell" title="Permalink to this headline">¶</a></h2>
+<h2>4.8. TextCell<a class="headerlink" href="#textcell" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cell.TextCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">TextCell</tt><a class="headerlink" href="#cell.TextCell" title="Permalink to this definition">¶</a></dt>
@@ -369,21 +452,19 @@ string values.</p>
                 <span class="n">format</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%x</span><span class="s">&quot;</span>
         <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span><span class="n">format</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">to_digit_str</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">5</span> <span class="p">):</span>
-        <span class="n">fmt</span><span class="o">=</span> <span class="s">&quot;{{0:0&gt;{0}d}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">txt</span><span class="o">=</span> <span class="s">&quot;{0:0&gt;{length}d}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">txt</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="numbercell">
-<h2>4.8. NumberCell<a class="headerlink" href="#numbercell" title="Permalink to this headline">¶</a></h2>
+<h2>4.9. NumberCell<a class="headerlink" href="#numbercell" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cell.NumberCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">NumberCell</tt><a class="headerlink" href="#cell.NumberCell" title="Permalink to this definition">¶</a></dt>
 <dd><p>A <tt class="docutils literal"><span class="pre">NumberCell</span></tt> implements the cells with a float value.
 <tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt> may report them as a type <tt class="docutils literal"><span class="pre">XL_CELL_NUMBER</span></tt>.
-A variety of conversions make sense for a number value.
-Note that the <tt class="docutils literal"><span class="pre">to_datetime()</span></tt> conversion depends on <tt class="docutils literal"><span class="pre">xlrd</span></tt>.
-This may be a faulty assumption for some species of workbooks.</p>
+A variety of conversions make sense for a number value.</p>
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">NumberCell</span><span class="p">(</span> <span class="n">Cell</span> <span class="p">):</span>
@@ -407,21 +488,24 @@ This may be a faulty assumption for some species of workbooks.</p>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">to_datetime</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="bp">None</span> <span class="p">):</span>
         <span class="k">assert</span> <span class="n">format</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">,</span> <span class="s">&quot;Format is not used.&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">dt</span><span class="o">=</span> <span class="n">xlrd</span><span class="o">.</span><span class="n">xldate_as_tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">datemode</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">xlrd</span><span class="o">.</span><span class="n">xldate</span><span class="o">.</span><span class="n">XLDateAmbiguous</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">ex</span><span class="o">=</span> <span class="ne">ValueError</span><span class="p">(</span> <span class="s">&quot;Ambiguous Date: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="p">)</span>
-            <span class="n">ex</span><span class="o">.</span><span class="n">__cause__</span><span class="o">=</span> <span class="n">e</span>
-            <span class="k">raise</span> <span class="n">ex</span>
-        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="o">*</span><span class="n">dt</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">float_to_date</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="c">#try:</span>
+        <span class="c">#    dt= xlrd.xldate_as_tuple(self.value, self.workbook.datemode)</span>
+        <span class="c">#except xlrd.xldate.XLDateAmbiguous as e:</span>
+        <span class="c">#    ex= ValueError( &quot;Ambiguous Date: {0}&quot;.format(self.value) )</span>
+        <span class="c">#    raise ex from e</span>
+        <span class="c">#return datetime.datetime(*dt)</span>
+
     <span class="k">def</span> <span class="nf">to_digit_str</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">5</span> <span class="p">):</span>
-        <span class="n">fmt</span><span class="o">=</span> <span class="s">&quot;{{0:0&gt;{0}d}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">txt</span><span class="o">=</span> <span class="s">&quot;{0:0&gt;{length}d}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">txt</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="floatdatecell">
-<h2>4.9. FloatDateCell<a class="headerlink" href="#floatdatecell" title="Permalink to this headline">¶</a></h2>
+<h2>4.10. FloatDateCell<a class="headerlink" href="#floatdatecell" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cell.FloatDateCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">FloatDateCell</tt><a class="headerlink" href="#cell.FloatDateCell" title="Permalink to this definition">¶</a></dt>
@@ -439,7 +523,7 @@ we simply inherit the features of a number.</p>
 dressed-up floating-point numbers.</p>
 </div>
 <div class="section" id="booleancell">
-<h2>4.10. BooleanCell<a class="headerlink" href="#booleancell" title="Permalink to this headline">¶</a></h2>
+<h2>4.11. BooleanCell<a class="headerlink" href="#booleancell" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cell.BooleanCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">BooleanCell</tt><a class="headerlink" href="#cell.BooleanCell" title="Permalink to this definition">¶</a></dt>
@@ -455,7 +539,7 @@ we simply inherit the features.</p>
 </div>
 </div>
 <div class="section" id="errorcell">
-<h2>4.11. ErrorCell<a class="headerlink" href="#errorcell" title="Permalink to this headline">¶</a></h2>
+<h2>4.12. ErrorCell<a class="headerlink" href="#errorcell" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cell.ErrorCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">ErrorCell</tt><a class="headerlink" href="#cell.ErrorCell" title="Permalink to this definition">¶</a></dt>
@@ -482,7 +566,7 @@ the error string for the cell.</p>
 </div>
 </div>
 <div class="section" id="datecell">
-<h2>4.12. DateCell<a class="headerlink" href="#datecell" title="Permalink to this headline">¶</a></h2>
+<h2>4.13. DateCell<a class="headerlink" href="#datecell" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="cell.DateCell">
 <em class="property">class </em><tt class="descclassname">cell.</tt><tt class="descname">DateCell</tt><a class="headerlink" href="#cell.DateCell" title="Permalink to this definition">¶</a></dt>
@@ -493,15 +577,19 @@ This is a value which did not come from a workbook float value.</p>
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">DateCell</span><span class="p">(</span> <span class="n">Cell</span> <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A cell which contains a proper :mod:`datetime` value.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A cell which contains a proper :py:mod:`datetime` value.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">to_int</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_float</span><span class="p">())</span>
     <span class="k">def</span> <span class="nf">to_float</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
-        <span class="n">timetuple</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()[:</span><span class="mi">6</span><span class="p">]</span>
-        <span class="n">xl</span><span class="o">=</span> <span class="n">xlrd</span><span class="o">.</span><span class="n">xldate</span><span class="o">.</span><span class="n">xldate_from_datetime_tuple</span><span class="p">(</span>
-            <span class="n">timetuple</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">datemode</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">xl</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">date_to_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="c">#timetuple= self.value.timetuple()[:6]</span>
+        <span class="c">#xl= xlrd.xldate.xldate_from_datetime_tuple(</span>
+        <span class="c">#    timetuple,</span>
+        <span class="c">#    self.workbook.datemode)</span>
+        <span class="c">#return xl</span>
+
     <span class="k">def</span> <span class="nf">to_decimal</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">0</span> <span class="p">):</span>
         <span class="n">fmt</span><span class="o">=</span> <span class="s">&quot;{0:0.{digits}f}&quot;</span>
         <span class="k">return</span> <span class="n">decimal</span><span class="o">.</span><span class="n">Decimal</span><span class="p">(</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_float</span><span class="p">(),</span><span class="n">digits</span><span class="o">=</span><span class="n">digits</span><span class="p">)</span> <span class="p">)</span>
@@ -514,19 +602,19 @@ This is a value which did not come from a workbook float value.</p>
         <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_int</span><span class="p">()</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>For numbers, the <tt class="docutils literal"><span class="pre">&lt;d&gt;</span></tt> cells have a native date format.</p>
-<p>This is an extension to basic <tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt>, XLSX and ODS workbook processing
-because no cell has this as its data type.</p>
+<p>For Apple Nnumbers, the <tt class="docutils literal"><span class="pre">&lt;d&gt;</span></tt> cells have a native date format.
+This is a unique feature, since <tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt>, XLSX and ODS don&#8217;t have a
+proper date cell value.</p>
 </div>
 <div class="section" id="conversion-functions">
-<h2>4.13. Conversion Functions<a class="headerlink" href="#conversion-functions" title="Permalink to this headline">¶</a></h2>
-<p>There is a need for functions for various kinds of conversions.  These are
-mostly focused on processing Fixed format files, where the data all originates
-as text.</p>
-<p>These can also be applied to CSV or TAB files to create cells other than the default
-<a class="reference internal" href="#cell.TextCell" title="cell.TextCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.TextCell</span></tt></a>.</p>
-<div class="section" id="dates">
-<h3>4.13.1. Dates<a class="headerlink" href="#dates" title="Permalink to this headline">¶</a></h3>
+<h2>4.14. Conversion Functions<a class="headerlink" href="#conversion-functions" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p>Refactor these into the <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a> module.</p>
+<p class="last">These functions are used to define schema, not process Cell objects <em>per se</em>.</p>
+</div>
+<p>The idea here is to create some functions that can be used to build
+Schema attributes that handle proper date conversions.</p>
 <dl class="function">
 <dt id="cell.date_from_string">
 <tt class="descclassname">cell.</tt><tt class="descname">date_from_string</tt><big>(</big><em>format</em><big>)</big><a class="headerlink" href="#cell.date_from_string" title="Permalink to this definition">¶</a></dt>
@@ -548,7 +636,7 @@ that returns a single-argument conversion function.</p>
     <span class="k">return</span> <span class="n">the_conversion</span>
 </pre></div>
 </div>
-<p>This forms the factory for the <a class="reference internal" href="#cell.DateCell" title="cell.DateCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.DateCell</span></tt></a> class.</p>
+<p>This forms a factory for the <a class="reference internal" href="#cell.DateCell" title="cell.DateCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.DateCell</span></tt></a> class.</p>
 <dl class="function">
 <dt id="cell.datecell_from_string">
 <tt class="descclassname">cell.</tt><tt class="descname">datecell_from_string</tt><big>(</big><em>format</em><big>)</big><a class="headerlink" href="#cell.datecell_from_string" title="Permalink to this definition">¶</a></dt>
@@ -572,55 +660,51 @@ that returns a single-argument conversion function.</p>
 </pre></div>
 </div>
 <p>This could be used like this in a schema definition.</p>
-<div class="highlight-python"><div class="highlight"><pre>d = Attribute( name=&quot;mm-dd-yy&quot;, size=*n*, offset=*m*,
+<pre class="literal-block">
+d = Attribute( name=&quot;mm-dd-yy&quot;, size=<em>n</em>, offset=<em>m</em>,
     create=stingray.cell.datecell_from_string(&quot;%m/%d/%y&quot;) )
-</pre></div>
-</div>
-<p>The function <a class="reference internal" href="#cell.date_from_float" title="cell.date_from_float"><tt class="xref py py-func docutils literal"><span class="pre">date_from_float()</span></tt></a> is an additional closure based on a <tt class="docutils literal"><span class="pre">workbook.datemode</span></tt> that returns a single-argument conversion function.</p>
+</pre>
 <dl class="function">
 <dt id="cell.date_from_float">
-<tt class="descclassname">cell.</tt><tt class="descname">date_from_float</tt><big>(</big><em>datemode</em><big>)</big><a class="headerlink" href="#cell.date_from_float" title="Permalink to this definition">¶</a></dt>
-<dd><p>A closure based on a datemode setting
+<tt class="descclassname">cell.</tt><tt class="descname">date_from_float</tt><big>(</big><em>workbook</em><big>)</big><a class="headerlink" href="#cell.date_from_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>A closure based on an XLS workbook&#8217;s datemode setting
 that returns a single-argument conversion function.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>datemode</strong> &#8211; the data mode for the workbook document as a whole.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>workbook</strong> &#8211; the xlrd workbook with the required datemode.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">date_from_float</span><span class="p">(</span> <span class="n">datemode</span> <span class="p">):</span>
-    <span class="k">def</span> <span class="nf">the_conversion</span><span class="p">(</span> <span class="n">value</span> <span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">dt</span><span class="o">=</span> <span class="n">xlrd</span><span class="o">.</span><span class="n">xldate_as_tuple</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">datemode</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">xlrd</span><span class="o">.</span><span class="n">xldate</span><span class="o">.</span><span class="n">XLDateAmbiguous</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">ex</span><span class="o">=</span> <span class="ne">ValueError</span><span class="p">(</span> <span class="s">&quot;Ambiguous Date: {0!r}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="p">)</span>
-            <span class="n">ex</span><span class="o">.</span><span class="n">__cause__</span><span class="o">=</span> <span class="n">e</span>
-            <span class="k">raise</span> <span class="n">ex</span>
-        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="o">*</span><span class="n">dt</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">the_conversion</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">date_from_float</span><span class="p">(</span><span class="n">workbook</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">workbook</span><span class="o">.</span><span class="n">float_to_date</span>
 </pre></div>
 </div>
-<p>This function has similar applications for converting data to a more useful
-<a class="reference internal" href="#cell.DateCell" title="cell.DateCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.DateCell</span></tt></a> instance.</p>
-<div class="highlight-python"><div class="highlight"><pre>float2date= stingray.cell.date_from_float(workbook.datemode)
-d = Attribute( name=&quot;mm-dd-yy&quot;, size=*n*, offset=*m*,
+<p>Once the definition of this was somewhat more complex. It was dependent on
+<tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt>; We&#8217;ve refactored it out of here to isolate all <tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt>
+dependencies properly.</p>
+<pre class="literal-block">
+def date_from_float( workbook ):
+    def the_conversion( value ):
+        try:
+            dt= xlrd.xldate_as_tuple(value, workbook.datemode)
+        except xlrd.xldate.XLDateAmbiguous as e:
+            ex= ValueError( &quot;Ambiguous Date: {0!r}&quot;.format(value) )
+            raise ex from e
+        return datetime.datetime(*dt)
+    return the_conversion
+</pre>
+<p>This function can be used to convert a raw float to a more useful
+<a class="reference internal" href="#cell.DateCell" title="cell.DateCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.DateCell</span></tt></a> instance. This is only sensible in the XLRD context
+where dates have peculiar conversion rules.</p>
+<pre class="literal-block">
+float2date= stingray.cell.date_from_float(workbook)
+d = Attribute( name=&quot;mm-dd-yy&quot;, size=<em>n</em>, offset=<em>m</em>,
     create=lambda x, w: stingray.cell.DateCell( float2date(x), w ) )
-</pre></div>
-</div>
-</div>
-<div class="section" id="numbers">
-<h3>4.13.2. Numbers<a class="headerlink" href="#numbers" title="Permalink to this headline">¶</a></h3>
-<p>A fixed-format file can have any of a variety of numbers, encoded in a
-variety of ways.</p>
-<p>The ordinary number-as-string, is trivially handled by <a class="reference internal" href="#cell.TextCell" title="cell.TextCell"><tt class="xref py py-class docutils literal"><span class="pre">cell.TextCell</span></tt></a>.  No real need for a more sophisticated conversion.</p>
-<p>The less-ordinary case of COBOL data, in computational-3 format, or display
-format with an assumed decimal place is more difficult.  We&#8217;ll defer
-this to <a class="reference internal" href="cobol.html#cobol"><em>The COBOL Package</em></a>.</p>
-</div>
+</pre>
 </div>
 </div>
 
@@ -639,20 +723,17 @@ this to <a class="reference internal" href="cobol.html#cobol"><em>The COBOL Pack
 <li><a class="reference internal" href="#capture-use-case">4.1. Capture Use Case</a></li>
 <li><a class="reference internal" href="#convert-use-cases">4.2. Convert Use Cases</a></li>
 <li><a class="reference internal" href="#model">4.3. Model</a></li>
-<li><a class="reference internal" href="#overheads">4.4. Overheads</a></li>
-<li><a class="reference internal" href="#cell">4.5. Cell</a></li>
-<li><a class="reference internal" href="#emptycell">4.6. EmptyCell</a></li>
-<li><a class="reference internal" href="#textcell">4.7. TextCell</a></li>
-<li><a class="reference internal" href="#numbercell">4.8. NumberCell</a></li>
-<li><a class="reference internal" href="#floatdatecell">4.9. FloatDateCell</a></li>
-<li><a class="reference internal" href="#booleancell">4.10. BooleanCell</a></li>
-<li><a class="reference internal" href="#errorcell">4.11. ErrorCell</a></li>
-<li><a class="reference internal" href="#datecell">4.12. DateCell</a></li>
-<li><a class="reference internal" href="#conversion-functions">4.13. Conversion Functions</a><ul>
-<li><a class="reference internal" href="#dates">4.13.1. Dates</a></li>
-<li><a class="reference internal" href="#numbers">4.13.2. Numbers</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#circularity">4.4. Circularity</a></li>
+<li><a class="reference internal" href="#overheads">4.5. Overheads</a></li>
+<li><a class="reference internal" href="#cell">4.6. Cell</a></li>
+<li><a class="reference internal" href="#emptycell">4.7. EmptyCell</a></li>
+<li><a class="reference internal" href="#textcell">4.8. TextCell</a></li>
+<li><a class="reference internal" href="#numbercell">4.9. NumberCell</a></li>
+<li><a class="reference internal" href="#floatdatecell">4.10. FloatDateCell</a></li>
+<li><a class="reference internal" href="#booleancell">4.11. BooleanCell</a></li>
+<li><a class="reference internal" href="#errorcell">4.12. ErrorCell</a></li>
+<li><a class="reference internal" href="#datecell">4.13. DateCell</a></li>
+<li><a class="reference internal" href="#conversion-functions">4.14. Conversion Functions</a></li>
 </ul>
 </li>
 </ul>

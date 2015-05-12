@@ -211,8 +211,8 @@ preservation of raw data.</p>
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="_images/cobol_cell.png"><img alt="_images/cobol_cell.png" src="_images/cobol_cell.png" style="width: 6in;" /></a>
-<div class="admonition important">
-<p class="first admonition-title">Important</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
 <p>Non-Polymorphic.</p>
 <p class="last">These classes are profound extensions to the base definitions of <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>.
 They are not polymorphic with the base classes.
@@ -705,8 +705,8 @@ Similar to the way REDEFINES is handled.</li>
 </ul>
 <p>This means that the <tt class="docutils literal"><span class="pre">number</span></tt> attribute must be derived EITHER from the definition
 or a data record. For ODO, we need to bind the definition to a record.</p>
-<div class="admonition important">
-<p class="first admonition-title">Important</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
 <p>Dependencies between DDE and Attribute</p>
 <p>An OCCURS is a feature of the DDE.
 Data access, however, requires the <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a>.
@@ -839,78 +839,116 @@ An elementary-level DDE with a numeric PICTURE is numeric-type data.  It can
 be usage display or usage computational.  An elementary-level DDE with a string PICTURE is string-type data.</p>
 <p>Occurs and Redefines can occur at any level.</p>
 <p>Each entry is defined by the following attributes:</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Level:</th><td class="field-body">COBOL level number 01 to 49, 66 or 88.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">MyName:</th><td class="field-body">COBOL variable name</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Occurs:</th><td class="field-body">An instance of <a class="reference internal" href="#cobol.defs.Occurs" title="cobol.defs.Occurs"><tt class="xref py py-class docutils literal"><span class="pre">Occurs</span></tt></a>.
+<dl class="attribute">
+<dt id="cobol.defs.DDE.level">
+<tt class="descname">level</tt><a class="headerlink" href="#cobol.defs.DDE.level" title="Permalink to this definition">¶</a></dt>
+<dd><p>COBOL level number 01 to 49, 66 or 88.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.defs.DDE.myName">
+<tt class="descname">myName</tt><a class="headerlink" href="#cobol.defs.DDE.myName" title="Permalink to this definition">¶</a></dt>
+<dd><p>COBOL variable name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.defs.DDE.occurs">
+<tt class="descname">occurs</tt><a class="headerlink" href="#cobol.defs.DDE.occurs" title="Permalink to this definition">¶</a></dt>
+<dd><p>An instance of <a class="reference internal" href="#cobol.defs.Occurs" title="cobol.defs.Occurs"><tt class="xref py py-class docutils literal"><span class="pre">Occurs</span></tt></a>.
 the number of occurrences. The default is 1, which we call &#8220;format 0&#8221;.
 There are two defined formats: format 1 has a fixed number of occurrences;
-format 2 is the Occurs Depending On with a variable number of occurrences.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Picture:</th><td class="field-body">the exploded picture clause, with ()&#8217;s expanded</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">InitValue:</th><td class="field-body">any initial value provided</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Allocation:</th><td class="field-body">an instance of <a class="reference internal" href="#cobol.defs.Allocation" title="cobol.defs.Allocation"><tt class="xref py py-class docutils literal"><span class="pre">Allocation</span></tt></a> used to compute the offset and total size.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Usage:</th><td class="field-body">an instance of <a class="reference internal" href="#cobol.defs.Usage" title="cobol.defs.Usage"><tt class="xref py py-class docutils literal"><span class="pre">Usage</span></tt></a> to delegate data conversion properly.
-The actual conversion is handled by the workbook.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Contains:</th><td class="field-body">the list of contained fields within a group</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Parent:</th><td class="field-body">A weakref to the immediate parent DDE</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Top:</th><td class="field-body">A weakref to the overall record definition DDE.</td>
-</tr>
-</tbody>
-</table>
+format 2 is the Occurs Depending On with a variable number of occurrences.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.defs.DDE.picture">
+<tt class="descname">picture</tt><a class="headerlink" href="#cobol.defs.DDE.picture" title="Permalink to this definition">¶</a></dt>
+<dd><p>the exploded picture clause, with ()&#8217;s expanded</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.defs.DDE.initValue">
+<tt class="descname">initValue</tt><a class="headerlink" href="#cobol.defs.DDE.initValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>any initial value provided</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.defs.DDE.allocation">
+<tt class="descname">allocation</tt><a class="headerlink" href="#cobol.defs.DDE.allocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>an instance of <a class="reference internal" href="#cobol.defs.Allocation" title="cobol.defs.Allocation"><tt class="xref py py-class docutils literal"><span class="pre">Allocation</span></tt></a> used to compute the offset and total size.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.defs.DDE.usage">
+<tt class="descname">usage</tt><a class="headerlink" href="#cobol.defs.DDE.usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>an instance of <a class="reference internal" href="#cobol.defs.Usage" title="cobol.defs.Usage"><tt class="xref py py-class docutils literal"><span class="pre">Usage</span></tt></a> to delegate data conversion properly.
+The actual conversion is handled by the workbook.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.defs.DDE.contains">
+<tt class="descname">contains</tt><a class="headerlink" href="#cobol.defs.DDE.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>the list of contained fields within a group</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.defs.DDE.parent">
+<tt class="descname">parent</tt><a class="headerlink" href="#cobol.defs.DDE.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>A weakref to the immediate parent DDE</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.defs.DDE.top">
+<tt class="descname">top</tt><a class="headerlink" href="#cobol.defs.DDE.top" title="Permalink to this definition">¶</a></dt>
+<dd><p>A weakref to the overall record definition DDE.</p>
+</dd></dl>
+
 <p>The following decorations are applied by functions that traverse the DDE structure.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">SizeScalePrecision:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><tt class="docutils literal"><span class="pre">Picture</span></tt> namedtuple with details derived from parsing the PICTURE clause</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Size:</th><td class="field-body">the size of an individual occurrence</td>
-</tr>
-</tbody>
-</table>
+<dl class="attribute">
+<dt id="cobol.defs.DDE.sizeScalePrecision">
+<tt class="descname">sizeScalePrecision</tt><a class="headerlink" href="#cobol.defs.DDE.sizeScalePrecision" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">Picture</span></tt> namedtuple with details derived from parsing the PICTURE clause</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.defs.DDE.size">
+<tt class="descname">size</tt><a class="headerlink" href="#cobol.defs.DDE.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>the size of an individual occurrence</p>
+</dd></dl>
+
 <p>The following features may have to be computed lazily if there&#8217;s an Occurs
 Depending On. Otherwise they can be computed eagerly.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Variably_located:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">Variably Located if any this element or any child has Occurs Depending On.
+<dl class="attribute">
+<dt id="cobol.defs.DDE.variably_located">
+<tt class="descname">variably_located</tt><a class="headerlink" href="#cobol.defs.DDE.variably_located" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variably Located if any this element or any child has Occurs Depending On.
 Otherwise (no ODO) the DDE is Statically Located.
 Actually, only element <strong>after</strong> the ODO element are variably located. But it&#8217;s simpler
-to treat the whole record as variable.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Offset:</th><td class="field-body">offset to this field from start of record.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">TotalSize:</th><td class="field-body">overall size of this item, including all occurrences.</td>
-</tr>
-</tbody>
-</table>
+to treat the whole record as variable.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.defs.DDE.offset">
+<tt class="descname">offset</tt><a class="headerlink" href="#cobol.defs.DDE.offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>offset to this field from start of record.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.defs.DDE.totalSize">
+<tt class="descname">totalSize</tt><a class="headerlink" href="#cobol.defs.DDE.totalSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>overall size of this item, including all occurrences.</p>
+</dd></dl>
+
 <p>Additionally, this item &#8211; in a way &#8211; breaks the dependencies between
 a <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a> and a DDE. It&#8217;s appropriate for an Attribute
 to depend on a DDE, but the reverse isn&#8217;t proper. However, we DDE
 referring to an attribute anyway.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Attribute:</th><td class="field-body">weakref to the <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a> built from this DDE.</td>
-</tr>
-</tbody>
-</table>
+<dl class="attribute">
+<dt id="cobol.defs.DDE.attribute">
+<tt class="descname">attribute</tt><a class="headerlink" href="#cobol.defs.DDE.attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>weakref to the <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a> built from this DDE.</p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">DDE</span><span class="p">:</span>
@@ -957,7 +995,7 @@ referring to an attribute anyway.</p>
         <span class="k">return</span> <span class="s">&quot;{:&lt;2s} {:&lt;20s}{:s}{:s}{:s}{:s}.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="n">oc</span><span class="p">,</span> <span class="n">pc</span><span class="p">,</span> <span class="n">uc</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>Construction occurs in three general steps:</p>
+<p>Construction occurs in these general steps:</p>
 <ol class="arabic simple">
 <li>the DDE is created,</li>
 <li>source attributes are set,</li>
@@ -1173,7 +1211,7 @@ the structure has at least one ODO.</p>
 <div class="admonition-todo admonition" id="index-0">
 <p class="first admonition-title">Todo</p>
 <p>refactor setSizeAndOffset()</p>
-<p class="last">Refactor setSizeAndOffset() into the <a class="reference internal" href="#cobol.defs.Allocation" title="cobol.defs.Allocation"><tt class="xref py py-class docutils literal"><span class="pre">Allocation</span></tt></a> class methods
+<p class="last">Refactor <a class="reference internal" href="#cobol.defs.setSizeAndOffset" title="cobol.defs.setSizeAndOffset"><tt class="xref py py-func docutils literal"><span class="pre">setSizeAndOffset()</span></tt></a> into the <a class="reference internal" href="#cobol.defs.Allocation" title="cobol.defs.Allocation"><tt class="xref py py-class docutils literal"><span class="pre">Allocation</span></tt></a> class methods
 to remove isinstance() nonsense.</p>
 </div>
 <dl class="function">

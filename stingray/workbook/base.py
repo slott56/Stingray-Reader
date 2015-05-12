@@ -7,7 +7,11 @@
 #
 # These are the definitions shared by all Workbook subclass definitions.
 #
-# ..  py:module:: workbook
+# One of the common features is date conversions. Only XLS files have 
+# peculiar date conversion issues. But we're forced to make all 
+# spreadsheets polymorphic with respect to this anomalous behavior.
+#
+# ..  py:module:: workbook.base
 #
 # ::
 
@@ -20,6 +24,24 @@ import stingray.sheet
 #
 #     All physical workbook formats all encode a single, common data structure.
 #     Here are some abstract definitions.
+#    
+#     ..  py:attribute:: name
+#        
+#         Filename for this workbook.
+#    
+#     ..  py:attribute:: the_file
+#    
+#         The actual open file object.
+#    
+#     ..  py:attribute:: datemode
+#    
+#         For XLS spreadsheets only, a datemode is required. This may not 
+#         be appropriate for all spreadsheets. It's in this superclass 
+#         for now, but may be refactored out.
+#    
+#     ..  py:attribute:: log
+#    
+#         Logger for Workbooks.
 #
 # ::
 
@@ -59,7 +81,7 @@ class Workbook:
 
     def sheets( self ):
         """List of sheet names.
-        The filename is a handy default for CSV and Fixed files.
+        The filename is a handy default sheet name for CSV and Fixed files.
         """
         nm, _ = os.path.splitext( os.path.basename(self.name) )
         return [ nm ]
@@ -97,8 +119,25 @@ class Workbook:
         """Create a Cell from the row's data."""
         raise NotImplementedError
 
+# And, for proper date conversions in XLS spreadsheets only, we have 
+# two methods. In other spreadsheets, proper system dates and times
+# are used in somewhat more conventional ways.
+#
+# ..  py:method:: Workbook.float_to_date( value ):
+#
+# ::
 
-# There are distinct subclasses of :py:class:`workbook.Workbook`, based on the
+    def float_to_date( self, value ):
+        raise NotImplementedError
+
+# ..  py:method:: Workbook.date_to_float( value ):
+#
+# ::
+
+    def date_to_float( value ):
+        raise NotImplementedError
+
+# There are many distinct subclasses of :py:class:`workbook.base.Workbook`, based on the
 # physical file format.
 #
 # Many of our physical formats don't require any physical schema information.

@@ -178,6 +178,19 @@ an empty sheet is desirable.</p>
 <dd><p>A Schema Loader has one mandatory contract: It must load the schema.</p>
 <p>A subclass may add a second contract, For example,
 an embedded schema loader will also return the non-schema rows.</p>
+<dl class="attribute">
+<dt id="schema.loader.SchemaLoader.sheet">
+<tt class="descname">sheet</tt><a class="headerlink" href="#schema.loader.SchemaLoader.sheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <tt class="xref py py-class docutils literal"><span class="pre">Sheet</span></tt> associated with this schema.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="schema.loader.SchemaLoader.row_iter">
+<tt class="descname">row_iter</tt><a class="headerlink" href="#schema.loader.SchemaLoader.row_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>An iterator over the rows of this sheet; used to pick rows that
+belong to the header, separate from the rows that belong to data.</p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">SchemaLoader</span><span class="p">:</span>
@@ -238,8 +251,14 @@ plug-in that the Workbook uses when instantiating each Sheet.</p>
     <span class="n">loader_class</span><span class="o">=</span><span class="n">HeadingRowSchemaLoader</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>In many cases, we&#8217;d like to subclass this to suppress the empty rows that are an inevitable feature of workbook sheets.  This doesn&#8217;t work well for COBOL
+<dl class="class">
+<dt id="schema.loader.NonBlankHeadingRowSchemaLoader">
+<em class="property">class </em><tt class="descclassname">schema.loader.</tt><tt class="descname">NonBlankHeadingRowSchemaLoader</tt><a class="headerlink" href="#schema.loader.NonBlankHeadingRowSchemaLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>In many cases, we&#8217;d like to suppress the empty rows that are an inevitable feature of workbook sheets.</p>
+<p>Note that this doesn&#8217;t work well for COBOL
 or Fixed format files, since an &#8220;empty&#8221; row may be difficult to discern.</p>
+</dd></dl>
+
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">NonBlankHeadingRowSchemaLoader</span><span class="p">(</span> <span class="n">HeadingRowSchemaLoader</span> <span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span> <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A simple :py:class:`Sheet` instance.&quot;&quot;&quot;</span>
@@ -278,6 +297,18 @@ builder to create application dictionaries.</li>
 <a class="reference internal" href="#schema.loader.ExternalSchemaLoader.schema" title="schema.loader.ExternalSchemaLoader.schema"><tt class="xref py py-meth docutils literal"><span class="pre">schema.loader.ExternalSchemaLoader.schema()</span></tt></a>,
 that iterates over application objects built from application dictionaries.</li>
 </ol>
+<dl class="attribute">
+<dt id="schema.loader.ExternalSchemaLoader.workbook">
+<tt class="descname">workbook</tt><a class="headerlink" href="#schema.loader.ExternalSchemaLoader.workbook" title="Permalink to this definition">¶</a></dt>
+<dd><p>The overall Workbook that we&#8217;re parsing to locate schema information.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="schema.loader.ExternalSchemaLoader.Sheet">
+<tt class="descname">Sheet</tt><a class="headerlink" href="#schema.loader.ExternalSchemaLoader.Sheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A specific sheet within that workbook.</p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ExternalSchemaLoader</span><span class="p">(</span> <span class="n">SchemaLoader</span> <span class="p">):</span>

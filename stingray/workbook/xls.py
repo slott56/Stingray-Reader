@@ -8,7 +8,6 @@
 #
 # ::
 
-import xlrd
 import logging
 import pprint
 
@@ -16,7 +15,9 @@ from stingray.workbook.base import Workbook
 import stingray.sheet
 import stingray.cell
 
-# ..  py:module:: workbook
+import xlrd
+
+# ..  py:module:: workbook.xls
 #
 # ..  py:class:: XLS_Workbook
 #
@@ -25,6 +26,19 @@ import stingray.cell
 #     This definition of a workbook wraps :py:mod:`xlrd` so that it fits the Stingray framework.   
 #     We'll use proper :py:class:`cell.Cell` subclass instances instead of the default ``xlrd.Cell``
 #     values that :py:mod:`xlrd` normally creates.
+#
+#     In addition to the superclass attributes, some additional unique
+#     attributes are introduced here.
+#        
+#     ..  py:attribute:: wb
+#    
+#         A xlrd workbook for this file.
+#        
+#     ..  py:attribute:: datemode
+#    
+#         The XLS date mode for this workbook. This is required for converting
+#         floating-point values to dates and dates to floating-point values.
+#
 #
 # ::
 
@@ -110,3 +124,30 @@ class XLS_Workbook( Workbook ):
             return stingray.cell.EmptyCell('', self)
         else:
             raise ValueError( "Damaged Workbook" )
+
+# For proper date conversions, we have 
+# two methods that leverage the datemode to properly convert dates
+# and times in :file:`.XLS` workbooks.
+#
+# ..  py:method:: Workbook.float_to_date( value ):
+#
+# ::
+
+    def float_to_date( self, value ):
+        try:
+            dt= xlrd.xldate_as_tuple(value, self.datemode)
+        except xlrd.xldate.XLDateAmbiguous as e:
+            ex= ValueError( "Ambiguous Date: {0!r}".format(value) )
+            raise ex from e
+        return datetime.datetime(*dt)
+
+# ..  py:method:: Workbook.date_to_float( value ):
+#
+# ::
+
+    def date_to_float( value ):
+        timetuple= self.value.timetuple()[:6]
+        xl= xlrd.xldate.xldate_from_datetime_tuple(
+            timetuple,
+            self.datemode)
+        return xl

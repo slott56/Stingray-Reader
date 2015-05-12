@@ -115,7 +115,7 @@ components.
 :file:`.numbers` describe the physical format.   
 
 Our :py:class:`cell.Cell`, :py:class:`sheet.Sheet`, and
-:py:class:`workbook.Workbook` handles many physical format details nicely.
+:py:class:`workbook.base.Workbook` handles many physical format details nicely.
 
 Data Attribute Mapping -- Using a Schema
 ==========================================
@@ -207,7 +207,7 @@ version.
     def make_builder( args ):
         return eval( 'build_record_{0}'.format(args.layout) )
 
-The :func:`make_builder` function selects one of the available
+The :py:func:`make_builder` function selects one of the available
 builders based on a run-time option.
 
 Adding Fluency
@@ -462,9 +462,9 @@ This makes two claims about the workbook.
 
 -   All sheets in the workbook have the same schema rules.
     In this example, it's an embedded schema in each sheet and the schema is the heading row.
-    We could easily use an ExternalSchemaSheet and an external schema.
+    We could easily use an :class:`sheet.ExternalSchemaSheet` and an external schema.
     
--   A single :func:`process_sheet` function is appropriate for all sheets.
+-   A single :py:func:`process_sheet` function is appropriate for all sheets.
 
 If a workbook doesn't meet these criteria, then a (potentially) more complex
 workbook processing function is needed.  A sheet filter is usually necessary.

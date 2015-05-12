@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="The Stingray Schema-Based File Reader" href="index.html" />
-    <link rel="next" title="2. Licensing" href="license.html" />
+    <link rel="next" title="2. Design Considerations" href="design.html" />
     <link rel="prev" title="The Stingray Schema-Based File Reader" href="index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="license.html" title="2. Licensing"
+          <a href="design.html" title="2. Design Considerations"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="The Stingray Schema-Based File Reader"
@@ -57,19 +57,21 @@
 <p>Given a workbook &#8211; or any other &#8220;flat&#8221; file &#8211; how is it organized?  What does it <em>mean</em>?</p>
 <p>How can we ignore details that are merely physical?
 When is a change merely a logical layout variant with no semantic impact?
-How do we isolate ourselves from these layout variants?</p>
-<p>There are two use cases that we want to focus on.</p>
+How do we isolate ourselves from these variations?</p>
+<p>There are two user stories that we want to focus on.</p>
 <ul class="simple">
 <li><strong>Extract Transform and Load (ETL)</strong>.   We&#8217;ve got a file of data
-in the form of a workbook (&#8220;spreadsheet&#8221;) file or perhaps a flat (delimiter-free) COBOL file.</li>
-<li><strong>Analysis</strong>.  Also known as Data Profiling.  We&#8217;ve got a file of data and we want to
-examine the data for frequencies, ranges and relationships.
+in the form of a workbook (&#8220;spreadsheet&#8221;) file or perhaps a flat (delimiter-free) COBOL file.
+The <strong>ET</strong> portion of <strong>ETL</strong> may be part of a &#8220;Big Data&#8221; application:
+it could be the mapper portion of a Hadoop Map-Reduce.</li>
+<li><strong>Analysis</strong>.  More specifically, Data Profiling.  We&#8217;ve got a file of data and we want to
+examine it for frequencies, ranges and relationships.
 A common use for this is to &#8220;validate&#8221; or &#8220;unit test&#8221;
 a file before attempting to process it.</li>
 </ul>
 <p>In these cases, we don&#8217;t want our applications to depend on
-the physical file format.  We want to work equally well with CSV or XLSX
-versions of a file.</p>
+the physical file format.
+We want to work equally well with CSV or XLSX versions of a file.</p>
 <p>We&#8217;d like something like this to transparently handle workbook files in a variety of formats.</p>
 <pre class="literal-block">
 def process_sheet( sheet ):
@@ -82,30 +84,36 @@ def process_sheet( sheet ):
 def main(args):
     for input in args.file:
         with workbook.open_workbook( input ) as source:
-            for name in source.sheets():
+            for name in source.sheets(): ❶
                 sheet= source.sheet( name,
-                    sheet.EmbeddedSchemaSheet,
-                    loader_class=schema.loader.HeadingRowSchemaLoader )
+                    sheet.EmbeddedSchemaSheet, ❷
+                    loader_class=schema.loader.HeadingRowSchemaLoader ) ❸
                 counts= process_sheet( sheet )
-                pprint.pprint( counts )
+                pprint( counts )
 </pre>
-<p>Note that this specifies a number of things explicitly.</p>
+<p>Note that this is wordy because it specifies a number of things explicitly.</p>
 <ul class="simple">
-<li><tt class="samp docutils literal"><span class="pre">for</span> <span class="pre">name</span> <span class="pre">in</span> <span class="pre">source.sheets()</span></tt> claims that <em>all</em> sheets have valid data.
+<li>❶ <tt class="samp docutils literal"><span class="pre">for</span> <span class="pre">name</span> <span class="pre">in</span> <span class="pre">source.sheets()</span></tt> claims that <em>all</em> sheets have valid data.
 When this is not the case, more sophisticated name filtering
 needs to be inserted into this loop.</li>
-<li><a class="reference internal" href="sheet.html#sheet.EmbeddedSchemaSheet" title="sheet.EmbeddedSchemaSheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.EmbeddedSchemaSheet</span></tt></a> states that the sheet has the schema
+<li>❷ <a class="reference internal" href="sheet.html#sheet.EmbeddedSchemaSheet" title="sheet.EmbeddedSchemaSheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.EmbeddedSchemaSheet</span></tt></a> states that the sheet has the schema
 embedded in it.  For example, the headers in the first row of the sheet.
 We can use <a class="reference internal" href="sheet.html#sheet.ExternalSchemaSheet" title="sheet.ExternalSchemaSheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.ExternalSchemaSheet</span></tt></a> to specify
 that an external schema must be loaded. For example, a separate sheet in this
 workbook or perhaps a separate file.</li>
-<li><a class="reference internal" href="schema_loader.html#schema.loader.HeadingRowSchemaLoader" title="schema.loader.HeadingRowSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></tt></a> states that the schema is
+<li>❸ <a class="reference internal" href="schema_loader.html#schema.loader.HeadingRowSchemaLoader" title="schema.loader.HeadingRowSchemaLoader"><tt class="xref py py-class docutils literal"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></tt></a> states that the schema is
 the first row of the sheet.  We can write other parsers for other sheets
 with more complex or atypical layouts.</li>
 </ul>
+<p>We&#8217;ve made these issues explicit because they are the source of complication
+in otherwise simple applications. Parsing the header from <tt class="file docutils literal"><span class="pre">.csv</span></tt> files is done
+by a simple algorithm in the <tt class="xref py py-mod docutils literal"><span class="pre">csv</span></tt> module. This algorithm isn&#8217;t always
+appropriate, and we need to be able to change it.</p>
+<div class="section" id="logical-layout-issues">
+<h2>1.1. Logical Layout Issues<a class="headerlink" href="#logical-layout-issues" title="Permalink to this headline">¶</a></h2>
 <p>Beyond physical format transparency, we want applications that are flexible with respect to the
-the logical layout.  We&#8217;d like to be adaptable to changes to the names, number,
-order and type of columns without a significant rewrite.   We&#8217;d like
+the logical layout of coumns.  We&#8217;d like to be adaptable to changes to the names, number,
+order and type of columns without a significant rewrite. We&#8217;d like
 to isolate the column names or positions from the rest of our application processing.</p>
 <p>We can do this by definining  small &#8220;builder&#8221; functions which isolate the
 logical layout from the rest of the application.</p>
@@ -147,9 +155,11 @@ def process_sheet( sheet ):
         <em>process the app_object</em>
     return counts
 </pre>
+<p>We&#8217;ll show concrete implementation examples in the <a class="reference internal" href="demo/index.html#demo"><em>Stingray Demo Applications</em></a> section.</p>
+</div>
 <div class="section" id="deeper-issues">
-<h2>1.1. Deeper Issues<a class="headerlink" href="#deeper-issues" title="Permalink to this headline">¶</a></h2>
-<p>Processing a workbook (or other flat file) means solving two closely-related schema management problems.</p>
+<h2>1.2. Deeper Issues<a class="headerlink" href="#deeper-issues" title="Permalink to this headline">¶</a></h2>
+<p>Processing a workbook (or other flat file) means solving two closely-related schema problems.</p>
 <ul class="simple">
 <li>Decoding the &#8220;Physical Format&#8221;.  Format is the organization of bytes from
 which we can decode Python objects (e.g., decode a string to lines
@@ -157,7 +167,7 @@ of text to atomic fields).  A workbook should make the physical format irrelevan
 <li>Mapping to the &#8220;Logical Layout&#8221;. That is, the semantic mapping from Python
 items (e.g., strings) to meaningful data elements in our problem domain (e.g., customer zip codes.)</li>
 </ul>
-<p>Both of these are implementation details for the <em>Conceptual Content</em>.  The
+<p>Both of these are implementation details for some <em>Conceptual Content</em>.  The
 conceptual schema is the <em>meaning</em> behind the encoded data.</p>
 <p>Often, the physical format issue is addressed by using a well-known (or even standardized) file format:
 CSV, XLSX, XML, JSON, YAML, etc.
@@ -165,95 +175,83 @@ We&#8217;ll start with just the workbook formats CSV, XLSX and ODS.</p>
 <p>We&#8217;ll ignore JSON and YAML for the time being. We should be able to extend our
 model from highly structured data to semi-structured data, including JSON, YAML,
 and even documents created with outliner tools.</p>
-<p>The logical layout issue is not as easy to address as physical format.  Why not?</p>
+<p>We&#8217;ll expand on our model to include COBOL files. In many cases, they will parallel
+workbooks. In some cases, however, they introduce some complexity.</p>
+<p>The logical layout issue is not as easy to address as the physical format issue.
+A file is either compliant with a physical format or it&#8217;s not.  Why is logical
+layout more complex than physical format? We&#8217;ve seen at least four common reasons:</p>
 <ul>
 <li><p class="first"><strong>Bullfeathers</strong>.  Also known as Semantic Heterogeneity.
 You call them &#8220;customers&#8221; because they have
 a contract and pay money for services.  Marketing, however, calls their
-prospects &#8220;customers&#8221; even though there is no contract in place.</p>
-<p>Same word.  Different semantics.
-Yes.  It&#8217;s a &#8220;problem domain&#8221; issue.  No, it&#8217;s not solvable.</p>
-<p>All we can do is cope. This means having enough flexibility to handle
-the semantic issues.</p>
+prospects &#8220;customers&#8221; even though there is no contract in place.
+Same word.  Different semantics.</p>
+<p>Yes, this a &#8220;problem domain&#8221; issue.  No, there&#8217;s no technical solution short
+of a complete ontology for each data item.</p>
+<p>We&#8217;ll need a design with enough flexibility to handle
+the semantic matching expediently.</p>
 </li>
 <li><p class="first"><strong>Buffoonery</strong>.  Is &#8220;CSTID&#8221; the &#8220;customer id number&#8221;?
 Or is it the &#8220;Commercial Status ID&#8221;?  Or is it the &#8220;Credit Score
 Time Interval Delta&#8221;?  Or is it something entirely unrelated that merely
 happens to be shoved into that field?</p>
+<p>Yes, this is &#8220;code rot.&#8221; Even with careful format definitions, this kind of thing happens as software
+matures. No, there&#8217;s no technical solution short of firing all the managers
+who make short-sighted decisions.</p>
 <p>We&#8217;ll need a design that has the flexibility to cope with variant abbreviations for column names.</p>
 </li>
 <li><p class="first"><strong>Bad Management</strong>.  At some point in the past, the &#8220;Employees Here&#8221; and &#8220;Total Employees&#8221;
 were misused by an application.  The problem was found&#8211;and fixed&#8211;but
-there is some &#8220;legacy&#8221; data that has incorrect data.  What now?</p>
+there is some &#8220;legacy&#8221; data that has incorrect values.  What now?</p>
+<p>Yes, this is a data stewardship problem.</p>
 <p>This leads to rather complex designs where the mapping from source to target
-is dependent on the source data itself. Or the context for the source data.</p>
+is dependent on some external context for the source data.</p>
 </li>
 <li><p class="first"><strong>Bugs</strong>.  The field named &#8220;Effective Date&#8221; is really the <em>Reported Date</em>.
 The field name &#8220;Supplied Date&#8221; is really the <em>Effective Date</em>.
 The field labeled &#8220;Reported Date&#8221; isn&#8217;t populated consistently and doesn&#8217;t
 seem to have any meaning.  Really.</p>
-<p>This is also a kind of mapping issue. It&#8217;s analogous to the &#8220;Buffoonery&#8221; issue, above. Flexible mappings are essential.</p>
+<p>There&#8217;s a fine line between &#8220;technical debt&#8221; and &#8220;code rot.&#8221; Our point
+is not to sort out the root cause of the problem.</p>
+<p>We need flexibility to handle bugs as well as other problems.</p>
 </li>
 </ul>
-<p>There is an underlying <em>Conceptual Schema</em>.  However, it has numerous
+<p>There is always an underlying <em>Conceptual Schema</em>.  It often has numerous
 variant implementations, each with a unique collection of errors and anomalies.</p>
-</div>
-<div class="section" id="directions">
-<h2>1.2. Directions<a class="headerlink" href="#directions" title="Permalink to this headline">¶</a></h2>
-<p>We need to have a representation for a schema that allows an application
-<em>some</em> flexibility.
-We have four plus one views of an acceptable solution to the schema
-representation problem.</p>
-<ul class="simple">
-<li>The use cases need to make sense to the actors.
-To retain the user&#8217;s terminology, a data dictionary can help interpret a use case in spite of the
-user&#8217;s imprescise terminology.
-Additional aliases for names and descriptions will be essential.</li>
-<li>The logical view needs to focus on
-the problem domain, eschewing physical format issues.
-(If mentioned at all, format should
-be little more than a stereotype attached to a class model.)
-The logical view must allow variability in the logical layout of the workbook or file.</li>
-<li>The deployment view should allow multiple applications to properly
-follow the Don&#8217;t Repeat Yourself (DRY) principle and share a schema definition.
-Schemata are precious, centralized components which bridge
-data and processing.
-If a schema is bound with the data (to the extent possible), then it can be reused more effectively</li>
-<li>The processing view should allow a single application program
-to work sensibly with files that have the same
-logical layout but different physical formats.  A single conceptual
-schema may have variant logical layouts (e.g., column name spelling changes).
-This layout variants should be tolerated by a single application.</li>
-<li>The physical view is focused on file processing: either workbooks or
-flat data files.</li>
-</ul>
 </div>
 <div class="section" id="misdirections">
 <h2>1.3. Misdirections<a class="headerlink" href="#misdirections" title="Permalink to this headline">¶</a></h2>
+<p>Our canonical examples are the <tt class="xref py py-mod docutils literal"><span class="pre">csv</span></tt> and the <tt class="xref py py-mod docutils literal"><span class="pre">xlrd</span></tt> package.
+These offer handy ways to read workbooks. However, they&#8217;re far from ideal.
+Both of these show eager processing and flat structures.</p>
+<p>We have an additional consideration when it comes to data conversions.
+We have to avoid the attractive nuisance of a Domain Specific Language (DSL)
+for mappings and conversions.</p>
 <p>We have to be cautious of trying too hard to leverage the <tt class="xref py py-mod docutils literal"><span class="pre">csv</span></tt> module&#8217;s
-row-as-dictionary view of data.  Above, we suggested that the <tt class="xref py py-mod docutils literal"><span class="pre">csv</span></tt> representation
-was ideal.</p>
-<p>The <tt class="xref py py-class docutils literal"><span class="pre">csv.DictReader</span></tt> approach &#8211; implicitly creating a dict instead of a sequence &#8211;
+row-as-dictionary view of data.
+The <tt class="xref py py-class docutils literal"><span class="pre">csv.DictReader</span></tt> approach &#8211; implicitly creating a dict instead of a sequence &#8211;
 fails us when we have to work with COBOL or Fixed Format files.
 These non-spreadsheet files may not be close to First Normal Form.
 COBOL files have repeating groups which
 require numeric indexes in addition to column names.</p>
 <p>For semi-structured data (JSON, YAML our an outline) there are fewer
-constraints, leading to a more complex normalization step and possible
-row validation rules.</p>
-<p>Further, the <tt class="xref py py-mod docutils literal"><span class="pre">csv</span></tt> approach of <strong>eagerly</strong> building a row doesn&#8217;t work
+constraints on the data, leading to a more complex normalization step and possible
+row validation rules. We&#8217;d like to retain a relatively simple schema
+in spite of the potential complexity of these files.</p>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">csv</span></tt> approach of <strong>eagerly</strong> building a row doesn&#8217;t work
 for COBOL files because of the <tt class="docutils literal"><span class="pre">REDEFINES</span></tt> clause.  We can&#8217;t reliably
-build the various &#8220;cells&#8221; available in the COBOL schema, since some of
+build the various &#8220;cells&#8221; available in a COBOL schema, since some of
 those values may turn out to be invalid. COBOL requires lazily building a row
 based on which REDEFINES alias is relevant.</p>
 <p>We also have to avoid the attractive nuisance of trying to create a
 &#8220;data mapping DSL&#8221;.  This is seductive because a data mapping
-is a triple of target, source and conversion.</p>
+is a triple of target, source and conversion. It seems like we could write some language
+that encodes these three things in a handy summary like this:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">target</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">conversion</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Since this is &#8211; effectively &#8211; Python code, there&#8217;s no real reason
-for creating a DSL.  Just use Python.</p>
+for creating a DSL when we can just use Python.</p>
 <div class="section" id="historical-solutions">
 <h3>1.3.1. Historical Solutions<a class="headerlink" href="#historical-solutions" title="Permalink to this headline">¶</a></h3>
 <blockquote>
@@ -279,47 +277,44 @@ as well.</p>
 used in the data and environment divisions of the source.  This was a hierarchical
 structure that defined the various items in a single record of a file.</p>
 <p>Hierarchical.  Like XML.</p>
-<p>Best practice was essentially DRY.
-Developers would keep the definitions as separate modules
-under ordinary source code control.</p>
-<p>Every application that worked with a given file would import the DDE for
+<p>COBOL best practice was essentially DRY:
+developers would keep the definitions as separate modules
+under ordinary source code control.
+Every application that worked with a given file would import the DDE for
 that file.</p>
 <p>Clearly, the binding between schema and file is a two-step operation.
 There&#8217;s a compile-time binding between schema and application.  There&#8217;s a
 run-time binding between application and file.</p>
 <p>Just as clearly, this is subject to all kinds of mysterious problems when
-schema definition modules where cloned and then modified, leaving it unclear
-which is correct.  Also, when a schema definition was modified and not
-all programs were properly recompiled.</p>
+schema definition modules are cloned and then modified, leaving it unclear
+which version is correct.  Also, when a schema definition was modified and not
+all programs were properly recompiled, some programs worked with some
+files, other programs didn&#8217;t.</p>
 <p>Since the schema wasn&#8217;t formally bound to the file, it was particularly easy
 to have files without any known schema.  Ideally, the file name included
 some schema hint.</p>
 <p>What&#8217;s relevant for Python programmers is the central idea of a schema
-being</p>
-<ol class="loweralpha simple">
-<li>External to any specific application.</li>
-<li>DRY.</li>
-</ol>
+being external to any specific application.</p>
 <p>To this, we would like to assure that the schema was bound to the relevant
 files.  This is much more difficult to achieve in practice, but there are some
-approaches that can work well.</p>
-<p>We&#8217;ll look at this closely, below.</p>
+approaches that can work through manually managing file names.</p>
 </div>
 <div class="section" id="dbms-schema-solution">
 <h2>1.5. DBMS Schema Solution<a class="headerlink" href="#dbms-schema-solution" title="Permalink to this headline">¶</a></h2>
 <p>A Database Management System (DBMS) &#8211; whether relational or hierarchical
 or columnar or networked or whatever &#8211; addresses the problems with
 flat files and the separation between application program, physical format,
-logical layout, and operating system file.</p>
-<p>The DBMS should provide us a logical/physical schema separation</p>
+logical layout, and operating system file.
+A DBMS provides a complete logical/physical schema separation</p>
 <p>The physical files are managed by the DBMS.  Our applications are now
-independent of physical file structure (and indepenent even of OS.)</p>
-<p>The logical &#8220;table structure&#8221; (or whatever is offered) is distinct
+independent of all physical file structure. They&#8217;re often independent of
+OS considerations, too.</p>
+<p>The logical &#8220;table structure&#8221; (or &#8220;document&#8221; or whatever is offered) is distinct
 from the files.  The logical schema it tightly bound to
 the data itself.  When using SQL, for example, the column names and data types
 are available as part of the execution of each SQL query.</p>
 <p>This binding between data is schema is ideal.</p>
-<p>Sadly, it doesn&#8217;t apply to files.  Only to databases as a whole.</p>
+<p>Sadly, it doesn&#8217;t apply to separate files.  Only to databases as a whole.</p>
 <p>If file transfers are replaced with SQL queries (or web services requests)
 then schema is discoverable from the database (or web service).  However, the
 problem we&#8217;re addressing here is file transfer.  So this
@@ -328,9 +323,10 @@ solution is inappropriate except as a guidepost.</p>
 <div class="section" id="csv-schema-solution">
 <h2>1.6. CSV Schema Solution<a class="headerlink" href="#csv-schema-solution" title="Permalink to this headline">¶</a></h2>
 <p>A workbook (or &#8220;spreadsheet&#8221;) may or may not have schema
-information.</p>
+information. There may be a header row, a separate sheet, a separate
+document, or nothing.</p>
 <p>The workbook may have any of a large
-number of physical formats: .XLS (i.e., native) .XLSX or .CSV.
+number of physical formats: <tt class="file docutils literal"><span class="pre">.XLS</span></tt> (i.e., native) <tt class="file docutils literal"><span class="pre">.XLSX</span></tt> or <tt class="file docutils literal"><span class="pre">.CSV</span></tt>.
 The format is irrelevant to the presence or absence of a schema.</p>
 <p>One common way to embed schema information
 is to assure that the first row of each sheet within a workbook has
@@ -360,26 +356,31 @@ with schema information.  A separate sheet in a workbook is at least bound
 with the data.  A separate schema description file (even if bound in a ZIP archive) can get
 unbound from the data.</p>
 <p>While there are numerous problems, workbooks are a very common way to exchange
-data.  It&#8217;s not sensible to pretend they don&#8217;t exist.  We can&#8217;t
-paraphrase Jamie Zawinski and say
-&#8220;Some people, when confronted with a problem, think &#8216;I know,
-I&#8217;ll use [a spreadsheet].&#8217;  Now they have two problems.&#8221;  We do need to
-process this data irrespective of the issues.</p>
+data.  It&#8217;s not sensible to pretend they don&#8217;t exist.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>It Won&#8217;t Go Away</p>
+<p>We can&#8217;t
+paraphrase Jamie Zawinski and say</p>
+<p>&#8220;Some people, when confronted with a problem, think &#8216;I know,
+I&#8217;ll use [a spreadsheet].&#8217;  Now they have two problems.&#8221;</p>
+<p class="last">We do need to process this data irrespective of the issues.</p>
+</div>
 <p>We need a suitable, Pythonic solution to the schema problem when confronted
 with data in a spreadsheet.</p>
 </div>
 <div class="section" id="xml-non-solution">
 <h2>1.7. XML Non-Solution<a class="headerlink" href="#xml-non-solution" title="Permalink to this headline">¶</a></h2>
-<p>Weirdly, XML fans will state the XML is &#8220;self-defining&#8221;.  Their claim
-is that somehow this <em>solves</em> the schema problem.  This statement can be
+<p>Weirdly, XML fans will claim we should use XML, stating the XML is &#8220;self-defining&#8221;.
+Their claim is that somehow this <em>solves</em> the schema problem.  This statement can be
 misleading.</p>
-<p>For our purposes, XML is a physical format.  An XML document without
+<p>For our purposes, XML is a kind of physical format.  An XML document without
 a referenced (or embedded) XSD lacks any semantic information.
 Even then, an XSD can be helpful, but not
 sufficient.  The type definitions in an XSD could be unclear, ambiguous or
 simply wrong.</p>
 <p>An XSD document can be a good, useful schema definition.  It can also be riddled
-with buffoonery, bad management and bugs.  It isn&#8217;t magically perfect.  It
+with buffoonery, bad management and bugs.  It isn&#8217;t magically <em>perfect</em>.  It
 merely frees us from physical format considerations.</p>
 <p>We can &#8211; to an extent &#8211; leverage elements of PyXSD (<a class="reference external" href="http://pyxsd.org">http://pyxsd.org</a>)
 to create Python classes from an XSD schema.  This package could
@@ -390,7 +391,7 @@ some of what we&#8217;re going to use.</p>
 sophisticated modeling available in XSD.  A spreadsheet is a flat list of
 of a few simple types (float, string, date-encoded-as-float.)   A
 COBOL DDE is a hierarchy of of a few simple types (display, comp-3).
-All we can really do is borrow concepts and terminology.</p>
+All we can really do is borrow some concepts and terminology.</p>
 </div>
 <div class="section" id="summary">
 <h2>1.8. Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
@@ -398,15 +399,14 @@ All we can really do is borrow concepts and terminology.</p>
 Sadly, others &#8211; which are still in active use &#8211; require a great deal
 of schema information merely to decode the physical format.</p>
 <p>Logical layout is generally a feature of the application program
-as well as the data.  Even in a SQL-based data access, the column
-names in a <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement amount to a binding to a schema.</p>
+as well as the data.  In a SQL-based data access, the column
+names in a <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement amount to a binding between application and schema.</p>
 <p>While we can make some kinds of simple
-applications which are completely driven by metadata, the
-general solution to information processing remains a proper
-programming language.</p>
-<p>Therefore, we need to have application programs which can
+applications which are completely driven by metadata, we can&#8217;t easily
+escape the need to customize and deal with variations.
+Therefore, we need to have application programs which can
 tolerate physical format changes without complaint.</p>
-<p>We would also like an application program that can work with
+<p>We would like an application program that can work with
 &#8220;minor&#8221; variations on a logical layout.  That is, the order
 of columns, or minor spelling changes to a column name can be
 handled gracefully.</p>
@@ -418,97 +418,6 @@ interface something like this.</p>
 <p>The <tt class="docutils literal"><span class="pre">-l</span> <span class="pre">layout_2</span></tt> provides logical layout information. This defines the &#8220;application-level&#8221; schema information.</p>
 <p>The <tt class="docutils literal"><span class="pre">some_file.xyz</span></tt> could be <tt class="docutils literal"><span class="pre">some_file.xls</span></tt> or <tt class="docutils literal"><span class="pre">some_file.ods</span></tt>,
 allowing transparent changes to physical format.</p>
-<div class="section" id="schema-representation-considerations">
-<h3>1.8.1. Schema Representation Considerations<a class="headerlink" href="#schema-representation-considerations" title="Permalink to this headline">¶</a></h3>
-<p>There are several sensible way to represent schema information.  Each has
-a problem.  We&#8217;re forced to chose the lesser of the various evils.</p>
-<ol class="arabic simple">
-<li>One (or more) rows in each workbook sheet that provides the attribute
-name.  The type is left implicit.  Other information (e.g., offset or size)
-is part of a physical format: it&#8217;s only needed for fixed-format files.
-The &#8220;row-header schema&#8221; is casual and could involve numerous kinds of
-technical errors (missing names, duplicate names, incorrect names.)</li>
-<li>A distinct workbook sheet that lists name, data type information
-for each attribute.  Offset and size for fixed format files can
-also be provided.  This can involve numerous kinds of technical errors
-(missing attributes, duplicate attribute names, incorrect attribute
-descriptions.)</li>
-<li>A Python module that&#8217;s built from source information.  This
-allows us to trivially <tt class="docutils literal"><span class="pre">import</span> <span class="pre">schema.foo</span></tt> and have lots of cool
-classes and functions in the <tt class="docutils literal"><span class="pre">schema.foo</span></tt> module.  This
-pushes the envelope the DRY principle because the module would have to be built
-from other source data.</li>
-<li>Some standardized metadata format.  XSD (or even XMI) pops into mind.
-These are detailed and potentially useful.
-Experience shows, however, that schema definitions are almost universally provided as workbook sheets.
-An external schema in a standard notation pushes the envelope on
-the DRY principle and also is vanishingly rare in practice.</li>
-</ol>
-<p>Items 1 and 2 (workbook-based schema) cover over 99%
-of the cases in practice.  While the data is casual and error-prone, it&#8217;s
-readily available and consistent with DRY.</p>
-<p>Option 3 (a Python module) &#8211; while cool &#8211; breaks the DRY
-principle.  Refreshing a Python schema when a source <tt class="file docutils literal"><span class="pre">.XLS</span></tt> document
-changes is annoying because we&#8217;re tweaking the way <tt class="docutils literal"><span class="pre">import</span></tt> works.
-The imported schema module has to confirm that it&#8217;s newer than the
-files it&#8217;s derived from and possibly rebuild itself <em>automagically</em> after
-the schema source is touched.</p>
-<p>Option 4 is rarely used in practice.  In the rare cases when an organization
-will consent to providing XSD files, they&#8217;re often prepared separately
-from the data and do not actually reflect the application software
-that is used to build the data file.</p>
-<p>Plus, we should also be able to extend our schema representation
-to cope with COBOL DDE&#8217;s.  These have a place, since legacy conversion
-and data extraction is still sometimes required.</p>
-<p>Finally, we may be forced to deal with data in semi-structured formats
-like JSON, YAML or an outline.</p>
-<p>Our best approach is to load schema information from source every time
-it&#8217;s needed.  There are two paths:</p>
-<ul class="simple">
-<li>Either we&#8217;ll parse the embedded schema buried in each
-sheet of a workbook,</li>
-<li>or we&#8217;ll load an external schema definition from
-a file.</li>
-</ul>
-</div>
-</div>
-<div class="section" id="the-cobol-issues">
-<h2>1.9. The COBOL Issues<a class="headerlink" href="#the-cobol-issues" title="Permalink to this headline">¶</a></h2>
-<p>When dealing with &#8220;Flat Files&#8221; from legacy COBOL problems, there are several
-additional problems that need to be solved.</p>
-<ol class="arabic simple">
-<li>The files have a fixed field layout, without delimiters.
-This means that the offset of each field must be used to
-decompose the record into its individual elements.</li>
-<li>Numeric fields can have an implied decimal point, making
-it difficult to determine the value of a string of digits.
-The COBOL DDE is essential for parsing the file contents.</li>
-<li>COBOL can make use of numeric data represented in a variety
-of &#8220;Computational&#8221; forms.  The &#8220;Computational-3&#8221; (&#8220;COMP-3&#8221;)
-form is particularly complex because decimal digits are
-packed two per byte and the final half-byte encodes
-sign information.</li>
-<li>The string data may be encoded in EBCDIC bytes.</li>
-<li>COBOL encourages the use of data aliases (or &#8220;unions&#8221;) via the <tt class="docutils literal"><span class="pre">REDEFINES</span></tt> clause.
-Without the entire unviverse of COBOL programs that work with a given file,
-the general handling of <tt class="docutils literal"><span class="pre">REDEFINES</span></tt>
-data elements can become an insoluable problem.
-Only lazy field access can work;
-eager creation of individual cell values is doomed because a
-<tt class="docutils literal"><span class="pre">REDEFINES</span></tt> alternative may be defined over invalid data.</li>
-<li>COBOL has an <tt class="docutils literal"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></tt> (ODO) feature where one attribute
-determines the size of another attribute. This means the data
-of every attribute after the ODO attribute has a location which varies.
-The positions within the flat file cannot be computed statically.</li>
-</ol>
-<p>Generally, COBOL files are defined by a &#8220;Data Definition Entry&#8221; (DDE)
-that provides the record layout.</p>
-<p>Developing the offsets to each field manually is tedious and
-error-prone work.  In the presence of ODO, the locations become
-expressions based on the current record&#8217;s data.</p>
-<p>It&#8217;s essential to
-parse the DDE, which has the original COBOL source
-definition for the file.  A schema can be built from the parsed DDE.</p>
 </div>
 </div>
 
@@ -524,8 +433,8 @@ definition for the file.  A schema can be built from the parsed DDE.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">1. Introduction</a><ul>
-<li><a class="reference internal" href="#deeper-issues">1.1. Deeper Issues</a></li>
-<li><a class="reference internal" href="#directions">1.2. Directions</a></li>
+<li><a class="reference internal" href="#logical-layout-issues">1.1. Logical Layout Issues</a></li>
+<li><a class="reference internal" href="#deeper-issues">1.2. Deeper Issues</a></li>
 <li><a class="reference internal" href="#misdirections">1.3. Misdirections</a><ul>
 <li><a class="reference internal" href="#historical-solutions">1.3.1. Historical Solutions</a></li>
 </ul>
@@ -534,11 +443,7 @@ definition for the file.  A schema can be built from the parsed DDE.</p>
 <li><a class="reference internal" href="#dbms-schema-solution">1.5. DBMS Schema Solution</a></li>
 <li><a class="reference internal" href="#csv-schema-solution">1.6. CSV Schema Solution</a></li>
 <li><a class="reference internal" href="#xml-non-solution">1.7. XML Non-Solution</a></li>
-<li><a class="reference internal" href="#summary">1.8. Summary</a><ul>
-<li><a class="reference internal" href="#schema-representation-considerations">1.8.1. Schema Representation Considerations</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#the-cobol-issues">1.9. The COBOL Issues</a></li>
+<li><a class="reference internal" href="#summary">1.8. Summary</a></li>
 </ul>
 </li>
 </ul>
@@ -547,8 +452,8 @@ definition for the file.  A schema can be built from the parsed DDE.</p>
   <p class="topless"><a href="index.html"
                         title="previous chapter">The Stingray Schema-Based File Reader</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="license.html"
-                        title="next chapter">2. Licensing</a></p>
+  <p class="topless"><a href="design.html"
+                        title="next chapter">2. Design Considerations</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/introduction.txt"
@@ -581,7 +486,7 @@ definition for the file.  A schema can be built from the parsed DDE.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="license.html" title="2. Licensing"
+          <a href="design.html" title="2. Design Considerations"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="The Stingray Schema-Based File Reader"

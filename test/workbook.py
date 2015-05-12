@@ -34,11 +34,11 @@ import stingray.workbook
 # CSV_Workbook Tests
 # =====================
 #
-# A :py:class:`workbook.Workbook`  produces a list of sheet names, is a factory
+# A :py:class:`workbook.base.Workbook`  produces a list of sheet names, is a factory
 # for individual ``Sheet`` instances and produces the rows of
-# a named sheet.  Also, a :py:class:`workbook.Workbook` is a context.
+# a named sheet.  Also, a :py:class:`workbook.base.Workbook` is a context.
 #
-# All subclasses of :py:class:`workbook.Workbook` must be polymorphic with this
+# All subclasses of :py:class:`workbook.base.Workbook` must be polymorphic with this
 # degenerate special cases.
 # This means that the tests are nearly identical.  
 #

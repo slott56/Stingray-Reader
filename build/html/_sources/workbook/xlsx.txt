@@ -19,12 +19,11 @@ XLSX or XLSM Workbook
     import stingray.sheet
     import stingray.cell
 
-..  py:module:: workbook
+..  py:module:: workbook.xlsx
 
 ..  py:class:: XLSX_Workbook
 
     Extract sheets, rows and cells from an XLSX format file.
-
 
     We're opening a ZIP archive and parsing the various XML documents
     that we find therein.
@@ -38,6 +37,17 @@ XLSX or XLSM Workbook
     The class as a whole defines some handy constants like XML namespaces
     and a pattern for parsing Cell ID's to separate the letters from the numbers.
 
+    In addition to the superclass attributes, some additional unique
+    attributes are introduced here.
+        
+    ..  py:attribute:: zip_archive
+    
+        A zip archive for this file.
+
+    ..  py:attribute:: strings_dict
+    
+        The strings in this workbook
+        
 ::
 
     class XLSX_Workbook( Workbook ):

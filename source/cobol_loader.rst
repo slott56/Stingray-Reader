@@ -463,13 +463,33 @@ we're comfortable ignoring it.
 
     Define the various attribtes of a COBOL PICTURE clause.
     
-    :final: the final picture
-    :alpha: boolean; True if any ``"X"`` or ``"A"``; False if all ``"9"`` and related
-    :length: length of the final picture
-    :scale: count of ``"P"`` positions, often zero
-    :precision: digits to the right of the decimal point
-    :signed: boolean; True if any ``"S"``, ``"-"`` or related 
-    :decimal: ``"."`` or ``"V"`` or ``None``
+    ..  py:attribute:: final
+
+        the final picture
+        
+    ..  py:attribute:: alpha
+
+        boolean; True if any ``"X"`` or ``"A"``; False if all ``"9"`` and related
+        
+    ..  py:attribute:: length
+
+        length of the final picture
+        
+    ..  py:attribute:: scale
+
+        count of ``"P"`` positions, often zero
+        
+    ..  py:attribute:: precision
+
+        digits to the right of the decimal point
+        
+    ..  py:attribute:: signed
+
+        boolean; True if any ``"S"``, ``"-"`` or related 
+        
+    ..  py:attribute:: decimal
+
+        ``"."`` or ``"V"`` or ``None``
 
 ::
 

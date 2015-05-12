@@ -430,26 +430,48 @@ we&#8217;re comfortable ignoring it.</p>
 <dt id="cobol.loader.Picture">
 <em class="property">class </em><tt class="descclassname">cobol.loader.</tt><tt class="descname">Picture</tt><a class="headerlink" href="#cobol.loader.Picture" title="Permalink to this definition">¶</a></dt>
 <dd><p>Define the various attribtes of a COBOL PICTURE clause.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Final:</th><td class="field-body">the final picture</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Alpha:</th><td class="field-body">boolean; True if any <tt class="docutils literal"><span class="pre">&quot;X&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;A&quot;</span></tt>; False if all <tt class="docutils literal"><span class="pre">&quot;9&quot;</span></tt> and related</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Length:</th><td class="field-body">length of the final picture</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Scale:</th><td class="field-body">count of <tt class="docutils literal"><span class="pre">&quot;P&quot;</span></tt> positions, often zero</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Precision:</th><td class="field-body">digits to the right of the decimal point</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Signed:</th><td class="field-body">boolean; True if any <tt class="docutils literal"><span class="pre">&quot;S&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;-&quot;</span></tt> or related</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Decimal:</th><td class="field-body"><tt class="docutils literal"><span class="pre">&quot;.&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;V&quot;</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></td>
-</tr>
-</tbody>
-</table>
+<dl class="attribute">
+<dt id="cobol.loader.Picture.final">
+<tt class="descname">final</tt><a class="headerlink" href="#cobol.loader.Picture.final" title="Permalink to this definition">¶</a></dt>
+<dd><p>the final picture</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.loader.Picture.alpha">
+<tt class="descname">alpha</tt><a class="headerlink" href="#cobol.loader.Picture.alpha" title="Permalink to this definition">¶</a></dt>
+<dd><p>boolean; True if any <tt class="docutils literal"><span class="pre">&quot;X&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;A&quot;</span></tt>; False if all <tt class="docutils literal"><span class="pre">&quot;9&quot;</span></tt> and related</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.loader.Picture.length">
+<tt class="descname">length</tt><a class="headerlink" href="#cobol.loader.Picture.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>length of the final picture</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.loader.Picture.scale">
+<tt class="descname">scale</tt><a class="headerlink" href="#cobol.loader.Picture.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>count of <tt class="docutils literal"><span class="pre">&quot;P&quot;</span></tt> positions, often zero</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.loader.Picture.precision">
+<tt class="descname">precision</tt><a class="headerlink" href="#cobol.loader.Picture.precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>digits to the right of the decimal point</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.loader.Picture.signed">
+<tt class="descname">signed</tt><a class="headerlink" href="#cobol.loader.Picture.signed" title="Permalink to this definition">¶</a></dt>
+<dd><p>boolean; True if any <tt class="docutils literal"><span class="pre">&quot;S&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;-&quot;</span></tt> or related</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cobol.loader.Picture.decimal">
+<tt class="descname">decimal</tt><a class="headerlink" href="#cobol.loader.Picture.decimal" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">&quot;.&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;V&quot;</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="n">Picture</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span> <span class="s">&#39;Picture&#39;</span><span class="p">,</span>

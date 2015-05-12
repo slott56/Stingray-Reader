@@ -73,8 +73,8 @@ it can be viewed as a sort of &#8220;dry run&#8221;: all the processing; none of
 We&#8217;ll create applications
 which validate their input file and have a simple plug-in strategy for
 doing any final persistent processing on that file.</p>
-<div class="admonition important">
-<p class="first admonition-title">Important</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
 <p>Simple File Structures</p>
 <p>This validation is designed for simple CSV files with embedded schema.
 The assumption is that each sheet within the workbook
@@ -337,7 +337,7 @@ Each will follow the above template to process all rows of the sheet.</p>
 <h3>12.2.3.5. High-Level Interfaces<a class="headerlink" href="#high-level-interfaces" title="Permalink to this headline">¶</a></h3>
 <p>These are the functions that can be used for live-file unit testing
 of the application as a whole. The <tt class="xref py py-func docutils literal"><span class="pre">validate()</span></tt> function
-uses a context manager for validation only. THe <tt class="xref py py-func docutils literal"><span class="pre">process()</span></tt> function
+uses a context manager for validation only. The <tt class="xref py py-func docutils literal"><span class="pre">process()</span></tt> function
 uses the other context manager to that actual work is performed.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">builder</span> <span class="p">):</span>
     <span class="k">with</span> <span class="n">Validate_Only_Processing</span><span class="p">()</span> <span class="k">as</span> <span class="n">mode</span><span class="p">:</span>
@@ -432,7 +432,7 @@ may be required.</li>
 <div class="highlight-bash"><div class="highlight"><pre>python3 demo/app.py -d -l 1 sample/<span class="se">\*</span>.csv
 </pre></div>
 </div>
-<p>This will apply builder with layout <tt class="docutils literal"><span class="pre">1</span></tt> against all of the <tt class="file docutils literal"><span class="pre">sameple/*.csv</span></tt> files.</p>
+<p>This will apply builder with layout <tt class="docutils literal"><span class="pre">1</span></tt> against all of the <tt class="file docutils literal"><span class="pre">sample/*.csv</span></tt> files.</p>
 <p>The output looks like this</p>
 <div class="highlight-none"><div class="highlight"><pre>INFO:demo/app.py:Mode: validate
 INFO:demo/app.py:sample/csv_workbook.csv :: csv_workbook

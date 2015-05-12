@@ -24,9 +24,9 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="The Stingray Schema-Based File Reader" href="index.html" />
-    <link rel="up" title="9. The iWork ‘13 Numbers Modules" href="iwork13.html" />
+    <link rel="up" title="9. The Other Modules" href="iwork13.html" />
     <link rel="next" title="9.2. Protobuf Module – Unpacking iWork 13 files." href="protobuf.html" />
-    <link rel="prev" title="9. The iWork ‘13 Numbers Modules" href="iwork13.html" /> 
+    <link rel="prev" title="9. The Other Modules" href="iwork13.html" /> 
   </head>
   <body>
     <div class="related">
@@ -42,10 +42,10 @@
           <a href="protobuf.html" title="9.2. Protobuf Module – Unpacking iWork 13 files."
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="iwork13.html" title="9. The iWork ‘13 Numbers Modules"
+          <a href="iwork13.html" title="9. The Other Modules"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
-          <li><a href="iwork13.html" accesskey="U">9. The iWork &#8216;13 Numbers Modules</a> &raquo;</li> 
+          <li><a href="iwork13.html" accesskey="U">9. The Other Modules</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -81,6 +81,7 @@ The 4 byte header is not included in the chunk length.</p>
 </div>
 <div class="section" id="id1">
 <h2>9.1.2. Snappy<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Here&#8217;s some more information on the snappy protocol.</p>
 <p><a class="reference external" href="http://en.wikipedia.org/wiki/Snappy_(software">http://en.wikipedia.org/wiki/Snappy_(software</a>)</p>
 <p><a class="reference external" href="https://code.google.com/p/snappy/">https://code.google.com/p/snappy/</a></p>
 <p><a class="reference external" href="https://code.google.com/p/snappy/source/browse/trunk/format_description.txt">https://code.google.com/p/snappy/source/browse/trunk/format_description.txt</a></p>
@@ -241,6 +242,9 @@ three-byte length.</li>
 <dd><p>The LZ77 decoder. This locates the <strong>varint</strong> size header.  That&#8217;s followed by
 a sequence of tags.  The literal tag has data. The other three tags repeat
 previously output bytes.</p>
+<p>We&#8217;re building a <tt class="docutils literal"><span class="pre">bytearray</span></tt> buffer from the input. This means copying
+literals into the buffer. It also means copying part of the buffer into the buffer
+to add one of the three kinds of copies.</p>
 <p>Because of the framing protocol, we&#8217;re limited to a buffer of only 64K bytes.</p>
 </dd></dl>
 
@@ -381,7 +385,7 @@ data. This defines a sequence of windows over the stream of data.</p>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="iwork13.html"
-                        title="previous chapter">9. The iWork &#8216;13 Numbers Modules</a></p>
+                        title="previous chapter">9. The Other Modules</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="protobuf.html"
                         title="next chapter">9.2. Protobuf Module &#8211; Unpacking iWork 13 files.</a></p>
@@ -420,10 +424,10 @@ data. This defines a sequence of windows over the stream of data.</p>
           <a href="protobuf.html" title="9.2. Protobuf Module – Unpacking iWork 13 files."
              >next</a> |</li>
         <li class="right" >
-          <a href="iwork13.html" title="9. The iWork ‘13 Numbers Modules"
+          <a href="iwork13.html" title="9. The Other Modules"
              >previous</a> |</li>
         <li><a href="index.html">The Stingray Schema-Based File Reader</a> &raquo;</li>
-          <li><a href="iwork13.html" >9. The iWork &#8216;13 Numbers Modules</a> &raquo;</li> 
+          <li><a href="iwork13.html" >9. The Other Modules</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

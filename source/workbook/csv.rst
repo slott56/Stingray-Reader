@@ -16,7 +16,7 @@ CSV Workbook
     import stingray.sheet
     import stingray.cell
 
-..  py:module:: workbook
+..  py:module:: workbook.csv
 
 ..  py:class:: CSV_Workbook
 
@@ -27,6 +27,13 @@ CSV Workbook
     that :py:mod:`csv` normally creates.
     
     There's only a single sheet and it matches the filename.
+    
+    In addition to the superclass attributes, an additional unique
+    attribute is introduced here.
+        
+    ..  py:attribute:: rdr
+    
+        The csv reader for this file.
 
 ::
 
@@ -52,7 +59,7 @@ CSV Workbook
 We can build an eager :py:class:`sheet.Row` or a :py:class:`sheet.LazyRow` from
 the available data.
 The eager Row includes the conversions.  The :py:class:`sheet.LazyRow` defers
-the conversions until the callback to :py:meth:`workbook.Workbook.row_get`.
+the conversions until the callback to :py:meth:`workbook.base.Workbook.row_get`.
 
 ..  py:method:: CSV_Workbook.rows_of( sheet )
 

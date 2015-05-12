@@ -84,10 +84,10 @@
 </div>
 <div class="section" id="csv-workbook-tests">
 <h2>14.6.2. CSV_Workbook Tests<a class="headerlink" href="#csv-workbook-tests" title="Permalink to this headline">¶</a></h2>
-<p>A <a class="reference internal" href="../workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a>  produces a list of sheet names, is a factory
+<p>A <a class="reference internal" href="../workbook/base.html#workbook.base.Workbook" title="workbook.base.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.base.Workbook</span></tt></a>  produces a list of sheet names, is a factory
 for individual <tt class="docutils literal"><span class="pre">Sheet</span></tt> instances and produces the rows of
-a named sheet.  Also, a <a class="reference internal" href="../workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a> is a context.</p>
-<p>All subclasses of <a class="reference internal" href="../workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a> must be polymorphic with this
+a named sheet.  Also, a <a class="reference internal" href="../workbook/base.html#workbook.base.Workbook" title="workbook.base.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.base.Workbook</span></tt></a> is a context.</p>
+<p>All subclasses of <a class="reference internal" href="../workbook/base.html#workbook.base.Workbook" title="workbook.base.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.base.Workbook</span></tt></a> must be polymorphic with this
 degenerate special cases.
 This means that the tests are nearly identical.</p>
 <p>The most important distinction among the various physical formats
@@ -149,7 +149,7 @@ delimiters in the <tt class="docutils literal"><span class="pre">csv</span></tt>
 </div>
 <div class="section" id="fixed-workbook-tests">
 <h2>14.6.4. Fixed_Workbook Tests<a class="headerlink" href="#fixed-workbook-tests" title="Permalink to this headline">¶</a></h2>
-<p>A <a class="reference internal" href="../workbook/fixed.html#workbook.Fixed_Workbook" title="workbook.Fixed_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Fixed_Workbook</span></tt></a> is similar to a <a class="reference internal" href="../workbook/csv.html#workbook.CSV_Workbook" title="workbook.CSV_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.CSV_Workbook</span></tt></a>.
+<p>A <a class="reference internal" href="../workbook/fixed.html#workbook.Fixed_Workbook" title="workbook.Fixed_Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Fixed_Workbook</span></tt></a> is similar to a <tt class="xref py py-class docutils literal"><span class="pre">workbook.CSV_Workbook</span></tt>.
 It always has an external schema and the column contents
 might be different due to encoding or truncation issues.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TestFixedWorkbook</span><span class="p">(</span> <span class="n">TestCSVWorkbook</span> <span class="p">):</span>

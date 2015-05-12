@@ -40,15 +40,33 @@ Data supplied in the form of a workbook can suffer from numerous data quality is
 We need to be assured that a file actually conforms to a required
 schema.
 
+A COBOL file parallels a workbook sheet in several ways. It also introduces
+some unique complications. We'd like to provide a suite of tools that work
+well with common spreadsheets as well as COBOL files, allowing some 
+uniformity in processing various kinds of data.
+
+Technology
+==========
+
+While this is 100% Python, it's not *simply* Python. The actual code
+is built from this document. 
+
+..  warning:: The Code Did Not Come First
+
+    The document doesn't follow behind the code. The document **contains**
+    the code. The code is extracted from the document. 
+    For details, see the :ref:`build` section.
+
 Contents
 =========
+
 
 .. toctree::
    :numbered:
    :maxdepth: 1
    
    introduction
-   license
+   design
    package
    cell
    sheet
@@ -63,6 +81,7 @@ Contents
    testing/index
    build
    installation
+   license
 
 License
 ========

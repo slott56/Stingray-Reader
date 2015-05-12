@@ -56,28 +56,29 @@
 <span id="schema-package-schema-and-attribute-definitions"></span><span id="schema"></span><h1>6. Schema Package &#8211; Schema and Attribute Definitions<a class="headerlink" href="#module-schema" title="Permalink to this headline">¶</a></h1>
 <p>A <em>Schema</em> contains data descriptions.  It&#8217;s a collection of <em>Attribute</em> specifications.</p>
 <p>For our purposes, we&#8217;re trying to cover the following bases:</p>
-<ul class="simple">
-<li>Workbooks in a variety of forms: CSV, Tab, XLSX, ODS, etc.
+<ul>
+<li><p class="first">Workbooks in a variety of forms: CSV, Tab, XLSX, ODS, etc.
 The common feature of these schema is that they&#8217;re flat.  A single
-index (or name) identifies each column.<ul>
+index (or name) identifies each column.</p>
+<p>The schema can be in a variety of places.</p>
+<ul class="simple">
 <li>The schema may be a header row within a sheet.</li>
 <li>The schema may be elsewhere in the sheet.  It may be a header
 that&#8217;s not the first row.</li>
-<li>The schema may be in a separate document.
-It could be XSD, but this is vanishingly rare.</li>
+<li>The schema may be in a separate document.</li>
 </ul>
 </li>
-<li>COBOL Files.  The schema is a separate document, encoded in
-COBOL source code.
-A COBOL schema is rarely a perfectly
-flat structure.  However, using <tt class="docutils literal"><span class="pre">.</span></tt>-path names allows us
-to flatten a COBOL structure into a simpler structure that can be
-compatible with workbooks.</li>
+<li><p class="first">COBOL Files. The schema is highly structured: a path must be
+used to unambiguously identify each field. Some COBOL schema are
+designed so that all leaf names are unique.</p>
+<p>The schema is a separate document, encoded in
+COBOL source code.</p>
+</li>
 </ul>
 <p>We&#8217;ll also happen to cover relational database table definitions.  However,
 this isn&#8217;t our focus.  This is simply coincidence.</p>
-<p>Note that we are not trying to cover XML schemas or a complete relational
-database schema.</p>
+<p>Note that we are not trying to cover XML schemas or a <strong>complete</strong> relational
+database schema. There are a lot of possible features not present here.</p>
 <div class="section" id="load-a-schema-use-case">
 <h2>6.1. Load a Schema Use Case<a class="headerlink" href="#load-a-schema-use-case" title="Permalink to this headline">¶</a></h2>
 <p>The objective of this module is to provide a handy base class family
@@ -104,8 +105,8 @@ with <em>open</em> as wb:
 <p>The schema object isn&#8217;t made explicit.  It&#8217;s available in <tt class="docutils literal"><span class="pre">sheet.schema</span></tt>.</p>
 <p>External schema loading would look like this.</p>
 <pre class="literal-block">
-with <em>open schema</em> as swb:
-    esl = ExternalSchemaLoader( swb, 'Schema' )
+with <em>open schema</em> as wb_s:
+    esl = ExternalSchemaLoader( wb_s, 'Schema' )
     schema = esl.load()
 with <em>open data</em> as wb:
     sheet = ExternalSchemaSheet( wb, 'Sheet1', schema )
@@ -160,11 +161,15 @@ complex naming for attributes.  Really.</li>
 <li>Find the cell value based on the attribute.</li>
 </ol>
 </div>
-<div class="section" id="the-builder">
-<h2>6.3. The Builder<a class="headerlink" href="#the-builder" title="Permalink to this headline">¶</a></h2>
-<p>Most applications are based on building Python objects from source file data.
-Experience indicates that the conceptual schema may have several variant
-logical layout implementations.  Because of the logical layout variability,
+<div class="section" id="application-object-builder">
+<h2>6.3. Application Object Builder<a class="headerlink" href="#application-object-builder" title="Permalink to this headline">¶</a></h2>
+<p>The whole point of this is to facilitate writing applications that work
+with objects encoded as rows in a spreadsheet. We&#8217;re not merely picking
+a value from cells of a row: we&#8217;re creating Python objects from the row
+as a whole. These application objects are also based on a common Conceptual Schema;
+they are yet another implementation of the concept.</p>
+<p>Experience indicates that the conceptual schema may have several variant
+logical layouts.  Because of the logical layout variability,
 a two-step dance is
 required between source rows and final Python objects.</p>
 <ol class="arabic simple">
@@ -233,6 +238,9 @@ the application.  All this module does is get a workbook <a class="reference int
     <span class="p">)</span>
 </pre></div>
 </div>
+<p>We&#8217;ve applied a number of input transformations to create Python objects. These
+objects are designed to fit as closely as possible to the conceptual schema.
+We can then output these in any required format.</p>
 </div>
 <div class="section" id="model">
 <h2>6.4. Model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h2>
@@ -272,17 +280,19 @@ of additional keywords.</p>
 These are transformed into the row-as-dict values.  If the attribute names
 involve duplicates, then one of the duplicated values will be chosen; the
 choice is arbitrary.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Info:</th><td class="field-body">Dict of additional information about this schema. Meta-metadata.
-For COBOL schema, this includes the source DDE.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Names:</th><td class="field-body">Attribute names for rows_as_dict_iter()</td>
-</tr>
-</tbody>
-</table>
+<dl class="attribute">
+<dt id="schema.Schema.info">
+<tt class="descname">info</tt><a class="headerlink" href="#schema.Schema.info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dict of additional information about this schema. Meta-metadata.
+For COBOL schema, this includes the source DDE.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="schema.Schema.names">
+<tt class="descname">names</tt><a class="headerlink" href="#schema.Schema.names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attribute names for rows_as_dict_iter()</p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Schema</span><span class="p">(</span> <span class="nb">list</span> <span class="p">):</span>
@@ -321,12 +331,12 @@ This only works for records without an Occurs Depending On.</p>
 </div>
 <p>A Schema needs to handle two common use cases.</p>
 <ul>
-<li><p class="first">Most formats. The items are defined by the physical format. Data can be fetched positionally.
+<li><p class="first">Cell values are defined by the physical format. Data can be fetched positionally.
 Names map to positions.</p>
 </li>
-<li><p class="first">Fixed and COBOL.  The columns are not defined by the physical format, but by an external
+<li><p class="first">Fixed and COBOL.  The cell values are not defined by the physical format, but by an external
 schema associated with the <a class="reference internal" href="sheet.html#sheet.Sheet" title="sheet.Sheet"><tt class="xref py py-class docutils literal"><span class="pre">sheet.Sheet</span></tt></a>. Names map to offsets and sizes;
-these  must be computed from the external schema. In the case of
+the bytes found there must be converted to Python objects. In the case of
 Occurs Depending On (ODO), the offsets depend on both schema and data.</p>
 <p>COBOL data may have elements which are invalid, but unused due to application
 logic in selecting a proper REDEFINES alias.</p>
@@ -351,35 +361,43 @@ we create the a &#8220;schema dictionary&#8221; using simple names and path name
 <dd><p>An Attribute definition has a required value of a name and a class that will
 be created to hold the data.</p>
 <p>Here are the essential attributes of an Attribute.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Name:</th><td class="field-body">The attribute name. Typically always available for most kinds of schema.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Create:</th><td class="field-body">Cell class to create.  If omitted, the class-level
+<dl class="attribute">
+<dt id="schema.Attribute.name">
+<tt class="descname">name</tt><a class="headerlink" href="#schema.Attribute.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The attribute name. Typically always available for most kinds of schema.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="schema.Attribute.create">
+<tt class="descname">create</tt><a class="headerlink" href="#schema.Attribute.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cell class to create.  If omitted, the class-level
 <tt class="xref py py-data docutils literal"><span class="pre">Attribute.default_cell</span></tt> will be used.
-By default, this refers to <tt class="xref py py-class docutils literal"><span class="pre">stingray.cell.TextCell</span></tt>.</td>
-</tr>
-</tbody>
-</table>
+By default, this refers to <tt class="xref py py-class docutils literal"><span class="pre">stingray.cell.TextCell</span></tt>.</p>
+</dd></dl>
+
 <p>The additional
 values commonly provided by simple fixed format file schemata.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Offset:</th><td class="field-body">Optional offset into a buffer. For simple fixed-layout files,
+<dl class="attribute">
+<dt id="schema.Attribute.offset">
+<tt class="descname">offset</tt><a class="headerlink" href="#schema.Attribute.offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional offset into a buffer. For simple fixed-layout files,
 this is a constant. For COBOL files with Occurs Depending On,
 however, this must be a function based on the actual record
-being processed.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Size:</th><td class="field-body">Optional size within the buffer.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Position:</th><td class="field-body">Optional sequential position.</td>
-</tr>
-</tbody>
-</table>
+being processed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="schema.Attribute.size">
+<tt class="descname">size</tt><a class="headerlink" href="#schema.Attribute.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional size within the buffer.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="schema.Attribute.position">
+<tt class="descname">position</tt><a class="headerlink" href="#schema.Attribute.position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optional sequential position.</p>
+</dd></dl>
+
 <p>A subclass might introduce yet more attributes.</p>
 </dd></dl>
 
@@ -404,7 +422,7 @@ being processed.</td>
         <span class="k">return</span> <span class="s">&quot;Attribute( name={0.name!r}, position={0.position}, offset={0.offset}, size={0.size} )&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="bp">self</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>An <a class="reference internal" href="#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a> is used by a <a class="reference internal" href="workbook/base.html#workbook.Workbook" title="workbook.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.Workbook</span></tt></a> to
+<p>An <a class="reference internal" href="#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a> is used by a <a class="reference internal" href="workbook/base.html#workbook.base.Workbook" title="workbook.base.Workbook"><tt class="xref py py-class docutils literal"><span class="pre">workbook.base.Workbook</span></tt></a> to
 extract cell data from a row.</p>
 <p>The use case looks like this for a Fixed format workbook.  For other
 workbooks, other kinds of conversion functions might be used.</p>
@@ -435,7 +453,7 @@ Attribute( name= &quot;mm-dd-yy&quot;, size= <em>n</em>, offset= <em>m</em>,
 <li><a class="reference internal" href="#">6. Schema Package &#8211; Schema and Attribute Definitions</a><ul>
 <li><a class="reference internal" href="#load-a-schema-use-case">6.1. Load a Schema Use Case</a></li>
 <li><a class="reference internal" href="#use-a-schema-use-case">6.2. Use a Schema Use Case</a></li>
-<li><a class="reference internal" href="#the-builder">6.3. The Builder</a></li>
+<li><a class="reference internal" href="#application-object-builder">6.3. Application Object Builder</a></li>
 <li><a class="reference internal" href="#model">6.4. Model</a></li>
 <li><a class="reference internal" href="#overheads">6.5. Overheads</a></li>
 <li><a class="reference internal" href="#schema-class">6.6. Schema Class</a></li>

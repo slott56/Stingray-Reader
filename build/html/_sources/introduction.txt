@@ -9,21 +9,23 @@ Given a workbook -- or any other "flat" file -- how is it organized?  What does 
 
 How can we ignore details that are merely physical?
 When is a change merely a logical layout variant with no semantic impact?
-How do we isolate ourselves from these layout variants?
+How do we isolate ourselves from these variations?
 
-There are two use cases that we want to focus on.
+There are two user stories that we want to focus on.
 
 -   **Extract Transform and Load (ETL)**.   We've got a file of data
     in the form of a workbook ("spreadsheet") file or perhaps a flat (delimiter-free) COBOL file.
+    The **ET** portion of **ETL** may be part of a "Big Data" application: 
+    it could be the mapper portion of a Hadoop Map-Reduce.
 
--   **Analysis**.  Also known as Data Profiling.  We've got a file of data and we want to
-    examine the data for frequencies, ranges and relationships.
+-   **Analysis**.  More specifically, Data Profiling.  We've got a file of data and we want to
+    examine it for frequencies, ranges and relationships.
     A common use for this is to "validate" or "unit test"
     a file before attempting to process it.
-
+    
 In these cases, we don't want our applications to depend on
-the physical file format.  We want to work equally well with CSV or XLSX
-versions of a file.
+the physical file format.  
+We want to work equally well with CSV or XLSX versions of a file.
 
 We'd like something like this to transparently handle workbook files in a variety of formats.
 
@@ -39,32 +41,40 @@ We'd like something like this to transparently handle workbook files in a variet
     def main(args):
         for input in args.file:
             with workbook.open_workbook( input ) as source:
-                for name in source.sheets():
+                for name in source.sheets(): ❶
                     sheet= source.sheet( name,
-                        sheet.EmbeddedSchemaSheet,
-                        loader_class=schema.loader.HeadingRowSchemaLoader )
+                        sheet.EmbeddedSchemaSheet, ❷
+                        loader_class=schema.loader.HeadingRowSchemaLoader ) ❸
                     counts= process_sheet( sheet )
-                    pprint.pprint( counts )
+                    pprint( counts )
 
-Note that this specifies a number of things explicitly.
+Note that this is wordy because it specifies a number of things explicitly.
 
--   :samp:`for name in source.sheets()` claims that *all* sheets have valid data.
+-   ❶ :samp:`for name in source.sheets()` claims that *all* sheets have valid data.
     When this is not the case, more sophisticated name filtering
     needs to be inserted into this loop.
 
--   :py:class:`sheet.EmbeddedSchemaSheet` states that the sheet has the schema
+-   ❷ :py:class:`sheet.EmbeddedSchemaSheet` states that the sheet has the schema
     embedded in it.  For example, the headers in the first row of the sheet. 
     We can use :py:class:`sheet.ExternalSchemaSheet` to specify
     that an external schema must be loaded. For example, a separate sheet in this
     workbook or perhaps a separate file.
     
--   :py:class:`schema.loader.HeadingRowSchemaLoader` states that the schema is
+-   ❸ :py:class:`schema.loader.HeadingRowSchemaLoader` states that the schema is
     the first row of the sheet.  We can write other parsers for other sheets
     with more complex or atypical layouts.
 
+We've made these issues explicit because they are the source of complication
+in otherwise simple applications. Parsing the header from :file:`.csv` files is done
+by a simple algorithm in the :mod:`csv` module. This algorithm isn't always 
+appropriate, and we need to be able to change it.
+
+Logical Layout Issues
+----------------------
+
 Beyond physical format transparency, we want applications that are flexible with respect to the
-the logical layout.  We'd like to be adaptable to changes to the names, number,
-order and type of columns without a significant rewrite.   We'd like
+the logical layout of coumns.  We'd like to be adaptable to changes to the names, number,
+order and type of columns without a significant rewrite. We'd like
 to isolate the column names or positions from the rest of our application processing.
 
 We can do this by definining  small "builder" functions which isolate the
@@ -118,11 +128,12 @@ We can then use this iterator to process rows of a sheet.
             *process the app_object*
         return counts
 
+We'll show concrete implementation examples in the :ref:`demo` section.
 
 Deeper Issues
 ----------------
 
-Processing a workbook (or other flat file) means solving two closely-related schema management problems.
+Processing a workbook (or other flat file) means solving two closely-related schema problems.
 
 -   Decoding the "Physical Format".  Format is the organization of bytes from
     which we can decode Python objects (e.g., decode a string to lines
@@ -131,95 +142,82 @@ Processing a workbook (or other flat file) means solving two closely-related sch
 -   Mapping to the "Logical Layout". That is, the semantic mapping from Python
     items (e.g., strings) to meaningful data elements in our problem domain (e.g., customer zip codes.)
 
-Both of these are implementation details for the *Conceptual Content*.  The
-conceptual schema is the *meaning* behind the encoded data.
+Both of these are implementation details for some *Conceptual Content*.  The
+conceptual schema is the *meaning* behind the encoded data. 
 
 Often, the physical format issue is addressed by using a well-known (or even standardized) file format:
 CSV, XLSX, XML, JSON, YAML, etc.
-We'll start with just the workbook formats CSV, XLSX and ODS.
+We'll start with just the workbook formats CSV, XLSX and ODS. 
 
 We'll ignore JSON and YAML for the time being. We should be able to extend our
 model from highly structured data to semi-structured data, including JSON, YAML,
 and even documents created with outliner tools.
 
-The logical layout issue is not as easy to address as physical format.  Why not?
+We'll expand on our model to include COBOL files. In many cases, they will parallel
+workbooks. In some cases, however, they introduce some complexity.
+
+The logical layout issue is not as easy to address as the physical format issue. 
+A file is either compliant with a physical format or it's not.  Why is logical
+layout more complex than physical format? We've seen at least four common reasons:
 
 -   **Bullfeathers**.  Also known as Semantic Heterogeneity.
     You call them "customers" because they have
     a contract and pay money for services.  Marketing, however, calls their
-    prospects "customers" even though there is no contract in place.
-
+    prospects "customers" even though there is no contract in place. 
     Same word.  Different semantics.
-    Yes.  It's a "problem domain" issue.  No, it's not solvable.
+    
+    Yes, this a "problem domain" issue.  No, there's no technical solution short
+    of a complete ontology for each data item.
 
-    All we can do is cope. This means having enough flexibility to handle
-    the semantic issues.
+    We'll need a design with enough flexibility to handle
+    the semantic matching expediently.
 
 -   **Buffoonery**.  Is "CSTID" the "customer id number"?
     Or is it the "Commercial Status ID"?  Or is it the "Credit Score
     Time Interval Delta"?  Or is it something entirely unrelated that merely
     happens to be shoved into that field?
 
+    Yes, this is "code rot." Even with careful format definitions, this kind of thing happens as software
+    matures. No, there's no technical solution short of firing all the managers
+    who make short-sighted decisions.
+    
     We'll need a design that has the flexibility to cope with variant abbreviations for column names.
 
 -   **Bad Management**.  At some point in the past, the "Employees Here" and "Total Employees"
     were misused by an application.  The problem was found--and fixed--but
-    there is some "legacy" data that has incorrect data.  What now?
+    there is some "legacy" data that has incorrect values.  What now?
+    
+    Yes, this is a data stewardship problem.
 
     This leads to rather complex designs where the mapping from source to target
-    is dependent on the source data itself. Or the context for the source data.
+    is dependent on some external context for the source data.
 
 -   **Bugs**.  The field named "Effective Date" is really the *Reported Date*.
     The field name "Supplied Date" is really the *Effective Date*.
     The field labeled "Reported Date" isn't populated consistently and doesn't
     seem to have any meaning.  Really.
+    
+    There's a fine line between "technical debt" and "code rot." Our point
+    is not to sort out the root cause of the problem.
+    
+    We need flexibility to handle bugs as well as other problems.
 
-    This is also a kind of mapping issue. It's analogous to the "Buffoonery" issue, above. Flexible mappings are essential.
-
-There is an underlying *Conceptual Schema*.  However, it has numerous
+There is always an underlying *Conceptual Schema*.  It often has numerous
 variant implementations, each with a unique collection of errors and anomalies.
-
-Directions
--------------
-
-We need to have a representation for a schema that allows an application
-*some* flexibility.
-We have four plus one views of an acceptable solution to the schema
-representation problem.
-
--   The use cases need to make sense to the actors.
-    To retain the user's terminology, a data dictionary can help interpret a use case in spite of the
-    user's imprescise terminology.
-    Additional aliases for names and descriptions will be essential.
-
--   The logical view needs to focus on
-    the problem domain, eschewing physical format issues.
-    (If mentioned at all, format should
-    be little more than a stereotype attached to a class model.)
-    The logical view must allow variability in the logical layout of the workbook or file.
-
--   The deployment view should allow multiple applications to properly
-    follow the Don't Repeat Yourself (DRY) principle and share a schema definition.
-    Schemata are precious, centralized components which bridge
-    data and processing.
-    If a schema is bound with the data (to the extent possible), then it can be reused more effectively
-
--   The processing view should allow a single application program
-    to work sensibly with files that have the same
-    logical layout but different physical formats.  A single conceptual
-    schema may have variant logical layouts (e.g., column name spelling changes).
-    This layout variants should be tolerated by a single application.
-
--   The physical view is focused on file processing: either workbooks or
-    flat data files.
 
 Misdirections
 -------------------
 
-We have to be cautious of trying too hard to leverage the :py:mod:`csv` module's
-row-as-dictionary view of data.  Above, we suggested that the :py:mod:`csv` representation
-was ideal.
+Our canonical examples are the :py:mod:`csv` and the :py:mod:`xlrd` package.
+These offer handy ways to read workbooks. However, they're far from ideal.
+Both of these show eager processing and flat structures. 
 
+We have an additional consideration when it comes to data conversions. 
+We have to avoid the attractive nuisance of a Domain Specific Language (DSL) 
+for mappings and conversions.
+
+We have to be cautious of trying too hard to leverage the :py:mod:`csv` module's
+row-as-dictionary view of data.  
 The :py:class:`csv.DictReader` approach -- implicitly creating a dict instead of a sequence -- 
 fails us when we have to work with COBOL or Fixed Format files.
 These non-spreadsheet files may not be close to First Normal Form.
@@ -227,25 +225,27 @@ COBOL files have repeating groups which
 require numeric indexes in addition to column names.
 
 For semi-structured data (JSON, YAML our an outline) there are fewer
-constraints, leading to a more complex normalization step and possible
-row validation rules.
+constraints on the data, leading to a more complex normalization step and possible
+row validation rules. We'd like to retain a relatively simple schema 
+in spite of the potential complexity of these files.
 
-Further, the :py:mod:`csv` approach of **eagerly** building a row doesn't work
+The :py:mod:`csv` approach of **eagerly** building a row doesn't work
 for COBOL files because of the ``REDEFINES`` clause.  We can't reliably
-build the various "cells" available in the COBOL schema, since some of
+build the various "cells" available in a COBOL schema, since some of
 those values may turn out to be invalid. COBOL requires lazily building a row
 based on which REDEFINES alias is relevant.
 
 We also have to avoid the attractive nuisance of trying to create a
 "data mapping DSL".  This is seductive because a data mapping
-is a triple of target, source and conversion.
+is a triple of target, source and conversion. It seems like we could write some language
+that encodes these three things in a handy summary like this:
 
 ..  parsed-literal::
 
     target = source.conversion()
 
 Since this is -- effectively -- Python code, there's no real reason
-for creating a DSL.  Just use Python.
+for creating a DSL when we can just use Python.
 
 Historical Solutions
 =======================
@@ -280,10 +280,9 @@ structure that defined the various items in a single record of a file.
 
 Hierarchical.  Like XML.
 
-Best practice was essentially DRY.
-Developers would keep the definitions as separate modules
+COBOL best practice was essentially DRY:
+developers would keep the definitions as separate modules
 under ordinary source code control.
-
 Every application that worked with a given file would import the DDE for
 that file.
 
@@ -292,25 +291,21 @@ There's a compile-time binding between schema and application.  There's a
 run-time binding between application and file.
 
 Just as clearly, this is subject to all kinds of mysterious problems when
-schema definition modules where cloned and then modified, leaving it unclear
-which is correct.  Also, when a schema definition was modified and not
-all programs were properly recompiled.
+schema definition modules are cloned and then modified, leaving it unclear
+which version is correct.  Also, when a schema definition was modified and not
+all programs were properly recompiled, some programs worked with some
+files, other programs didn't.
 
 Since the schema wasn't formally bound to the file, it was particularly easy
 to have files without any known schema.  Ideally, the file name included
 some schema hint.
 
 What's relevant for Python programmers is the central idea of a schema
-being
-
-a.  External to any specific application.
-b.  DRY.
+being external to any specific application.
 
 To this, we would like to assure that the schema was bound to the relevant
 files.  This is much more difficult to achieve in practice, but there are some
-approaches that can work well.
-
-We'll look at this closely, below.
+approaches that can work through manually managing file names.
 
 DBMS Schema Solution
 ------------------------
@@ -319,20 +314,20 @@ A Database Management System (DBMS) -- whether relational or hierarchical
 or columnar or networked or whatever -- addresses the problems with
 flat files and the separation between application program, physical format,
 logical layout, and operating system file.
-
-The DBMS should provide us a logical/physical schema separation
+A DBMS provides a complete logical/physical schema separation
 
 The physical files are managed by the DBMS.  Our applications are now
-independent of physical file structure (and indepenent even of OS.)
+independent of all physical file structure. They're often independent of
+OS considerations, too.
 
-The logical "table structure" (or whatever is offered) is distinct
+The logical "table structure" (or "document" or whatever is offered) is distinct
 from the files.  The logical schema it tightly bound to
 the data itself.  When using SQL, for example, the column names and data types
 are available as part of the execution of each SQL query.
 
 This binding between data is schema is ideal.
 
-Sadly, it doesn't apply to files.  Only to databases as a whole.
+Sadly, it doesn't apply to separate files.  Only to databases as a whole.
 
 If file transfers are replaced with SQL queries (or web services requests)
 then schema is discoverable from the database (or web service).  However, the
@@ -343,10 +338,11 @@ CSV Schema Solution
 -------------------------
 
 A workbook (or "spreadsheet") may or may not have schema
-information.
+information. There may be a header row, a separate sheet, a separate
+document, or nothing.
 
 The workbook may have any of a large
-number of physical formats: .XLS (i.e., native) .XLSX or .CSV.
+number of physical formats: :file:`.XLS` (i.e., native) :file:`.XLSX` or :file:`.CSV`.
 The format is irrelevant to the presence or absence of a schema.
 
 One common way to embed schema information
@@ -379,11 +375,17 @@ with the data.  A separate schema description file (even if bound in a ZIP archi
 unbound from the data.
 
 While there are numerous problems, workbooks are a very common way to exchange
-data.  It's not sensible to pretend they don't exist.  We can't
-paraphrase Jamie Zawinski and say
-"Some people, when confronted with a problem, think 'I know,
-I'll use [a spreadsheet].'  Now they have two problems."  We do need to
-process this data irrespective of the issues.
+data.  It's not sensible to pretend they don't exist. 
+
+..  warning:: It Won't Go Away
+
+    We can't
+    paraphrase Jamie Zawinski and say
+
+    "Some people, when confronted with a problem, think 'I know,
+    I'll use [a spreadsheet].'  Now they have two problems."  
+    
+    We do need to process this data irrespective of the issues.
 
 We need a suitable, Pythonic solution to the schema problem when confronted
 with data in a spreadsheet.
@@ -391,18 +393,18 @@ with data in a spreadsheet.
 XML Non-Solution
 ---------------------
 
-Weirdly, XML fans will state the XML is "self-defining".  Their claim
-is that somehow this *solves* the schema problem.  This statement can be
+Weirdly, XML fans will claim we should use XML, stating the XML is "self-defining".  
+Their claim is that somehow this *solves* the schema problem.  This statement can be
 misleading.
 
-For our purposes, XML is a physical format.  An XML document without
+For our purposes, XML is a kind of physical format.  An XML document without
 a referenced (or embedded) XSD lacks any semantic information.
 Even then, an XSD can be helpful, but not
 sufficient.  The type definitions in an XSD could be unclear, ambiguous or
 simply wrong.
 
 An XSD document can be a good, useful schema definition.  It can also be riddled
-with buffoonery, bad management and bugs.  It isn't magically perfect.  It
+with buffoonery, bad management and bugs.  It isn't magically *perfect*.  It
 merely frees us from physical format considerations.
 
 We can -- to an extent -- leverage elements of PyXSD (http://pyxsd.org)
@@ -415,7 +417,7 @@ XSD is a bit too complex for this problem domain.  Spreadsheets don't make use o
 sophisticated modeling available in XSD.  A spreadsheet is a flat list of
 of a few simple types (float, string, date-encoded-as-float.)   A
 COBOL DDE is a hierarchy of of a few simple types (display, comp-3).
-All we can really do is borrow concepts and terminology.
+All we can really do is borrow some concepts and terminology.
 
 Summary
 -------------------------
@@ -425,18 +427,16 @@ Sadly, others -- which are still in active use -- require a great deal
 of schema information merely to decode the physical format.
 
 Logical layout is generally a feature of the application program
-as well as the data.  Even in a SQL-based data access, the column
-names in a ``SELECT`` statement amount to a binding to a schema.
+as well as the data.  In a SQL-based data access, the column
+names in a ``SELECT`` statement amount to a binding between application and schema.
 
 While we can make some kinds of simple
-applications which are completely driven by metadata, the
-general solution to information processing remains a proper
-programming language.
-
+applications which are completely driven by metadata, we can't easily
+escape the need to customize and deal with variations.
 Therefore, we need to have application programs which can
 tolerate physical format changes without complaint.
 
-We would also like an application program that can work with
+We would like an application program that can work with
 "minor" variations on a logical layout.  That is, the order
 of columns, or minor spelling changes to a column name can be
 handled gracefully.
@@ -453,110 +453,3 @@ The ``-l layout_2`` provides logical layout information. This defines the "appli
 The ``some_file.xyz`` could be ``some_file.xls`` or ``some_file.ods``,
 allowing transparent changes to physical format.
 
-Schema Representation Considerations
-=====================================
-
-There are several sensible way to represent schema information.  Each has
-a problem.  We're forced to chose the lesser of the various evils.
-
-1.  One (or more) rows in each workbook sheet that provides the attribute
-    name.  The type is left implicit.  Other information (e.g., offset or size)
-    is part of a physical format: it's only needed for fixed-format files.
-    The "row-header schema" is casual and could involve numerous kinds of
-    technical errors (missing names, duplicate names, incorrect names.)
-
-#.  A distinct workbook sheet that lists name, data type information
-    for each attribute.  Offset and size for fixed format files can
-    also be provided.  This can involve numerous kinds of technical errors
-    (missing attributes, duplicate attribute names, incorrect attribute
-    descriptions.)
-
-#.  A Python module that's built from source information.  This
-    allows us to trivially ``import schema.foo`` and have lots of cool
-    classes and functions in the ``schema.foo`` module.  This
-    pushes the envelope the DRY principle because the module would have to be built
-    from other source data.
-
-#.  Some standardized metadata format.  XSD (or even XMI) pops into mind.
-    These are detailed and potentially useful.
-    Experience shows, however, that schema definitions are almost universally provided as workbook sheets.
-    An external schema in a standard notation pushes the envelope on
-    the DRY principle and also is vanishingly rare in practice.
-
-Items 1 and 2 (workbook-based schema) cover over 99%
-of the cases in practice.  While the data is casual and error-prone, it's
-readily available and consistent with DRY.
-
-Option 3 (a Python module) -- while cool -- breaks the DRY
-principle.  Refreshing a Python schema when a source :file:`.XLS` document
-changes is annoying because we're tweaking the way ``import`` works.
-The imported schema module has to confirm that it's newer than the
-files it's derived from and possibly rebuild itself *automagically* after
-the schema source is touched.
-
-Option 4 is rarely used in practice.  In the rare cases when an organization
-will consent to providing XSD files, they're often prepared separately
-from the data and do not actually reflect the application software
-that is used to build the data file.
-
-Plus, we should also be able to extend our schema representation
-to cope with COBOL DDE's.  These have a place, since legacy conversion
-and data extraction is still sometimes required.
-
-Finally, we may be forced to deal with data in semi-structured formats
-like JSON, YAML or an outline.
-
-Our best approach is to load schema information from source every time
-it's needed.  There are two paths:
-
--   Either we'll parse the embedded schema buried in each
-    sheet of a workbook,
-
--   or we'll load an external schema definition from
-    a file.
-
-The COBOL Issues
--------------------------
-
-When dealing with "Flat Files" from legacy COBOL problems, there are several
-additional problems that need to be solved.
-
-1.  The files have a fixed field layout, without delimiters.
-    This means that the offset of each field must be used to
-    decompose the record into its individual elements.
-
-#.  Numeric fields can have an implied decimal point, making
-    it difficult to determine the value of a string of digits.
-    The COBOL DDE is essential for parsing the file contents.
-
-#.  COBOL can make use of numeric data represented in a variety
-    of "Computational" forms.  The "Computational-3" ("COMP-3")
-    form is particularly complex because decimal digits are
-    packed two per byte and the final half-byte encodes
-    sign information.
-
-#.  The string data may be encoded in EBCDIC bytes.
-
-#.  COBOL encourages the use of data aliases (or "unions") via the ``REDEFINES`` clause.
-    Without the entire unviverse of COBOL programs that work with a given file,
-    the general handling of ``REDEFINES``
-    data elements can become an insoluable problem.
-    Only lazy field access can work;
-    eager creation of individual cell values is doomed because a
-    ``REDEFINES`` alternative may be defined over invalid data.
-    
-#.  COBOL has an ``OCCURS DEPENDING ON`` (ODO) feature where one attribute
-    determines the size of another attribute. This means the data 
-    of every attribute after the ODO attribute has a location which varies.
-    The positions within the flat file cannot be computed statically.
-
-Generally, COBOL files are defined by a "Data Definition Entry" (DDE)
-that provides the record layout.
-
-Developing the offsets to each field manually is tedious and
-error-prone work.  In the presence of ODO, the locations become 
-expressions based on the current record's data. 
-
-It's essential to
-parse the DDE, which has the original COBOL source
-definition for the file.  A schema can be built from the parsed DDE.

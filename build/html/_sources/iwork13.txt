@@ -1,8 +1,8 @@
-.. _`iwork13`:
+.. _`other_modules`:
 
-######################################
-The iWork '13 Numbers Modules
-######################################
+#########################################
+The "Other" Modules: snappy and protobuf
+#########################################
 
 There are two digressive modules that are part of reading iWork '13 Numbers files.
 We could depend on other implementations. Instead, we've provided our own
@@ -14,8 +14,8 @@ implementations.
 In the same way that the various XML workbooks could be built on any of
 the Python XML modules.
 
-However, it's somewhat simpler for developers to rely only on XLRD and 
-Stingray.
+However, it's somewhat simpler for developers to rely only on 
+Stingray and (optionally) :mod:`xlrd`.
 
 ..  toctree::
     :maxdepth: 1

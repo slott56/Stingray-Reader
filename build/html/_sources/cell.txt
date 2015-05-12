@@ -8,7 +8,7 @@ Cell Module -- Data Element Containers and Conversions
 
 ..  py:module:: cell
 
-The point of a :py:class:`cell.Cell` is two-fold.
+The point of a :py:class:`cell.Cell` is two-fold:
 
 -   **Capture**.  That is, decode the information in the source file into
     a Python object that represents the source spreadsheet value.
@@ -18,12 +18,22 @@ The point of a :py:class:`cell.Cell` is two-fold.
     to properly decode the bytes or characters.  We may even have to
     cope with EBCDIC or packed decimal conversions.
 
--   **Convert**. Provide the cell value coerced to another type.
+-   **Convert**. Provide the cell value coerced to another Python type. 
+    This is rather open-ended; it's hard to provide a comprehensive list of 
+    types to which data can be converted.
 
 Capture Use Case
 ====================
 
-The **Capture** use case is defined by our physical formats.
+The **Capture** use case is defined by our physical formats. We have several places
+to look for source data formats:
+
+-   :py:mod:`xlrd`.
+
+-   XSLX (ECMA 376).
+
+-   Apple Numbers.
+
 ``xlrd`` identifies the follow cell types found in XLS workbooks.
 
 ..  csv-table::
@@ -57,7 +67,7 @@ See below under `Conversion Functions`_.
 
 We should depend on the :py:mod:`locale` module to provide proper format strings for converting between date and string.
 
-A Numbers spreadsheet appears to have the following cell types. Some of the
+An Apple Numbers spreadsheet appears to have the following cell types. Some of the
 tags appear to have no value, so their purpose is unclear.
 
 ..  csv-table::
@@ -72,6 +82,22 @@ tags appear to have no value, so their purpose is unclear.
     ``s`` (?),
     ``t`` (Text),Cell containing text
     ``pm`` (Popup Menu),A popup menu of otherc cell values
+    
+This provides a reasonably complete set of source data types. They vary by 
+physical format. They all have a common history, starting with VisiCalc and including
+MultiPlan. Here's a summary:
+
+..  csv-table::
+    :header: "Type","XLRD","XLSX","Numbers"
+    :widths: 22,22,22,22
+    
+    Empty,Two Varieties,No,Two Varieties
+    Text,Yes,Three Varieties,Yes
+    Number,Yes,Yes,Yes
+    Date,Two Encodings,Yes,Yes
+    Boolean,Yes,Yes,No
+    Error,Yes,Yes,No
+
 
 Convert Use Cases
 =======================
@@ -127,12 +153,21 @@ Model
 ..  image:: cell.png
     :width: 6in
 
+Circularity
+============
+
+Note that a Cell depends on a Workbook.
+
+And a Workbook (via a Sheet and a Row) depends on a Cell.
+
+In some languages, we'd be obligated to define interfaces so that these
+two classes could depend on each other sensibly. In Python, however, 
+we don't need to create an elaborate web of dependencies.
+
 Overheads
 ===========
 
-We required ``xlrd`` from http://www.lexicon.net/sjmachin/xlrd.htm 
-
-This is the easiest way to read legacy Microsoft ``.XLS`` files.
+Here are the module docstring and imports.
 
 ::
 
@@ -147,8 +182,13 @@ This is the easiest way to read legacy Microsoft ``.XLS`` files.
     import datetime
     import time
     from collections import Hashable
-    import xlrd
+    
+A version string.
 
+::
+
+    __version__ = "4.4.6"
+    
 Just to be sure that any locale-based processing will actually
 work, we establish a default locale.
 
@@ -164,18 +204,29 @@ Cell
     The :py:class:`cell.Cell` class hierarchy extends this base class.  Note that we have
     a relatively short list of built-in conversions.  
     For more complex, application-specific conversions, the raw :py:attr:`value` is available as a property.
+    
+    ..  py:attribute:: value 
+    
+        The raw data, often a String from a workbook. May also be a 
+        sequence of bytes for COBOL.
+            
+    ..  py:attribute:: workbook
+    
+        The :py:class:`workbook.base.Workbook` that created this Cell.
+        This is largely used for Excel date conversions, but there
+        could be other context needs for lazy access to data.
 
 ::
 
     class Cell( Hashable ):
-        """A class hierarchy for each kind of Cell."""
+        """A class hierarchy for each kind of Cell.
+        """
         def __init__( self, value=None, workbook=None ):
             """Build a new Cell; the atomic data element of a  workbook.
 
-            :param _value: the proper Python object, correctly converted from the source.
-            :param workbook: the :py:class:`workbook.Workbook` that created this Cell.
-                This is largely used for Excel date conversions, but there
-                could be other context needs.
+            :param value: Raw value, generally a string for most workbooks.
+            :param workbook: Parent workbook, required for some 
+                conversions and for lazy access to data.
             """
             self._value, self.workbook = value, workbook
         def __repr__( self ):
@@ -211,7 +262,7 @@ hashable.
         def value( self ):
             return self._value
 
-..  todo:: Test hashable interface of Cell
+..  todo:: Unit test cases for the hashable interface of Cell
 
 EmptyCell
 ============
@@ -270,8 +321,8 @@ TextCell
                     format = "%x"
             return datetime.datetime.strptime(self.value,format)
         def to_digit_str( self, length=5 ):
-            fmt= "{{0:0>{0}d}}".format(length)
-            return fmt.format( int(self.value) )
+            txt= "{0:0>{length}d}".format(int(self.value), length=length)
+            return txt
 
 NumberCell
 ============
@@ -281,8 +332,6 @@ NumberCell
     A ``NumberCell`` implements the cells with a float value.
     :py:mod:`xlrd` may report them as a type ``XL_CELL_NUMBER``.
     A variety of conversions make sense for a number value.
-    Note that the ``to_datetime()`` conversion depends on ``xlrd``.
-    This may be a faulty assumption for some species of workbooks.
 
 ::
 
@@ -307,17 +356,21 @@ NumberCell
             return str(self.value)
         def to_datetime( self, format=None ):
             assert format is None, "Format is not used."
-            try:
-                dt= xlrd.xldate_as_tuple(self.value, self.workbook.datemode)
-            except xlrd.xldate.XLDateAmbiguous as e:
-                ex= ValueError( "Ambiguous Date: {0}".format(self.value) )
-                ex.__cause__= e
-                raise ex
-            return datetime.datetime(*dt)
+            
+            return self.workbook.float_to_date(self.value)
+            
+            #try:
+            #    dt= xlrd.xldate_as_tuple(self.value, self.workbook.datemode)
+            #except xlrd.xldate.XLDateAmbiguous as e:
+            #    ex= ValueError( "Ambiguous Date: {0}".format(self.value) )
+            #    raise ex from e
+            #return datetime.datetime(*dt)
+            
         def to_digit_str( self, length=5 ):
-            fmt= "{{0:0>{0}d}}".format(length)
-            return fmt.format( int(self.value) )
-
+            txt= "{0:0>{length}d}".format(int(self.value), length=length)
+            return txt
+    
+    
 FloatDateCell
 ===============
 
@@ -392,15 +445,19 @@ DateCell
 ::
 
     class DateCell( Cell ):
-        """A cell which contains a proper :mod:`datetime` value."""
+        """A cell which contains a proper :py:mod:`datetime` value."""
         def to_int( self ):
             return int(self.to_float())
         def to_float( self ):
-            timetuple= self.value.timetuple()[:6]
-            xl= xlrd.xldate.xldate_from_datetime_tuple(
-                timetuple,
-                self.workbook.datemode)
-            return xl
+            
+            return self.workbook.date_to_float(self.value)
+            
+            #timetuple= self.value.timetuple()[:6]
+            #xl= xlrd.xldate.xldate_from_datetime_tuple(
+            #    timetuple,
+            #    self.workbook.datemode)
+            #return xl
+            
         def to_decimal( self, digits=0 ):
             fmt= "{0:0.{digits}f}"
             return decimal.Decimal( fmt.format(self.to_float(),digits=digits) )
@@ -413,24 +470,20 @@ DateCell
             return fmt.format( self.to_int() )
 
 
-For numbers, the ``<d>`` cells have a native date format.
-
-This is an extension to basic :py:mod:`xlrd`, XLSX and ODS workbook processing
-because no cell has this as its data type.
+For Apple Nnumbers, the ``<d>`` cells have a native date format.
+This is a unique feature, since :py:mod:`xlrd`, XLSX and ODS don't have a 
+proper date cell value.
+    
 
 Conversion Functions
 =======================
 
-There is a need for functions for various kinds of conversions.  These are
-mostly focused on processing Fixed format files, where the data all originates
-as text.
+..  todo:: Refactor these into the :py:mod:`schema` module.
 
-These can also be applied to CSV or TAB files to create cells other than the default
-:py:class:`cell.TextCell`.
+    These functions are used to define schema, not process Cell objects *per se*.
 
-Dates
---------
-
+The idea here is to create some functions that can be used to build 
+Schema attributes that handle proper date conversions.
 
 ..  py:function:: date_from_string(format)
 
@@ -447,7 +500,7 @@ Dates
             return datetime.datetime.strptime( string, format )
         return the_conversion
 
-This forms the factory for the :py:class:`cell.DateCell` class.
+This forms a factory for the :py:class:`cell.DateCell` class.
 
 ..  py:function:: datecell_from_string(format)
 
@@ -469,49 +522,45 @@ This could be used like this in a schema definition.
 
 ..  parsed-literal::
 
-    d = Attribute( name="mm-dd-yy", size=*n*, offset=*m*,
+    d = Attribute( name="mm-dd-yy", size=\ *n*, offset=\ *m*,
         create=stingray.cell.datecell_from_string("%m/%d/%y") )
 
-The function :py:func:`date_from_float` is an additional closure based on a ``workbook.datemode`` that returns a single-argument conversion function.
 
-..  py:function:: date_from_float(datemode)
+..  py:function:: date_from_float(workbook)
 
-    A closure based on a datemode setting
+    A closure based on an XLS workbook's datemode setting
     that returns a single-argument conversion function.
     
-    :param datemode: the data mode for the workbook document as a whole.
-
+    :param workbook: the xlrd workbook with the required datemode.
 
 ::
 
-    def date_from_float( datemode ):
-        def the_conversion( value ):
-            try:
-                dt= xlrd.xldate_as_tuple(value, datemode)
-            except xlrd.xldate.XLDateAmbiguous as e:
-                ex= ValueError( "Ambiguous Date: {0!r}".format(value) )
-                ex.__cause__= e
-                raise ex
-            return datetime.datetime(*dt)
-        return the_conversion
+    def date_from_float(workbook):
+        return workbook.float_to_date
 
-This function has similar applications for converting data to a more useful
-:py:class:`cell.DateCell` instance.
+Once the definition of this was somewhat more complex. It was dependent on 
+:py:mod:`xlrd`; We've refactored it out of here to isolate all :py:mod:`xlrd`
+dependencies properly.
 
 ..  parsed-literal::
 
-    float2date= stingray.cell.date_from_float(workbook.datemode)
-    d = Attribute( name="mm-dd-yy", size=*n*, offset=*m*,
+    def date_from_float( workbook ):
+        def the_conversion( value ):
+            try:
+                dt= xlrd.xldate_as_tuple(value, workbook.datemode)
+            except xlrd.xldate.XLDateAmbiguous as e:
+                ex= ValueError( "Ambiguous Date: {0!r}".format(value) )
+                raise ex from e
+            return datetime.datetime(\*dt)
+        return the_conversion
+
+This function can be used to convert a raw float to a more useful
+:py:class:`cell.DateCell` instance. This is only sensible in the XLRD context
+where dates have peculiar conversion rules.
+
+..  parsed-literal::
+
+    float2date= stingray.cell.date_from_float(workbook)
+    d = Attribute( name="mm-dd-yy", size=\ *n*, offset=\ *m*,
         create=lambda x, w: stingray.cell.DateCell( float2date(x), w ) )
 
-Numbers
-----------
-
-A fixed-format file can have any of a variety of numbers, encoded in a
-variety of ways.
-
-The ordinary number-as-string, is trivially handled by :py:class:`cell.TextCell`.  No real need for a more sophisticated conversion.
-
-The less-ordinary case of COBOL data, in computational-3 format, or display
-format with an assumed decimal place is more difficult.  We'll defer
-this to :ref:`cobol`.

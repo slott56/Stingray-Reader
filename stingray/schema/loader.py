@@ -159,6 +159,15 @@ class NoSchemaFound( Exception ):
 #    
 #     A subclass may add a second contract, For example, 
 #     an embedded schema loader will also return the non-schema rows.
+#    
+#     ..  py:attribute:: sheet
+#    
+#         The :py:class:`Sheet` associated with this schema.
+#        
+#     ..  py:attribute:: row_iter
+#    
+#         An iterator over the rows of this sheet; used to pick rows that
+#         belong to the header, separate from the rows that belong to data.
 #
 # ::
 
@@ -223,8 +232,12 @@ class HeadingRowSchemaLoader( SchemaLoader ):
 #         self.wb, 'The_Name',     
 #         loader_class=HeadingRowSchemaLoader )
 #
-# In many cases, we'd like to subclass this to suppress the empty rows that are an inevitable feature of workbook sheets.  This doesn't work well for COBOL
-# or Fixed format files, since an "empty" row may be difficult to discern.
+# ..  py:class:: NonBlankHeadingRowSchemaLoader
+#
+#     In many cases, we'd like to suppress the empty rows that are an inevitable feature of workbook sheets.  
+#    
+#     Note that this doesn't work well for COBOL
+#     or Fixed format files, since an "empty" row may be difficult to discern.
 #
 # ::
 
@@ -268,6 +281,14 @@ class NonBlankHeadingRowSchemaLoader( HeadingRowSchemaLoader ):
 #     3.  The overall function,
 #         :py:meth:`schema.loader.ExternalSchemaLoader.schema`,
 #         that iterates over application objects built from application dictionaries.
+#
+#     ..  py:attribute:: workbook
+#    
+#         The overall Workbook that we're parsing to locate schema information.
+#    
+#     ..  py:attribute:: Sheet
+#    
+#         A specific sheet within that workbook.
 #
 # ::
 

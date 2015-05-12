@@ -3,8 +3,26 @@
 .. _`workbook_number09`:
 
 
-Numbers 09 Workbook
----------------------
+Apple iWorks Numbers '09 Workbook
+-----------------------------------
+
+The Stingray model of sheet/row/cell structure does not
+easily fit the Numbers sheet/table/row/cell structure.
+How can we handle the extra layer of names introduced by 
+Numbers?
+
+Option 1: navigation hierarchy.
+
+    Workbook ➞ new layer (Numbers "Workspace") ➞ Sheet (Numbers "Table") ➞ Row ➞ Cell
+
+Option 2: navigation hierarchy.
+
+    Combine (Workspace,Table) into a 2-tuple, and call this a "sheet" name when working
+    with Numbers documents.
+    
+    This will fit with Stingray acceptably. 
+    
+The imports required to process this kind of file.
 
 ::
 
@@ -19,11 +37,12 @@ Numbers 09 Workbook
     import stingray.sheet
     import stingray.cell
 
-..  py:module:: workbook
+..  py:module:: workbook.numbers09
         
-The iWork 09 format is a (simpler) Zip file with an XML document inside it.
+The iWork Numbers 09 format is a Zip file with an XML document inside it.
 There may be slight variations between native Numbers '09 and Numbers '13 doing
-a "save as" in Numbers '09 format.
+a "save as" in Numbers '09 format. It's not clear; we haven't done
+exhaustive checking.
 
 Numbers '13 is entirely different. See :ref:`workbook_number13`.
 
@@ -34,6 +53,17 @@ Numbers '13 is entirely different. See :ref:`workbook_number13`.
     The ``.numbers`` "file" is a ZIP file.
         
     The :file:`index.xml` element the interesting part of the archive.
+
+    In addition to the superclass attributes, some additional unique
+    attributes are introduced here.
+        
+    ..  py:attribute:: zip_archive
+    
+        A zip archive for this file.
+        
+    ..  py:attribute:: workspace
+    
+        The "workspaces": pages with tables inside them.
 
 ::
 
@@ -160,19 +190,19 @@ Locate a "data source" within the XML document. Create ``Cell`` instances.
                     
             elif cell.tag == general_tag: # General?
                 return stingray.cell.EmptyCell( '', self )
-            elif cell.tag == number_tag: # number
+            elif cell.tag == number_tag: # Number
                 value= self._decode_number( cell )
                 return stingray.cell.NumberCell( value, self )
             elif cell.tag == o_tag: #??
                 self._cell_warning("Unknown cell type", cell)
                 return stingray.cell.EmptyCell( '', self )
-            elif cell.tag == span_tag: #span?
+            elif cell.tag == span_tag: # Span?
                 self._cell_warning("Unknown cell type", cell)
                 return stingray.cell.EmptyCell( '', self )
-            elif cell.tag == text_tag: # text
+            elif cell.tag == text_tag: # Text
                 value= self._decode_text( cell )
                 return stingray.cell.TextCell( value, self )
-            elif cell.tag == bool_tag: # boolean
+            elif cell.tag == bool_tag: # Boolean
                 value= self._decode_number( cell )
                 return stingray.cell.BooleanCell( value, self )
             elif cell.tag == popup_menu_tag: # popup menu
@@ -212,8 +242,10 @@ Some lower-level conversions.
 
             fs= None # cell_style.get(fs_attr) # Doesn't seem correct
             fdp= None # cell_style.get(fdp_attr) # Doesn't seem correct
+            
             # Transform fs into proper Python format, otherwise, use the number of 
             # decimal places.
+            
             if fs is not None:
                 fmt= self._rewrite_fmt( fs )
                 #print( "Decimal: {{0:{0}}}.format({1}) = ".format( fmt, value_txt ), end="" )

@@ -87,14 +87,18 @@ class handles the Occurs Depending On situation.
 
 Here are the attributes inherited from :py:class:`schema.Attribute`.
 
-:name: 
+..  py:attribute:: name
+
     The attribute name. Typically always available for most kinds of schema.
     
-:create: Cell class to create.  If omitted, the class-level
+..  py:attribute:: create
+
+    Cell class to create.  If omitted, the class-level
     :py:data:`Attribute.default_cell` will be used.
     By default, this refers to :py:class:`cell.TextCell`.
     
-:position: 
+..  py:attribute:: position
+
     Optional sequential position. This is set by the :py:class:`schema.Schema`
     that contains this object.
 
@@ -102,7 +106,8 @@ The additional values commonly provided by simple fixed format file schemata.
 These can't be treated as simple values, however, since they're
 clearly changed based on the ODO issues.
    
-:size: 
+..  py:attribute:: size
+
     Size within the buffer.
 
 These two properties over overridden by the :py:class:`cobol.IndexedAttribute` subclass;
@@ -111,13 +116,15 @@ The superclass versions are simple a delegation to the DDE.
 If :py:meth:`cobol.RepeatingAttribute.index` is used, the subclass object is built
 where these values come from the ``index`` method results.
 
-:dimensionality:
+..  py:attribute:: dimensionality
+
     A tuple of DDE's that defines the dimensionality pushed down to this
     item through the COBOL DDE hierarchy.
 
     This meay be set by the :py:meth:`cobol.RepeatingAttribute.index` method.
 
-:offset: 
+..  py:attribute:: offset
+
     Optional offset into a buffer. This may be statically defined,
     or it may be dynamic because of variably-located data supporting
     the Occurs Depends On.
@@ -127,22 +134,28 @@ where these values come from the ``index`` method results.
 This subclass introduces yet more attribute-like properties that simply
 delegate to the DDE.
 
-:dde:
+..  py:attribute:: dde
+
     A weakref to a :py:class:`cobol.loader.DDE` object.
 
-:path:
+..  py:attribute:: path
+
     The "."-separated path from top-level name to this element's name.
     
-:usage:
+..  py:attribute:: usage
+
     The original DDE.usage object, an instance of :py:class:`cobol.defs.Usage`
     
-:redefines:
+..  py:attribute:: redefines
+
     The original DDE.allocation object, an instance of :py:class:`cobol.loader.Allocation`
     
-:picture:
+..  py:attribute:: picture
+
     The original DDE.picture object, an instance of :py:class:`cobol.defs.Picture`
     
-:size_scale_precision:
+..  py:attribute:: size_scale_precision
+
     The original DDE.sizeScalePrecision object, a tuple with size, scale and precision derived
     from the picture.
 
@@ -417,7 +430,7 @@ making this a mixin strategy.
 
 The common use case looks like this.
 
-1.  The application uses ``row.cell( schema[n] )`` to fetch a :py:class:`cell.Cell`.
+1.  The application uses :code:`row.cell( schema[n] )` to fetch a :py:class:`cell.Cell`.
     The :py:meth:`cobol.ODO_LazyRow.cell` method is simply ``sheet.workbook.row_get( buffer, attribute )``.  
     It applies the cell type (via the schema item's attribute) and the raw data in the row's buffer.
 
@@ -428,7 +441,7 @@ The common use case looks like this.
         various types of data.  The various :py:mod:`cobol` Cell subclasses
         can refer to the proper conversion methods.
     
-    -   Create the required :py:class:`cell.Cell` based on the ``attribute.create(sheet, value)`` function.
+    -   Create the required :py:class:`cell.Cell` based on the :py:func:`attribute.create` function.
     
 There's a less common use case to extract a subset of row bytes to populate a 
 separate 01-level definition that's not tied to the Workbook's schema.
@@ -491,7 +504,7 @@ COBOL File
 
     If enough values are provided, a single result object will be built.
 
-..  important:: Performance
+..  note:: Performance
 
     This is the most-used method. Removing the if-statement would be
     a huge improvement.
@@ -538,7 +551,7 @@ COBOL File
 
     If the attribute is has no dimensions, then it's simply pulled from the source row.
 
-..  important:: Performance
+..  note:: Performance
 
     This is the most-used method. Removing the if-statement would be
     a huge improvement.
@@ -693,7 +706,7 @@ COMP in proper character files may not make any sense, either.
 A codec would make a hash of the bit patterns required.  
 Again, we've defined it here because that's relatively simple to extend.
 
-We're simply going to unpack big-ending bytes.
+We're simply going to unpack big-endian bytes.
 
 ::
 
@@ -734,7 +747,7 @@ actual RECFM's plus an additional special case.
 -   N - Variable, but no BDW or RDW words. This involves some buffer management
     magic to recover the records properly.
 
-Note: "IBM z/Architecture mainframes are all big-endian".
+..  note::  IBM z/Architecture mainframes are all big-endian
 
 ..  py:class:: RECFM_Parser
 

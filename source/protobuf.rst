@@ -79,6 +79,8 @@ See :ref:`installation` for more information on these files.
 protobuf
 ===============================================
     
+For more information on protobuf, see the following:
+
 https://developers.google.com/protocol-buffers/
 
 https://developers.google.com/protocol-buffers/docs/encoding
@@ -144,7 +146,7 @@ Some Overheads
 ..  py:class:: Message
 
     A definition of a generic protobuf message. This is both an instance
-    and it also as staticmethods that build instances from a buffer of bytes.
+    and it also has staticmethods that build instances from a buffer of bytes.
 
     We don't use subclasses of ``Message``. The proper way to use
     Protobuf is to compile ``.proto`` files into Message class definitions.

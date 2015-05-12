@@ -3,8 +3,12 @@
 # .. _`workbook_number13`:
 #
 #
-# Numbers 13 Workbook
-# ---------------------
+# Apple iWorks Numbers '13 Workbook
+# ----------------------------------
+#
+# See :ref:`workbook_number09` for a note on the naming of sheets.
+#
+# Here are the modules we need to import to process these Workbooks.
 #
 # ::
 
@@ -22,7 +26,7 @@ import stingray.cell
 from stingray.snappy import Snappy
 from stingray.protobuf import Archive_Reader, Message
 
-# ..  py:module:: workbook
+# ..  py:module:: workbook.numbers13
 #        
 # ..  todo:: Additional Numbers13_Workbook Feature
 #    
@@ -32,11 +36,9 @@ from stingray.protobuf import Archive_Reader, Message
 # a number of ``.IWA`` files. Each ``.IWA`` is compressed using the Snappy protocol.
 # The uncompressed data is messages in Protobuf format.
 #
-# We could depend on proper Snappy and Protobuf implementations. We provide
-# our own fall-back implementation in case there's nothing better available.
-#
-# We should import other implementations first, and then fall back to our own implementation.
-# Instead, we'll simply import a local snappy and protobuf reader.
+# We could depend on other Snappy and Protobuf implementations. We provide
+# our own fall-back implementation, instead.
+# See :ref:`other_modules` for more information on these two supporting modules.
 #
 # ..  py:class:: Numbers13_Workbook
 #
@@ -45,6 +47,13 @@ from stingray.protobuf import Archive_Reader, Message
 #     The ``.numbers`` "file" is a directory bundle or package.
 #        
 #     The :file:`index.zip` file is the interesting part of the bundle.
+#    
+#     In addition to the superclass attributes, some additional unique
+#     attributes are introduced here.
+#        
+#     ..  py:attribute:: archive
+#    
+#         The snappy archive for this file.
 #
 #
 # ::

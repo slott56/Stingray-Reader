@@ -6,10 +6,10 @@
 Stingray Build
 #########################
 
-The source for :mod:`stingray` is a Sphinx project that depends on PyLit.
+The source for :py:mod:`stingray` is a Sphinx project that depends on PyLit.
 Yes.  The documentation spawns the code.
 
-..  important:: PyLit Feature
+..  note:: PyLit Feature
 
     The first line of each file should be ``..    #!/usr/bin/env python3``.
    

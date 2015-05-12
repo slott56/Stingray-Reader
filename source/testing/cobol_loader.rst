@@ -136,13 +136,26 @@ Picture Parsing
 A picture clause has it's own "sub-language" for describing an elementary
 piece of data.  From the picture clause, we extract a number of features.
 
-:final: final picture with ()'s expanded.
-:alpha: boolean alpha = True, numeric = False.
-:length: len(final)
-:scale: count of "P" positions
-:precision: digits to the right of the decimal point
-:signed: boolean
-:decimal: "." or "V" or None
+..  py:attribute:: final
+    final picture with ()'s expanded.
+
+..  py:attribute:: alpha
+    boolean alpha = True, numeric = False.
+
+..  py:attribute:: length
+    len(final)
+
+..  py:attribute:: scale
+    count of "P" positions
+
+..  py:attribute:: precision
+    digits to the right of the decimal point
+
+..  py:attribute:: signed
+    boolean
+
+..  py:attribute:: decimal
+    "." or "V" or None
 
 ::
 

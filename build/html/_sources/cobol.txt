@@ -23,9 +23,12 @@ We have three problems to solve to get COBOL data into Python applications.
 
     Most of the :py:class:`cell.Cell` subclasses aren't really appropriate for    
     data coming from COBOL applications.   
-    Indeed, only :py:class:`cell.TextCell` is really appropriate.  
+    Indeed, only :py:class:`cell.TextCell` is really appropriate.
     
--   How do we represent the schema?
+    Given that all raw data is bytes -- often in EBCDIC -- how do we understand what those 
+    bytes represent? For this, we'll need a more complex schema.
+    
+-   How do we represent this more complex schema?
 
     The schema more complex than the 
     flat-file schema expected by :py:mod:`schema`.
@@ -43,10 +46,16 @@ We have three problems to solve to get COBOL data into Python applications.
     -   There are fields that may have invalid data due to a "REDEFINES" clause.
         The USAGE information indicates the encoding of the data which is 
         expected to be in the field, the actual data may not match the definition.
+        
+    We'll need to load this more complex schema.
     
 -   How do we build the schema?
 
     The schema is encoded in COBOL.  That is the subject of :ref:`cobol_loader`.
+    
+Once we can load a schema, we can then use the schema to determine what a sequence
+of bytes represent. Once we know what the bytes represents, we can work with COBOL
+data.
 
 Requirements
 ==============
@@ -61,7 +70,10 @@ For each source file row, there's a two-step operation.
     Building Python objects is best done with a "builder" function, 
     as shown above in :ref:`schema`, :ref:`developer`, and :ref:`demo`.
     
-3.  Split the file into sections for parallel processing.
+This isn't all. In order to locate the rows, we may have to understand overall
+file organization. This includes the following feature:
+    
+-   Split the file into sections for parallel processing.
     The GNU/Linux ``split`` command won't work with EBCDIC files, so
     we have to use the low-level RECFM definitions to parse and split
     a file.
@@ -72,8 +84,12 @@ High-Level Processing
 A :py:class:`sheet.Row` appears to be a sequential collection of 
 :py:class:`cell.Cell` instances.  The schema is 
 used for **lazy**  creation of :py:class:`cell.Cell` instances.
-Cells may have bad data, and the use of `REDEFINES` means that
-a row cannot be built eagerly.
+
+A candidate cells may be based on bytes that aren't valid for the
+cell's detailed description. This is common when there is a `REDEFINES`. 
+This means that a row cannot be built eagerly.
+
+Here's our example code. This is generally how we want to proceed:
 
 ..  parsed-literal::
 
@@ -86,8 +102,13 @@ a row cannot be built eagerly.
             counts= process_sheet( sheet )
             pprint.pprint( counts )
             
-The :py:class:`Character_File` class is for files in all character (no packed decimal) 
-encoded in ASCII. 
+We want to load a schema. Then we want to open and process a file based on this
+schema. This parallels an :py:class:`sheet.ExternalSchemaSheet`, with an 
+:py:class:`schema.loader.ExternalSchemaLoader`.
+
+The :py:class:`cobol.Character_File` class is for files in which all fields
+are  all character encoded in ASCII. 
+No packed decimal. No EBCDIC.
 These kinds of files are expected to have proper ``'\n'`` characters at the end of each record.
 
 For an EBCDIC file, use the :py:class:`cobol.EBCDIC_File` class. These files 
@@ -217,18 +238,18 @@ How do we work with multiple :py:class:`sheet.Row` objects here?
 -   We have the ``ABC-SPECIFIC-RECORD`` and the ``DEF-ANOTHER-RECORD`` 
     bound to a subset of bytes within the source record.
     
-The second case requires Python code which vaguely parallels the COBOL 
-code. 
-In effect, we're creating a new :py:class:`cobol.ODO_LazyRow` object from
-``buffer= row.cell( schema_dict['GENERIC-FIELD'] ).raw`` and the
-proper schema for that variant.
+    This case requires Python code which vaguely parallels the COBOL 
+    code. 
+    In effect, we're creating a new :py:class:`cobol.ODO_LazyRow` object from
+    ``buffer= row.cell( schema_dict['GENERIC-FIELD'] ).raw`` and the
+    proper schema for that variant.
 
-..  parsed-literal::
+    ..  parsed-literal::
 
-    segment = ODO_LazyRow(
-        ExternalSchemaSheet( workbook, "ABC-SPECIFIC-RECORD", subschema ),
-        data= row.cell( schema_dict['GENERIC-FIELD'] ).raw,
-    )
+        segment = ODO_LazyRow(
+            ExternalSchemaSheet( workbook, "ABC-SPECIFIC-RECORD", subschema ),
+            data= row.cell( schema_dict['GENERIC-FIELD'] ).raw,
+        )
     
 This is implemented as the :py:meth:`cobol.COBOL_File.subrow` method.
 It allows us to work with a single field (``schema_dict['GENERIC-FIELD']``) 
