@@ -136,7 +136,7 @@ from stingray.cobol.defs import TextCell
 #
 # ..  py:attribute:: dde
 #
-#     A weakref to a :py:class:`cobol.loader.DDE` object.
+#     A weakref to a :py:class:`cobol.defs.DDE` object.
 #
 # ..  py:attribute:: path
 #
@@ -148,11 +148,11 @@ from stingray.cobol.defs import TextCell
 #    
 # ..  py:attribute:: redefines
 #
-#     The original DDE.allocation object, an instance of :py:class:`cobol.loader.Allocation`
+#     The original DDE.allocation object, an instance of :py:class:`cobol.defs.Allocation`
 #    
 # ..  py:attribute:: picture
 #
-#     The original DDE.picture object, an instance of :py:class:`cobol.defs.Picture`
+#     The original DDE.picture object, an instance of :py:class:`cobol.loader.Picture`
 #    
 # ..  py:attribute:: size_scale_precision
 #

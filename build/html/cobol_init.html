@@ -69,7 +69,7 @@ more sophisticated COBOL-based workbooks.</li>
 to create a schema.</p>
 <div class="section" id="module-cobol">
 <span id="module-overheads"></span><h2>10.2.1.1. Module Overheads<a class="headerlink" href="#module-cobol" title="Permalink to this headline">¶</a></h2>
-<p>We depend on <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>, <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>, and <a class="reference internal" href="workbook/fixed.html#module-workbook" title="workbook"><tt class="xref py py-mod docutils literal"><span class="pre">workbook</span></tt></a>.
+<p>We depend on <a class="reference internal" href="cell.html#module-cell" title="cell"><tt class="xref py py-mod docutils literal"><span class="pre">cell</span></tt></a>, <a class="reference internal" href="schema.html#module-schema" title="schema"><tt class="xref py py-mod docutils literal"><span class="pre">schema</span></tt></a>, and <a class="reference internal" href="workbook/init.html#module-workbook" title="workbook"><tt class="xref py py-mod docutils literal"><span class="pre">workbook</span></tt></a>.
 We&#8217;ll also import one class definition from <a class="reference internal" href="cobol_defs.html#module-cobol.defs" title="cobol.defs"><tt class="xref py py-mod docutils literal"><span class="pre">cobol.defs</span></tt></a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;stingray.cobol -- Extend the core Stingray definitions to handle COBOL</span>
 <span class="sd">DDE&#39;s and COBOL files, including packed decimal and EBCDIC data.</span>
@@ -178,7 +178,7 @@ delegate to the DDE.</p>
 <dl class="attribute">
 <dt id="cobol.dde">
 <tt class="descclassname">cobol.</tt><tt class="descname">dde</tt><a class="headerlink" href="#cobol.dde" title="Permalink to this definition">¶</a></dt>
-<dd><p>A weakref to a <tt class="xref py py-class docutils literal"><span class="pre">cobol.loader.DDE</span></tt> object.</p>
+<dd><p>A weakref to a <a class="reference internal" href="cobol_defs.html#cobol.defs.DDE" title="cobol.defs.DDE"><tt class="xref py py-class docutils literal"><span class="pre">cobol.defs.DDE</span></tt></a> object.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -196,13 +196,13 @@ delegate to the DDE.</p>
 <dl class="attribute">
 <dt id="cobol.redefines">
 <tt class="descclassname">cobol.</tt><tt class="descname">redefines</tt><a class="headerlink" href="#cobol.redefines" title="Permalink to this definition">¶</a></dt>
-<dd><p>The original DDE.allocation object, an instance of <tt class="xref py py-class docutils literal"><span class="pre">cobol.loader.Allocation</span></tt></p>
+<dd><p>The original DDE.allocation object, an instance of <a class="reference internal" href="cobol_defs.html#cobol.defs.Allocation" title="cobol.defs.Allocation"><tt class="xref py py-class docutils literal"><span class="pre">cobol.defs.Allocation</span></tt></a></p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="cobol.picture">
 <tt class="descclassname">cobol.</tt><tt class="descname">picture</tt><a class="headerlink" href="#cobol.picture" title="Permalink to this definition">¶</a></dt>
-<dd><p>The original DDE.picture object, an instance of <tt class="xref py py-class docutils literal"><span class="pre">cobol.defs.Picture</span></tt></p>
+<dd><p>The original DDE.picture object, an instance of <a class="reference internal" href="cobol_loader.html#cobol.loader.Picture" title="cobol.loader.Picture"><tt class="xref py py-class docutils literal"><span class="pre">cobol.loader.Picture</span></tt></a></p>
 </dd></dl>
 
 <dl class="attribute">

@@ -136,11 +136,11 @@ delegate to the DDE.
 
 ..  py:attribute:: dde
 
-    A weakref to a :py:class:`cobol.loader.DDE` object.
+    A weakref to a :py:class:`cobol.defs.DDE` object.
 
 ..  py:attribute:: path
 
-    The "."-separated path from top-level name to this element's name.
+    The ``"."``-separated path from top-level name to this element's name.
     
 ..  py:attribute:: usage
 
@@ -148,11 +148,11 @@ delegate to the DDE.
     
 ..  py:attribute:: redefines
 
-    The original DDE.allocation object, an instance of :py:class:`cobol.loader.Allocation`
+    The original DDE.allocation object, an instance of :py:class:`cobol.defs.Allocation`
     
 ..  py:attribute:: picture
 
-    The original DDE.picture object, an instance of :py:class:`cobol.defs.Picture`
+    The original DDE.picture object, an instance of :py:class:`cobol.loader.Picture`
     
 ..  py:attribute:: size_scale_precision
 
@@ -441,7 +441,8 @@ The common use case looks like this.
         various types of data.  The various :py:mod:`cobol` Cell subclasses
         can refer to the proper conversion methods.
     
-    -   Create the required :py:class:`cell.Cell` based on the :py:func:`attribute.create` function.
+    -   Create the required :py:class:`cell.Cell` based on the ``attribute.create`` function.
+        See :class:`schema.Attribute`.
     
 There's a less common use case to extract a subset of row bytes to populate a 
 separate 01-level definition that's not tied to the Workbook's schema.
@@ -631,11 +632,11 @@ Numeric data with usage ``DISPLAY`` is essentially text. In some cases, the
 picture has ``V``, which means that we must handle this implicit decimal point.
 The "display" feature is the COBOL default: everything is plain text.
 
-Here's the core rule for character files:
+..  note:: The core rule for character files
 
--   Leading separate sign is the default for character files.
+    Leading separate sign is the default for character files.
     
-COBOL can support other kinds of signs. This conversion doesn't.
+    COBOL can support other kinds of signs. This conversion doesn't.
     
     
 ::

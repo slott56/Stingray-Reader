@@ -14,7 +14,7 @@
 
 
 \title{The Stingray Schema-Based File Reader}
-\date{May 11, 2015}
+\date{May 13, 2015}
 \release{4.4.6}
 \author{S. Lott}
 \newcommand{\sphinxlogo}{}
@@ -32,66 +32,66 @@
     \PYG@it{\PYG@bf{\PYG@ff{#1}}}}}}}
 \def\PYG#1#2{\PYG@reset\PYG@toks#1+\relax+\PYG@do{#2}}
 
-\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
-\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
-\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
-\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
-\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
 \expandafter\def\csname PYG@tok@sh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@si\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.44,0.63,0.82}{##1}}}
+\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
+\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
 \expandafter\def\csname PYG@tok@sb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@sc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@c1\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
 \expandafter\def\csname PYG@tok@sd\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@se\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@nt\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.45}{##1}}}
-\expandafter\def\csname PYG@tok@nv\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
-\expandafter\def\csname PYG@tok@no\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.38,0.68,0.84}{##1}}}
-\expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
-\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
-\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
-\expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 \expandafter\def\csname PYG@tok@nc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
-\expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@c\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
+\expandafter\def\csname PYG@tok@na\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@ow\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@nf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.02,0.16,0.49}{##1}}}
+\expandafter\def\csname PYG@tok@ne\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@bp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@sr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.14,0.33,0.53}{##1}}}
+\expandafter\def\csname PYG@tok@ss\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.32,0.47,0.09}{##1}}}
+\expandafter\def\csname PYG@tok@no\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.38,0.68,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@ni\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.84,0.33,0.22}{##1}}}
+\expandafter\def\csname PYG@tok@nl\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.13,0.44}{##1}}}
+\expandafter\def\csname PYG@tok@m\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@o\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PYG@tok@k\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@nn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.05,0.52,0.71}{##1}}}
+\expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@vi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@vc\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@w\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PYG@tok@vg\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.73,0.38,0.84}{##1}}}
+\expandafter\def\csname PYG@tok@s\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
+\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
+\expandafter\def\csname PYG@tok@cs\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\colorbox[rgb]{1.00,0.94,0.94}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@kc\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
 \expandafter\def\csname PYG@tok@gt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
 \expandafter\def\csname PYG@tok@gu\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
+\expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
 \expandafter\def\csname PYG@tok@gr\endcsname{\def\PYG@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
 \expandafter\def\csname PYG@tok@gs\endcsname{\let\PYG@bf=\textbf}
-\expandafter\def\csname PYG@tok@gp\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
-\expandafter\def\csname PYG@tok@cm\endcsname{\let\PYG@it=\textit\def\PYG@tc##1{\textcolor[rgb]{0.25,0.50,0.56}{##1}}}
-\expandafter\def\csname PYG@tok@s2\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
-\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@sx\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.78,0.36,0.04}{##1}}}
 \expandafter\def\csname PYG@tok@mh\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
 \expandafter\def\csname PYG@tok@mi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
-\expandafter\def\csname PYG@tok@gd\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@ge\endcsname{\let\PYG@it=\textit}
-\expandafter\def\csname PYG@tok@go\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.20,0.20,0.20}{##1}}}
-\expandafter\def\csname PYG@tok@cp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
-\expandafter\def\csname PYG@tok@gi\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
-\expandafter\def\csname PYG@tok@gh\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
-\expandafter\def\csname PYG@tok@err\endcsname{\def\PYG@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PYG@tok@kd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@mo\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@nb\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@il\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@mf\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.13,0.50,0.31}{##1}}}
+\expandafter\def\csname PYG@tok@kn\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kp\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kr\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.00,0.44,0.13}{##1}}}
+\expandafter\def\csname PYG@tok@kt\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.56,0.13,0.00}{##1}}}
+\expandafter\def\csname PYG@tok@nd\endcsname{\let\PYG@bf=\textbf\def\PYG@tc##1{\textcolor[rgb]{0.33,0.33,0.33}{##1}}}
+\expandafter\def\csname PYG@tok@s1\endcsname{\def\PYG@tc##1{\textcolor[rgb]{0.25,0.44,0.63}{##1}}}
 
 \def\PYGZbs{\char`\\}
 \def\PYGZus{\char`\_}
@@ -174,7 +174,7 @@ uniformity in processing various kinds of data.
 
 
 \chapter{Technology}
-\label{index:technology}\label{index:the-stingray-schema-based-file-reader}
+\label{index:the-stingray-schema-based-file-reader}\label{index:technology}
 While this is 100\% Python, it's not \emph{simply} Python. The actual code
 is built from this document.
 
@@ -191,7 +191,7 @@ For details, see the {\hyperref[build:build]{\emph{Stingray Build}}} section.
 \label{index:contents}
 
 \section{Introduction}
-\label{introduction:intro}\label{introduction::doc}\label{introduction:introduction}
+\label{introduction::doc}\label{introduction:intro}\label{introduction:introduction}
 Given a workbook -- or any other ``flat'' file -- how is it organized?  What does it \emph{mean}?
 
 How can we ignore details that are merely physical?
@@ -667,7 +667,7 @@ allowing transparent changes to physical format.
 
 
 \section{Design Considerations}
-\label{design:design-considerations}\label{design::doc}
+\label{design::doc}\label{design:design-considerations}
 There are several important data representation issues. We'll look at
 {\hyperref[design:workbook-schema-issues]{Workbook Schema Issues}} and {\hyperref[design:some-cobol-file-issues]{Some COBOL File Issues}} that
 will inform the rest of the design.
@@ -889,7 +889,7 @@ using protobuf.
 
 
 \subsection{stingray \texttt{\_\_init\_\_.py}}
-\label{stingray_init:stingray-init}\label{stingray_init::doc}\label{stingray_init:stingray-init-py}
+\label{stingray_init::doc}\label{stingray_init:stingray-init}\label{stingray_init:stingray-init-py}
 This is approximately pure overhead required to make a Python package.
 \phantomsection\label{stingray_init:module-__init__}\index{\_\_init\_\_ (module)}
 \begin{Verbatim}[commandchars=\\\{\}]
@@ -903,7 +903,7 @@ This is approximately pure overhead required to make a Python package.
 
 
 \section{Cell Module -- Data Element Containers and Conversions}
-\label{cell:module-cell}\label{cell:cell-module-data-element-containers-and-conversions}\label{cell::doc}\label{cell:cells}\index{cell (module)}
+\label{cell:cells}\label{cell::doc}\label{cell:cell-module-data-element-containers-and-conversions}\label{cell:module-cell}\index{cell (module)}
 The point of a {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} is two-fold:
 \begin{itemize}
 \item {} 
@@ -1708,7 +1708,7 @@ d = Attribute( name=''mm-dd-yy'', size=\emph{n}, offset=\emph{m},
 
 
 \section{Sheet Module -- Sheet and Row Access}
-\label{sheet:module-sheet}\label{sheet:sheet-module-sheet-and-row-access}\label{sheet:sheets}\label{sheet::doc}\index{sheet (module)}
+\label{sheet::doc}\label{sheet:sheets}\label{sheet:sheet-module-sheet-and-row-access}\label{sheet:module-sheet}\index{sheet (module)}
 A \emph{Sheet} is a generator
 of \emph{Row} objects.  A \emph{Row} is a sequence of {\hyperref[cell:cell.Cell]{\code{cell.Cell}}} instances,
 identified by position within the row.
@@ -2354,7 +2354,7 @@ This assures proper packed decimal conversion of redefined fields.
 
 
 \section{Schema Package -- Schema and Attribute Definitions}
-\label{schema:module-schema}\label{schema:schema}\label{schema::doc}\label{schema:schema-package-schema-and-attribute-definitions}\index{schema (module)}
+\label{schema:module-schema}\label{schema::doc}\label{schema:schema}\label{schema:schema-package-schema-and-attribute-definitions}\index{schema (module)}
 A \emph{Schema} contains data descriptions.  It's a collection of \emph{Attribute} specifications.
 
 For our purposes, we're trying to cover the following bases:
@@ -3515,7 +3515,7 @@ can process.
 
 
 \subsubsection{Workbook \_\_init\_\_ Module -- Wrapper for all implementations}
-\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}\label{workbook/init::doc}\label{workbook/init:workbook-init}
+\label{workbook/init:workbook-init}\label{workbook/init::doc}\label{workbook/init:workbook-init-module-wrapper-for-all-implementations}
 A few Python overheads that we put in the \code{\_\_init\_\_}
 module of this package. Our goal is to make it so that only
 the top-level package is imported; the individual workbook modules
@@ -3818,7 +3818,7 @@ will determine a mapping bewtween filename and physical format or filename and s
 
 
 \subsubsection{Workbook Base Definition}
-\label{workbook/base::doc}\label{workbook/base:workbook-base}\label{workbook/base:workbook-base-definition}
+\label{workbook/base:workbook-base-definition}\label{workbook/base:workbook-base}\label{workbook/base::doc}
 These are the definitions shared by all Workbook subclass definitions.
 
 One of the common features is date conversions. Only XLS files have
@@ -4003,7 +4003,7 @@ each line into cells.
 
 
 \subsubsection{CSV Workbook}
-\label{workbook/csv:csv-workbook}\label{workbook/csv:workbook-csv}\label{workbook/csv::doc}
+\label{workbook/csv::doc}\label{workbook/csv:workbook-csv}\label{workbook/csv:csv-workbook}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{csv}
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
@@ -4103,7 +4103,7 @@ is easy.
 
 
 \subsubsection{XLS Workbook}
-\label{workbook/xls:xls-workbook}\label{workbook/xls::doc}\label{workbook/xls:workbook-xls}
+\label{workbook/xls::doc}\label{workbook/xls:workbook-xls}\label{workbook/xls:xls-workbook}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4618,7 +4618,7 @@ containing cell type information.
 
 
 \subsubsection{ODS Workbook}
-\label{workbook/ods:workbook-ods}\label{workbook/ods:ods-workbook}\label{workbook/ods::doc}
+\label{workbook/ods::doc}\label{workbook/ods:workbook-ods}\label{workbook/ods:ods-workbook}
 \begin{Verbatim}[commandchars=\\\{\}]
 \PYG{k+kn}{import} \PYG{n+nn}{logging}
 \PYG{k+kn}{import} \PYG{n+nn}{pprint}
@@ -4853,7 +4853,7 @@ At \code{\textless{}table-cell} end: finalize the accumulated value.
 
 
 \subsubsection{Apple iWorks Numbers `09 Workbook}
-\label{workbook/numbers_09:apple-iworks-numbers-09-workbook}\label{workbook/numbers_09:workbook-number09}\label{workbook/numbers_09::doc}
+\label{workbook/numbers_09::doc}\label{workbook/numbers_09:apple-iworks-numbers-09-workbook}\label{workbook/numbers_09:workbook-number09}
 The Stingray model of sheet/row/cell structure does not
 easily fit the Numbers sheet/table/row/cell structure.
 How can we handle the extra layer of names introduced by
@@ -5280,7 +5280,7 @@ Iterator through all rows of a sheet.
 
 
 \subsubsection{Apple iWorks Numbers `13 Workbook}
-\label{workbook/numbers_13:workbook-number13}\label{workbook/numbers_13:apple-iworks-numbers-13-workbook}\label{workbook/numbers_13::doc}
+\label{workbook/numbers_13:apple-iworks-numbers-13-workbook}\label{workbook/numbers_13:workbook-number13}\label{workbook/numbers_13::doc}
 See {\hyperref[workbook/numbers_09:workbook-number09]{\emph{Apple iWorks Numbers `09 Workbook}}} for a note on the naming of sheets.
 
 Here are the modules we need to import to process these Workbooks.
@@ -5631,7 +5631,7 @@ Iterator through all rows.
 
 
 \subsubsection{Fixed-Format (COBOL-style) Workbook}
-\label{workbook/fixed::doc}\label{workbook/fixed:workbook-fixed}\label{workbook/fixed:fixed-format-cobol-style-workbook}
+\label{workbook/fixed:workbook-fixed}\label{workbook/fixed:fixed-format-cobol-style-workbook}\label{workbook/fixed::doc}
 Like a CSV workbook, this is a kind of degenerate case.  We don't have
 a lot of sheets, or a lot of data types.
 
@@ -5775,7 +5775,7 @@ Stingray and (optionally) \code{xlrd}.
 
 
 \subsection{Snappy Module -- Unpacking iWork 13 files.}
-\label{snappy:snappy-module-unpacking-iwork-13-files}\label{snappy::doc}\label{snappy:snappy}
+\label{snappy:snappy}\label{snappy:snappy-module-unpacking-iwork-13-files}\label{snappy::doc}
 This is not a full implementation of the Snappy compression protocol.
 It's a minimal implementation, enough to unpack iWork `13 files.
 \phantomsection\label{snappy:module-snappy}\index{snappy (module)}
@@ -6135,7 +6135,7 @@ data. This defines a sequence of windows over the stream of data.
 
 
 \subsection{Protobuf Module -- Unpacking iWork 13 files.}
-\label{protobuf:protobuf-module-unpacking-iwork-13-files}\label{protobuf:protobuf}\label{protobuf::doc}
+\label{protobuf:protobuf}\label{protobuf::doc}\label{protobuf:protobuf-module-unpacking-iwork-13-files}
 This is not a full implementation of Protobuf object representation.
 This is a minimal implementation of protobuf parsing, enough to unpack iWork `13 files.
 \phantomsection\label{protobuf:module-protobuf}\index{protobuf (module)}
@@ -6496,7 +6496,7 @@ that's associated with the ID in the ArchiveInfo.
 
 
 \section{The COBOL Package}
-\label{cobol:the-cobol-package}\label{cobol::doc}\label{cobol:cobol}
+\label{cobol:cobol}\label{cobol::doc}\label{cobol:the-cobol-package}
 If you're interested in the implementation, you can cut to the chase.
 See {\hyperref[cobol:cobol-impl]{\emph{COBOL Implementation}}}.
 \begin{itemize}
@@ -6849,56 +6849,82 @@ subclasses of \code{Cell} used by the \code{cobol} package have a \code{raw} att
 the raw bytes. However, it's sometimes simpler to have this expanded in the tuple.
 
 
-\subsubsection{The Occurs Depending On Problem}
-\label{cobol:the-occurs-depending-on-problem}
+\subsubsection{Foundational Definitions}
+\label{cobol:foundational-definitions}
 There are two kinds of DDE's: group and elementary. A group DDE is a collection of DDE's.
-An elementary does not contain anything. This makes a DDE a proper tree.
+An elementary does not contain anything; it is a leaf. This makes a DDE a proper tree.
 
-A DDE, \(d\), has two interesting properties: the offset, \(d_o\), and the
-size, \(d_s\). We're interested in the bytes associated with a particular DDE
+A DDE, \(d\), has two interesting properties: the offset, \(\operatorname{o}(d)\), and the
+size, \(\operatorname{s}(d)\). We're interested in the bytes associated with a particular DDE
 element, \(B[d]\). These bytes are fetched from a larger buffer, \(B = \{ B_0, B_1, B_2, ..., B_n \}\).
 
 This allows us to fetch the bytes from a buffer by getting
-bytes \(B[d] = \{B_x | d_o \leq x < d_o+d_s\}\).
+bytes \(B[d] = \{B_x | \operatorname{o}(d) \leq x < \operatorname{o}(d)+\operatorname{s}(d)\}\).
 
-The size of an elementary DDE, \(d_s\), is fixed by the picture clause.
+The size of an elementary DDE, \(\operatorname{s}(d)\), is fixed by the picture clause.
 
-The size of a group DDE is the sum of the children. \(d_s = \sum_{c \in d}c_s\).
-While this seems clear, it doesn't include the \code{OCCURS} clause issues: we'll return to
+The size of a group DDE is the sum of the children. \(\operatorname{s}(d) = \sum_{c \in d}\operatorname{s}(c)\).
+While this seems clear, it doesn't account for the \code{OCCURS} clause issues: we'll return to
 those below.
 
-The DDE's in a tree can have three species of relationships.
+The DDE's in a tree can have three optional species of relationships.
 \begin{itemize}
 \item {} 
-Predecessor/Successor. The predecessor of \(d\) is \(P(d)\).
-
-The offset of an item is \(d_o = P(d)_o + P(d)_s\). This applies recursively
+\textbf{Predecessor/Successor}. The predecessor of \(d\) is \(P(d)\).
+The offset of an item is \(\operatorname{o}(d) = \operatorname{o}(P(d)) + \operatorname{s}(P(d))\).
+This applies recursively
 to the first item in the DDE collection.
-For the first item in a DDE, \(d_0\), \(P(d_0)_o=0\) and \(P(d_0)_s=0\).
+For the very first item in a DDE, \(d_0\), \(\operatorname{o}(d_0)=0\).
+For the first item in a group, however, the rule for the offset is based on the parent.
+
+Also, for the very first item, and the first item in a group, there is no
+predecessor. We can say \(P(d_0)=\bot\) to indicate it has a null value.
+Or we can say \(\nexists x \vert x = P(d_0)\), to indicate that there's
+no such value, it's an exception to ask for it.
 
 \item {} 
-Parent/Child. The parent contains a group of items; the parent of \(d\) is \(G(d)\),
-we can say \(d \in G(d)\).
+\textbf{Group/Elementary} or Parent/Child. The parent is a group of items; the parent of \(d\) is \(G(d)\),
+we can say \(d \in G(d)\). For top-level items in the DDE, there is  no
+parent group.  We can say  \(G(d_0)=\bot\) for null or
+\(\nexists x \vert x = G(d_0)\) to show that it's an exception to ask.
+
+The offsets inside this group depend on the
+base offset of the group \(\operatorname{o}(G(d)) \Rightarrow \operatorname{o}(d)\).
+This is a vague ``influences'' relationship. We can be more formal by noting
+that \(G(d) = \{ d_0, d_1, d_2, ..., d, ..., d_n \}\). This means that
+\(\operatorname{o}(d_0) = \operatorname{o}(G(d))\), and we can use the \(P(d)\)
+predecessor to locate the cumulative offset between each \(d_i\) and \(d_0\),
+including the cumulative offset between \(d\) and \(d_0\).
 
 \item {} 
-Redefines. This DDE's offset (and size) is defined by another item, \(R(d)\).
-\(d_o = R(d)_o\) and \(d_s = R(d)_s\).
+\textbf{Redefines}. This DDE's offset (and size) of \(d\) is defined by another item, \(R(d)\).
+This, too, is optional. We can say  \(R(d_0)=\bot\) for null or
+\(\nexists x \vert x = R(d_0)\) to show that it's an exception to ask.
+
+The offset, \(\operatorname{o}(d) = \operatorname{o}(R(d))\). This often applies
+at a group level, which means that the \(\operatorname{o}(G(d)) = \operatorname{o}(R(G(d)))\).
+A group redefines influences the offset of all items in the group
+\(\operatorname{o}(R(G(d))) \Rightarrow \{\operatorname{o}(x) \in G(d)\}\).
 
 \end{itemize}
 
-The predecessor/successor relationship is implied by the order of the DDE's as they're
-compiled. If they have the same level number, they're successors.
+The predecessor/successor relationship is specified by the order of the DDE's as they're
+compiled. Every item after the first has a predecessor.
 
 The child relationship is specified via the level numbers. A larger level number
-implies a child of a lower level number.
+implies a child of a lower level number. If they have the same level number, they're successors.
 
 The redefines relationship is specified via the \code{REDEFINES} clause.
 
-This is complicated by the \code{OCCURS} clause. There are two versions in the COBOL language
-manual, to which we'll add third.
+
+\subsubsection{Occurs Depending On}
+\label{cobol:occurs-depending-on}
+The previous definitions aret complicated by the \code{OCCURS} clause.
+There are two versions in the COBOL language
+manual, to which we'll add a third.
 \begin{itemize}
 \item {} 
-``Format 1'' has a fixed number of occurrences, \(O(d) = n\), comes from \code{OCCURS n TIMES}.
+``Format 1'' has a fixed number of occurrences: \(O(d) = n\), comes from \code{OCCURS n TIMES}.
 
 \item {} 
 ``Format 2'' means the number of occurrences depends on a piece of data,
@@ -6912,54 +6938,76 @@ This is the default if no occurrence information is provided.
 
 \end{itemize}
 
-This adds another interesting attribute, the total size of an item, \(d_t=d_s \times O(d)\).
+This adds another interesting attribute, the total size of an elementary item,
+\(T(d) = \operatorname{s}(d) \times O(d)\).
 The total size is the elementary size times the number of occurrences.
 
-This changes our definition of size of a group item to the sum of the total sizes,
-not the sum of the simple size.  \(d_t = d_s = \sum_{c \in d}{c_t} \times O(d)\).
+This expands our definition of size of a group item to the sum of the total sizes,
+not the sum of the simple size.
+\begin{gather}
+\begin{split}T(g) = \operatorname{s}(g) = \sum_{d \in g}{T(d)} \times O(g)\end{split}\notag
+\end{gather}
+This shows how the occurs information for a group applies to all the elements inside a group.
 
-This also changes how we fetch the bytes, \(B[d]\), because we need index information
+We can think of \(O(d) = O(G(d))\) as the rule for applying the occurs information
+to all members of a group. If we do this, then there must be a root group, \(G_0\)
+for which \(O(G_0) = 1\). This allows us to walk ``up'' the tree locating all of the
+parental occurrence information for a given elementary item.
+
+The occurs clause also changes how we fetch the bytes, \(B[d]\), because we need index information
 for each \code{OCCURS} clause in the parents of \emph{d}. In COBOL we might be getting \code{D( I )}.
 \begin{gather}
-\begin{split}B[d:i] = \{ B_x | d_o+(i)d_s \leq x < d_o+(i+1)d_s \}\end{split}\notag
+\begin{split}B[d:i] = \{ B_x | \operatorname{o}(d) + i \operatorname{s}(d) \leq x < \operatorname{o}(d) + (i+1)\operatorname{s}(d) \}\end{split}\notag
 \end{gather}
 The indices may be much more complex, however. A common situation is a group-level item
 with an occurrence that nests an elementary item with an occurrence. This is a two-dimensional
 structure. In COBOL it might be \code{D( J ) OF G( I )}. More commonly, it's written \code{D( I, J )} where
 the indices are applied from top-most group DDE down the tree to the lowest-level items.
 \begin{gather}
-\begin{split}B[d:i,j] = \{ B_x | G(d:i)_o+jd_s \leq x < G(d:i)_o+(j+1)d_s \}\end{split}\notag
+\begin{split}B[d:i,j] = \{ B_x | \operatorname{o}(G(d:i)) + j \operatorname{s}(d) \leq x < \operatorname{o}(G(d:i))+(j+1)\operatorname{s}(d) \}\end{split}\notag
 \end{gather}
-The offset, \(d_o\) is computed recursively using
+The offset, \(\operatorname{o}(d)\) is computed recursively using
 a combination of predecessors, \(P(d)\), groups, \(G(d)\), and redefinitions,
 \(R(d)\). There are several cases.
 \begin{itemize}
 \item {} 
-If there's a REDEFINES clause, \(d_o= R(d)_o\).
+\(\operatorname{o}(d) = \operatorname{o}(R(d))\) if this item is defined by a REDEFINES clause.
 
 \item {} 
-If there's a predecessor, \(d_o= P(d)_o + P(d)_s \times O(P(d))\).
+\(\operatorname{o}(d) = \operatorname{o}(P(d)) + \operatorname{s}(P(d)) \times O(P(d))\)
+if this item has a predecessor.
+
+The predecessor could involve an occurs clause that depends on actual data:
+\(O(P(d)) = B[ D(P(d)) ]\).
 
 \item {} 
-If there's no predecessor, there may be a containing group, \(d_o= G(d)_o + G(d)_s \times O(G(d))\).
-This is more complex than it appears because a group could contain an occurrence clause.
-\(G(d:i)_o = G(d)_o+iG(d)_s\).
+\(\operatorname{o}(d) = \operatorname{o}(G(d)) + \operatorname{s}(G(d)) \times O(G(d))\)
+if this item is the first member of a containing group, and has no predecessor.
+
+This is more complex than it appears because a group could contain an occurs clause,
+which influences all items within the group.
+\(\operatorname{o}(G(d:i)) = \operatorname{o}(G(d)) + i \operatorname{s}(G(d))\).
+
+This, too, can depend on actual data: \(O(G(d)) = B[ D(G(d)) ]\).
 
 \item {} 
-If there's no predecessor and no group, \(d_o = 0\).
+\(\operatorname{o}(d) = 0\), if there's neither predecessor nor group.
 
 \end{itemize}
 
-The two cases which involve the occurs information, \(O(P(d))\) and \(O(G(d))\)
-may include ``format 2'' occurs and depend on data within an actual record.
-We may have \(O(P(d)) = B[ D(P(d)) ]\) or \(O(G(d)) = B[ D(G(d)) ]\).
+We've called out the two cases which involve the occurs information
+that may include ``format 2'' occurs and depend on data within an actual record.
+These mean that the calculation cannot be done eagerly in this situation.
 
 
 \subsubsection{Variable-Length COBOL Records}
 \label{cobol:variable-length-cobol-records}
+See
+
 \href{https://publib.boulder.ibm.com/infocenter/zos/basics/index.jsp?topic=/com.ibm.zos.zconcepts/zconcepts\_159.htm}{https://publib.boulder.ibm.com/infocenter/zos/basics/index.jsp?topic=/com.ibm.zos.zconcepts/zconcepts\_159.htm}
 
 V (Variable)
+\begin{quote}
 
 This format has one logical record as one physical block. A
 variable-length logical record consists of a record descriptor word
@@ -6968,13 +7016,18 @@ describing the record. The first 2 bytes contain the length of the
 logical record (including the 4-byte RDW). The length can be from 4 to
 32,760 bytes. All bits of the third and fourth bytes must be 0, because
 other values are used for spanned records. This format is seldom used.
+\end{quote}
 
 VB (Variable Blocked)
+\begin{quote}
 
 This format places several variable-length logical records (each with an
 RDW) in one physical block. The software must place an additional Block
 Descriptor Word (BDW) at the beginning of the block, containing the
 total length of the block.
+\end{quote}
+
+Here's a handy diagram showing five kinds of RECFM.
 
 \includegraphics{zOSB037.png}
 
@@ -6982,7 +7035,7 @@ See \href{http://en.wikipedia.org/wiki/Data\_set\_(IBM\_mainframe}{http://en.wik
 
 See \href{http://www.simotime.com/vrecex01.htm}{http://www.simotime.com/vrecex01.htm}
 
-There are three relevant encoding possibilities. These are the COBOL ``RECFM''
+This leads us to three relevant encoding possibilities. These are the COBOL ``RECFM''
 options in the JCL for the file. Each record is preceded by a
 Record Descriptor Word (RDW).
 
@@ -7036,9 +7089,9 @@ The length of the block including four-byte Descriptor Word.
 \\
 \hline\end{tabulary}
 
-\end{quote}
 
 A block can have multiple records in it. The block length must be \textgreater{}= record length.
+\end{quote}
 
 \code{VBS}     Variable Blocked Spanned.
 \begin{quote}
@@ -7171,13 +7224,13 @@ The {\hyperref[cobol_defs:cobol.defs.ErrorCell]{\code{cobol.defs.ErrorCell}}} in
 
 
 \subsection{COBOL Implementation}
-\label{cobol:cobol-implementation}\label{cobol:cobol-impl}
+\label{cobol:cobol-impl}\label{cobol:cobol-implementation}
 These are the modules that extend the core functionality of Stingray
 to handle COBOL files and EBCDIC data.
 
 
 \subsubsection{COBOL Package -- Extend Schema to Handle EBCDIC}
-\label{cobol_init:cobol-init}\label{cobol_init:cobol-package-extend-schema-to-handle-ebcdic}\label{cobol_init::doc}
+\label{cobol_init:cobol-package-extend-schema-to-handle-ebcdic}\label{cobol_init::doc}\label{cobol_init:cobol-init}
 The COBOL package is a (large) Python \code{\_\_init\_\_.py} module which
 includes much of the public API for working with COBOL files.
 
@@ -7200,7 +7253,7 @@ to create a schema.
 
 
 \paragraph{Module Overheads}
-\label{cobol_init:module-overheads}\label{cobol_init:module-cobol}\index{cobol (module)}
+\label{cobol_init:module-cobol}\label{cobol_init:module-overheads}\index{cobol (module)}
 We depend on {\hyperref[cell:module-cell]{\code{cell}}}, {\hyperref[schema:module-schema]{\code{schema}}}, and {\hyperref[workbook/init:module-workbook]{\code{workbook}}}.
 We'll also import one class definition from {\hyperref[cobol_defs:module-cobol.defs]{\code{cobol.defs}}}.
 
@@ -7340,7 +7393,7 @@ delegate to the DDE.
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.dde}\pysigline{\code{cobol.}\bfcode{dde}}
-A weakref to a \code{cobol.loader.DDE} object.
+A weakref to a {\hyperref[cobol_defs:cobol.defs.DDE]{\code{cobol.defs.DDE}}} object.
 
 \end{fulllineitems}
 
@@ -7364,7 +7417,7 @@ The original DDE.usage object, an instance of {\hyperref[cobol_defs:cobol.defs.U
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.redefines}\pysigline{\code{cobol.}\bfcode{redefines}}
-The original DDE.allocation object, an instance of \code{cobol.loader.Allocation}
+The original DDE.allocation object, an instance of {\hyperref[cobol_defs:cobol.defs.Allocation]{\code{cobol.defs.Allocation}}}
 
 \end{fulllineitems}
 
@@ -7372,7 +7425,7 @@ The original DDE.allocation object, an instance of \code{cobol.loader.Allocation
 
 \begin{fulllineitems}
 \phantomsection\label{cobol_init:cobol.picture}\pysigline{\code{cobol.}\bfcode{picture}}
-The original DDE.picture object, an instance of \code{cobol.defs.Picture}
+The original DDE.picture object, an instance of {\hyperref[cobol_loader:cobol.loader.Picture]{\code{cobol.loader.Picture}}}
 
 \end{fulllineitems}
 
@@ -8399,7 +8452,7 @@ This is left as a future extension.
 
 
 \subsubsection{COBOL Loader Module -- Parse COBOL Source to Load a Schema}
-\label{cobol_loader:cobol-loader}\label{cobol_loader:cobol-loader-module-parse-cobol-source-to-load-a-schema}\label{cobol_loader::doc}\label{cobol_loader:module-cobol.loader}\index{cobol.loader (module)}
+\label{cobol_loader:cobol-loader-module-parse-cobol-source-to-load-a-schema}\label{cobol_loader::doc}\label{cobol_loader:cobol-loader}\label{cobol_loader:module-cobol.loader}\index{cobol.loader (module)}
 Parsing a spreadsheet schema is relatively easy: see {\hyperref[schema_loader:schema-loader]{\emph{Schema Loader Module -- Load Embedded or External Schema}}}.
 Parsing a COBOL schema, however, is a bit more complex. We need to parse
 COBOL sources code to decode Data Definition Elements (DDE's) and create
@@ -9857,7 +9910,7 @@ When opening the workbook, one of the schema must be chosen as the ``official'' 
 
 
 \subsubsection{COBOL Definitions Module -- Handle COBOL DDE's}
-\label{cobol_defs:module-cobol.defs}\label{cobol_defs:cobol-defs}\label{cobol_defs:cobol-definitions-module-handle-cobol-dde-s}\label{cobol_defs::doc}\index{cobol.defs (module)}
+\label{cobol_defs:cobol-defs}\label{cobol_defs:cobol-definitions-module-handle-cobol-dde-s}\label{cobol_defs::doc}\label{cobol_defs:module-cobol.defs}\index{cobol.defs (module)}
 This is a small set of class definitions and functions
 that are used by {\hyperref[cobol_loader:module-cobol.loader]{\code{cobol.loader}}} as well as
 {\hyperref[cobol_init:module-cobol]{\code{cobol}}}.
@@ -11390,7 +11443,7 @@ See {\hyperref[sheet:sheet.LazyRow]{\code{sheet.LazyRow}}}.
 
 
 \section{The \textbf{Stingray} Developer's Guide}
-\label{developer:the-stingray-developer-s-guide}\label{developer::doc}\label{developer:developer}
+\label{developer::doc}\label{developer:the-stingray-developer-s-guide}\label{developer:developer}
 We use \textbf{Stingray} to work with data files where the schema is
 either external or complex (or both). We can tackle this question:
 \begin{quote}
@@ -12376,7 +12429,7 @@ This should permit skipping past the junk.
 
 
 \section{\textbf{Stingray} Demo Applications}
-\label{demo/index:demo}\label{demo/index::doc}\label{demo/index:stingray-demo-applications}
+\label{demo/index:stingray-demo-applications}\label{demo/index::doc}\label{demo/index:demo}
 Perhaps the most important use case for \textbf{Stingray} is to write data extract
 applications. This is shown below in {\hyperref[demo/validation:demo-validate]{\emph{Application Level Data Validation Technique}}}.
 We can also handle COBOL file conversions. This is shown below in {\hyperref[demo/cobol_reader:demo-cobol]{\emph{Reading COBOL Files}}}.
@@ -12395,7 +12448,7 @@ More importantly, how do we confirm that an application can successfully use a f
 
 
 \subsection{Unit Level Validation for Application and Data}
-\label{demo/data_quality:unit-level-validation-for-application-and-data}\label{demo/data_quality:demo-sqa}\label{demo/data_quality::doc}
+\label{demo/data_quality::doc}\label{demo/data_quality:demo-sqa}\label{demo/data_quality:unit-level-validation-for-application-and-data}
 We validate that a given file actually matches the required schema through a three-part valiation process.
 \begin{enumerate}
 \item {} 
@@ -13175,7 +13228,7 @@ doesn't match the schema required by the application.
 
 
 \subsection{Data Profiling Demonstration}
-\label{demo/profile:demo-profile}\label{demo/profile:data-profiling-demonstration}\label{demo/profile::doc}
+\label{demo/profile:demo-profile}\label{demo/profile::doc}\label{demo/profile:data-profiling-demonstration}
 This is a simple data profiling application that can be applied
 to workbooks to examine the data prior to creating builders.
 
@@ -13512,7 +13565,7 @@ type
 
 
 \subsection{Reading COBOL Files}
-\label{demo/cobol_reader:demo-cobol}\label{demo/cobol_reader:reading-cobol-files}\label{demo/cobol_reader::doc}
+\label{demo/cobol_reader:demo-cobol}\label{demo/cobol_reader::doc}\label{demo/cobol_reader:reading-cobol-files}
 For sample data, we're using data found here:
 \href{http://wonder.cdc.gov/wonder/sci\_data/codes/fips/type\_txt/cntyxref.asp}{http://wonder.cdc.gov/wonder/sci\_data/codes/fips/type\_txt/cntyxref.asp}
 
@@ -14923,7 +14976,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Workbook Testing}
-\label{testing/workbook:workbook-testing}\label{testing/workbook::doc}
+\label{testing/workbook::doc}\label{testing/workbook:workbook-testing}
 There are many types of workbooks.  See {\hyperref[workbook/index:workbook]{\emph{Workbook Package -- Uniform Wrappers for Workbooks}}} for details.
 
 These tests use actual files in the \code{sample} directory.
@@ -15239,7 +15292,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{COBOL Schema Testing}
-\label{testing/cobol:cobol-schema-testing}\label{testing/cobol::doc}
+\label{testing/cobol::doc}\label{testing/cobol:cobol-schema-testing}
 Processing COBOL (and possibly EBCDIC) files requires a more sophisticated
 schema.  And a more sophisticated schema loader.
 
@@ -17984,7 +18037,7 @@ any real work unless this is the main module being executed.
 
 
 \subsection{Test Snappy and Protobuf}
-\label{testing/snappy_protobuf:test-snappy-and-protobuf}\label{testing/snappy_protobuf::doc}\label{testing/snappy_protobuf:test-snappy-protobuf}
+\label{testing/snappy_protobuf::doc}\label{testing/snappy_protobuf:test-snappy-and-protobuf}\label{testing/snappy_protobuf:test-snappy-protobuf}
 These are tests for the snappy decompression and the protobuf object encoding.
 
 
@@ -18207,7 +18260,7 @@ To enable logging.
 
 
 \section{Stingray Build}
-\label{build:build}\label{build::doc}\label{build:stingray-build}
+\label{build::doc}\label{build:build}\label{build:stingray-build}
 The source for \code{stingray} is a Sphinx project that depends on PyLit.
 Yes.  The documentation spawns the code.
 
@@ -18554,7 +18607,7 @@ sphinx\PYGZhy{}build \PYG{n+nv}{\PYGZdl{}*} \PYGZhy{}b latex \PYG{n+nb}{source }
 
 
 \section{Installation via \texttt{setup.py}}
-\label{installation:installation}\label{installation::doc}\label{installation:installation-via-setup-py}
+\label{installation::doc}\label{installation:installation}\label{installation:installation-via-setup-py}
 Use the following link to get the latest code:
 \begin{quote}
 
@@ -18696,7 +18749,7 @@ classifiers=[
 
 
 \section{Licensing}
-\label{license:licensing}\label{license::doc}
+\label{license::doc}\label{license:licensing}
 See \href{http://creativecommons.org/licenses/by-nc-sa/4.0/}{http://creativecommons.org/licenses/by-nc-sa/4.0/}
 
 This work is made available under the Creative Commons

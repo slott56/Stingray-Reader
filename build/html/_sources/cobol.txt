@@ -328,51 +328,77 @@ The raw bytes and the ``Cell`` object are (technically) redundant, since all
 subclasses of ``Cell`` used by the ``cobol`` package have a ``raw`` attribute with
 the raw bytes. However, it's sometimes simpler to have this expanded in the tuple.
 
-The Occurs Depending On Problem
+Foundational Definitions
 ---------------------------------
 
 There are two kinds of DDE's: group and elementary. A group DDE is a collection of DDE's. 
-An elementary does not contain anything. This makes a DDE a proper tree.
+An elementary does not contain anything; it is a leaf. This makes a DDE a proper tree.
 
-A DDE, :math:`d`, has two interesting properties: the offset, :math:`d_o`, and the
-size, :math:`d_s`. We're interested in the bytes associated with a particular DDE 
+A DDE, :math:`d`, has two interesting properties: the offset, :math:`\operatorname{o}(d)`, and the
+size, :math:`\operatorname{s}(d)`. We're interested in the bytes associated with a particular DDE 
 element, :math:`B[d]`. These bytes are fetched from a larger buffer, :math:`B = \{ B_0, B_1, B_2, ..., B_n \}`.
 
 This allows us to fetch the bytes from a buffer by getting
-bytes :math:`B[d] = \{B_x | d_o \leq x < d_o+d_s\}`.
+bytes :math:`B[d] = \{B_x | \operatorname{o}(d) \leq x < \operatorname{o}(d)+\operatorname{s}(d)\}`.
 
-The size of an elementary DDE, :math:`d_s`, is fixed by the picture clause.
+The size of an elementary DDE, :math:`\operatorname{s}(d)`, is fixed by the picture clause.
 
-The size of a group DDE is the sum of the children. :math:`d_s = \sum_{c \in d}c_s`.
-While this seems clear, it doesn't include the ``OCCURS`` clause issues: we'll return to
+The size of a group DDE is the sum of the children. :math:`\operatorname{s}(d) = \sum_{c \in d}\operatorname{s}(c)`.
+While this seems clear, it doesn't account for the ``OCCURS`` clause issues: we'll return to
 those below.
 
-The DDE's in a tree can have three species of relationships.
+The DDE's in a tree can have three optional species of relationships.
 
--   Predecessor/Successor. The predecessor of :math:`d` is :math:`P(d)`.
-    
-    The offset of an item is :math:`d_o = P(d)_o + P(d)_s`. This applies recursively
+-   **Predecessor/Successor**. The predecessor of :math:`d` is :math:`P(d)`.
+    The offset of an item is :math:`\operatorname{o}(d) = \operatorname{o}(P(d)) + \operatorname{s}(P(d))`. 
+    This applies recursively
     to the first item in the DDE collection.
-    For the first item in a DDE, :math:`d_0`, :math:`P(d_0)_o=0` and :math:`P(d_0)_s=0`.
+    For the very first item in a DDE, :math:`d_0`, :math:`\operatorname{o}(d_0)=0`.
+    For the first item in a group, however, the rule for the offset is based on the parent.
+    
+    Also, for the very first item, and the first item in a group, there is no 
+    predecessor. We can say :math:`P(d_0)=\bot` to indicate it has a null value.
+    Or we can say :math:`\nexists x \vert x = P(d_0)`, to indicate that there's 
+    no such value, it's an exception to ask for it.
 
--   Parent/Child. The parent contains a group of items; the parent of :math:`d` is :math:`G(d)`,
-    we can say :math:`d \in G(d)`.
+-   **Group/Elementary** or Parent/Child. The parent is a group of items; the parent of :math:`d` is :math:`G(d)`,
+    we can say :math:`d \in G(d)`. For top-level items in the DDE, there is  no 
+    parent group.  We can say  :math:`G(d_0)=\bot` for null or 
+    :math:`\nexists x \vert x = G(d_0)` to show that it's an exception to ask.
+    
+    The offsets inside this group depend on the 
+    base offset of the group :math:`\operatorname{o}(G(d)) \Rightarrow \operatorname{o}(d)`.
+    This is a vague "influences" relationship. We can be more formal by noting
+    that :math:`G(d) = \{ d_0, d_1, d_2, ..., d, ..., d_n \}`. This means that
+    :math:`\operatorname{o}(d_0) = \operatorname{o}(G(d))`, and we can use the :math:`P(d)`
+    predecessor to locate the cumulative offset between each :math:`d_i` and :math:`d_0`,
+    including the cumulative offset between :math:`d` and :math:`d_0`.
 
--   Redefines. This DDE's offset (and size) is defined by another item, :math:`R(d)`.
-    :math:`d_o = R(d)_o` and :math:`d_s = R(d)_s`.
+-   **Redefines**. This DDE's offset (and size) of :math:`d` is defined by another item, :math:`R(d)`.
+    This, too, is optional. We can say  :math:`R(d_0)=\bot` for null or 
+    :math:`\nexists x \vert x = R(d_0)` to show that it's an exception to ask.
+    
+    The offset, :math:`\operatorname{o}(d) = \operatorname{o}(R(d))`. This often applies
+    at a group level, which means that the :math:`\operatorname{o}(G(d)) = \operatorname{o}(R(G(d)))`.
+    A group redefines influences the offset of all items in the group
+    :math:`\operatorname{o}(R(G(d))) \Rightarrow \{\operatorname{o}(x) \in G(d)\}`. 
 
-The predecessor/successor relationship is implied by the order of the DDE's as they're 
-compiled. If they have the same level number, they're successors.
+The predecessor/successor relationship is specified by the order of the DDE's as they're 
+compiled. Every item after the first has a predecessor. 
 
 The child relationship is specified via the level numbers. A larger level number
-implies a child of a lower level number.
+implies a child of a lower level number. If they have the same level number, they're successors.
 
 The redefines relationship is specified via the ``REDEFINES`` clause. 
 
-This is complicated by the ``OCCURS`` clause. There are two versions in the COBOL language
-manual, to which we'll add third.
+Occurs Depending On
+---------------------------------
 
--   "Format 1" has a fixed number of occurrences, :math:`O(d) = n`, comes from ``OCCURS n TIMES``.
+The previous definitions aret complicated by the ``OCCURS`` clause. 
+There are two versions in the COBOL language
+manual, to which we'll add a third.
+
+-   "Format 1" has a fixed number of occurrences: :math:`O(d) = n`, comes from ``OCCURS n TIMES``.
 
 -   "Format 2" means the number of occurrences depends on a piece of data, 
     in another DDE, the depends-n basis, :math:`D(d)`. This means that
@@ -382,18 +408,30 @@ manual, to which we'll add third.
 -   To this, we can add "Format 0" which has a single occurrence, :math:`O(d)=1`.
     This is the default if no occurrence information is provided.
     
-This adds another interesting attribute, the total size of an item, :math:`d_t=d_s \times O(d)`. 
+This adds another interesting attribute, the total size of an elementary item, 
+:math:`T(d) = \operatorname{s}(d) \times O(d)`. 
 The total size is the elementary size times the number of occurrences. 
 
-This changes our definition of size of a group item to the sum of the total sizes,
-not the sum of the simple size.  :math:`d_t = d_s = \sum_{c \in d}{c_t} \times O(d)`.
+This expands our definition of size of a group item to the sum of the total sizes,
+not the sum of the simple size. 
 
-This also changes how we fetch the bytes, :math:`B[d]`, because we need index information
+..  math::
+
+    T(g) = \operatorname{s}(g) = \sum_{d \in g}{T(d)} \times O(g)
+    
+This shows how the occurs information for a group applies to all the elements inside a group.
+
+We can think of :math:`O(d) = O(G(d))` as the rule for applying the occurs information 
+to all members of a group. If we do this, then there must be a root group, :math:`G_0`
+for which :math:`O(G_0) = 1`. This allows us to walk "up" the tree locating all of the
+parental occurrence information for a given elementary item.
+
+The occurs clause also changes how we fetch the bytes, :math:`B[d]`, because we need index information
 for each ``OCCURS`` clause in the parents of *d*. In COBOL we might be getting ``D( I )``. 
 
 ..    math::
 
-    B[d:i] = \{ B_x | d_o+(i)d_s \leq x < d_o+(i+1)d_s \}
+    B[d:i] = \{ B_x | \operatorname{o}(d) + i \operatorname{s}(d) \leq x < \operatorname{o}(d) + (i+1)\operatorname{s}(d) \}
 
 The indices may be much more complex, however. A common situation is a group-level item
 with an occurrence that nests an elementary item with an occurrence. This is a two-dimensional
@@ -402,47 +440,60 @@ the indices are applied from top-most group DDE down the tree to the lowest-leve
 
 ..    math::
 
-    B[d:i,j] = \{ B_x | G(d:i)_o+jd_s \leq x < G(d:i)_o+(j+1)d_s \}
+    B[d:i,j] = \{ B_x | \operatorname{o}(G(d:i)) + j \operatorname{s}(d) \leq x < \operatorname{o}(G(d:i))+(j+1)\operatorname{s}(d) \}
 
-The offset, :math:`d_o` is computed recursively using
+The offset, :math:`\operatorname{o}(d)` is computed recursively using
 a combination of predecessors, :math:`P(d)`, groups, :math:`G(d)`, and redefinitions,
 :math:`R(d)`. There are several cases.
 
--   If there's a REDEFINES clause, :math:`d_o= R(d)_o`.
+-   :math:`\operatorname{o}(d) = \operatorname{o}(R(d))` if this item is defined by a REDEFINES clause.
 
--   If there's a predecessor, :math:`d_o= P(d)_o + P(d)_s \times O(P(d))`.
+-   :math:`\operatorname{o}(d) = \operatorname{o}(P(d)) + \operatorname{s}(P(d)) \times O(P(d))`
+    if this item has a predecessor.
+    
+    The predecessor could involve an occurs clause that depends on actual data:
+    :math:`O(P(d)) = B[ D(P(d)) ]`. 
 
--   If there's no predecessor, there may be a containing group, :math:`d_o= G(d)_o + G(d)_s \times O(G(d))`.
-    This is more complex than it appears because a group could contain an occurrence clause.
-    :math:`G(d:i)_o = G(d)_o+iG(d)_s`.
+-   :math:`\operatorname{o}(d) = \operatorname{o}(G(d)) + \operatorname{s}(G(d)) \times O(G(d))`
+    if this item is the first member of a containing group, and has no predecessor.
 
--   If there's no predecessor and no group, :math:`d_o = 0`.
+    This is more complex than it appears because a group could contain an occurs clause,
+    which influences all items within the group.
+    :math:`\operatorname{o}(G(d:i)) = \operatorname{o}(G(d)) + i \operatorname{s}(G(d))`.
+    
+    This, too, can depend on actual data: :math:`O(G(d)) = B[ D(G(d)) ]`.
 
-The two cases which involve the occurs information, :math:`O(P(d))` and :math:`O(G(d))` 
-may include "format 2" occurs and depend on data within an actual record.
-We may have :math:`O(P(d)) = B[ D(P(d)) ]` or :math:`O(G(d)) = B[ D(G(d)) ]`.
+-   :math:`\operatorname{o}(d) = 0`, if there's neither predecessor nor group.
+
+We've called out the two cases which involve the occurs information
+that may include "format 2" occurs and depend on data within an actual record.
+These mean that the calculation cannot be done eagerly in this situation.
 
 Variable-Length COBOL Records
 ------------------------------
+
+See 
 
 https://publib.boulder.ibm.com/infocenter/zos/basics/index.jsp?topic=/com.ibm.zos.zconcepts/zconcepts_159.htm
 
 V (Variable)
 
-This format has one logical record as one physical block. A
-variable-length logical record consists of a record descriptor word
-(RDW) followed by the data. The record descriptor word is a 4-byte field
-describing the record. The first 2 bytes contain the length of the
-logical record (including the 4-byte RDW). The length can be from 4 to
-32,760 bytes. All bits of the third and fourth bytes must be 0, because
-other values are used for spanned records. This format is seldom used.
+    This format has one logical record as one physical block. A
+    variable-length logical record consists of a record descriptor word
+    (RDW) followed by the data. The record descriptor word is a 4-byte field
+    describing the record. The first 2 bytes contain the length of the
+    logical record (including the 4-byte RDW). The length can be from 4 to
+    32,760 bytes. All bits of the third and fourth bytes must be 0, because
+    other values are used for spanned records. This format is seldom used.
 
 VB (Variable Blocked)
 
-This format places several variable-length logical records (each with an
-RDW) in one physical block. The software must place an additional Block
-Descriptor Word (BDW) at the beginning of the block, containing the
-total length of the block.
+    This format places several variable-length logical records (each with an
+    RDW) in one physical block. The software must place an additional Block
+    Descriptor Word (BDW) at the beginning of the block, containing the
+    total length of the block.
+    
+Here's a handy diagram showing five kinds of RECFM.
 
 ..  image:: zOSB037.png
 
@@ -450,7 +501,7 @@ See http://en.wikipedia.org/wiki/Data_set_(IBM_mainframe)
 
 See http://www.simotime.com/vrecex01.htm
 
-There are three relevant encoding possibilities. These are the COBOL "RECFM" 
+This leads us to three relevant encoding possibilities. These are the COBOL "RECFM" 
 options in the JCL for the file. Each record is preceded by a 
 Record Descriptor Word (RDW).
 
@@ -476,7 +527,7 @@ Record Descriptor Word (RDW).
     3-4     The length of the block including four-byte Descriptor Word.
     =====   ============
     
-A block can have multiple records in it. The block length must be >= record length.
+    A block can have multiple records in it. The block length must be >= record length.
 
 ``VBS``     Variable Blocked Spanned.
 
