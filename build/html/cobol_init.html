@@ -184,7 +184,7 @@ delegate to the DDE.</p>
 <dl class="attribute">
 <dt id="cobol.path">
 <tt class="descclassname">cobol.</tt><tt class="descname">path</tt><a class="headerlink" href="#cobol.path" title="Permalink to this definition">¶</a></dt>
-<dd><p>The &#8221;.&#8221;-separated path from top-level name to this element&#8217;s name.</p>
+<dd><p>The <tt class="docutils literal"><span class="pre">&quot;.&quot;</span></tt>-separated path from top-level name to this element&#8217;s name.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -472,7 +472,8 @@ It applies the cell type (via the schema item&#8217;s attribute) and the raw dat
 information <strong>and</strong> the worksheet-specific methods for unpacking the
 various types of data.  The various <a class="reference internal" href="#module-cobol" title="cobol"><tt class="xref py py-mod docutils literal"><span class="pre">cobol</span></tt></a> Cell subclasses
 can refer to the proper conversion methods.</li>
-<li>Create the required <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> based on the <tt class="xref py py-func docutils literal"><span class="pre">attribute.create()</span></tt> function.</li>
+<li>Create the required <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><tt class="xref py py-class docutils literal"><span class="pre">cell.Cell</span></tt></a> based on the <tt class="docutils literal"><span class="pre">attribute.create</span></tt> function.
+See <a class="reference internal" href="schema.html#schema.Attribute" title="schema.Attribute"><tt class="xref py py-class docutils literal"><span class="pre">schema.Attribute</span></tt></a>.</li>
 </ul>
 </li>
 </ol>
@@ -653,11 +654,12 @@ Text is easy, Python&#8217;s <tt class="docutils literal"><span class="pre">io.o
 <p>Numeric data with usage <tt class="docutils literal"><span class="pre">DISPLAY</span></tt> is essentially text. In some cases, the
 picture has <tt class="docutils literal"><span class="pre">V</span></tt>, which means that we must handle this implicit decimal point.
 The &#8220;display&#8221; feature is the COBOL default: everything is plain text.</p>
-<p>Here&#8217;s the core rule for character files:</p>
-<ul class="simple">
-<li>Leading separate sign is the default for character files.</li>
-</ul>
-<p>COBOL can support other kinds of signs. This conversion doesn&#8217;t.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The core rule for character files</p>
+<p>Leading separate sign is the default for character files.</p>
+<p class="last">COBOL can support other kinds of signs. This conversion doesn&#8217;t.</p>
+</div>
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@staticmethod</span>
 <span class="k">def</span> <span class="nf">number_display</span><span class="p">(</span> <span class="nb">buffer</span><span class="p">,</span> <span class="n">attr</span> <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extract a numeric field&#39;s value.</span>

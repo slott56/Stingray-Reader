@@ -5,12 +5,12 @@
 History
 ##############
 
-Latest release is 4.4.6.
+Latest release is 4.4.7.
 
 Version 4
 ==========
 
-Version 4 dates from March, 2014. It switches to Python3.3
+Version 4 dates from March, 2014. It switches to Python3.
 
 Change Details:
 
@@ -120,6 +120,9 @@ Change Details:
 -   Fix a bug in handling signed usage display EBCDIC numbers.
 
 -   Fix a bug in handling complex picture clauses with ``9(x)v9(y)`` syntax.
+    
+-   Added some unit tests to confirm some previous fixes. Cleanup testing
+    and build to make it easier to test a single class as part of debugging.
     
 Version 3
 ==============

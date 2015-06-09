@@ -232,6 +232,24 @@ class TestPictureParser( unittest.TestCase ):
         self.assertEqual( 3, pic.precision )
         self.assertFalse( pic.signed )
         self.assertEqual( ".", pic.decimal )
+    def test_should_handle_trailing_repeat_1(self):
+        pic= stingray.cobol.loader.picture_parser("SV9(5)")
+        self.assertEqual( "99999", pic.final )
+        self.assertFalse( pic.alpha )
+        self.assertEqual( 5, pic.length )
+        self.assertEqual( 0, pic.scale )
+        self.assertEqual( 5, pic.precision )
+        self.assertTrue( pic.signed )
+        self.assertEqual( "V", pic.decimal )
+    def test_should_handle_trailing_repeat_2(self):
+        pic= stingray.cobol.loader.picture_parser("SV9(05)")
+        self.assertEqual( "99999", pic.final )
+        self.assertFalse( pic.alpha )
+        self.assertEqual( 5, pic.length )
+        self.assertEqual( 0, pic.scale )
+        self.assertEqual( 5, pic.precision )
+        self.assertTrue( pic.signed )
+        self.assertEqual( "V", pic.decimal )
 
 # Usage
 # =========

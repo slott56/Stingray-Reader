@@ -208,10 +208,8 @@ Run the Test Script
 ::
 
   def run_test():
-      from test.main import suite
-      from test import Logger
-      with Logger( stream=sys.stdout, level=logging.WARN ):
-          result= unittest.TextTestRunner().run(suite())
+      import test.main 
+      result= test.main.main()
       if result.failures:
           sys.exit(result.failures)
 

@@ -894,7 +894,85 @@ Be sure it parses.  Be sure we can extract data.
 
             self.assertEqual( "0123456", subrow.cell(schema_segment_def_dict['ITEM-3']).to_str() )
             self.assertEqual( "QRSTUVWXYZ", subrow.cell(schema_segment_def_dict['ITEM-4']).to_str() )
-                        
+ 
+Test Fragment 14
+=================
+
+This is peculiar. It's from a bug report for fields which couldn't be parsed
+properly. The ``SV9(n)`` is rarely-used. The bug was that it created something that
+baffled the COMP-3 conversion.
+
+::
+
+    copy14= """
+           01  GENERIC-RECORD.
+                  04 NUMBER-1     PIC SV9(5)   COMP-3.
+                  04 NUMBER-2     PIC SV9(5)   COMP-3.
+                  04 NUMBER-3     PIC SV9(05)  COMP-3.
+                  04 NUMBER-4     PIC SV9(5)   COMP-3.
+    """
+    
+Here's some comp-3 fields that should be converted properly.
+
+::
+
+    buffer14= (
+        b"\x12\x34\x5c" # NUMBER-1=".12345"
+        b"\x67\x89\x0c" # NUMBER-2=".67890"
+        b"\x00\x12\x0c" # NUMBER-3=".00120"
+        b"\x98\x76\x5d" # NUMBER-4="-.98765"
+        )
+
+
+Be sure it parses.  Be sure we can extract data.
+
+::
+
+    class Test_Copybook_14( DDE_Test ):
+        def setUp( self ):
+            super().setUp()
+            file_like_object= io.StringIO( copy14 )
+            dde_list, self.schema14 = stingray.cobol.loader.COBOL_schema( file_like_object )            
+            self.dde14= dde_list[0]
+            #stingray.cobol.defs.report( self.dde14 )
+        def test_should_parse(self):
+            self.assertEqual( 5, len(self.schema14) )
+            self.assertEqual( "NUMBER-1", self.schema14[1].name )
+            self.assertEqual( "NUMBER-2", self.schema14[2].name )
+            self.assertEqual( "NUMBER-3", self.schema14[3].name )
+            self.assertEqual( "NUMBER-4", self.schema14[4].name )
+
+            self.assertEqual( 0, self.dde14.get( "NUMBER-1" ).offset )
+            self.assertEqual( 3, self.dde14.get( "NUMBER-1" ).size )
+            self.assertEqual( "99999", self.dde14.get( "NUMBER-1" ).sizeScalePrecision.final  )
+            self.assertEqual( "COMP-3", self.dde14.get( "NUMBER-1" ).usage.source() )
+            self.assertEqual( 3, self.dde14.get( "NUMBER-2" ).offset )
+            self.assertEqual( 3, self.dde14.get( "NUMBER-2" ).size )
+            self.assertEqual( "99999", self.dde14.get( "NUMBER-2" ).sizeScalePrecision.final  )
+            self.assertEqual( "COMP-3", self.dde14.get( "NUMBER-2" ).usage.source() )
+            self.assertEqual( 6, self.dde14.get( "NUMBER-3" ).offset )
+            self.assertEqual( 3, self.dde14.get( "NUMBER-3" ).size )
+            self.assertEqual( "99999", self.dde14.get( "NUMBER-3" ).sizeScalePrecision.final  )
+            self.assertEqual( "COMP-3", self.dde14.get( "NUMBER-3" ).usage.source() )
+            self.assertEqual( 9, self.dde14.get( "NUMBER-4" ).offset )
+            self.assertEqual( 3, self.dde14.get( "NUMBER-4" ).size )
+            self.assertEqual( "99999", self.dde14.get( "NUMBER-4" ).sizeScalePrecision.final  )
+            self.assertEqual( "COMP-3", self.dde14.get( "NUMBER-4" ).usage.source() )
+
+        def test_should_extract_data(self):
+            data= stingray.cobol.Character_File( name="", 
+                file_object= [buffer14], 
+                schema=self.schema14 )
+            data_iter= data.sheet( "" ).rows()
+            row= next( data_iter )
+            
+            #stingray.cobol.dump( self.schema14, row )
+            self.assertEqual( decimal.Decimal('0.12345'), row.cell(self.schema14[1]).to_decimal() )
+            self.assertEqual( decimal.Decimal('0.67890'), row.cell(self.schema14[2]).to_decimal() )
+            self.assertEqual( decimal.Decimal('0.00120'), row.cell(self.schema14[3]).to_decimal() )
+            self.assertEqual( decimal.Decimal('-0.98765'), row.cell(self.schema14[4]).to_decimal() )
+                    
+                       
 Test Suite and Runner
 =====================
 

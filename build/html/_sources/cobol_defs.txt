@@ -899,7 +899,7 @@ DDE Class
         an instance of :py:class:`Usage` to delegate data conversion properly.
         The actual conversion is handled by the workbook.
 
-    ..  py:attribute:: contains
+    ..  py:attribute:: children
 
         the list of contained fields within a group
 

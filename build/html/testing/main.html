@@ -88,9 +88,19 @@ and easy-to-use <tt class="xref py py-func docutils literal"><span class="pre">s
     <span class="n">s</span><span class="o">.</span><span class="n">addTests</span><span class="p">(</span> <span class="n">test</span><span class="o">.</span><span class="n">snappy_protobuf</span><span class="o">.</span><span class="n">suite</span><span class="p">()</span> <span class="p">)</span>
     <span class="k">return</span> <span class="n">s</span>
 
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">test</span><span class="o">.</span><span class="n">Logger</span><span class="p">(</span> <span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">WARN</span> <span class="p">):</span>
+
+        <span class="c"># Single test case for debugging purposes</span>
+        <span class="c">#single= test.cobol_2.Test_Copybook_11</span>
+        <span class="c">#suite= unittest.defaultTestLoader.loadTestsFromTestCase(single)</span>
+        <span class="c">#return unittest.TextTestRunner().run(suite)</span>
+
+        <span class="c"># All test cases is the default</span>
+        <span class="k">return</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">suite</span><span class="p">())</span>
+
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="k">with</span> <span class="n">test</span><span class="o">.</span><span class="n">Logger</span><span class="p">(</span> <span class="n">stream</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span> <span class="p">):</span>
-        <span class="n">unittest</span><span class="o">.</span><span class="n">TextTestRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">suite</span><span class="p">())</span>
+    <span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

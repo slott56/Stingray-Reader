@@ -85,7 +85,7 @@ if sys.version_info < (3,3):
 
 setup(
     name='stingray',
-    version='4.4.6',
+    version='4.4.7',
     description='Schema-Based File Reader, COBOL, EBCDIC Conversion, ETL, Data Profiling',
     author='S.Lott',
     author_email='s_lott@yahoo.com',

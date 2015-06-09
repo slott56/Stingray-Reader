@@ -28,14 +28,14 @@ process files in spreadsheet formats.
 Additionally, stringray provides some guidance on how to structure
 file-processing applications so that they are testable and composable.
 
-Stingray 4.4.6 requires Python 3.3
+Stingray 4.4.7 requires Python 3.3, preferably 3.4.
 
-It depends on this project to read .XLS files
+It depends on this project to read .XLS files:
 
 -   xlrd.  http://www.lexicon.net/sjmachin/xlrd.htm
 
 If you want to build from scratch and create documentation, you'll need these
-other two projects.
+other two projects:
 
 -   PyLit3.  https://github.com/slott56/PyLit-3
 

@@ -421,7 +421,7 @@ import stingray.cobol.defs
 #
 # ::
 
-__version__ = "4.4.6"
+__version__ = "4.4.7"
 
 # A module-level logger.
 #
@@ -1110,14 +1110,20 @@ class RecordFactory:
 #    
 # ..  image:: cobol_final.png
 #
-# We have a number of supporting functions that make this work.
+# We have a number of supporting functions that make this work. The first two
+# will build the final Stingray schema from COBOL DDE definitions.
 #
+# ::
+
+make_attr_log = logging.getLogger("make_attr")
+make_schema_log = logging.getLogger("make_schema")
+
 # ..  py:function:: make_attr( aDDE )
 #
 #     Transform a :py:class:`cobol.defs.DDE` into an  :py:class:`stingray.cobol.RepeatingAttribute`.
 #     This will include a weakref to the DDE so that the source information (like parents and children)
 #     is available. It will also build a weak reference from the original DDE to the resulting
-#     attribute.
+#     attribute, allowing us to locate the schema associated with a DDE.
 #
 # ::
 
@@ -1132,6 +1138,7 @@ def make_attr( aDDE ):
         dde= weakref.ref(aDDE),
     )
     aDDE.attribute= weakref.ref( attr )
+    make_attr_log.debug( "{0} <=> {1}".format(aDDE, attr) )
     return attr
 
 # ..  py:function:: make_schema( dde_iter )
@@ -1147,6 +1154,7 @@ def make_attr( aDDE ):
 def make_schema( dde_iter ):
     schema= stingray.schema.Schema( dde=[] )
     for record in dde_iter:
+        make_schema_log.debug( "Record {0}".format(record) )
         schema.info['dde'].append( record )
         for aDDE in record:
             attr= make_attr(aDDE)
@@ -1252,7 +1260,8 @@ def COBOL_schema( source, lexer_class=Lexer, replacing=None,  ):
 
 # ..  py:function:: COBOL_schemata(source, replacing=None)
 #
-#     This function will parse the COBOL copybook, returning two lists:
+#     This function will parse a COBOL copybook with multiple 01 level definitions, 
+#     returning two lists:
 #
 #     -   a list of the parsed COBOL 01-level records, and
 #

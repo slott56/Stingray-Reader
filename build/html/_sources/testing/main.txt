@@ -39,6 +39,16 @@ and easy-to-use :py:func:`suite` function that returns the module's suite.
         s.addTests( test.snappy_protobuf.suite() )
         return s
         
+    def main():
+        with test.Logger( stream=sys.stderr, level=logging.WARN ):
+        
+            # Single test case for debugging purposes
+            #single= test.cobol_2.Test_Copybook_11
+            #suite= unittest.defaultTestLoader.loadTestsFromTestCase(single)
+            #return unittest.TextTestRunner().run(suite)
+            
+            # All test cases is the default
+            return unittest.TextTestRunner().run(suite())
+    
     if __name__ == "__main__":
-        with test.Logger( stream=sys.stderr, level=logging.INFO ):
-            unittest.TextTestRunner().run(suite())
+        main()
