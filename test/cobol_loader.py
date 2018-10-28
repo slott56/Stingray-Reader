@@ -13,6 +13,7 @@
 import unittest
 import stingray.cobol.loader
 import weakref
+import io
 
 # Lexical Scanner
 # =================
@@ -1203,6 +1204,67 @@ class TestNestedSchemaMaker( unittest.TestCase ):
         self.assertEqual( 24, schema[6].offset )
         self.assertEqual( 11, schema[6].size )
 
+# Another Variation on Loading DDE's
+# ==================================
+#
+# Here's a class which does some loading. The processing is a bit convoluted, 
+# but this is a possible use case, and must work.
+#
+# ::
+
+class SchemaLoaderClass (stingray.cobol.loader.COBOLSchemaLoader):
+    lexer_class= stingray.cobol.loader.Lexer_Long_Lines
+
+    def load( self ):
+        fixed_dde_list= list()
+        unused_dde_list= list()
+        dde_list=list(self.parser.makeRecord( self.lexer.scan(self.source) ))
+        hdr_trl_record_copybook="""\
+000010 01  HEADER-TRAILER-RECORD.
+000020            05  HDR-REC-TYPE                        PIC X(6).
+000030            05  FILLER                              PIC X(5).
+000040            05  HDR-TRL                             PIC X(8).
+000050            05  FILLER                              PIC X(1).
+000060            05  HDR-DATE1                           PIC X(10).
+000070            05  FILLER                              PIC X(1).
+000080            05  HDR-JULIAN-DATE1                    PIC X(7).
+000090            05  FILLER                              PIC X(1).
+000100            05  HDR-SOME-NUMBER1                    PIC X(8).
+000110            05  FILLER                              PIC X(1).
+000120            05  HDR-DATE2                           PIC X(10).
+000130            05  FILLER                              PIC X(1).
+000140            05  HDR-SOME-NUMBER2                    PIC X(7).
+000150            05  FILLER                              PIC X(1).
+000140            05  HDR-SOME-NUMBER3                    PIC X(4).
+000160            05  HDR-REST-OF-LINE            PIC X(30).
+"""
+        dde_list+=list(self.parser.makeRecord( self.lexer.scan(hdr_trl_record_copybook) ))
+        for dde in dde_list:
+            if dde.name =='HEADER-TRAILER-RECORD':
+                fixed_dde_list+= [dde]
+            elif dde.name == 'ANOTHER-RECORD':
+                base_dde= [dde]
+            else:
+                unused_dde_list+= [dde]
+        schema= stingray.cobol.loader.make_schema( base_dde )
+        fixed_schema= stingray.cobol.loader.make_schema( fixed_dde_list )
+        return schema, fixed_schema
+        
+# Confirm that this class really works
+#
+# ::
+
+class TestSchemaLoaderClass(unittest.TestCase):
+    def test_should_load(self):
+        another_record ="""\
+      01  ANOTHER-RECORD.
+          05  FILLER PIC X(10).
+        """
+        example = io.StringIO(another_record)
+        slc= SchemaLoaderClass(example)
+        schema, fixed_schema= slc.load()
+        self.assertTrue( any( f.name == "ANOTHER-RECORD" for f in schema ) )
+        self.assertTrue( any( f.name == "HEADER-TRAILER-RECORD" for f in fixed_schema ) )
 
 # Test Suite and Runner
 # =====================

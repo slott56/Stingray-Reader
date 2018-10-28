@@ -341,6 +341,9 @@ class ErrorCell( stingray.cell.ErrorCell ):
 #     with an extra half-byte for sign information. This must be rounded up.
 #     COMP-3 fields often have an odd number of digits to reflect this.
 #
+# -   When usage is not provided, it is inherited from the parent
+#     structure. The top-most parent has a default usage of DISPLAY.
+#
 # The :py:meth:`Usage.create_func()` method returns a :py:class:`cell.Cell` type 
 # that should be built from the raw bytes.
 #
@@ -371,21 +374,33 @@ class ErrorCell( stingray.cell.ErrorCell ):
 #
 #     The superclass of ``Usage`` is abstract and doesn't compute a proper size.
 #
+# ..  TODO::
+#
+#     This is regrettably stateful.
+#
 # ::
 
 class Usage:
     """Covert numeric data based on Usage clause."""
     def __init__( self, source ):
         self.source_= source
-        self.final= source
+
+        # Stateful type information bound in by picture clause
+        self.picture = None
+        self.final= ""
         self.numeric= None # is the picture all digits?
         self.length= None
         self.scale= None
         self.precision= None
         self.signed= None
         self.decimal= None
+
+        # Stateful context bound in during parsing.
+        self.dde = None
+
     def setTypeInfo( self, picture ):
         """Details from parsing a PICTURE clause."""
+        self.picture = picture
         self.final= picture.final
         self.numeric = not picture.alpha
         self.length = picture.length
@@ -393,8 +408,21 @@ class Usage:
         self.precision = picture.precision
         self.signed = picture.signed
         self.decimal = picture.decimal
+
+# ..  py:method:: Usage.source()
+#
+# ::
+
     def source( self ):
         return self.source_
+
+# ..  py:method:: Usage.resolve()
+#
+# ::
+
+    def resolve( self, aDDE ):
+        """Associate back to the owning DDE."""
+        self.dde= weakref.ref(aDDE)
 
 # ..  py:method:: Usage.create_func()
 #
@@ -485,7 +513,31 @@ class UsageComp3( Usage ):
     def size( self ):
         """COMP-3 is packed decimal."""
         return (len(self.final)+2)//2
-        
+
+# ..  py:class:: UsageParent
+#
+# This is a bit more complex situation. Unless otherwise specified, all DDE's inherit usage
+# from their parent. At the top, it's a default UsageDisplay("").
+#
+# When a Usage clause is created, it must contain *both* the source text **and** a link to the containing
+# DDE so the parent can be located by a walk up the structure.
+#
+# THe DDE links, however, are added when the parent is built.
+#
+# ::
+
+class UsageParent(Usage):
+    """Inherit Usage from parent. Or default to UsageDisplay("") if there is no parent."""
+    def __init__(self):
+        super().__init__("")
+    def size(self):
+        """Not provided here. Depends on parent!"""
+        raise NotImplementedError
+    def create_func(selfself, raw, workbook, attr):
+        """Depends on parent!"""
+        raise NotImplementedError
+
+
 # Allocation Strategy Hierarchy
 # ------------------------------
 #
@@ -941,8 +993,8 @@ class OccursDependingOnLimit( OccursDependingOn ):
 #
 #     Additionally, this item -- in a way -- breaks the dependencies between
 #     a :py:class:`schema.Attribute` and a DDE. It's appropriate for an Attribute
-#     to depend on a DDE, but the reverse isn't proper. However, we DDE
-#     referring to an attribute anyway.
+#     to depend on a DDE, but the reverse isn't proper. However, we support a DDE
+#     referring to an attribute because it can be useful.
 #
 #     ..  py:attribute:: attribute
 #
@@ -971,37 +1023,47 @@ class DDE:
         # Relationships
         self.indent= 0 
         self.children= []
-        self.top= None # must be a weakref.ref()
-        self.parent= None # must be a weakref.ref()
+        self.top= None  # must be a weakref.ref()
+        self.parent= None  # must be a weakref.ref()
 
-        # Derived property from the picture clause
-        self.size= self.usage.size()            
-        
+        # Size is a derived property from the picture and usage clauses
+        # We don't always have the usage clause in isolation, however.
+        # This is an initial pass which might get replaced during decoration
+        if isinstance(self.usage, UsageParent):
+            # Actually based on parent... A handy default is to act like parent has UsageDisplay.
+            self.size = 0
+        else:
+            self.size = self.usage.size()
+
         # Because of ODO, these cannot always be computed statically.
-        self.offset= 0 # self.allocation.refers_to.offset + self.allocation.refers_to.total_size
-        self.totalSize= 0 # self.size * self.occurs.number(aRow)
+        # In the non-ODO case, a static "decorator" pass sets these.
+        # In the ODO case, it's computed after data is loaded.
+        self.offset= 0  # self.allocation.refers_to.offset + self.allocation.refers_to.total_size
+        self.totalSize= 0  # self.size * self.occurs.number(aRow)
         
         # Derived attribute created from this DDE.
         self.attribute= None
                     
     def __repr__( self ):
-        return "{:s} {:s} {:s}".format( self.level, self.name, map(str,self.children) )
+        return "{!s} {!s} {!s}".format( self.level, self.name, map(str,self.children) )
+
     def __str__( self ):
         oc= str(self.occurs)
         pc= " PIC {0}".format(self.picture) if self.picture else ""
         uc= " USAGE {0}".format( self.usage.source() ) if self.usage.source() else ""
         rc= self.allocation.source()
-        return "{:<2s} {:<20s}{:s}{:s}{:s}{:s}.".format( self.level, self.name, rc, oc, pc, uc )
+        return "{:<2s} {:<20s}{!s}{!s}{!s}{!s}.".format( self.level, self.name, rc, oc, pc, uc )
+
 
 # Construction occurs in these general steps: 
 #
-# (1) the DDE is created,
+# (1) The DDE is created,
 #
-# (2) source attributes are set, 
+# (2) Source attributes are set,
 #
-# (3) the DDE is decorated with size, offset and other details.
+# (3) The DDE is decorated with usage, size, offset, and dimensionality.
 #
-# (4) the DDE is transformed into a :py:class:`schema.Attribute`.
+# (4) The DDE is transformed into a :py:class:`schema.Attribute`.
 #    
 # ::
 
@@ -1068,7 +1130,7 @@ class DDE:
         found= search( self.top(), name )
         if found:
             return found
-        raise AttributeError( "Field {:s} unknown in this record".format(name) )
+        raise AttributeError( "Field {!r} unknown in this record".format(name) )
     
 # Work with Occurs Depending On. The :meth:`variably_located` question
 # may only apply to top-level (01, parent=None) DDE's.
@@ -1160,13 +1222,20 @@ def search( top, aName ):
 #
 #     Apply :py:meth:`Allocation.resolve` throughout the structure.
 #     For each ``REDEFINES`` or ``OCCURS DEPENDING ON`` clause, locate the DDE to which
-#     it refers, saving a repeated searches.  
+#     it refers, saving a repeated searches.
+#
+#     For ``USAGE``, locate the parent.
 #
 # ::
 
 def resolver( top ):
-    """For each DDE.allocation which is based on REDEFINES, locate the referenced
-    name.  For each DDE.occurs which has OCCURS DEPENDING ON, locate the
+    """
+    Resolved references among DDE items.
+
+    For each DDE.allocation which is based on REDEFINES, locate the referenced
+    name.
+
+    For each DDE.occurs which has OCCURS DEPENDING ON, locate the
     referenced name.
     """
     for aDDE in top:
@@ -1183,7 +1252,10 @@ def resolver( top ):
 # For occurs, we also have three versions:
 # Default (effectively 1), Fixed, and Depends On.
 # The first two don't involve names. Only Depends On involves a name that we want
-# to resolve before proceeding. 
+# to resolve before proceeding.
+#
+# The Usage clause propagates down the hierarchy, also.
+# We need to establish the usage first, so we can then resolve the other sizes.
 #
 #       
 # ..  py:function:: setDimensionality( top )
@@ -1198,7 +1270,7 @@ def resolver( top ):
 
 def setDimensionality( top ):
     def dimensions( aDDE ):
-        """:returns: A tuple of parental DDE's with non-1 occurs clauses."""
+        """:returns: A tuple of all parental DDE's with non-1 occurs clauses."""
         if aDDE.occurs.default:
             this_level= tuple()
         else:
@@ -1208,6 +1280,28 @@ def setDimensionality( top ):
         else:
             # Reached the top!
             return this_level
+    def usage( aDDE ):
+        """:returns: First non-UsageParent usage clause working up the hierarchy."""
+        if isinstance(aDDE.usage, UsageParent):
+            # Check the parent or create a default when we reach the top.
+            if aDDE.parent:
+                parent_usage = usage(aDDE.parent())
+                # Clone the usage class found above us. Then set our picture and DDE reference
+                new_usage = parent_usage.__class__(parent_usage.source())
+            else:
+                new_usage = UsageDisplay("")
+            if aDDE.usage.picture:
+                new_usage.setTypeInfo(aDDE.usage.picture)
+            new_usage.resolve(aDDE)
+            return new_usage
+        else:
+            return aDDE.usage
+    for aDDE in top:
+        # print(f"Usage for aDDE started {aDDE.usage}", end='...')
+        aDDE.usage = usage(aDDE)
+        aDDE.size = aDDE.usage.size()
+        # print(f"resolved to {aDDE.usage}")
+
     for aDDE in top:
         aDDE.dimensionality = dimensions( aDDE )
 
@@ -1262,8 +1356,9 @@ def setSizeAndOffset( aDDE, aRow=None, base=0 ):
         # base= aDDE.offset= allocation.offset( base )
         aDDE.offset= aDDE.allocation.offset(base)
         aDDE.totalSize= 0
-    # Initialize the size -- it may get updated below for group-level items.
-    aDDE.size= aDDE.usage.size()            
+
+    # Initialize the size -- If it's a group-level item, it will get updated.
+    aDDE.size= aDDE.usage.size()
             
     ## logger.debug( "{0} Enter {1} offset={2}".format(">"*aDDE.indent, aDDE, aDDE.offset) )
     

@@ -213,6 +213,7 @@ class Snappy:
         :returns: buffer of bytes for this frame.
         """
         buffer= bytearray()
+        # DEBUG: print(f"FRAME: {frame!r}")
         stream= iter( frame )
         # The size of the uncompressed data in this frame.
         size= varint( stream ) 

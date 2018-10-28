@@ -28,7 +28,7 @@ process files in spreadsheet formats.
 Additionally, stringray provides some guidance on how to structure
 file-processing applications so that they are testable and composable.
 
-Stingray 4.4.7 requires Python 3.3, preferably 3.4.
+Stingray 4.5 requires Python >=3.3
 
 It depends on this project to read .XLS files:
 
@@ -44,11 +44,7 @@ other two projects:
 Since Stingray is a *Literate Programming* project, the documentation is also
 the source.  And vice-versa.
 
-http://stingrayreader.sourceforge.net/index.html
-
-http://sourceforge.net/projects/stingrayreader/files/stingray.pdf
-
-https://sourceforge.net/p/stingrayreader/code/
+https://github.com/slott56/Stingray-Reader
 
 Here's the license for using Stingray
 

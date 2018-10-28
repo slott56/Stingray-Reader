@@ -421,7 +421,7 @@ import stingray.cobol.defs
 #
 # ::
 
-__version__ = "4.4.7"
+__version__ = "4.4.9"
 
 # A module-level logger.
 #
@@ -706,6 +706,7 @@ class RecordFactory:
     redefines_class= stingray.cobol.defs.Redefines
     successor_class= stingray.cobol.defs.Successor
     group_class= stingray.cobol.defs.Group
+    parent_usage_class = stingray.cobol.defs.UsageParent
     display_class= stingray.cobol.defs.UsageDisplay
     comp_class= stingray.cobol.defs.UsageComp
     comp3_class= stingray.cobol.defs.UsageComp3
@@ -936,10 +937,14 @@ class RecordFactory:
                 name= self.token
                 self.token= next(self.lex)
             
-            # Defaults    
-            usage= self.display_class( "" )
-            pic= None
+            # Placeholder. The USAGE must be pushed down from parent.
+            # At the very top, the 01 defaults to USAGE DISPLAY.
+            usage= self.parent_usage_class()
+            # Placeholder. The OCCURS is pushed down from the parent.
             occurs= self.occurs_class()
+
+            # Picture defines elementary vs. group level
+            pic= None
             redefines= None # set to Redefines below or by addChild() to Group or Successor
             
             # Accumulate the relevant clauses, dropping noise words and irrelevant clauses.    
@@ -1028,7 +1033,7 @@ class RecordFactory:
         self.context= [top]
         for dde in ddeIter:
             #print( dde, ":", self.context[-1] )
-            # If a lower level or same level, pop context
+            # If a lower level number or same level, pop context
             while self.context and dde.level <= self.context[-1].level:
                 self.context.pop()
                 
@@ -1077,7 +1082,12 @@ class RecordFactory:
 # ::
 
     def decorate( self, top ):
-        """Three post-processing steps: resolver, size and offset, dimensionality."""
+        """Post-processing steps: reference resolver,
+        Then set Usage, dimensionality.
+
+        For some record types (OCCURS DEPENDING ON)
+        The size and offset have to be deferred.
+        """
         stingray.cobol.defs.resolver( top )
         stingray.cobol.defs.setDimensionality( top )
         if top.variably_located:
@@ -1138,7 +1148,7 @@ def make_attr( aDDE ):
         dde= weakref.ref(aDDE),
     )
     aDDE.attribute= weakref.ref( attr )
-    make_attr_log.debug( "{0} <=> {1}".format(aDDE, attr) )
+    make_attr_log.debug( "Attribute {0} <=> {1}".format(aDDE, attr) )
     return attr
 
 # ..  py:function:: make_schema( dde_iter )

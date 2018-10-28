@@ -65,7 +65,7 @@ class Test_Copybook_1( DDE_Test ):
     def setUp( self ):
         super().setUp()
         self.dde1 = list(self.rf.makeRecord( self.lexer.scan(copy1) ))[0]
-        #stingray.cobol.defs.report( self.dde1 )
+        # stingray.cobol.defs.report( self.dde1 )
     def test_should_parse( self ):
         dde1= self.dde1
         self.assertEqual( 7, dde1.get( "QUESTION" ).offset )
@@ -83,14 +83,14 @@ class Test_Copybook_1( DDE_Test ):
         self.assertEqual( "ZZ", dde1.get( "NOT-SURE" ).sizeScalePrecision.final  )
     def test_should_extract( self ):
         schema = stingray.cobol.loader.make_schema( [self.dde1] )
-        #print( schema )
+        # print( schema )
         schema_dict= dict( (a.name, a) for a in schema )
         data= stingray.cobol.Character_File( name="", 
             file_object= ["ABCDEFG01HIJKLM02OPQ03RSTUVW04YZabcde",], 
             schema=schema )
 
         row= next( data.sheet( "" ).rows() )
-        #stingray.cobol.dump( schema, row )
+        # stingray.cobol.dump( schema, row )
         
         self.assertEqual( "1", row.cell(schema_dict['QUESTION']).to_str() )
         self.assertEqual( 2, row.cell(schema_dict['PRINT-YES']).to_int() )

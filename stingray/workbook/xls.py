@@ -23,19 +23,19 @@ import xlrd
 #
 #     Extract sheets, rows and cells from an XLS format file.
 #
-#     This definition of a workbook wraps :py:mod:`xlrd` so that it fits the Stingray framework.   
+#     This definition of a workbook wraps :py:mod:`xlrd` so that it fits the Stingray framework.
 #     We'll use proper :py:class:`cell.Cell` subclass instances instead of the default ``xlrd.Cell``
 #     values that :py:mod:`xlrd` normally creates.
 #
 #     In addition to the superclass attributes, some additional unique
 #     attributes are introduced here.
-#        
+#
 #     ..  py:attribute:: wb
-#    
+#
 #         A xlrd workbook for this file.
-#        
+#
 #     ..  py:attribute:: datemode
-#    
+#
 #         The XLS date mode for this workbook. This is required for converting
 #         floating-point values to dates and dates to floating-point values.
 #
@@ -80,10 +80,12 @@ class XLS_Workbook( Workbook ):
 # ::
 
     def rows_of( self, sheet ):
-        """An iterator over all rows of the given sheet."""
-        self.sheet= self.wb.sheet_by_name(sheet.name)
-        for n in range(self.sheet.nrows):
-            data = self.sheet.row(n)
+        """An iterator over all rows of the given sheet object.
+        This uses the XLRD translation to locate the sheet.
+        """
+        current_sheet= self.wb.sheet_by_name(sheet.name)
+        for n in range(current_sheet.nrows):
+            data = current_sheet.row(n)
             row = stingray.sheet.Row( sheet, *(self.cell(col) for col in data) )
             yield row
 
@@ -125,7 +127,7 @@ class XLS_Workbook( Workbook ):
         else:
             raise ValueError( "Damaged Workbook" )
 
-# For proper date conversions, we have 
+# For proper date conversions, we have
 # two methods that leverage the datemode to properly convert dates
 # and times in :file:`.XLS` workbooks.
 #

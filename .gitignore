@@ -5,3 +5,6 @@
 *.sh
 /stingray-*.zip
 
+.idea/*
+.tox/*
+docs/html/.doctrees/
