@@ -48,7 +48,7 @@
 #             sheet= wb.sheet( filename )
 #             counts= process_sheet( sheet )
 #             pprint.pprint( counts )
-#    
+#   
 # Step 1 is to open the COBOL DDE "copybook" file, :file:`zipcty.cob` that defines the layout.
 # We build the schema using a :py:class:`cobol.loader.COBOLSchemaLoader`.
 #
@@ -70,9 +70,9 @@
 #     def process_sheet( sheet ):
 #         schema_dict= dict( (a.name, a) for a in sheet.schema )
 #         schema_dict.update( dict( (a.path, a) for a in sheet.schema ) )
-#        
+#       
 #         counts= { 'read': 0 }
-#        
+#       
 #         row_iter= sheet.rows()
 #         header= header_builder( next(row_iter), schema_dict )
 #         print( header )
@@ -81,7 +81,7 @@
 #             print( detail )
 #             counts['read'] += 1
 #         return counts
-#        
+#       
 # First, we've build two versions of the schema, indexed by low-level item name
 # and the full path to an item. In some cases, the low-level DDE items are unique,
 # and the paths are not required. In other cases, the paths are required.
@@ -105,7 +105,7 @@
 # For each row, there's a two-step operation.
 #
 # 1.  Access elements of each row using the COBOL DDE structure.
-#    
+#   
 # 2.  Build Python objects from the Cells found in the row.
 #
 # Generally, we must use lazy evaluation as shown in this example:
@@ -148,7 +148,7 @@
 # application, we'll do this.
 #
 # ..  parsed-literal::
-#    
+#   
 #     def build_object(row, schema):
 #         return Object( \*\*row_builder(row, schema) )
 #
@@ -204,7 +204,7 @@
 #     class ExtendedRecordFactory( cobol.loader.RecordFactory ):
 #         occurs_dependingon_class= stingray.cobol.defs.OccursDependingOnLimit
 #         #Default is occurs_dependingon_class= stingray.cobol.defs.OccursDependingOn
-#        
+#       
 #     class MySchemaLoader( cobol.loader.COBOLSchemaLoader ):
 #         record_factory_class= ExtendedRecordFactory
 #
@@ -254,7 +254,7 @@
 # reports on the structure. The DDE has an ``__iter__()`` method which 
 # provides a complete pre-order depth-first traversal of the record
 # structure.
-#    
+#   
 # Here are some functions which traverse the entire DDE structure.
 #
 # -   :py:func:`cobol.defs.report` reports on the DDE structure.
@@ -314,7 +314,7 @@
 #
 # -   **COMP-3**.  These are packed decimal fields, with the size derived from the picture clause;
 #     there are two digits packed into each byte, with an extra half-byte for a sign.
-#    
+#   
 # These require different strategies for decoding the input bytes. 
 #
 # Additional types include COMP-1 and COMP-2 which are single- and double-precision floating-point.
@@ -327,7 +327,7 @@
 #
 # The syntax for ODO is more complex: ``OCCURS [int TO] int [TIMES] DEPENDING [ON] name``.
 # Compare this with simple ``OCCURS int [TIMES]``.
-#    
+#   
 # This leads to variable byte positions for data items which follow the occurs clause,
 # based on the *name* value.
 #
@@ -339,7 +339,7 @@
 # -   Variably Located. The complex ODO situation where there's an ODO in the record.
 #     **All** ODO "depends on" fields become part of the offset calculation. This means
 #     we need an index for depends on clauses.
-#        
+#       
 # The technical buzzphrase is "a data item following, but not subordinate to, a variable-length table in the same level-01 record."
 #
 # See http://publib.boulder.ibm.com/infocenter/comphelp/v7v91/index.jsp?topic=%2Fcom.ibm.aix.cbl.doc%2Ftptbl27.htm
@@ -362,7 +362,7 @@
 #     - Variably Located. The calculation of size and offset is based on live data. 
 #       The :py:func:`cobol.defs.setSizeAndOffset` function must be used after the
 #       row is fetched but before any other processing.
-#      
+#     
 #       This is done automagically by a :py:class:`sheet.LazyRow` object.
 #
 #
@@ -393,7 +393,7 @@
 #     [COBOLSchemaLoader]->[Lexer],
 #     [COBOLSchemaLoader]->[RecordFactory],
 #     [RecordFactory]<>-[DDE].
-#    
+#   
 # ..  image:: cobol_loader.png
 #
 # Overheads
@@ -417,12 +417,6 @@ import stingray.schema.loader
 import stingray.cobol
 import stingray.cobol.defs
 
-# We'll put in a version number, just to support some debugging.
-#
-# ::
-
-__version__ = "4.4.9"
-
 # A module-level logger.
 #
 # ::
@@ -442,7 +436,7 @@ logger= logging.getLogger( __name__ )
 class SyntaxError( Exception ):
     """COBOL syntax error."""
     pass
-    
+  
 
 # Picture Clause Parsing
 # ======================
@@ -462,31 +456,31 @@ class SyntaxError( Exception ):
 # ..  py:class:: Picture
 #
 #     Define the various attribtes of a COBOL PICTURE clause.
-#    
+#   
 #     ..  py:attribute:: final
 #
 #         the final picture
-#        
+#       
 #     ..  py:attribute:: alpha
 #
 #         boolean; True if any ``"X"`` or ``"A"``; False if all ``"9"`` and related
-#        
+#       
 #     ..  py:attribute:: length
 #
 #         length of the final picture
-#        
+#       
 #     ..  py:attribute:: scale
 #
 #         count of ``"P"`` positions, often zero
-#        
+#       
 #     ..  py:attribute:: precision
 #
 #         digits to the right of the decimal point
-#        
+#       
 #     ..  py:attribute:: signed
 #
 #         boolean; True if any ``"S"``, ``"-"`` or related 
-#        
+#       
 #     ..  py:attribute:: decimal
 #
 #         ``"."`` or ``"V"`` or ``None``
@@ -551,14 +545,14 @@ def picture_parser( pic ):
             out.append( "." )
         else:
             raise SyntaxError( "Picture error in {!r}".format(pic) )
-        
+      
     final= "".join( out )
     alpha= ('A' in final) or ('X' in final) or ('/' in final)
     logger.debug( "PIC {0} {1} alpha={2} scale={3} prec={4}".format(pic, final, alpha, scale, precision) )
     # Note: Actual bytes consumed depends on len(final) and usage!
     return Picture( final, alpha, len(final), scale,
         precision, signed, decimal)
-        
+      
 # Lexical Scanning
 # ====================
 #
@@ -599,7 +593,7 @@ class Lexer:
 # ..  py:method:: Lexer.scan( text )
 #
 #     Locate the sequence of tokens in the input stream.
-#            
+#           
 # ::
 
     def scan( self, text ):
@@ -667,7 +661,7 @@ class Lexer_Long_Lines( Lexer ):
 #     class MySchemaLoader( cobol.COBOLSchemaLoader ):
 #         lexer_class= cobol.Lexer_Long_Lines
 #
-#            
+#           
 # Parsing
 # ============
 #
@@ -702,7 +696,7 @@ class RecordFactory:
         "SYNCH","SYNCHRONIZED",
         "USAGE","DISPLAY","COMP-3",
         "VALUE","."}
-    
+  
     redefines_class= stingray.cobol.defs.Redefines
     successor_class= stingray.cobol.defs.Successor
     group_class= stingray.cobol.defs.Group
@@ -719,7 +713,7 @@ class RecordFactory:
         self.token= None
         self.context= []
         self.log= logging.getLogger( self.__class__.__qualname__ )
-        
+      
 # Each of these parsing functions has a precondition of the last examined token
 # in ``self.token``.  They have a post-condition of leaving a **not**\ -examined
 # token in ``self.token``.
@@ -735,7 +729,7 @@ class RecordFactory:
         pic= self.token
         self.token= next(self.lex)
         return pic
-        
+      
 # ::
 
     def blankWhenZero( self ):
@@ -773,7 +767,7 @@ class RecordFactory:
                 self.token= next(self.lex)
             self.occurs_cruft()
             return self.occurs_fixed_class(occurs)
-            
+          
     def occurs_cruft( self ):
         """Soak up additional key and index sub-clauses."""
         if self.token in {"ASCENDING","DESCENDING"}:
@@ -792,7 +786,7 @@ class RecordFactory:
         # get indexed data names
         while self.token not in self.keywords:
             self.token= next(self.lex)
-            
+          
     def occurs2( self, lower ):
         """Parse the [Occurs n TO] m Times Depending On name"""
         self.token= next(self.lex)
@@ -808,7 +802,7 @@ class RecordFactory:
         name= self.token
         self.token= next(self.lex)
         self.occurs_cruft()
-        
+      
         return self.occurs_dependingon_class( name, default_size )
         #raise stingray.cobol.defs.UnsupportedError( "Occurs depending on" )
 
@@ -924,11 +918,11 @@ class RecordFactory:
     def dde_iter( self, lexer ):
         """Create a single DDE from an entry of clauses."""
         self.lex= lexer
-        
+      
         for self.token in self.lex:
             # Start with the level.
             level= self.token
-            
+          
             # Pick off a name, if present
             self.token= next(self.lex)
             if self.token in self.keywords:
@@ -936,7 +930,7 @@ class RecordFactory:
             else:
                 name= self.token
                 self.token= next(self.lex)
-            
+          
             # Placeholder. The USAGE must be pushed down from parent.
             # At the very top, the 01 defaults to USAGE DISPLAY.
             usage= self.parent_usage_class()
@@ -946,7 +940,7 @@ class RecordFactory:
             # Picture defines elementary vs. group level
             pic= None
             redefines= None # set to Redefines below or by addChild() to Group or Successor
-            
+          
             # Accumulate the relevant clauses, dropping noise words and irrelevant clauses.    
             while self.token and self.token != '.':
                 if self.token == "BLANK":
@@ -987,7 +981,7 @@ class RecordFactory:
                     except SyntaxError as e:
                         raise SyntaxError( "{!r} unrecognized".format(self.token) )
             assert self.token == "."
-            
+          
             # Create and yield the DDE
             if pic:
                 # Parse the picture; update the USAGE clause with details.
@@ -1002,13 +996,13 @@ class RecordFactory:
                 # Build a group-level DDE
                 dde= stingray.cobol.defs.DDE( 
                     level, name, usage=usage, occurs=occurs, redefines=redefines )
-                    
+                  
             yield dde
 
 # Note that some clauses (like ``REDEFINES``) occupy a special place in COBOL syntax.
 # We're not fastidious about enforcing COBOL semantic rules. Presumably the 
 # source is proper COBOL and was actually used to create the source file. 
-#        
+#       
 # ..  py:method:: RecordFactory.makeRecord( lexer )
 #
 #     This overall is iterator
@@ -1036,7 +1030,7 @@ class RecordFactory:
             # If a lower level number or same level, pop context
             while self.context and dde.level <= self.context[-1].level:
                 self.context.pop()
-                
+              
             if len(self.context) == 0: 
                 # Special case of multiple 01 levels.
                 self.log.info( "Multiple {0} levels".format(top.level) )
@@ -1058,7 +1052,7 @@ class RecordFactory:
                     assert dde.parent().picture, "88 not under elementary item"
                     dde.size= dde.parent().size 
                     dde.usage= dde.parent().usage
-            
+          
         self.decorate( top )
         yield top
 
@@ -1095,7 +1089,7 @@ class RecordFactory:
             pass # Log a warning?
         else:
             stingray.cobol.defs.setSizeAndOffset( top )
-                        
+                      
 # COBOL Schema Loader Class
 # ==========================
 #
@@ -1117,7 +1111,7 @@ class RecordFactory:
 #     [COBOLSchemaLoader]->[RecordFactory],
 #     [RecordFactory]<>-[DDE],
 #     [DDE]<>-[DDE].
-#    
+#   
 # ..  image:: cobol_final.png
 #
 # We have a number of supporting functions that make this work. The first two
@@ -1143,7 +1137,7 @@ def make_attr( aDDE ):
         name= aDDE.name,
         size= aDDE.size,
         create= aDDE.usage.create_func,
-        
+      
         # COBOL extensions:
         dde= weakref.ref(aDDE),
     )
@@ -1170,7 +1164,7 @@ def make_schema( dde_iter ):
             attr= make_attr(aDDE)
             schema.append( attr )
     return schema      
-            
+          
 # ..  py:class:: COBOLSchemaLoader
 #
 #     The overall schema loader process: parse and then build a schema.
@@ -1189,7 +1183,7 @@ class COBOLSchemaLoader( stingray.schema.loader.ExternalSchemaLoader ):
         self.source= source
         self.lexer= self.lexer_class( replacing )
         self.parser= self.record_factory_class()
-        
+      
 # ..  py:method:: COBOLSchemaLoader.load()
 #
 #     Use the :py:meth:`RecordFactory.makeRecord` method to iterate through
@@ -1202,7 +1196,7 @@ class COBOLSchemaLoader( stingray.schema.loader.ExternalSchemaLoader ):
         dde_iter= self.parser.makeRecord( self.lexer.scan(self.source) )
         schema= make_schema( dde_iter )
         return schema
-        
+      
 # The ``replacing`` keyword argument is a sequence of pairs: ``[ ('old','new'), ...]``.
 # The old text is replaced with the new text.  This seems strange because it is.
 # COBOL allows replacement text to permit reuse without name clashes.
@@ -1227,7 +1221,7 @@ class COBOLSchemaLoader( stingray.schema.loader.ExternalSchemaLoader ):
 #
 #     class MySchemaLoader( cobol.COBOLSchemaLoader ):
 #         lexer_class= cobol.loader.Lexer_Long_Lines
-#        
+#       
 # In some cases, we want to see the intermediate COBOL record definitions.
 # In this case, we want to do something like the following function.
 #
@@ -1254,11 +1248,11 @@ class COBOLSchemaLoader( stingray.schema.loader.ExternalSchemaLoader ):
 #
 #     :param replacing: replacing argument to provide to the lexer. 
 #         This is ``None`` by default.
-#    
+#   
 #     :returns: 2-tuple (dde_list, schema).
 #         The first item is a list of 01-level :py:class:`cobol.def.DDE` objects.
 #         The second item is a :py:class:`cobol.defs.Schema` object.
-#    
+#   
 # ::
 
 def COBOL_schema( source, lexer_class=Lexer, replacing=None,  ):
@@ -1291,7 +1285,7 @@ def COBOL_schema( source, lexer_class=Lexer, replacing=None,  ):
 #         The first item is a list of 01-level :py:class:`cobol.def.DDE` objects.
 #         The second item is list of :py:class:`cobol.defs.Schema` objects, one for
 #         each 01-level DDE.
-#    
+#   
 # ::
 
 def COBOL_schemata( source, replacing=None, lexer_class=Lexer ):
@@ -1318,10 +1312,10 @@ def COBOL_schemata( source, replacing=None, lexer_class=Lexer ):
 # There's a "High-Level API" that looks like this:
 #
 # ..  parsed-literal
-#    
+#   
 #     dde_list, schema_list = stingray.cobol.loader.COBOL_schemata( 
 #         source, lexer_class=cobol.loader.Lexer_Long_Lines )
 #     self.record_1, self.record_2 = dde_list
 #     self.schema_1, self.schema_2 = schema_list
-#    
+#   
 # When opening the workbook, one of the schema must be chosen as the "official" schema.

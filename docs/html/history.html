@@ -36,12 +36,14 @@
             
   <div class="section" id="history">
 <span id="id1"></span><h1>13. History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
-<p>Latest release is 4.4.8.</p>
+<p>Latest release is 4.5</p>
 <div class="section" id="version-4">
 <h2>13.1. Version 4<a class="headerlink" href="#version-4" title="Permalink to this headline">¶</a></h2>
 <p>Version 4 dates from March, 2014. It switches to Python3.</p>
 <p>Change Details:</p>
 <ul>
+<li><p class="first">Added support for parent-level USAGE clauses.</p>
+</li>
 <li><p class="first">Added a “replacing” option to the COBOL Schema Loader.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;xyzzy.cob&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cobol</span><span class="p">:</span>
     <span class="n">schema</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">COBOLSchemaLoader</span><span class="p">(</span> <span class="n">cobol</span><span class="p">,</span> <span class="n">replacing</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;&#39;WORD&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;BAR&quot;</span><span class="p">)</span> <span class="p">)</span>

@@ -5,7 +5,7 @@
 History
 ##############
 
-Latest release is 4.4.8.
+Latest release is 4.5
 
 Version 4
 ==========
@@ -13,6 +13,8 @@ Version 4
 Version 4 dates from March, 2014. It switches to Python3.
 
 Change Details:
+
+-   Added support for parent-level USAGE clauses.
 
 -   Added a "replacing" option to the COBOL Schema Loader.
 

@@ -417,12 +417,6 @@ from COBOL source instead of some other source.
   import stingray.cobol
   import stingray.cobol.defs
 
-We'll put in a version number, just to support some debugging.
-
-::
-
-  __version__ = "4.4.9"
-
 A module-level logger.
 
 ::

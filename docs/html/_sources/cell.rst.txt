@@ -183,12 +183,6 @@ Here are the module docstring and imports.
   import time
   from collections import Hashable
 
-A version string.
-
-::
-
-  __version__ = "4.4.9"
-
 Just to be sure that any locale-based processing will actually
 work, we establish a default locale.
 
