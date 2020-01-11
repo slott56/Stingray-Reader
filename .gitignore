@@ -8,3 +8,4 @@
 .idea/*
 .tox/*
 docs/html/.doctrees/
+.notes
