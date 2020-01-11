@@ -16,7 +16,7 @@
 #
 # -   A "hard-coded" schema, written as a Python object definition.  
 #     A static instance of :py:class:`schema.Schema` handles this gracefully.
-#    
+#   
 # For the essential implementation, see :ref:`schema_loader`.
 #
 # Also, we will have schemata written in COBOL notation, but that's handled separately.
@@ -70,7 +70,7 @@ class MockRow:
         return self.data[attribute.position]
     def __iter__( self ):
         return iter(self.data)
-        
+      
 # HeadingRowSchemaLoader Tests
 # ==============================
 #
@@ -138,7 +138,7 @@ class TestExternalSchemaLoader( unittest.TestCase ):
               stingray.cell.TextCell("str", self.wb),
               ),
             ]
-            
+          
         self.loader= stingray.schema.loader.ExternalSchemaLoader( self.wb, 'The_Name',)
     def test_should_parse( self ):
         schema = self.loader.schema()
@@ -192,7 +192,7 @@ class TestExternalSchemaSheet( unittest.TestCase ):
         self.assertEqual( "Second", row['Col 2'].to_str() )
     def test_should_have_attributes( self ):
         self.assertEqual( 'The_Name', self.sheet.name )
-        
+      
 # EmbeddedSchemaSheet Tests
 # ============================
 #

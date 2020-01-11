@@ -15,7 +15,7 @@
 # -   Workbooks in a variety of forms: CSV, Tab, XLSX, ODS, etc.
 #     The common feature of these schema is that they're flat.  A single
 #     index (or name) identifies each column. 
-#    
+#   
 #     The schema can be in a variety of places.
 #
 #     -   The schema may be a header row within a sheet.
@@ -31,7 +31,7 @@
 #
 #     The schema is a separate document, encoded in
 #     COBOL source code.
-#    
+#   
 # We'll also happen to cover relational database table definitions.  However,
 # this isn't our focus.  This is simply coincidence.
 #
@@ -277,12 +277,12 @@ import stingray.cell
 #     choice is arbitrary.
 #
 #     ..  py:attribute:: info
-#    
+#   
 #         Dict of additional information about this schema. Meta-metadata.
 #         For COBOL schema, this includes the source DDE.
-#    
+#   
 #     ..  py:attribute:: names
-#    
+#   
 #         Attribute names for rows_as_dict_iter()
 #
 # ::
@@ -315,7 +315,7 @@ class Schema( list ):
     def expand( self, aRow ):
         """Expand each attribute to create a dictionary of cells."""
         return dict( (attr.name, aRow.cell(attr)) for attr in self )
-        
+      
 # For parsing COBOL data, we often need to know the total length of the defined schema.
 # This only works for records without an Occurs Depending On.
 #
@@ -333,7 +333,7 @@ class Schema( list ):
 #     schema associated with the :py:class:`sheet.Sheet`. Names map to offsets and sizes;
 #     the bytes found there must be converted to Python objects. In the case of 
 #     Occurs Depending On (ODO), the offsets depend on both schema and data.
-#    
+#   
 #     COBOL data may have elements which are invalid, but unused due to application
 #     logic in selecting a proper REDEFINES alias.
 #
@@ -342,7 +342,7 @@ class Schema( list ):
 # must process things lazily by field name.
 #
 # This is unlike spreadsheets where we can process all fields eagerly and in order.
-#    
+#   
 # ..  todo:: Index by name and path, also.
 #
 #     This will eliminate some complexity in COBOL schema handling where
@@ -359,11 +359,11 @@ class Schema( list ):
 #     Here are the essential attributes of an Attribute.
 #
 #     ..  py:attribute:: name
-#    
+#   
 #         The attribute name. Typically always available for most kinds of schema.
 #
 #     ..  py:attribute:: create
-#    
+#   
 #         Cell class to create.  If omitted, the class-level
 #         :py:data:`Attribute.default_cell` will be used.
 #         By default, this refers to :py:class:`stingray.cell.TextCell`.
@@ -372,18 +372,18 @@ class Schema( list ):
 #     values commonly provided by simple fixed format file schemata.
 #
 #     ..  py:attribute:: offset
-#    
+#   
 #         Optional offset into a buffer. For simple fixed-layout files,
 #         this is a constant. For COBOL files with Occurs Depending On,
 #         however, this must be a function based on the actual record
 #         being processed.
 #
 #     ..  py:attribute:: size
-#    
+#   
 #         Optional size within the buffer.
 #
 #     ..  py:attribute:: position
-#    
+#   
 #         Optional sequential position.
 #
 #     A subclass might introduce yet more attributes.

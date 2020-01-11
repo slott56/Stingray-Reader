@@ -29,7 +29,7 @@ def suite_maker( source ):
                     unittest.defaultTestLoader.loadTestsFromTestCase(obj))
         return tests
     return make_suite
-    
+  
 # A handy logging context.
 #
 # ::

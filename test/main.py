@@ -20,7 +20,7 @@ import test.cobol
 import test.cobol_loader
 import test.cobol_2
 import test.snappy_protobuf
-        
+      
 # Construction of an overall suite depends on each module providing
 # and easy-to-use :py:func:`suite` function that returns the module's suite.
 #
@@ -38,15 +38,15 @@ def suite():
     s.addTests( test.cobol_2.suite() )
     s.addTests( test.snappy_protobuf.suite() )
     return s
-    
+  
 def main():
     with test.Logger( stream=sys.stderr, level=logging.WARN ):
-    
+  
         # Single test case for debugging purposes
         #single= test.cobol_2.Test_Copybook_11
         #suite= unittest.defaultTestLoader.loadTestsFromTestCase(single)
         #return unittest.TextTestRunner().run(suite)
-        
+      
         # All test cases is the default
         return unittest.TextTestRunner().run(suite())
 

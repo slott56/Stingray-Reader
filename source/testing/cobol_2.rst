@@ -39,7 +39,7 @@ This is a handy superclass for all the various tests.  It refactors the
 DDE Test copybook 1 with basic features
 ========================================
 
-Some basic COBOL.
+Some basic COBOL we found online.
 
 ::
 
@@ -57,7 +57,8 @@ Some basic COBOL.
              05                              PIC X(7).
   """
 
-Be sure it parses.  Be sure we can extract data.
+Be sure it parses.  Be sure we can extract data from a source document
+using the DDE as a schema.
 
 ::
 
@@ -102,7 +103,7 @@ DDE Test copybook 2 with 88-level item
 ========================================
 
 
-Include 88-level items in the source.
+An exaMple with 88-level items in the source.
 
 ::
 
@@ -972,7 +973,54 @@ Be sure it parses.  Be sure we can extract data.
           self.assertEqual( decimal.Decimal('0.00120'), row.cell(self.schema14[3]).to_decimal() )
           self.assertEqual( decimal.Decimal('-0.98765'), row.cell(self.schema14[4]).to_decimal() )
                 
-                   
+
+Interesting ODO Structure
+=========================
+
+See https://github.com/slott56/Stingray-Reader/issues/1.
+
+The reported but was on the :meth:`cobol.defs.DDE.__repr__`.
+Here's the sample code.
+
+::
+
+  issue_1 = """
+             02 GROUP-LABL.
+                03 LABL-STDY-GP-AR-CT           PIC 9(00004).
+                03 LABL-STDY-GP-AR
+                   OCCURS 0 TO 40 TIMES DEPENDING ON LABL-STDY-GP-AR-CT.
+                   05 LABL-PRSN-ID              PIC 9(00009).
+                   05 LABL-GNPR-ID              PIC 9(00009).
+                   05 LABL-GNRC-ID              PIC 9(00009).
+                   05 LABL-GNRC-AT              PIC -9(00012).9(6).
+                   05 LABL-GNRC-QY              PIC -9(00015).
+                   05 LABL-GNRC-CD              PIC X(00006).
+                   05 LABL-GNRC-PT              PIC -9(00003).9(4).
+                   05 LABL-GNRC-TX              PIC X(00030).
+                   05 LABL-QRY-FILL-50-TX       PIC X(00050).
+  """
+
+Here's a parser for this fragment.
+
+::
+
+  class Test_Issue_1( DDE_Test ):
+      def setUp( self ):
+          super().setUp()
+          file_like_object= io.StringIO(issue_1)
+          dde_list, schema_list = stingray.cobol.loader.COBOL_schemata( file_like_object )
+          self.issue_1 = dde_list[0]
+          self.schema = schema_list[0]
+      def test_should_parse( self ):
+          # stingray.cobol.defs.report( self.issue_1 )
+          self.assertEqual(4, self.issue_1.get('LABL-STDY-GP-AR-CT').size)
+          self.assertEqual(9, self.issue_1.get('LABL-GNRC-PT').size)
+          self.assertEqual(20, self.issue_1.get('LABL-GNRC-AT').size)
+          self.assertEqual("02 GROUP-LABL ['03 LABL-STDY-GP-AR-CT   PIC 9(00004).', '03 LABL-STDY-GP-AR     OCCURS TO 40 DEPENDING ON LABL-STDY-GP-AR-CT.']", repr(self.issue_1))
+
+The reposered bug was a :func:`map` that worked in Python 2 but
+was untested in Python 3.
+
 Test Suite and Runner
 =====================
 

@@ -42,7 +42,7 @@ class MockDefaultCell:
             ) )
     def __ne__( self, other ):
         return not self.__eq__( other )
-                                
+                              
 class MockDDE:
     def __init__( self, **kw ):
         self.totalSize= 0 # if otherwise unspecified
@@ -59,7 +59,7 @@ class MockDDE:
 class MockNonRedefine:
     def __init__( self, **kw ):
         self.__dict__.update( kw )
-        
+      
 class MockOccurs:
     def __init__( self, number ):
         self._number= number
@@ -67,14 +67,14 @@ class MockOccurs:
         return self._number
     def __repr__( self ):
         return "{_class_name}({_number})".format(_class_name=self.__class__.__name__, **self.__dict__)
-        
+      
 class MockSchema( list ):
     def __init__( self, *args, **kw ):
         super().__init__( *args )
         self.info= kw
     def lrecl( self ):
         return max( a.offset+a.size for a in self )
-                
+              
 # Repeating Attribute
 # =====================
 #
@@ -186,7 +186,7 @@ class TestNestedRepeatingAttribute( unittest.TestCase ):
         complex= self.complex_10.index(2,1)
         self.assertEqual( 23, complex.offset )
         self.assertEqual( 2, complex.size )
-        
+      
 # DDE Data Access
 # =====================
 #
@@ -226,11 +226,11 @@ class Test_Dimensional_Access( unittest.TestCase ):
             ),
             dde= [self.top]
         )
-        
+      
         self.data = stingray.cobol.Character_File( name="", 
             file_object= ["111213212223313233414243515253616263717273818283919293010203",],
             schema=self.schema )
-            
+          
     def test_should_get_cell( self ):
         """Get individual cell values."""
         # 1-based indexing in COBOL, Python, however, is zero-based.
@@ -248,7 +248,7 @@ class Test_Dimensional_Access( unittest.TestCase ):
         slice= row.cell( self.schema[0].index(1) )
         #print( "Offset, Slice =", self.schema[0].index(1).offset, slice )
         self.assertEqual( ('21', '22', '23'), tuple( c.to_str() for c in slice ) )
-        
+      
 
 # Workbook File Access    
 # ========================
@@ -264,12 +264,12 @@ class MockAttribute:
         self.__dict__.update( kw )
     def __repr__( self ):
         return repr( self.__dict__ )
-        
+      
 class MockTextCell:
     def __init__( self, buffer, workbook, attr ):
         self.raw, self.workbook, self.attr= buffer, workbook, attr
         self.value= workbook.text( self.raw, self.attr )
-        
+      
 class MockDisplayCell( MockTextCell ):
     def __init__( self, buffer, workbook, attr ):
         self.raw, self.workbook, self.attr= buffer, workbook, attr
@@ -368,7 +368,7 @@ class TestEBCDICFile_Fixed( unittest.TestCase ):
         self.assertEqual( decimal.Decimal('678.90'), row.cell( self.attr_num2 ).value )
         self.assertEqual( decimal.Decimal('4660'), row.cell( self.attr_comp ).value )
         self.assertEqual( decimal.Decimal('-987.65'), row.cell( self.attr_comp3 ).value )
-  
+
 # Given a schema and some data, pick apart the row of a fake EBCDIC File.
 # This file has a RECFM of V, it has Record Descriptor Word (RDW)
 #
@@ -396,7 +396,7 @@ class TestEBCDICFile_Variable( TestEBCDICFile_Fixed ):
 
 # EBCDIC File with VB format. It has Block Descriptor Word (BDW) and 
 # Record Descriptor Word (RDW).
-# 
+#
 # ::
 
 class TestEBCDICFile_VariableBlocked( TestEBCDICFile_Fixed ):
@@ -464,7 +464,7 @@ class TestEBCDICFile_VariableWithoutRDW( TestEBCDICFile_Fixed ):
             b"\xf6\xf7\xf8\xf9\xf0" # NUMBER-2="678.90"
             b"\x00\x00\x12\x34" # NUMBER-3=4660
             b"\x98\x76\x5d" # NUMBER-4=-987.65
-            
+          
             b"\xe9\xd6\xe2" # WORD="ZOS"
             b"\xf1\xf2\xf3K\xf4\xf5" # NUMBER-1="123.45"
             b"\xf6\xf7\xf8\xf9\xf0" # NUMBER-2="678.90"
@@ -565,7 +565,7 @@ class TestNumberConversion( unittest.TestCase ):
             size_scale_precision = Picture('999.99', False, 5, 0, 2, True, ".") )
         n3= self.wb.number_display( b'\xf1\xf2\xf3K\xf4\xf5', attr3 )
         self.assertEqual( decimal.Decimal('123.45'), n3 )
-        
+      
     def test_should_convert_display_2(self):
         attr1= types.SimpleNamespace(
             size_scale_precision = Picture('9', False, 1, 0, 0, True, "V") )
@@ -583,7 +583,7 @@ class TestNumberConversion( unittest.TestCase ):
             size_scale_precision = Picture('99999V', False, 5, 0, 0, True, "V") )
         n2= self.wb.number_comp3( b'\x12\x34\x98\x76\x5d', attr2 )
         self.assertEqual( decimal.Decimal('-123498765'), n2 )
-        
+      
 
 # Test Suite and Runner
 # =====================

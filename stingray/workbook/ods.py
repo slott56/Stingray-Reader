@@ -29,13 +29,13 @@ import stingray.cell
 #
 #     In addition to the superclass attributes, some additional unique
 #     attributes are introduced here.
-#        
+#       
 #     ..  py:attribute:: zip_archive
-#    
+#   
 #         A zip archive for this file.
-#        
+#       
 #     ..  py:attribute:: tables
-#    
+#   
 #         A mapping that provides sheet names.
 #
 # ::
@@ -90,7 +90,7 @@ class ODS_Workbook( Workbook ):
 # ..  py:method:: ODS_Workbook.sheets( )
 #
 #     Return the list of sheets for this workbook.
-#    
+#   
 # ::
 
     def sheets( self ):
@@ -185,7 +185,7 @@ class ODS_Workbook( Workbook ):
             return stingray.cell.EmptyCell( '', self )
         else: 
             raise Exception( "Unknown cell {0}".format( dom.tostring(cell_doc) ) )
-            
+          
 # An ``iterparse`` version of building a row
 # would look for start of ``table`` tags and then get
 # the name attribute from that tag just to locate the right sheet.

@@ -1266,6 +1266,7 @@ Confirm that this class really works
           self.assertTrue( any( f.name == "ANOTHER-RECORD" for f in schema ) )
           self.assertTrue( any( f.name == "HEADER-TRAILER-RECORD" for f in fixed_schema ) )
 
+
 Test Suite and Runner
 =====================
 

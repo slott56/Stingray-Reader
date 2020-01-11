@@ -78,12 +78,12 @@ def main(args):
 <li>❶ <code class="samp docutils literal notranslate"><span class="pre">for</span> <span class="pre">name</span> <span class="pre">in</span> <span class="pre">source.sheets()</span></code> claims that <em>all</em> sheets have valid data.
 When this is not the case, more sophisticated name filtering
 needs to be inserted into this loop.</li>
-<li>❷ <code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.EmbeddedSchemaSheet</span></code> states that the sheet has the schema
+<li>❷ <a class="reference internal" href="sheet.html#sheet.EmbeddedSchemaSheet" title="sheet.EmbeddedSchemaSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.EmbeddedSchemaSheet</span></code></a> states that the sheet has the schema
 embedded in it.  For example, the headers in the first row of the sheet.
-We can use <code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.ExternalSchemaSheet</span></code> to specify
+We can use <a class="reference internal" href="sheet.html#sheet.ExternalSchemaSheet" title="sheet.ExternalSchemaSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.ExternalSchemaSheet</span></code></a> to specify
 that an external schema must be loaded. For example, a separate sheet in this
 workbook or perhaps a separate file.</li>
-<li>❸ <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></code> states that the schema is
+<li>❸ <a class="reference internal" href="schema_loader.html#schema.loader.HeadingRowSchemaLoader" title="schema.loader.HeadingRowSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></code></a> states that the schema is
 the first row of the sheet.  We can write other parsers for other sheets
 with more complex or atypical layouts.</li>
 </ul>
@@ -427,10 +427,10 @@ allowing transparent changes to physical format.</p>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">1. Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="design.html">2. Design Considerations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="package.html">3. The <code class="docutils literal notranslate"><span class="pre">stingray</span></code> Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cell.html">4. Stingray Build</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sheet.html">5. Stingray Build</a></li>
-<li class="toctree-l1"><a class="reference internal" href="schema.html">6. Stingray Build</a></li>
-<li class="toctree-l1"><a class="reference internal" href="schema_loader.html">7. Stingray Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cell.html">4. Cell Module – Data Element Containers and Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sheet.html">5. Sheet Module – Sheet and Row Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema.html">6. Schema Package – Schema and Attribute Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_loader.html">7. Schema Loader Module – Load Embedded or External Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workbook/index.html">8. Workbook Package – Uniform Wrappers for Workbooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="iwork13.html">9. The “Other” Modules: snappy and protobuf</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cobol.html">10. The COBOL Package</a></li>
@@ -439,7 +439,7 @@ allowing transparent changes to physical format.</p>
 <li class="toctree-l1"><a class="reference internal" href="history.html">13. History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing/index.html">14. Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build.html">15. Stingray Build</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">16. Stingray Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">16. Installation via <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">17. Licensing</a></li>
 </ul>
 

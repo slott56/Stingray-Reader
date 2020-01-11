@@ -17,7 +17,7 @@
 #
 # -   The hierarchy of classes based on :py:class:`cobol.COBOL_File` which provide
 #     more sophisticated COBOL-based workbooks.
-#    
+#   
 # Within the package we have the :py:mod:`cobol.loader` module which parses DDE's
 # to create a schema. 
 #
@@ -90,13 +90,13 @@ from stingray.cobol.defs import TextCell
 # ..  py:attribute:: name
 #
 #     The attribute name. Typically always available for most kinds of schema.
-#    
+#   
 # ..  py:attribute:: create
 #
 #     Cell class to create.  If omitted, the class-level
 #     :py:data:`Attribute.default_cell` will be used.
 #     By default, this refers to :py:class:`cell.TextCell`.
-#    
+#   
 # ..  py:attribute:: position
 #
 #     Optional sequential position. This is set by the :py:class:`schema.Schema`
@@ -105,7 +105,7 @@ from stingray.cobol.defs import TextCell
 # The additional values commonly provided by simple fixed format file schemata.
 # These can't be treated as simple values, however, since they're
 # clearly changed based on the ODO issues.
-#   
+#  
 # ..  py:attribute:: size
 #
 #     Size within the buffer.
@@ -128,9 +128,9 @@ from stingray.cobol.defs import TextCell
 #     Optional offset into a buffer. This may be statically defined,
 #     or it may be dynamic because of variably-located data supporting
 #     the Occurs Depends On.
-#    
+#   
 #     This meay be set by the :py:meth:`cobol.RepeatingAttribute.index` method.
-#     
+#    
 # This subclass introduces yet more attribute-like properties that simply
 # delegate to the DDE.
 #
@@ -141,19 +141,19 @@ from stingray.cobol.defs import TextCell
 # ..  py:attribute:: path
 #
 #     The ``"."``-separated path from top-level name to this element's name.
-#    
+#   
 # ..  py:attribute:: usage
 #
 #     The original DDE.usage object, an instance of :py:class:`cobol.defs.Usage`
-#    
+#   
 # ..  py:attribute:: redefines
 #
 #     The original DDE.allocation object, an instance of :py:class:`cobol.defs.Allocation`
-#    
+#   
 # ..  py:attribute:: picture
 #
 #     The original DDE.picture object, an instance of :py:class:`cobol.loader.Picture`
-#    
+#   
 # ..  py:attribute:: size_scale_precision
 #
 #     The original DDE.sizeScalePrecision object, a tuple with size, scale and precision derived
@@ -170,7 +170,7 @@ from stingray.cobol.defs import TextCell
 
 class RepeatingAttribute( stingray.schema.Attribute ):
     """An attribute with dimensionality. Not all COBOL items repeat.
-    
+  
     An "OCCURS" clause will define repeating values. 
     An "OCCURS DEPENDING ON" clause may define variably located values. 
     """
@@ -207,14 +207,14 @@ class RepeatingAttribute( stingray.schema.Attribute ):
 #
 #     -   Second, the :py:class:`COBOL_File` will supply any remaining indices,
 #         creating yet more temporary  :py:class:`cobol.IndexedAttribute` based on the initial offset.
-# 
+#
 # ::    
 
     def index( self, *values ):
         """"Apply possibly incomplete index values to an attribute.
         We do this by cloning this attribute and setting a modified 
         dimensionality and offset.
-        
+      
         :param values: 0-based index values.  Yes, legacy COBOL language is 1-based.
             For Python applications, zero-based makes more sense.
         :returns: A :py:class:`cobol.IndexedAttribute` copy, with modified offset
@@ -321,10 +321,10 @@ class IndexedAttribute( RepeatingAttribute ):
 
 class ODO_LazyRow( stingray.sheet.LazyRow ):
     """If the DDE is variably-located, tweak the sizes and offsets."""
-    
+  
     def __init__( self, sheet, **state ):
         """Build the row from the bytes.
-        
+      
         :param sheet: the containing sheet.
         :param **state: worksheet-specific state value to save.
         """
@@ -354,7 +354,7 @@ class ODO_LazyRow( stingray.sheet.LazyRow ):
 #
 #     The Cell will be a Cell object, either with valid data or an :py:class:`cobol.defs.ErrorCell`.
 #
-#    
+#   
 # ::
 
 def dump_iter( aDDE, aRow ):
@@ -394,7 +394,7 @@ def dump( schema, aRow ):
             print( "{:45s} {:3d} {:3d} {!r} {!s}".format(
                 aDDE.indent*'  '+str(aDDE), aDDE.offset, aDDE.size, 
                 raw_bytes, cell) )
-    
+  
 
 # COBOL "Workbook" Files
 # ========================
@@ -440,10 +440,10 @@ def dump( schema, aRow ):
 #         information **and** the worksheet-specific methods for unpacking the 
 #         various types of data.  The various :py:mod:`cobol` Cell subclasses
 #         can refer to the proper conversion methods.
-#    
+#   
 #     -   Create the required :py:class:`cell.Cell` based on the ``attribute.create`` function.
 #         See :class:`schema.Attribute`.
-#    
+#   
 # There's a less common use case to extract a subset of row bytes to populate a 
 # separate 01-level definition that's not tied to the Workbook's schema.
 #
@@ -464,7 +464,7 @@ def dump( schema, aRow ):
 #
 # ..  image:: cobol_file.png
 #     :width: 6in
-#    
+#   
 # COBOL File
 # --------------
 #
@@ -479,10 +479,10 @@ class COBOL_File( Fixed_Workbook ):
     """A COBOL "workbook" file which uses  :py:class:`cobol.RepeatingAttribute` and
     creates COBOL Cell values.  This is an abstraction which
     lacks specific decoding methods.
-    
+  
     This is a :py:class:`Fixed_Workbook`: a file with fixed-sized, no-punctuation fields.
     A schema is required to parse the attributes.
-    
+  
     The rows are defined as :py:class:`cobol.ODO_LazyRow` instances so that
     bad data can be gracefully skipped over and Occurs Depending On offsets
     can be properly calculated.
@@ -543,7 +543,7 @@ class COBOL_File( Fixed_Workbook ):
         else:
             # Doesn't belong here, delegate.
             return self.row_get( row, attr ) 
-            
+          
 # ..  py:method:: COBOL_File.row_get( row, attr )
 #
 #     The API method will get data from a row described by an attribute.
@@ -556,7 +556,7 @@ class COBOL_File( Fixed_Workbook ):
 #
 #     This is the most-used method. Removing the if-statement would be
 #     a huge improvement.
-#    
+#   
 # :: 
 
     def row_get( self, row, attr ):
@@ -590,7 +590,7 @@ class COBOL_File( Fixed_Workbook ):
 
     def subrow( self, subschema, text_cell ):
         """Build a row-like object from a single field.
-        
+      
         :param subschema: a schema built from an 01-level DDE.
         :param text_cell: a specific text cell to use.
         """
@@ -635,10 +635,10 @@ class Character_File( COBOL_File ):
 # ..  note:: The core rule for character files
 #
 #     Leading separate sign is the default for character files.
-#    
+#   
 #     COBOL can support other kinds of signs. This conversion doesn't.
-#    
-#    
+#   
+#   
 # ::
 
     @staticmethod
@@ -702,7 +702,7 @@ class Character_File( COBOL_File ):
         except Exception:
             Character_File.log.debug( "Can't process {0!r} from {1!r}".format(digits,buffer) )
             raise
-    
+  
 # COMP in proper character files may not make any sense, either. 
 # A codec would make a hash of the bit patterns required.  
 # Again, we've defined it here because that's relatively simple to extend.
@@ -723,7 +723,7 @@ class Character_File( COBOL_File ):
             sc, bytes = '>q', 8
         n= struct.unpack( sc, buffer )
         return decimal.Decimal( n[0] )
-    
+  
 # Class-level logger
 #
 # ::
@@ -803,11 +803,11 @@ class RECFM_F(RECFM_Parser):
 
 class RECFM_FB( RECFM_F ):
     """Parse RECFM=FB; the lrecl is the length of each record.
-    
+  
     It's not clear that there's any difference between F and FB.
     """
     pass
-    
+  
 # ..  py:class:: RECFM_V
 #
 #     Variable-length records. Each record has an RDW header word with the length.
@@ -838,7 +838,7 @@ class RECFM_V(RECFM_Parser):
             data= self.source.read( size-4 )
             yield rdw, data
             rdw= self.source.read(4)
-            
+          
 # We might want to implement the :py:meth:`RECFM_Parser.used` method to compare the number of bytes
 # used against the RDW size.
 #
@@ -887,7 +887,7 @@ class RECFM_VB(RECFM_Parser):
                 yield rdw, block_data[offset+4:offset+size]
                 offset += size
             bdw= self.source.read(4)
-            
+          
 # We might want to implement a generic :py:meth:`RECFM_Parser.used` method to compare the number of bytes
 # used against the RDW size and raise an exception in the event of a mismatch.
 #
@@ -969,20 +969,20 @@ class EBCDIC_File( Character_File ):
 #     -   If the schema depends on a variably located DDE, then we need to do the 
 #         :py:func:`cobol.defs.setSizeAndOffset` function using the DDE.
 #         This is done automagically by the :py:class:`cobol.ODO_LazyRow` object.
-#    
+#   
 #     -   The legacy Z/OS RECFM details. 
 #
 #         *   We might have F or FB files, which are simply
 #             long runs of EBCDIC bytes with no line breaks.
 #             The LRECL must match the DDE.
-#        
+#       
 #         *   We might have V (or VB) which have 4-byte header on each row (plus a 4-byte header on each block.)
 #             The LRECL doesn't matter.
-#        
+#       
 #         *   We can tolerate the awful situation where it's variable length (Occurs Depending On)
 #             but there are no RECFM=V or RECFM=VB header words. We call this RECFM=N.
 #             We fetch an oversized buffer and push back bytes beyond the end of the record.
-#    
+#   
 #         This means that the ``super().rows_of( sheet )`` has been replaced with a RECFM-aware
 #         byte-parser. This byte parser may involve a back-and-forth to handle RECFM=N.
 #         In the case of RECFM=N, we provide an overly-large buffer (32768 bytes) and after
@@ -994,11 +994,11 @@ class EBCDIC_File( Character_File ):
     def rows_of( self, sheet ):
         """Iterate through all "rows" of this "sheet". 
         Really, this means all records of this COBOL file.
-        
+      
         Note the handshake with RECFM parser to show how many
         bytes were really needed.  For RECFM_N, this is important.
         For other RECFM, this is ignored.
-        
+      
         :py:class:`cobol.ODO_LazyRow` may adjust the schema 
         if it has an Occurs Depending On.
         """
@@ -1026,11 +1026,11 @@ class EBCDIC_File( Character_File ):
 # will include a sign in addition to the digit.
 #
 # -   The last EBCDIC character might be '\xF1' to '\xF9' which is unsigned.
-#    
+#   
 # -   The last EBCDIC character might be '\xC1' to '\xC9' which is positive.
 #
 # -   The last EBCDIC character might be '\xD1' to '\xD9' which is negative.
-#    
+#   
 # Really.
 #
 #

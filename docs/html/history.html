@@ -50,14 +50,14 @@
 <p>The idea is to permit a copybook that expects “REPLACING” to be parsed.</p>
 </li>
 <li><p class="first">Handle multiple 01-level declarations.</p>
-<p>When we look at the context for <code class="xref py py-meth docutils literal notranslate"><span class="pre">cobol.loader.RecordFactory.makeRecord()</span></code>, this
+<p>When we look at the context for <a class="reference internal" href="cobol_loader.html#cobol.loader.RecordFactory.makeRecord" title="cobol.loader.RecordFactory.makeRecord"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cobol.loader.RecordFactory.makeRecord()</span></code></a>, this
 becomes an iterator which yields each <code class="docutils literal notranslate"><span class="pre">01</span></code> level DDE.</p>
 <p>When the stack is popped
 down to empty, yield the structure and then start parsing again.</p>
-<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">cobol.loader.COBOLSchemaLoader.load()</span></code> method builds the
-schema, iterates through all the <code class="docutils literal notranslate"><span class="pre">01</span></code> objects returned by <code class="xref py py-meth docutils literal notranslate"><span class="pre">cobol.loader.RecordFactory.makeRecord()</span></code>,
+<p>The <a class="reference internal" href="cobol_loader.html#cobol.loader.COBOLSchemaLoader.load" title="cobol.loader.COBOLSchemaLoader.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cobol.loader.COBOLSchemaLoader.load()</span></code></a> method builds the
+schema, iterates through all the <code class="docutils literal notranslate"><span class="pre">01</span></code> objects returned by <a class="reference internal" href="cobol_loader.html#cobol.loader.RecordFactory.makeRecord" title="cobol.loader.RecordFactory.makeRecord"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cobol.loader.RecordFactory.makeRecord()</span></code></a>,
 and returns <code class="docutils literal notranslate"><span class="pre">v.schema</span></code> as the resulting schema.</p>
-<p>Any unit test that uses <code class="xref py py-meth docutils literal notranslate"><span class="pre">cobol.loader.RecordFactory.makeRecord()</span></code> must change to reflect
+<p>Any unit test that uses <a class="reference internal" href="cobol_loader.html#cobol.loader.RecordFactory.makeRecord" title="cobol.loader.RecordFactory.makeRecord"><code class="xref py py-meth docutils literal notranslate"><span class="pre">cobol.loader.RecordFactory.makeRecord()</span></code></a> must change to reflect
 it’s revised interface as an iterator.</p>
 </li>
 <li><p class="first">Add some COBOL demos.</p>
@@ -69,14 +69,14 @@ it’s revised interface as an iterator.</p>
 <li><p class="first">Handle Occurs Depending On. Parse the syntax for ODO. Update LazyRow to
 tweak size and offset information for each row fetched.</p>
 </li>
-<li><p class="first">Add Z/OS RECFM handling in the <code class="xref py py-class docutils literal notranslate"><span class="pre">cobol.EBCDIC_File</span></code> class.
+<li><p class="first">Add Z/OS RECFM handling in the <a class="reference internal" href="cobol_init.html#cobol.EBCDIC_File" title="cobol.EBCDIC_File"><code class="xref py py-class docutils literal notranslate"><span class="pre">cobol.EBCDIC_File</span></code></a> class.
 This will allow processing “Raw” EBCDIC files with RECFM of V and
 RECFM of VB – these files include BDW and RDW headers on blocks
 and records.</p>
 </li>
-<li><p class="first">Fix the <code class="xref py py-func docutils literal notranslate"><span class="pre">cobol.dump()</span></code> to properly iterate through all fields.</p>
+<li><p class="first">Fix the <a class="reference internal" href="cobol_init.html#cobol.dump" title="cobol.dump"><code class="xref py py-func docutils literal notranslate"><span class="pre">cobol.dump()</span></code></a> to properly iterate through all fields.</p>
 </li>
-<li><p class="first">Fix the <code class="xref py py-class docutils literal notranslate"><span class="pre">cobol.defs.Usage</span></code> hierarchy to properly handle
+<li><p class="first">Fix the <a class="reference internal" href="cobol_defs.html#cobol.defs.Usage" title="cobol.defs.Usage"><code class="xref py py-class docutils literal notranslate"><span class="pre">cobol.defs.Usage</span></code></a> hierarchy to properly handle
 data which can’t be converted. An ErrorCell is created in the (all too common)
 case where the COBOL data is invalid.</p>
 </li>
@@ -94,7 +94,7 @@ references. Replace <code class="docutils literal notranslate"><span class="pre"
 <li><p class="first">Handled precision of comp3 correctly.
 <a class="reference external" href="https://sourceforge.net/p/stingrayreader/tickets/9/">https://sourceforge.net/p/stingrayreader/tickets/9/</a></p>
 </li>
-<li><p class="first">Added <code class="xref py py-class docutils literal notranslate"><span class="pre">cobol.loader.Lexer_Long_Lines</span></code> to parse copybooks with
+<li><p class="first">Added <a class="reference internal" href="cobol_loader.html#cobol.loader.Lexer_Long_Lines" title="cobol.loader.Lexer_Long_Lines"><code class="xref py py-class docutils literal notranslate"><span class="pre">cobol.loader.Lexer_Long_Lines</span></code></a> to parse copybooks with
 junk in positions 72:80 of each line.
 <a class="reference external" href="https://sourceforge.net/p/stingrayreader/tickets/11/">https://sourceforge.net/p/stingrayreader/tickets/11/</a></p>
 </li>
@@ -130,7 +130,7 @@ The idea is that we can do
 to map a field, <code class="docutils literal notranslate"><span class="pre">GENERIC-FIELD</span></code>, to an 01-level schema, <code class="docutils literal notranslate"><span class="pre">self.segment_abc</span></code>.
 We can then pick fields out of <code class="docutils literal notranslate"><span class="pre">subrow</span></code> using fields defined in <code class="docutils literal notranslate"><span class="pre">self.segment_abc</span></code>.</p>
 </li>
-<li><p class="first">Add <code class="xref py py-func docutils literal notranslate"><span class="pre">cobol.loader.COBOL_schema()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">cobol.loader.COBOL_schemata()</span></code>
+<li><p class="first">Add <a class="reference internal" href="cobol_loader.html#cobol.loader.COBOL_schema" title="cobol.loader.COBOL_schema"><code class="xref py py-func docutils literal notranslate"><span class="pre">cobol.loader.COBOL_schema()</span></code></a> and <a class="reference internal" href="cobol_loader.html#cobol.loader.COBOL_schemata" title="cobol.loader.COBOL_schemata"><code class="xref py py-func docutils literal notranslate"><span class="pre">cobol.loader.COBOL_schemata()</span></code></a>
 functions to provide a higher-level API for building a record schema or
 a (less common) multiple schemata.</p>
 </li>
@@ -248,10 +248,10 @@ encoding.</li>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">1. Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="design.html">2. Design Considerations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="package.html">3. The <code class="docutils literal notranslate"><span class="pre">stingray</span></code> Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cell.html">4. Stingray Build</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sheet.html">5. Stingray Build</a></li>
-<li class="toctree-l1"><a class="reference internal" href="schema.html">6. Stingray Build</a></li>
-<li class="toctree-l1"><a class="reference internal" href="schema_loader.html">7. Stingray Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cell.html">4. Cell Module – Data Element Containers and Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sheet.html">5. Sheet Module – Sheet and Row Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema.html">6. Schema Package – Schema and Attribute Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_loader.html">7. Schema Loader Module – Load Embedded or External Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workbook/index.html">8. Workbook Package – Uniform Wrappers for Workbooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="iwork13.html">9. The “Other” Modules: snappy and protobuf</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cobol.html">10. The COBOL Package</a></li>
@@ -260,7 +260,7 @@ encoding.</li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">13. History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing/index.html">14. Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build.html">15. Stingray Build</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">16. Stingray Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">16. Installation via <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">17. Licensing</a></li>
 </ul>
 

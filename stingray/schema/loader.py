@@ -17,7 +17,7 @@
 #
 # -   A separate sheet of a workbook.
 #     This version requires a sheet name.
-#        
+#       
 # -   A separate workbook.  This, too, requires a named sheet.
 #
 # -   COBOL Code.  We'll set this aside as a subclass
@@ -57,7 +57,7 @@
 #         sheet = self.wb.sheet( 'Sheet2', 
 #             stingray.sheet.EmbeddedSchemaSheet,
 #             loader_class= stingray.schema.loader.HeadingRowSchemaLoader )
-#            
+#           
 #         for row in sheet.rows():
 #             *process the row*
 #
@@ -145,7 +145,7 @@ import warnings
 
 class NoSchemaFound( Exception ):
     pass
-    
+  
 # The default behavior is to simply write a warning for an empty sheet.
 # The lack of a schema means there's no data, also, and 99% of the time, silently ignoring
 # an empty sheet is desirable.
@@ -156,16 +156,16 @@ class NoSchemaFound( Exception ):
 # ..  py:class:: SchemaLoader
 #
 #     A Schema Loader has one mandatory contract: It must load the schema.
-#    
+#   
 #     A subclass may add a second contract, For example, 
 #     an embedded schema loader will also return the non-schema rows.
-#    
+#   
 #     ..  py:attribute:: sheet
-#    
+#   
 #         The :py:class:`Sheet` associated with this schema.
-#        
+#       
 #     ..  py:attribute:: row_iter
-#    
+#   
 #         An iterator over the rows of this sheet; used to pick rows that
 #         belong to the header, separate from the rows that belong to data.
 #
@@ -222,8 +222,8 @@ class HeadingRowSchemaLoader( SchemaLoader ):
             return schema
         except StopIteration:
             warnings.warn( "Empty sheet: no schema present" )
-            
-        
+          
+      
 # We'll open a :py:class:`sheet.Sheet` with a specific loader.
 #
 # ..  parsed-literal::
@@ -235,7 +235,7 @@ class HeadingRowSchemaLoader( SchemaLoader ):
 # ..  py:class:: NonBlankHeadingRowSchemaLoader
 #
 #     In many cases, we'd like to suppress the empty rows that are an inevitable feature of workbook sheets.  
-#    
+#   
 #     Note that this doesn't work well for COBOL
 #     or Fixed format files, since an "empty" row may be difficult to discern.
 #
@@ -251,7 +251,7 @@ class NonBlankHeadingRowSchemaLoader( HeadingRowSchemaLoader ):
             if all( c.is_empty() for c in r ):
                 continue
             yield r
-        
+      
 # External Schema Loader
 # ==========================
 #
@@ -273,7 +273,7 @@ class NonBlankHeadingRowSchemaLoader( HeadingRowSchemaLoader ):
 #     1.  A dictionary-based "builder", :py:meth:`schema.loader.ExternalSchemaLoader.build_attr`, to handle Logical Layout.  
 #         This transforms the input "raw" dictionary of :py:class:`cell.Cell` instances to an application dictionary of proper Python objects.
 #         See :ref:`developer`.
-#    
+#   
 #     2.  An iterator, :py:meth:`schema.loader.ExternalSchemaLoader.attr_dict_iter`, 
 #         that provides "raw" dictionaries from each row (based on the schema) to the 
 #         builder to create application dictionaries.
@@ -283,11 +283,11 @@ class NonBlankHeadingRowSchemaLoader( HeadingRowSchemaLoader ):
 #         that iterates over application objects built from application dictionaries.
 #
 #     ..  py:attribute:: workbook
-#    
+#   
 #         The overall Workbook that we're parsing to locate schema information.
-#    
+#   
 #     ..  py:attribute:: Sheet
-#    
+#   
 #         A specific sheet within that workbook.
 #
 # ::
@@ -297,22 +297,22 @@ class ExternalSchemaLoader( SchemaLoader ):
     Build a schema with attribute name, offset, size  and type
     information.  The type is a string that names the
     type of cell to create.
-    
+  
     The meta-schema must be embedded as the first line of the schema sheet.
-    
+  
     The assumed meta-schema is the following::
-    
+  
         Schema( 
             Attribute("name",create="TextCell"),
             Attribute("offset",create="NumberCell"),
             Attribute("size",create="NumberCell"),
             Attribute("type",create="TextCell"),
         )
-        
+      
     If the meta-schema has different names, then a subclass with
     a different :py:meth:`build_attr` is required to map the actual
     source columns to the attributes of a :py:class:`Attribute`.
-                
+              
     Offsets are typically 1-based. 
     """
     def __init__( self, workbook, sheet_name='Sheet1' ):
@@ -358,13 +358,13 @@ class ExternalSchemaLoader( SchemaLoader ):
             size= size,
             create= create,
         )
-        
+      
 # Schema loading involves a process of
 #
 # 1.  Iterating through the source rows as dictionaries.
 #
 #     -   Build each raw row as a source dictionary.
-#    
+#   
 #     -   Build an standardized attr dictionary from the source dictionary.
 #         This mapping, implemented by :py:meth:`schema.loader.ExternalSchemaLoader.build_attr`
 #         is subject to a great deal of change without notice.
@@ -402,7 +402,7 @@ class ExternalSchemaLoader( SchemaLoader ):
             *(Attribute(**row) for row in source_dict)
         )
         return schema
-        
+      
 
 # Worst-Case Loader
 # ====================
@@ -417,7 +417,7 @@ class ExternalSchemaLoader( SchemaLoader ):
 class BareExternalSchemaLoader( SchemaLoader ):
     """Open a workbook file in a well-known format.  Apply a schema parser
     to the given sheet (or file) to build a schema.
-    
+  
     The meta-schema is hard-coded in this class because the given
     sheet has no headers.
     """

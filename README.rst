@@ -3,7 +3,7 @@ The Stingray Schema-Based File Reader
 ================================================================
 
 Spreadsheet format files are the *lingua franca* of data processing.
-CSV, Tab, XLS, XSLX and ODS files are used widely.  Python's `csv` module
+CSV, Tab, XLS, XSLX and ODS files are used widely.  Python's ``csv`` module
 and the XLRD project (http://www.lexicon.net/sjmachin/xlrd.htm) help
 us handle spreadsheet files.
 
@@ -28,11 +28,14 @@ process files in spreadsheet formats.
 Additionally, stringray provides some guidance on how to structure
 file-processing applications so that they are testable and composable.
 
-Stingray 4.5 requires Python >=3.3
+Stingray 4.5 requires Python >=3.5
 
 It depends on this project to read .XLS files:
 
 -   xlrd.  http://www.lexicon.net/sjmachin/xlrd.htm
+
+Changes
+=======
 
 If you want to build from scratch and create documentation, you'll need these
 other two projects:
@@ -44,7 +47,8 @@ other two projects:
 Since Stingray is a *Literate Programming* project, the documentation is also
 the source.  And vice-versa.
 
-https://github.com/slott56/Stingray-Reader
+The ``build.py`` runs **PyLit3** to convert the RST docs to Python as well
+as HTML.
 
 Here's the license for using Stingray
 

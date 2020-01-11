@@ -27,16 +27,16 @@ import stingray.cell
 # ..  py:class:: Fixed_Workbook
 #
 #     Extract sheets, rows and cells from a fixed-format file.
-#    
+#   
 #     The schema must have size and offset information to locate the fields.
-#    
+#   
 #     There's only a single sheet and it matches the filename.
-#    
+#   
 #     In addition to the superclass attributes, some additional unique
 #     attributes are introduced here.
-#        
+#       
 #     ..  py:attribute:: wb
-#    
+#   
 #         The underlying file. 
 #
 # ::
@@ -50,7 +50,7 @@ class Fixed_Workbook( Workbook ):
     bad data can be gracefully skipped over.
     """
     row_class= stingray.sheet.LazyRow
-    
+  
     def __init__( self, name, file_object=None, schema=None ):
         """Prepare the workbook for reading.
 
@@ -112,4 +112,4 @@ class Fixed_Workbook( Workbook ):
         """Create a :py:class:`cell.Cell` from the row's data."""
         extract= row._state['data'][attr.offset:attr.offset+attr.size]
         return attr.create( extract.rstrip(), self )
-    
+  

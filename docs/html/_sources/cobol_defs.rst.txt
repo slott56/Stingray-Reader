@@ -1045,7 +1045,7 @@ DDE Class
           self.attribute= None
                     
       def __repr__( self ):
-          return "{!s} {!s} {!s}".format( self.level, self.name, map(str,self.children) )
+          return "{!s} {!s} {!s}".format( self.level, self.name, list(map(str,self.children)) )
 
       def __str__( self ):
           oc= str(self.occurs)

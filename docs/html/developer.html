@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="12. Stingray Demo Applications" href="demo/index.html" />
-    <link rel="prev" title="10.2.3. Stingray Build" href="cobol_defs.html" />
+    <link rel="prev" title="10.2.3. COBOL Definitions Module – Handle COBOL DDE’s" href="cobol_defs.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -67,7 +67,7 @@ This is the data quality assurance question.</li>
 <p>As noted in <a class="reference internal" href="introduction.html#intro"><span class="std std-ref">Introduction</span></a>, there are three levels of schema that need to be bound to a file.</p>
 <ul>
 <li><p class="first"><strong>Physical Format</strong>.  We can make this transparent to our applications.
-See <a class="reference internal" href="workbook/index.html#workbook"><span class="std std-ref">Workbook Package – Uniform Wrappers for Workbooks</span></a> and <span class="xref std std-ref">cobol</span> for details. Everything is a workbook
+See <a class="reference internal" href="workbook/index.html#workbook"><span class="std std-ref">Workbook Package – Uniform Wrappers for Workbooks</span></a> and <a class="reference internal" href="cobol.html#cobol"><span class="std std-ref">The COBOL Package</span></a> for details. Everything is a workbook
 with a fairly limited API.</p>
 </li>
 <li><p class="first"><strong>Logical Layout</strong>.  This is how an application program will make use
@@ -109,28 +109,28 @@ We can then dig into <strong>Stingray</strong> application programming in <a cla
 <h2>11.2. Binding a Schema to a File<a class="headerlink" href="#binding-a-schema-to-a-file" title="Permalink to this headline">¶</a></h2>
 <p>We’re only going to bind two levels of schema to a file.  The conceptual schema
 would require some kind of formal ontology, something that’s rarely available.</p>
-<p><strong>Logical Layout</strong>.  We rely on a schema, <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.Schema</span></code> to manage
+<p><strong>Logical Layout</strong>.  We rely on a schema, <a class="reference internal" href="schema.html#schema.Schema" title="schema.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.Schema</span></code></a> to manage
 the logical layout of a file.</p>
 <p>A workbook has two ways to bind logical layout to data values.
-Our <code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.Sheet</span></code> subclass hierarchy requires a schema object.
-We’ll load the schema using a <code class="xref py py-mod docutils literal notranslate"><span class="pre">schema.loader</span></code>
+Our <a class="reference internal" href="sheet.html#sheet.Sheet" title="sheet.Sheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.Sheet</span></code></a> subclass hierarchy requires a schema object.
+We’ll load the schema using a <a class="reference internal" href="schema_loader.html#module-schema.loader" title="schema.loader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">schema.loader</span></code></a>
 components.</p>
 <ul class="simple">
 <li><strong>Embedded</strong>.  This is commonly seen as column titles within the sheet.  Or
 any variation on that theme. The common case of column titles is handled
-by a built-in schema loader, <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></code>.
+by a built-in schema loader, <a class="reference internal" href="schema_loader.html#schema.loader.HeadingRowSchemaLoader" title="schema.loader.HeadingRowSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></code></a>.
 Other variations are managed by building different schema loaders.</li>
 <li><strong>External</strong>.  This is a separate sheet or separate file. In this case, we
-can start with <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.BareExternalSchemaLoader</span></code> to read
+can start with <a class="reference internal" href="schema_loader.html#schema.loader.BareExternalSchemaLoader" title="schema.loader.BareExternalSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.BareExternalSchemaLoader</span></code></a> to read
 an external schema. In the case of COBOL files, there’s a separate
-<code class="xref py py-class docutils literal notranslate"><span class="pre">cobol.loader.COBOLSchemaLoader</span></code> that parses COBOL source to create
+<a class="reference internal" href="cobol_loader.html#cobol.loader.COBOLSchemaLoader" title="cobol.loader.COBOLSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">cobol.loader.COBOLSchemaLoader</span></code></a> that parses COBOL source to create
 a usable schema.</li>
 </ul>
 <p><strong>Physical Format</strong>.  Generally, a file name provides a hint as to the physical file format.
 <code class="file docutils literal notranslate"><span class="pre">.csv</span></code>, <code class="file docutils literal notranslate"><span class="pre">.xls</span></code>, <code class="file docutils literal notranslate"><span class="pre">.xlsx</span></code>, <code class="file docutils literal notranslate"><span class="pre">.xlsm</span></code>, <code class="file docutils literal notranslate"><span class="pre">.ods</span></code>,
 <code class="file docutils literal notranslate"><span class="pre">.numbers</span></code> describe the physical format.</p>
-<p>Our <code class="xref py py-class docutils literal notranslate"><span class="pre">cell.Cell</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.Sheet</span></code>, and
-<code class="xref py py-class docutils literal notranslate"><span class="pre">workbook.base.Workbook</span></code> handles many physical format details nicely.</p>
+<p>Our <a class="reference internal" href="cell.html#cell.Cell" title="cell.Cell"><code class="xref py py-class docutils literal notranslate"><span class="pre">cell.Cell</span></code></a>, <a class="reference internal" href="sheet.html#sheet.Sheet" title="sheet.Sheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.Sheet</span></code></a>, and
+<a class="reference internal" href="workbook/base.html#workbook.base.Workbook" title="workbook.base.Workbook"><code class="xref py py-class docutils literal notranslate"><span class="pre">workbook.base.Workbook</span></code></a> handles many physical format details nicely.</p>
 </div>
 <div class="section" id="data-attribute-mapping-using-a-schema">
 <h2>11.3. Data Attribute Mapping – Using a Schema<a class="headerlink" href="#data-attribute-mapping-using-a-schema" title="Permalink to this headline">¶</a></h2>
@@ -235,7 +235,7 @@ well-known spreadsheet files.</p>
 </div>
 <div class="section" id="data-transformation">
 <h2>11.4. Data Transformation<a class="headerlink" href="#data-transformation" title="Permalink to this headline">¶</a></h2>
-<p>In the <span class="xref std std-ref">cells</span> chapter, we noted that there are two
+<p>In the <a class="reference internal" href="cell.html#cells"><span class="std std-ref">Cell Module – Data Element Containers and Conversions</span></a> chapter, we noted that there are two
 parts to data handling: <strong>Capture</strong> and <strong>Conversion</strong>.  Capture is part
 of parsing the physical format.  Conversion is part of the final
 application, and has nothing to do with the schema that describes
@@ -429,7 +429,7 @@ def process_workbook( source, builder ):
 <ul class="simple">
 <li>All sheets in the workbook have the same schema rules.
 In this example, it’s an embedded schema in each sheet and the schema is the heading row.
-We could easily use an <code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.ExternalSchemaSheet</span></code> and an external schema.</li>
+We could easily use an <a class="reference internal" href="sheet.html#sheet.ExternalSchemaSheet" title="sheet.ExternalSchemaSheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.ExternalSchemaSheet</span></code></a> and an external schema.</li>
 <li>A single <a class="reference internal" href="#process_sheet" title="process_sheet"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_sheet()</span></code></a> function is appropriate for all sheets.</li>
 </ul>
 <p>If a workbook doesn’t meet these criteria, then a (potentially) more complex
@@ -504,7 +504,7 @@ we can’t necessarily do eager evaluation of each row of data.</p>
 <p>We’ll look at a number of techniques for handling variant records.</p>
 <div class="section" id="trivial-filtering">
 <h3>11.6.1. Trivial Filtering<a class="headerlink" href="#trivial-filtering" title="Permalink to this headline">¶</a></h3>
-<p>When using an Embedded Schema Loader based on <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></code>
+<p>When using an Embedded Schema Loader based on <a class="reference internal" href="schema_loader.html#schema.loader.HeadingRowSchemaLoader" title="schema.loader.HeadingRowSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></code></a>
 we can extend this loader to reject rows.</p>
 <p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">schema.loader.HeadingRowSchemaLoader.rows()</span></code> method can do simple filtering.
 This is most appropriate for excluding blank rows or summary rows from a spreadsheet.</p>
@@ -677,7 +677,7 @@ up properly.  Naming conventions and standardized directory structures are
 <code class="file docutils literal notranslate"><span class="pre">.numbers</span></code>) the filename extension describes the physical format. Additional
 information is required to determine the Logical Layout.</p>
 <p>The schema may be loaded from column headers, in which case the binding is handled
-via an embedded schema loader. If the  <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></code>
+via an embedded schema loader. If the  <a class="reference internal" href="schema_loader.html#schema.loader.HeadingRowSchemaLoader" title="schema.loader.HeadingRowSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></code></a>
 is used, no more information is required. If a customized schema loader is used
 (because the headings are not trivially the first row of a sheet), then we must
 – somehow – bind application to external schema. The filename extension doesn’t
@@ -719,7 +719,7 @@ are fixed format files which require the <code class="docutils literal notransla
 <div class="section" id="external-schema-workbooks">
 <h3>11.8.3. External Schema Workbooks<a class="headerlink" href="#external-schema-workbooks" title="Permalink to this headline">¶</a></h3>
 <p>A workbook with an external schema sheet must adhere to a few conventions to be usable.
-These rules form the basis for the <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.BareExternalSchemaLoader</span></code>
+These rules form the basis for the <a class="reference internal" href="schema_loader.html#schema.loader.BareExternalSchemaLoader" title="schema.loader.BareExternalSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.BareExternalSchemaLoader</span></code></a>
 class. To change the rules, extend that class.</p>
 <ul class="simple">
 <li>The standard sheet name <code class="docutils literal notranslate"><span class="pre">&quot;Schema&quot;</span></code>  defines the appropriate sheet.</li>
@@ -832,10 +832,10 @@ arguments for opening a workbook.</p>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">1. Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="design.html">2. Design Considerations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="package.html">3. The <code class="docutils literal notranslate"><span class="pre">stingray</span></code> Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cell.html">4. Stingray Build</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sheet.html">5. Stingray Build</a></li>
-<li class="toctree-l1"><a class="reference internal" href="schema.html">6. Stingray Build</a></li>
-<li class="toctree-l1"><a class="reference internal" href="schema_loader.html">7. Stingray Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cell.html">4. Cell Module – Data Element Containers and Conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sheet.html">5. Sheet Module – Sheet and Row Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema.html">6. Schema Package – Schema and Attribute Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_loader.html">7. Schema Loader Module – Load Embedded or External Schema</a></li>
 <li class="toctree-l1"><a class="reference internal" href="workbook/index.html">8. Workbook Package – Uniform Wrappers for Workbooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="iwork13.html">9. The “Other” Modules: snappy and protobuf</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cobol.html">10. The COBOL Package</a></li>
@@ -844,7 +844,7 @@ arguments for opening a workbook.</p>
 <li class="toctree-l1"><a class="reference internal" href="history.html">13. History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing/index.html">14. Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build.html">15. Stingray Build</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">16. Stingray Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">16. Installation via <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">17. Licensing</a></li>
 </ul>
 
@@ -852,7 +852,7 @@ arguments for opening a workbook.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="cobol_defs.html" title="previous chapter">10.2.3. Stingray Build</a></li>
+      <li>Previous: <a href="cobol_defs.html" title="previous chapter">10.2.3. COBOL Definitions Module – Handle COBOL DDE’s</a></li>
       <li>Next: <a href="demo/index.html" title="next chapter">12. <strong>Stingray</strong> Demo Applications</a></li>
   </ul></li>
 </ul>

@@ -65,7 +65,7 @@
 #         sheet = EmbeddedSchemaSheet( workbook, 'Sheet1', HeadingRowSchemaLoader )
 #         counts= process_sheet( sheet )
 #         pprint.pprint( counts )
-#        
+#       
 # The idea is to simply access a sheet with column titles, no matter how complex
 # the column titles turn out to be.
 #
@@ -136,7 +136,7 @@
 #     possible cells.  Indeed, for  COBOL files with REDEFINES definitions,
 #     some of the cells cannot be built eagerly; application logic must determine
 #     which attributes are valid or invalid.
-#    
+#   
 # Note that the API is the same. The implementation differs.
 #
 # Here's our prototypical code.
@@ -216,17 +216,17 @@ from collections import Sequence
 #
 #     An iterator over the rows of data in a workbook.
 #     Subclasses implement different bindings for the sheet's schema information.
-#    
+#   
 #     This is largely abstract, since there's no schema binding available.
 #     There are subclasses which have a schema binding.
 #     See :py:class:`sheet.ExternalSchemaSheet` and :py:class:`sheet.EmbeddedSchemaSheet`.
-#    
+#   
 #     ..  py:attribute:: workbook
-#    
+#   
 #         The :py:class:`Workbook` which contains this Sheet.
-#    
+#   
 #     ..  py:attribute:: name
-#    
+#   
 #         The name of this sheet.
 #
 # ::
@@ -267,15 +267,15 @@ class Sheet:
 #     Some Workbooks have cell content identified by size, offset and encoding.
 #     Therefore, we must provide the Attribute details to the Workbook
 #     to get the Cell's value.
-#    
+#   
 #     ..  py:attribute:: sheet
-#    
+#   
 #         The :py:class:`Sheet` which contains this row.
-#    
+#   
 #     ..  py:attribute:: data
-#        
+#       
 #         The sequence of :py:class:`Cell` values for this row. 
-#    
+#   
 # ::
 
 class Row( Sequence ):
@@ -294,7 +294,7 @@ class Row( Sequence ):
         :param attribute: The attribute's value to return.
         """
         return self.sheet.workbook.row_get( self, attribute )
-        
+      
 # Basic Sequence features
 #
 # ::
@@ -338,7 +338,7 @@ class Row( Sequence ):
 # -   The :py:class:`schema.Attribute.index` method
 #     selects data from the row in the workbook.  This applies the indices
 #     to the Attribute to compute the required offset into the source data.
-#    
+#   
 #     We're constrained by the laziness requirement of COBOL to lean toward the 
 #     this implementation.
 #
@@ -357,13 +357,13 @@ class Row( Sequence ):
 #     For these reasons, we have a :py:class:`sheet.LazyRow`, which conforms to the
 #     interface for a :py:class:`Row`, but isn't an actual sequence. No data is
 #     processed until the :py:meth:`LazyRow.__getitem__` method is used.
-#    
+#   
 #     ..  py:attribute:: sheet
-#    
+#   
 #         The :py:class:`Sheet` to which this row belongs.
-#    
+#   
 #     ..  py:attribute:: _state
-#    
+#   
 #         The worksheet's internal state information, required
 #         to perform lazy extraction of the cell values. The LazyRow
 #         superclass doesn't use this. A subclass may need it.
@@ -423,7 +423,7 @@ class LazyRow( Sequence ):
 #         def by_name( self, name ):
 #             attr= self.sheet.schema.get_name(name)
 #             return self.cell(attr)
-#            
+#           
 # This isn't implemented, because it doesn't seem very helpful.
 #
 # ExternalSchemaSheet Class
@@ -475,12 +475,12 @@ class ExternalSchemaSheet( Sheet ):
 #     The loader
 #     is invoked to build the :py:class:`schema.Schema` object that's bound 
 #     to the sheet. 
-#    
+#   
 #     The :py:class:`schema.loader.SchemaLoader` is also used to return the rest of the rows; 
 #     those that weren't used to build the schema.
 #
 #     ..  py:attribute:: loader
-#    
+#   
 #         The :py:class:`Loader` used to build schema from rows in this sheet.
 #
 # ::
@@ -532,7 +532,7 @@ class EmbeddedSchemaSheet( ExternalSchemaSheet ):
 # -   To create dict-like access to :py:class:`cell.Cell`  instances, 
 #     the :py:class:`schema.Schema` can be turned into a dictionary.  The row itself
 #     is not a dictionary, just the schema. The row is still a Sequence.
-#    
+#   
 #     This "schema-as-dict" can still be used with a properly
 #     lazy :py:class:`sheet.Row` to create :py:class:`cell.Cell` instances.
 #

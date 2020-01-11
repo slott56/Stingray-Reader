@@ -5,7 +5,7 @@
 # ###############################################################
 # Workbook __init__ Module -- Wrapper for all implementations
 # ###############################################################
-#    
+#   
 # A few Python overheads that we put in the ``__init__``
 # module of this package. Our goal is to make it so that only
 # the top-level package is imported; the individual workbook modules
@@ -72,7 +72,7 @@ from stingray.workbook.fixed import Fixed_Workbook
 #
 #     The :py:class:`UnknownFormat` exception is raised when a workbook can't be
 #     opened.
-#    
+#   
 # ::
 
 class UnknownFormat( Exception ):
@@ -138,7 +138,7 @@ except ImportError:
 # -   :py:class:`workbook.Numbers13_Workbook`
 #     These handle the iWork '13 Numbers files with multiple 
 #     workspaces and multiple tables in each workspace. 
-#    
+#   
 # -   :py:class:`workbook.ODS_Workbook`.
 #
 # -   :py:class:`workbook.Fixed_Workbook`.  This is actually a fairly complex case.  The workbook will appear to
@@ -184,7 +184,7 @@ class Opener:
     def __call__( self, name, file_object=None,
         schema_path='.', schema_sheet= None, **kw ):
         """Open a workbook.
-        
+      
         :param name: filename to open.
         :param file_object: File-like object to process.  If not
         provided the named file will be opened.
@@ -227,23 +227,23 @@ class Opener:
 # ..  py:function:: open_workbook( name, file_object, schema_path, schema_sheet )
 #
 #     Open a workbook.
-#    
+#   
 #     For fixed format files, we attempt to track down and load the relevant
 #     schema file. The idea here is that a file's extension can map to the schema's
 #     filename.
-#    
+#   
 #     :samp:`somefile.{schema}` would use a :samp:`{schema}.csv` workbook as it's schema.
 #     We'll simply try the first file that matches :samp:`{schema}.*` to see if it's
 #     a workbook we can open.
-#    
+#   
 #     :param name: The name of the file.
-#    
+#   
 #     :param file_object: (optional) already opened file object.
-#    
+#   
 #     :param schema_path: (optional) filename for an external schema file.
-#    
+#   
 #     :param schema_sheet: (optional) name of a sheet with a schema.
-#    
+#   
 # For fixed format files, we attempt to track down and load the relevant
 # schema.  An application might have narrower and more specific rules
 # for binding file and schema.  

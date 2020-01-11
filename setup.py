@@ -9,7 +9,7 @@
 # Use the following link to get the latest code:
 #
 #     ``git clone git://git.code.sf.net/p/stingrayreader/code stingrayreader-code``
-#    
+#   
 # It's also possible to get an archive distribution kit. These may be 
 # slightly out of date.
 #
@@ -43,23 +43,23 @@
 # ..  code-block:: bash
 #
 #     python3 build.py
-#    
+#   
 # Installation via Distutils
 # =============================
-#    
+#   
 # To install ``stingray`` you can use the following.
 # On Linux, this may require privileges via ``sudo``.
 #
 # ..  code-block:: bash
 #
 #     sudo python3 setup.py install
-#    
+#   
 # In some cases, you might want to break this down into a build step that
 # doesn't require privileges and the final install step, which does require
 # privileges.
 #
 # ..      code-block:: bash
-#        
+#       
 #         python3 setup.py build
 #         sudo python3 setup.py install
 #
@@ -118,4 +118,4 @@ setuptools.setup(
         "Topic :: Software Development :: Quality Assurance",
         ],
     )
-    
+  

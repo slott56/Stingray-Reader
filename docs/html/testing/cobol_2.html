@@ -67,7 +67,7 @@ and <a class="reference internal" href="../cobol_loader.html#module-cobol.loader
 </div>
 <div class="section" id="dde-test-copybook-1-with-basic-features">
 <h2>14.9.3. DDE Test copybook 1 with basic features<a class="headerlink" href="#dde-test-copybook-1-with-basic-features" title="Permalink to this headline">¶</a></h2>
-<p>Some basic COBOL.</p>
+<p>Some basic COBOL we found online.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">copy1</span><span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">      * COPY1.COB</span>
 <span class="s2">       01  DETAIL-LINE.</span>
@@ -83,7 +83,8 @@ and <a class="reference internal" href="../cobol_loader.html#module-cobol.loader
 <span class="s2">&quot;&quot;&quot;</span>
 </pre></div>
 </div>
-<p>Be sure it parses.  Be sure we can extract data.</p>
+<p>Be sure it parses.  Be sure we can extract data from a source document
+using the DDE as a schema.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Test_Copybook_1</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
     <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
@@ -124,7 +125,7 @@ and <a class="reference internal" href="../cobol_loader.html#module-cobol.loader
 </div>
 <div class="section" id="dde-test-copybook-2-with-88-level-item">
 <h2>14.9.4. DDE Test copybook 2 with 88-level item<a class="headerlink" href="#dde-test-copybook-2-with-88-level-item" title="Permalink to this headline">¶</a></h2>
-<p>Include 88-level items in the source.</p>
+<p>An exaMple with 88-level items in the source.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">copy2</span><span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">      * COPY2.COB</span>
 <span class="s2">       01  WORK-AREAS.</span>
@@ -932,8 +933,49 @@ baffled the COMP-3 conversion.</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="interesting-odo-structure">
+<h2>14.9.17. Interesting ODO Structure<a class="headerlink" href="#interesting-odo-structure" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference external" href="https://github.com/slott56/Stingray-Reader/issues/1">https://github.com/slott56/Stingray-Reader/issues/1</a>.</p>
+<p>The reported but was on the <code class="xref py py-meth docutils literal notranslate"><span class="pre">cobol.defs.DDE.__repr__()</span></code>.
+Here’s the sample code.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">issue_1</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">           02 GROUP-LABL.</span>
+<span class="s2">              03 LABL-STDY-GP-AR-CT           PIC 9(00004).</span>
+<span class="s2">              03 LABL-STDY-GP-AR</span>
+<span class="s2">                 OCCURS 0 TO 40 TIMES DEPENDING ON LABL-STDY-GP-AR-CT.</span>
+<span class="s2">                 05 LABL-PRSN-ID              PIC 9(00009).</span>
+<span class="s2">                 05 LABL-GNPR-ID              PIC 9(00009).</span>
+<span class="s2">                 05 LABL-GNRC-ID              PIC 9(00009).</span>
+<span class="s2">                 05 LABL-GNRC-AT              PIC -9(00012).9(6).</span>
+<span class="s2">                 05 LABL-GNRC-QY              PIC -9(00015).</span>
+<span class="s2">                 05 LABL-GNRC-CD              PIC X(00006).</span>
+<span class="s2">                 05 LABL-GNRC-PT              PIC -9(00003).9(4).</span>
+<span class="s2">                 05 LABL-GNRC-TX              PIC X(00030).</span>
+<span class="s2">                 05 LABL-QRY-FILL-50-TX       PIC X(00050).</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Here’s a parser for this fragment.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Test_Issue_1</span><span class="p">(</span> <span class="n">DDE_Test</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="n">file_like_object</span><span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">issue_1</span><span class="p">)</span>
+        <span class="n">dde_list</span><span class="p">,</span> <span class="n">schema_list</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">cobol</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">COBOL_schemata</span><span class="p">(</span> <span class="n">file_like_object</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">issue_1</span> <span class="o">=</span> <span class="n">dde_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="n">schema_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">test_should_parse</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+        <span class="c1"># stingray.cobol.defs.report( self.issue_1 )</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;LABL-STDY-GP-AR-CT&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;LABL-GNRC-PT&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_1</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;LABL-GNRC-AT&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s2">&quot;02 GROUP-LABL [&#39;03 LABL-STDY-GP-AR-CT   PIC 9(00004).&#39;, &#39;03 LABL-STDY-GP-AR     OCCURS TO 40 DEPENDING ON LABL-STDY-GP-AR-CT.&#39;]&quot;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">issue_1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The reposered bug was a <code class="xref py py-func docutils literal notranslate"><span class="pre">map()</span></code> that worked in Python 2 but
+was untested in Python 3.</p>
+</div>
 <div class="section" id="test-suite-and-runner">
-<h2>14.9.17. Test Suite and Runner<a class="headerlink" href="#test-suite-and-runner" title="Permalink to this headline">¶</a></h2>
+<h2>14.9.18. Test Suite and Runner<a class="headerlink" href="#test-suite-and-runner" title="Permalink to this headline">¶</a></h2>
 <p>In case we want to build up a larger test suite, we avoid doing
 any real work unless this is the main module being executed.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">test</span>

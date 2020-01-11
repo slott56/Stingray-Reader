@@ -24,23 +24,23 @@ import stingray.sheet
 #
 #     All physical workbook formats all encode a single, common data structure.
 #     Here are some abstract definitions.
-#    
+#   
 #     ..  py:attribute:: name
-#        
+#       
 #         Filename for this workbook.
-#    
+#   
 #     ..  py:attribute:: the_file
-#    
+#   
 #         The actual open file object.
-#    
+#   
 #     ..  py:attribute:: datemode
-#    
+#   
 #         For XLS spreadsheets only, a datemode is required. This may not 
 #         be appropriate for all spreadsheets. It's in this superclass 
 #         for now, but may be refactored out.
-#    
+#   
 #     ..  py:attribute:: log
-#    
+#   
 #         Logger for Workbooks.
 #
 # ::
@@ -59,7 +59,7 @@ class Workbook:
         self.log= logging.getLogger( self.__class__.__qualname__ )
     def __repr__( self ):
         return "{0}({1!r})".format( self.__class__.__qualname__, self.name )
-        
+      
 # ..  py:method:: Workbook.sheet( sheet_name, sheet_type, *args, **kw )
 #
 #     There are two varieties of sheets, depending on the presence or

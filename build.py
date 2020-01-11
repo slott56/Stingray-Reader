@@ -131,7 +131,10 @@ def sphinx_build( srcdir, outdir, buildername='html' ):
 def pylit_build_py( pyFile, rstFile ):
     """Essentially: ``python3 -m pylit -t source/demo/data_quality.rst demo/test.py``
     """
-    pylit.main( txt2code= True, overwrite="update", infile= pyFile, outfile= pylit, args=[] )
+    try:
+        pylit.main( txt2code= True, overwrite="update", infile= pyFile, outfile= rstFile, args=[] )
+    except SystemExit as ex:
+        pass
 
 # PyLit Build RST
 # ------------------

@@ -39,7 +39,7 @@ class DDE_Test( unittest.TestCase ):
 # DDE Test copybook 1 with basic features
 # ========================================
 #
-# Some basic COBOL.
+# Some basic COBOL we found online.
 #
 # ::
 
@@ -57,7 +57,8 @@ copy1= """
            05                              PIC X(7).
 """
 
-# Be sure it parses.  Be sure we can extract data.
+# Be sure it parses.  Be sure we can extract data from a source document
+# using the DDE as a schema.
 #
 # ::
 
@@ -91,7 +92,7 @@ class Test_Copybook_1( DDE_Test ):
 
         row= next( data.sheet( "" ).rows() )
         # stingray.cobol.dump( schema, row )
-        
+      
         self.assertEqual( "1", row.cell(schema_dict['QUESTION']).to_str() )
         self.assertEqual( 2, row.cell(schema_dict['PRINT-YES']).to_int() )
         self.assertEqual( 3, row.cell(schema_dict['PRINT-NO']).to_float() )
@@ -102,7 +103,7 @@ class Test_Copybook_1( DDE_Test ):
 # ========================================
 #
 #
-# Include 88-level items in the source.
+# An exaMple with 88-level items in the source.
 #
 # ::
 
@@ -139,7 +140,7 @@ class Test_Copybook_2( DDE_Test ):
         data= stingray.cobol.Character_File( name="", 
             file_object= ["NO 4567",], 
             schema=schema, )
-        
+      
         row= next( data.sheet( "" ).rows() )
         #stingray.cobol.dump( schema, row )
         self.assertEqual( "NO ", row.cell(schema_dict["ARE-THERE-MORE-RECORDS"]).to_str() )
@@ -175,7 +176,7 @@ class Test_Copybook_3( DDE_Test ):
         data = stingray.cobol.Character_File( name="", 
             file_object= ["111213212223313233414243515253616263717273818283919293010203",],
             schema=schema )
-        
+      
         row= next( data.sheet( "" ).rows() )
         #stingray.cobol.dump( schema, row )
         self.assertEqual( 12, row.cell(schema_dict.get('ANSWER').index(1-1,2-1)).to_int() )
@@ -234,8 +235,8 @@ class Test_Copybook_4( DDE_Test ):
         schema_dict= dict( (a.name, a) for a in schema )
         self.assertEqual( (52*5+32)+32+5+4, schema_dict["LATE-ARRIVALS"].index(1,1).offset )
         self.assertEqual( (52*5+32)+32+5+5+4, schema_dict["LATE-ARRIVALS"].index(1,2).offset )
-        
-            
+      
+          
 # DDE Test copybook 5 from page 195 with simple redefines
 # =======================================================
 #
@@ -275,14 +276,14 @@ class Test_Copybook_5( DDE_Test ):
         self.assertEqual( "9999", dde5.get("B-2").sizeScalePrecision.final )
         self.assertEqual( 4, dde5.get("C").size )
         self.assertEqual( 6, dde5.get("C").offset )
-        
+      
     def test_should_extract( self ):
         schema = stingray.cobol.loader.make_schema( [self.dde5] )
         schema_dict= dict( (a.name, a) for a in schema )
         data= stingray.cobol.Character_File( name="", 
             file_object= ["AB12345678",],
             schema=schema )
-        
+      
         row= next( data.sheet( "" ).rows() )
         #stingray.cobol.dump( schema, row )
 
@@ -344,11 +345,11 @@ class Test_Copybook_6( DDE_Test ):
             schema=schema )
         row= next( data1.sheet( "" ).rows() )
         #stingray.cobol.dump( schema, row )
-        
+      
         self.assertEqual( "ABC", row.cell(schema_dict["SALARY"]).to_str() )
         self.assertEqual( "123456789", row.cell(schema_dict["SO-SEC-NO"]).to_str() )
         self.assertEqual( "DE", row.cell(schema_dict["MONTH"]).to_str() )
-        
+      
     def test_should_extract_2( self ):
         schema = stingray.cobol.loader.make_schema( [self.dde6] )
         schema_dict= dict( (a.name, a) for a in schema )
@@ -357,7 +358,7 @@ class Test_Copybook_6( DDE_Test ):
             schema=schema )
         row= next( data2.sheet( "" ).rows() )
         #stingray.cobol.dump( schema, row )
-        
+      
         self.assertAlmostEquals( 123.456, row.cell(schema_dict["WAGE"]).to_float() )
         self.assertEqual( "ABCDEF", row.cell(schema_dict["EMP-NO"]).to_str() )
         self.assertEqual( "78", row.cell(schema_dict["YEAR"]).to_str() )
@@ -397,7 +398,7 @@ class Test_Copybook_7( DDE_Test ):
         self.assertEqual( 18, dde7.get("TEMPORARY-EMPLOYEE").size )
         self.assertEqual( 6, dde7.get("SEMI-MONTHLY-PAY").size )
         self.assertEqual( 6, dde7.get("WEEKLY-PAY").size )
-        
+      
     def test_should_extract_1( self ):
         schema = stingray.cobol.loader.make_schema( [self.dde7] )
         schema_dict= dict( (a.name, a) for a in schema )
@@ -407,9 +408,9 @@ class Test_Copybook_7( DDE_Test ):
         row= next( data1.sheet( "" ).rows() )
         # Can't dump with TEMPORARY-EMPLOYEE
         #stingray.cobol.dump( schema, row )
-        
+      
         self.assertEqual( '1234.56', row.cell(schema_dict["SEMI-MONTHLY-PAY"]).to_str() )
-        
+      
     def test_should_extract_2( self ):
         schema = stingray.cobol.loader.make_schema( [self.dde7] )
         schema_dict= dict( (a.name, a) for a in schema )
@@ -419,7 +420,7 @@ class Test_Copybook_7( DDE_Test ):
         row= next( data2.sheet( "" ).rows() )
         # Can't dump with REGULAR-EMPLOYEE
         #stingray.cobol.dump( schema, row ) 
-        
+      
         self.assertEqual( '12.34', row.cell(schema_dict["HOURLY-PAY"]).to_str() )
 
 
@@ -457,14 +458,14 @@ class Test_Copybook_8( DDE_Test ):
         self.assertEqual( 6, dde8.get("SEMI-MONTHLY-PAY").size )
         self.assertEqual( 4, dde8.get("HOURLY-PAY").size )
         self.assertEqual( 4, dde8.get("CODE-H").size )
-        
+      
     def test_should_extract_1( self ):
         schema = stingray.cobol.loader.make_schema( [self.dde8] )
         schema_path_dict= dict( (a.path, a) for a in schema )
         data1= stingray.cobol.Character_File( name="", 
             file_object= ["ABCDEFGHijkl123456",],
             schema=schema )
-        
+      
         row= next( data1.sheet( "" ).rows() )
         #stingray.cobol.dump( schema, row )
         #print( "SEMI-MONTHLY-PAY", schema_path_dict['REDEFINES-RECORD.REGULAR-EMPLOYEE.SEMI-MONTHLY-PAY'] )
@@ -479,7 +480,7 @@ class Test_Copybook_8( DDE_Test ):
         data2= stingray.cobol.Character_File( name="", 
             file_object= ["ABCDEFGHijklmn1234",],
             schema=schema )
-        
+      
         row= next( data2.sheet( "" ).rows() )
         #stingray.cobol.dump( schema, row )
         self.assertEqual( 12.34, 
@@ -606,7 +607,7 @@ class Test_Copybook_10( DDE_Test ):
 
     def test_should_setsizeandoffset( self ):
         dde10= self.dde10
-        
+      
         schema= stingray.cobol.loader.make_schema( [dde10] )
         self.data = stingray.cobol.Character_File( name="", 
             file_object= ["3111112222233333",],
@@ -675,7 +676,7 @@ class Test_Copybook_11( DDE_Test ):
         self.assertEqual( 1, dde11.get( "FIELD-3" ).size )
         self.assertEqual( "9", dde11.get( "FIELD-3" ).sizeScalePrecision.final  )
         self.assertEqual( "", dde11.get( "FIELD-3" ).usage.source() )
-        
+      
         self.assertEqual( 0, dde11.get( "FIELD-4" ).offset )
         self.assertEqual( 5, dde11.get( "FIELD-4" ).size )
         self.assertEqual( "XXXXX", dde11.get( "FIELD-4" ).sizeScalePrecision.final  )
@@ -683,7 +684,7 @@ class Test_Copybook_11( DDE_Test ):
 
     def test_should_setsizeandoffset( self ):
         dde11= self.dde11
-        
+      
         schema= stingray.cobol.loader.make_schema( [dde11] )
         self.data = stingray.cobol.Character_File( name="", 
             file_object= ["321111122222333334444455555",],
@@ -704,7 +705,7 @@ class Test_Copybook_11( DDE_Test ):
         self.assertEqual( 1, dde11.get( "FIELD-3" ).size )
         self.assertEqual( "9", dde11.get( "FIELD-3" ).sizeScalePrecision.final  )
         self.assertEqual( "", dde11.get( "FIELD-3" ).usage.source() )
-        
+      
         self.assertEqual( 17, dde11.get( "FIELD-4" ).offset )
         self.assertEqual( 5, dde11.get( "FIELD-4" ).size )
         self.assertEqual( "XXXXX", dde11.get( "FIELD-4" ).sizeScalePrecision.final  )
@@ -742,18 +743,18 @@ copy12= """
 class Test_Copybook_12( DDE_Test ):
     def setUp( self ):
         super().setUp()
-        
+      
         # Low-Level API
         #self.dde12a, self.dde12b = self.rf.makeRecord( self.lexer.scan(copy12) )
         #self.schema_detail= stingray.cobol.loader.make_schema( [self.dde12a] )
         #self.schema_summary= stingray.cobol.loader.make_schema( [self.dde12b] )
-        
+      
         # Higher-level API
         file_like_object= io.StringIO( copy12 )
         dde_list, schema_list = stingray.cobol.loader.COBOL_schemata( file_like_object )
         self.dde12a, self.dde12b = dde_list
         self.schema_detail, self.schema_summary = schema_list
-        
+      
         #stingray.cobol.defs.report( self.dde12a )
         #stingray.cobol.defs.report( self.dde12b )
     def test_should_parse( self ):
@@ -812,11 +813,11 @@ copy13= """
        01  GENERIC-RECORD.
            05 HEADER PIC X(3).
            05 GENERIC-FIELD PIC X(17).
-   
+ 
        01 ABC-SPECIFIC-RECORD.
            05 ITEM-1 PIC X(10).
            05 ITEM-2 PIC X(7).
-   
+ 
        01 DEF-ANOTHER-RECORD.
            05 ITEM-3 PIC X(7).
            05 ITEM-4 PIC X(10).
@@ -833,7 +834,7 @@ class Test_Copybook_13( DDE_Test ):
         dde_list, schema_list = stingray.cobol.loader.COBOL_schemata( file_like_object )
         self.dde13a, self.dde13b, self.dde13c = dde_list
         self.schema_header, self.segment_abc, self.segment_def = schema_list
-        
+      
         #stingray.cobol.defs.report( self.dde13a )
         #stingray.cobol.defs.report( self.dde13b )
         #stingray.cobol.defs.report( self.dde13c )
@@ -873,11 +874,11 @@ class Test_Copybook_13( DDE_Test ):
         #stingray.cobol.dump( self.schema_header, row )
 
         self.assertEqual( "ABC", row.cell(schema_header_dict['HEADER']).to_str() )
-        
+      
         # High-level API for building a row from a field's data.
         subrow= data.subrow( self.segment_abc, row.cell(schema_header_dict['GENERIC-FIELD'])  )
         #stingray.cobol.dump( self.segment_abc, subrow )
-        
+      
         self.assertEqual( "0123456789", subrow.cell(schema_segment_abc_dict['ITEM-1']).to_str() )
         self.assertEqual( "TUVWXYZ", subrow.cell(schema_segment_abc_dict['ITEM-2']).to_str() )
 
@@ -885,7 +886,7 @@ class Test_Copybook_13( DDE_Test ):
         #stingray.cobol.dump( self.schema_header, row )
 
         self.assertEqual( "DEF", row.cell(schema_header_dict['HEADER']).to_str() )
-        
+      
         # Low-level API for building a row from a specific field's data.
         subrow = stingray.cobol.ODO_LazyRow(
             stingray.sheet.ExternalSchemaSheet( data, "DEF-ANOTHER-RECORD", self.segment_def ),
@@ -965,14 +966,61 @@ class Test_Copybook_14( DDE_Test ):
             schema=self.schema14 )
         data_iter= data.sheet( "" ).rows()
         row= next( data_iter )
-        
+      
         #stingray.cobol.dump( self.schema14, row )
         self.assertEqual( decimal.Decimal('0.12345'), row.cell(self.schema14[1]).to_decimal() )
         self.assertEqual( decimal.Decimal('0.67890'), row.cell(self.schema14[2]).to_decimal() )
         self.assertEqual( decimal.Decimal('0.00120'), row.cell(self.schema14[3]).to_decimal() )
         self.assertEqual( decimal.Decimal('-0.98765'), row.cell(self.schema14[4]).to_decimal() )
-                
-                   
+              
+
+# Interesting ODO Structure
+# =========================
+#
+# See https://github.com/slott56/Stingray-Reader/issues/1.
+#
+# The reported but was on the :meth:`cobol.defs.DDE.__repr__`.
+# Here's the sample code.
+#
+# ::
+
+issue_1 = """
+           02 GROUP-LABL.
+              03 LABL-STDY-GP-AR-CT           PIC 9(00004).
+              03 LABL-STDY-GP-AR
+                 OCCURS 0 TO 40 TIMES DEPENDING ON LABL-STDY-GP-AR-CT.
+                 05 LABL-PRSN-ID              PIC 9(00009).
+                 05 LABL-GNPR-ID              PIC 9(00009).
+                 05 LABL-GNRC-ID              PIC 9(00009).
+                 05 LABL-GNRC-AT              PIC -9(00012).9(6).
+                 05 LABL-GNRC-QY              PIC -9(00015).
+                 05 LABL-GNRC-CD              PIC X(00006).
+                 05 LABL-GNRC-PT              PIC -9(00003).9(4).
+                 05 LABL-GNRC-TX              PIC X(00030).
+                 05 LABL-QRY-FILL-50-TX       PIC X(00050).
+"""
+
+# Here's a parser for this fragment.
+#
+# ::
+
+class Test_Issue_1( DDE_Test ):
+    def setUp( self ):
+        super().setUp()
+        file_like_object= io.StringIO(issue_1)
+        dde_list, schema_list = stingray.cobol.loader.COBOL_schemata( file_like_object )
+        self.issue_1 = dde_list[0]
+        self.schema = schema_list[0]
+    def test_should_parse( self ):
+        # stingray.cobol.defs.report( self.issue_1 )
+        self.assertEqual(4, self.issue_1.get('LABL-STDY-GP-AR-CT').size)
+        self.assertEqual(9, self.issue_1.get('LABL-GNRC-PT').size)
+        self.assertEqual(20, self.issue_1.get('LABL-GNRC-AT').size)
+        self.assertEqual("02 GROUP-LABL ['03 LABL-STDY-GP-AR-CT   PIC 9(00004).', '03 LABL-STDY-GP-AR     OCCURS TO 40 DEPENDING ON LABL-STDY-GP-AR-CT.']", repr(self.issue_1))
+
+# The reposered bug was a :func:`map` that worked in Python 2 but
+# was untested in Python 3.
+#
 # Test Suite and Runner
 # =====================
 #
