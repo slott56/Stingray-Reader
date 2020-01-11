@@ -39,15 +39,15 @@ import stingray.cell
 #
 #     In addition to the superclass attributes, some additional unique
 #     attributes are introduced here.
-#        
+#       
 #     ..  py:attribute:: zip_archive
-#    
+#   
 #         A zip archive for this file.
 #
 #     ..  py:attribute:: strings_dict
-#    
+#   
 #         The strings in this workbook
-#        
+#       
 # ::
 
 class XLSX_Workbook( Workbook ):
@@ -218,7 +218,7 @@ class XLSX_Workbook( Workbook ):
         cell_tag= dom.QName(self.XLSX_NS['main'], "c")
         value_tag= dom.QName(self.XLSX_NS['main'], "v")
         format_tag= dom.QName(self.XLSX_NS['main'], "f")
-        
+      
         for event, element in dom.iterparse(
             self.zip_archive.open(sheet_zip), events=('start','end') ):
             logging.debug( element.tag, repr(element.text) )

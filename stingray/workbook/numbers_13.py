@@ -27,11 +27,11 @@ from stingray.snappy import Snappy
 from stingray.protobuf import Archive_Reader, Message
 
 # ..  py:module:: workbook.numbers13
-#        
+#       
 # ..  todo:: Additional Numbers13_Workbook Feature
-#    
+#   
 #     Translate Formula and Formula error to Text
-#    
+#   
 # The iWork 13 format is a directory with an ``index.zip`` file. The ZIP contains
 # a number of ``.IWA`` files. Each ``.IWA`` is compressed using the Snappy protocol.
 # The uncompressed data is messages in Protobuf format.
@@ -43,16 +43,16 @@ from stingray.protobuf import Archive_Reader, Message
 # ..  py:class:: Numbers13_Workbook
 #
 #     Extract sheets, rows and cells from a Numbers '13 format file.
-#        
+#       
 #     The ``.numbers`` "file" is a directory bundle or package.
-#        
+#       
 #     The :file:`index.zip` file is the interesting part of the bundle.
-#    
+#   
 #     In addition to the superclass attributes, some additional unique
 #     attributes are introduced here.
-#        
+#       
 #     ..  py:attribute:: archive
-#    
+#   
 #         The snappy archive for this file.
 #
 #
@@ -63,16 +63,16 @@ class Numbers13_Workbook( Workbook ):
     """
     def __init__( self, name, file_object=None ):
         """Prepare the workbook for reading.
-        
+      
         :param name: File name
         :param file_object: Ignored for iWork13 files.
-        
+      
         We might be able to use the file's internal handle to open 
         it as a proper directory. But we don't.
         """
         super().__init__( name, None )
         self.archive= self._load_archive( name )
-   
+ 
 # Read the archive to get the serialized messages. This method deserializes
 # all of the protobuf-encoded messages. It's a shabby stand-in for proper protobuf
 # processing.
@@ -80,7 +80,7 @@ class Numbers13_Workbook( Workbook ):
 # One thing we *could* do is to refactor this method into a bunch of methods, 
 # each of which is tied to a specific class of message. That would parallel the
 # way protobuf really works.
-#                     
+#                    
 # ::
 
     @staticmethod
@@ -89,7 +89,7 @@ class Numbers13_Workbook( Workbook ):
         We don't actually need to read **all** of them.
         We really only need Index/Document.iwa, Index/CalculationEngine.iwa, and
         all Index/Tables/*.iwa. But that's almost everything.
-        
+      
         :param filename: File name
         """
         log= logging.getLogger( "load_archive" )
@@ -190,7 +190,7 @@ class Numbers13_Workbook( Workbook ):
                                     row_info.cells[col]= (celltype,data[3])
                                     count -= 1
                                     if count == 0: break
-                            
+                          
         return archive
 
 # Once we've decoded the archive, we can fetch sheets, tables, rows and cells.
@@ -230,7 +230,7 @@ class Numbers13_Workbook( Workbook ):
                 tablemodel= self.archive[tableinfo.tableModel[1][0]]
                 sheet_list.append(  (sheet.name, tablemodel.table_name) )
         return sheet_list
-    
+  
 # The proto files include this.
 #
 # ..  parsed-literal::
@@ -310,7 +310,7 @@ class Numbers13_Workbook( Workbook ):
                 for row in self._row_iter( tablemodel ):
                     yield row
                 break
-                    
+                  
 # ::
 
     def _row_iter( self, tablemodel ):
@@ -336,4 +336,4 @@ class Numbers13_Workbook( Workbook ):
                 for row in tile.rowInfos:
                     yield [ self._cell(row.cells[col], str_values, form_values, error_values) 
                         for col in row.cells ] 
-        
+      

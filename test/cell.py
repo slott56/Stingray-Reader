@@ -19,6 +19,11 @@ import unittest
 import decimal
 import datetime
 import stingray.cell
+import locale
+
+# The locale varies a bit from version to version
+# and OS to OS.
+SAMPLE_DATE = datetime.datetime(2056, 9, 10).strftime(locale.nl_langinfo(locale.D_FMT))
 
 # Cell Tests
 # ===============
@@ -76,7 +81,7 @@ class TestTextCell( unittest.TestCase ):
         self.wb= CellMockWorkbook()
         self.cell_numb= stingray.cell.TextCell( '123', self.wb )
         self.cell_word= stingray.cell.TextCell( 'xyz', self.wb )
-        self.cell_date= stingray.cell.TextCell( '9/10/1956', self.wb )
+        self.cell_date= stingray.cell.TextCell( SAMPLE_DATE, self.wb )
     def test_should_be_nonempty( self ):
         self.assertFalse( self.cell_numb.is_empty() )
         self.assertFalse( self.cell_word.is_empty() )
@@ -99,9 +104,9 @@ class TestTextCell( unittest.TestCase ):
     def test_should_convert_string( self ):
         self.assertEqual( '123', self.cell_numb.to_str() )
         self.assertEqual( 'xyz', self.cell_word.to_str() )
-        self.assertEqual( '9/10/1956', self.cell_date.to_str() )
+        self.assertEqual( SAMPLE_DATE, self.cell_date.to_str() )
     def test_should_convert_date( self ):
-        self.assertEqual( datetime.datetime(1956,9,10), 
+        self.assertEqual( datetime.datetime(2056,9,10),
             self.cell_date.to_datetime() )
     def test_should_exception_nondate( self ):
         with self.assertRaises(ValueError):  

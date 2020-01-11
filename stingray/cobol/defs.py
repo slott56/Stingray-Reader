@@ -33,7 +33,7 @@
 # ..    math::
 #
 #     S = L(w)
-#    
+#   
 # Or ``schema= loader(workbook)``. This may involve a separate workbook file,
 # a separate sheet within a file or even just columns within 
 # the current sheet.
@@ -64,7 +64,7 @@
 # ..    math::
 #
 #     s_r = R( d, S_b )
-#    
+#   
 # We've changed ``schema_baseline= loader(cobol source)`` and then,
 # for each row, ``schema_row= setSizeAndOffset(data, schema_baseline)``.
 #
@@ -80,13 +80,13 @@
 #
 # -   At :py:meth:`COBOL_File.row_get` time -- a bit more lazy, but still in the wrong
 #     module, since it's here, not in :py:mod:`cobol.loader`.
-#    
+#   
 # -   In the application before doing any schema processing on a given row. Very lazy.
 #     But now the application must be more deeply involved in ODO processing. The application
 #     would do something like the following. Sadly, it has a line that's easy to overlook.
-#    
+#   
 # ..  parsed-literal::
-#    
+#   
 #     with open("xyzzy.cob") as source:
 #         dde_list, schema = COBOL_schema( source )
 #     with stingray.cobol.Character_File( filename, schema=schema ) as wb:
@@ -94,7 +94,7 @@
 #         for row in sheet.rows():
 #             **cobol.loader.setSizeAndOffset( dde_list[0] )**
 #             dump( schema, row )
-#            
+#           
 # The Module Dependency Problem
 # -------------------------------
 #
@@ -170,7 +170,7 @@ logger= logging.getLogger( __name__ )
 class UnsupportedError( Exception ):
     """A COBOL DDE has features not supported by this module."""
     pass
-    
+  
 # The most important unsupported feature may be "separate signs."  These may be
 # required for decoding bytes in some files.
 #
@@ -188,10 +188,10 @@ class UnsupportedError( Exception ):
 #
 # -   Preservation of the source characters (or bytes) for creating
 #     character-level (or byte-level) structured dumps of a record.
-#    
+#   
 # -   Preservation of the original DDE attributes, because there is so much
 #     information required to interpret the bytes.
-#    
+#   
 # Consequently, even the :py:class:`cell.TextCell` must be extended to include
 # preservation of raw data.
 #
@@ -217,7 +217,7 @@ class UnsupportedError( Exception ):
 #     These classes are profound extensions to the base definitions of :py:mod:`cell`.
 #     They are not polymorphic with the base classes.
 #     COBOL processing is not transparently identical to other workbook processing.
-#    
+#   
 # These cells are conventionally built by the the :py:class:`cobol.COBOL_File` version
 # of Workbook as a factory. These are rarely built any other way.
 #
@@ -257,7 +257,7 @@ class NumberDisplayCell( NumberCell ):
     def __init__( self, raw, workbook, attr ):
         self.raw, self.workbook= raw, workbook
         self._value= workbook.number_display( self.raw, attr )
-        
+      
 # ..  py:class:: NumberCompCell
 #
 #     A COBOL numeric item with USAGE COMPUTATIONAL.
@@ -272,7 +272,7 @@ class NumberCompCell( NumberCell ):
     def __init__( self, raw, workbook, attr ):
         self.raw, self.workbook= raw, workbook
         self._value= workbook.number_comp( self.raw, attr )
-        
+      
 # ..  py:class:: NumberComp3Cell
 #
 #     A COBOL numeric item with USAGE COMPUTATIONAL-3.
@@ -307,7 +307,7 @@ class ErrorCell( stingray.cell.ErrorCell ):
 
 # Essential Class Definitions
 # ============================
-#    
+#   
 # The essential class definitions define the DDE we're attempting to build.
 # We can  separated this structure into a few high-level subject areas:
 #
@@ -316,10 +316,10 @@ class ErrorCell( stingray.cell.ErrorCell ):
 #
 # -   `Allocation Strategy Hierarchy`_ defines the relationships among DDE's:
 #     Predecessor/Successor, Group/Elementary or Redefines.
-#    
+#   
 # -   `Occurs Strategy Hierarchy`_ defines the Occurs options of
 #     Default (no Occurs), simple Occurs, and more complex Occurs Depending On.
-#    
+#   
 # -   The `DDE Class`_ itself.
 #
 # Usage Strategy Hierarchy
@@ -341,6 +341,9 @@ class ErrorCell( stingray.cell.ErrorCell ):
 #     with an extra half-byte for sign information. This must be rounded up.
 #     COMP-3 fields often have an odd number of digits to reflect this.
 #
+# -   When usage is not provided, it is inherited from the parent
+#     structure. The top-most parent has a default usage of DISPLAY.
+#
 # The :py:meth:`Usage.create_func()` method returns a :py:class:`cell.Cell` type 
 # that should be built from the raw bytes.
 #
@@ -354,7 +357,7 @@ class ErrorCell( stingray.cell.ErrorCell ):
 #     [Usage]^[UsageDisplay],
 #     [Usage]^[UsageComp]
 #     [Usage]^[UsageComp3]
-#    
+#   
 # ..  image:: cobol_usage.png
 #
 # ..  py:class:: Usage
@@ -371,21 +374,33 @@ class ErrorCell( stingray.cell.ErrorCell ):
 #
 #     The superclass of ``Usage`` is abstract and doesn't compute a proper size.
 #
+# ..  TODO::
+#
+#     This is regrettably stateful.
+#
 # ::
 
 class Usage:
     """Covert numeric data based on Usage clause."""
     def __init__( self, source ):
         self.source_= source
-        self.final= source
+
+        # Stateful type information bound in by picture clause
+        self.picture = None
+        self.final= ""
         self.numeric= None # is the picture all digits?
         self.length= None
         self.scale= None
         self.precision= None
         self.signed= None
         self.decimal= None
+
+        # Stateful context bound in during parsing.
+        self.dde = None
+
     def setTypeInfo( self, picture ):
         """Details from parsing a PICTURE clause."""
+        self.picture = picture
         self.final= picture.final
         self.numeric = not picture.alpha
         self.length = picture.length
@@ -393,8 +408,21 @@ class Usage:
         self.precision = picture.precision
         self.signed = picture.signed
         self.decimal = picture.decimal
+
+# ..  py:method:: Usage.source()
+#
+# ::
+
     def source( self ):
         return self.source_
+
+# ..  py:method:: Usage.resolve()
+#
+# ::
+
+    def resolve( self, aDDE ):
+        """Associate back to the owning DDE."""
+        self.dde= weakref.ref(aDDE)
 
 # ..  py:method:: Usage.create_func()
 #
@@ -420,9 +448,9 @@ class Usage:
         return 0
 
 # ..  py:class:: UsageDisplay
-#            
+#           
 #     Usage "DISPLAY" is the COBOL language default.  It's also assumed for group-level items.
-#         
+#        
 # ::
 
 class UsageDisplay( Usage ):
@@ -485,7 +513,31 @@ class UsageComp3( Usage ):
     def size( self ):
         """COMP-3 is packed decimal."""
         return (len(self.final)+2)//2
-        
+
+# ..  py:class:: UsageParent
+#
+# This is a bit more complex situation. Unless otherwise specified, all DDE's inherit usage
+# from their parent. At the top, it's a default UsageDisplay("").
+#
+# When a Usage clause is created, it must contain *both* the source text **and** a link to the containing
+# DDE so the parent can be located by a walk up the structure.
+#
+# THe DDE links, however, are added when the parent is built.
+#
+# ::
+
+class UsageParent(Usage):
+    """Inherit Usage from parent. Or default to UsageDisplay("") if there is no parent."""
+    def __init__(self):
+        super().__init__("")
+    def size(self):
+        """Not provided here. Depends on parent!"""
+        raise NotImplementedError
+    def create_func(selfself, raw, workbook, attr):
+        """Depends on parent!"""
+        raise NotImplementedError
+
+
 # Allocation Strategy Hierarchy
 # ------------------------------
 #
@@ -510,7 +562,7 @@ class UsageComp3( Usage ):
 #
 # The Redefines strategy depends on another element: not it's immediate predecessor. 
 # This element will be assigned the same offset as the element on which it depends. 
-#    
+#   
 # The **Strategy** design pattern allows an element to delegate the 
 # :py:meth:`Redefines.offset`,
 # and :py:meth:`Redefines.totalSize` methods.
@@ -565,7 +617,7 @@ class Redefines(Allocation):
 #
 #     Resolve a DDE name. See our ``self.refers_to`` to refer to a DDE within
 #     the given structure.
-#    
+#   
 # ::
 
     def resolve( self, aDDE ):
@@ -612,7 +664,7 @@ class Redefines(Allocation):
 #     subclass does not depend on a named element, it depends on the immediate
 #     predecessor. It uses that contextual offset and size information provided by 
 #     the :py:func:`setSizeAndOffset` function.
-#            
+#           
 # ::
 
 class Successor(Allocation):
@@ -643,12 +695,12 @@ class Successor(Allocation):
         :return: computed offset
         """
         return offset
-        
+      
 # ..  py:method:: Successor.totalSize()
 #
 #     The total size of a field with occurs depending on requires a record with live data.
 #     Otherwise, the total size is trivially computed from the DDE definition.
-#    
+#   
 # ::
 
     def totalSize( self ):
@@ -662,17 +714,17 @@ class Successor(Allocation):
 #     This subclass does not depend on a named element, it depends on the immediate
 #     parent group. It uses that contextual offset and size information provided by 
 #     the :py:func:`setSizeAndOffset` function.
-#            
+#           
 # ::
 
 class Group(Allocation):
     """More typical case is that the DDE is first under a parent."""
     def __init__( self ):
         super().__init__()
-        
+      
     def source( self ):
         return ""
-        
+      
 # ..  py:method:: Group.offset( offset )
 #
 #     For the first item in a group, we use the group parent in the ``dde`` field
@@ -691,7 +743,7 @@ class Group(Allocation):
         :return: computed offset
         """
         return offset
-        
+      
 # ..  py:method:: Group.totalSize()
 #
 #     This is essentially the same as the successor -- it's merely an item within a DDE,
@@ -721,25 +773,25 @@ class Group(Allocation):
 #
 # This means that the ``number`` attribute must be derived EITHER from the definition
 # or a data record. For ODO, we need to bind the definition to a record.
-#    
+#   
 # ..  warning:: Dependencies between DDE and Attribute
 #
 #     An OCCURS is a feature of the DDE.
 #     Data access, however, requires the :py:class:`schema.Attribute`.
 #     There's no **direct** linkage from :py:class:`cobol.defs.DDE` to :py:class:`schema.Attribute`. 
 #     There is linkage from :py:class:`schema.Attribute` to :py:class:`cobol.defs.DDE`. 
-#    
+#   
 #     It seems best to have Attribute independent of any particular 
 #     source. A schema may not necessarily come from COBOL.
-#    
+#   
 #     However.
-#    
+#   
 #     To facilitate a DDE-oriented dump of raw data or specific fields of a COBOL
 #     file, we include a :py:mod:`weakref` from the ``DDE`` to the ``Attribute`` created
 #     from that DDE. 
-#    
+#   
 # The overall top-most parent DDE associated with this object is ``self.dde().top()``.
-#    
+#   
 # ..  py:class:: Occurs
 #
 #     Abstract superclass for an Occurs clause.
@@ -756,7 +808,7 @@ class Occurs:
         self.dde= weakref.ref(aDDE)
     def number( self, aRow ):
         return 1
-        
+      
 # ..  py:class:: OccursFixed
 #
 #     Occurs clause with a simple fixed number of occurrences.
@@ -776,7 +828,7 @@ class OccursFixed( Occurs ):
         super().resolve(aDDE)
     def number( self, aRow ):
         return self._number
-        
+      
 # ..  py:class:: OccursDependingOn
 #
 #     Occurs clause with a DEPENDING ON option.
@@ -806,7 +858,7 @@ class OccursDependingOn( Occurs ):
         ## logger.debug( "Getting {0} from {1}".format(self.attr,aRow) )
         value= aRow.cell( self.attr ).to_int()
         return value
-        
+      
 # ..  py:class:: OccursDependingOnLimit
 #
 #     This is an extension to OccursDependingOn. It limits the ODO clause to the defined
@@ -821,7 +873,7 @@ class OccursDependingOn( Occurs ):
 #     See http://pic.dhe.ibm.com/infocenter/ratdevz/v8r0/index.jsp?topic=%2Fcom.ibm.ent.cbl.zos.doc%2Ftopics%2FMG%2Figymch1027.htm
 #
 #         "When the maximum length is used, it is not necessary to initialize the ODO object before the table receives data."
-#    
+#   
 #         "When TABLE-GROUP-1 is a receiving item, Enterprise COBOL moves the maximum number of character positions for it (450 bytes for TABLE-1 plus two bytes for ODO-KEY-1). Therefore, you need not initialize the length of TABLE-1 before moving the SEND-ITEM-1 data into the table."
 #
 #     Based on this (and bad data seen in the wild) we deduce that this upper limit
@@ -868,7 +920,7 @@ class OccursDependingOnLimit( OccursDependingOn ):
 #     Each entry is defined by the following attributes:
 #
 #     ..  py:attribute:: level
-#    
+#   
 #         COBOL level number 01 to 49, 66 or 88.
 #
 #     ..  py:attribute:: myName
@@ -910,7 +962,7 @@ class OccursDependingOnLimit( OccursDependingOn ):
 #     ..  py:attribute:: top
 #
 #         A weakref to the overall record definition DDE.
-#    
+#   
 #     The following decorations are applied by functions that traverse the DDE structure.
 #
 #     ..  py:attribute:: sizeScalePrecision
@@ -918,7 +970,7 @@ class OccursDependingOnLimit( OccursDependingOn ):
 #         ``Picture`` namedtuple with details derived from parsing the PICTURE clause
 #
 #     ..  py:attribute:: size
-#    
+#   
 #         the size of an individual occurrence
 #
 #     The following features may have to be computed lazily if there's an Occurs
@@ -941,13 +993,13 @@ class OccursDependingOnLimit( OccursDependingOn ):
 #
 #     Additionally, this item -- in a way -- breaks the dependencies between
 #     a :py:class:`schema.Attribute` and a DDE. It's appropriate for an Attribute
-#     to depend on a DDE, but the reverse isn't proper. However, we DDE
-#     referring to an attribute anyway.
+#     to depend on a DDE, but the reverse isn't proper. However, we support a DDE
+#     referring to an attribute because it can be useful.
 #
 #     ..  py:attribute:: attribute
 #
 #         weakref to the :py:class:`schema.Attribute` built from this DDE.
-#    
+#   
 # ::
 
 class DDE:
@@ -964,50 +1016,60 @@ class DDE:
         self.allocation= redefines # Redefines or Successor or Group
         self.usage= usage
         self.initValue= initValue
-        
+      
         # Parsed picture information
         self.sizeScalePrecision= sizeScalePrecision
 
         # Relationships
         self.indent= 0 
         self.children= []
-        self.top= None # must be a weakref.ref()
-        self.parent= None # must be a weakref.ref()
+        self.top= None  # must be a weakref.ref()
+        self.parent= None  # must be a weakref.ref()
 
-        # Derived property from the picture clause
-        self.size= self.usage.size()            
-        
+        # Size is a derived property from the picture and usage clauses
+        # We don't always have the usage clause in isolation, however.
+        # This is an initial pass which might get replaced during decoration
+        if isinstance(self.usage, UsageParent):
+            # Actually based on parent... A handy default is to act like parent has UsageDisplay.
+            self.size = 0
+        else:
+            self.size = self.usage.size()
+
         # Because of ODO, these cannot always be computed statically.
-        self.offset= 0 # self.allocation.refers_to.offset + self.allocation.refers_to.total_size
-        self.totalSize= 0 # self.size * self.occurs.number(aRow)
-        
+        # In the non-ODO case, a static "decorator" pass sets these.
+        # In the ODO case, it's computed after data is loaded.
+        self.offset= 0  # self.allocation.refers_to.offset + self.allocation.refers_to.total_size
+        self.totalSize= 0  # self.size * self.occurs.number(aRow)
+      
         # Derived attribute created from this DDE.
         self.attribute= None
-                    
+                  
     def __repr__( self ):
-        return "{:s} {:s} {:s}".format( self.level, self.name, map(str,self.children) )
+        return "{!s} {!s} {!s}".format( self.level, self.name, list(map(str,self.children)) )
+
     def __str__( self ):
         oc= str(self.occurs)
         pc= " PIC {0}".format(self.picture) if self.picture else ""
         uc= " USAGE {0}".format( self.usage.source() ) if self.usage.source() else ""
         rc= self.allocation.source()
-        return "{:<2s} {:<20s}{:s}{:s}{:s}{:s}.".format( self.level, self.name, rc, oc, pc, uc )
+        return "{:<2s} {:<20s}{!s}{!s}{!s}{!s}.".format( self.level, self.name, rc, oc, pc, uc )
+
 
 # Construction occurs in these general steps: 
 #
-# (1) the DDE is created,
+# (1) The DDE is created,
 #
-# (2) source attributes are set, 
+# (2) Source attributes are set,
 #
-# (3) the DDE is decorated with size, offset and other details.
+# (3) The DDE is decorated with usage, size, offset, and dimensionality.
 #
-# (4) the DDE is transformed into a :py:class:`schema.Attribute`.
-#    
+# (4) The DDE is transformed into a :py:class:`schema.Attribute`.
+#   
 # ::
 
     def addChild( self, aDDE ):
         """Add a substructure to this DDE.
-    
+  
         This is used by RecordFactory to assemble the DDE.
         """
         if aDDE.allocation:
@@ -1068,8 +1130,8 @@ class DDE:
         found= search( self.top(), name )
         if found:
             return found
-        raise AttributeError( "Field {:s} unknown in this record".format(name) )
-    
+        raise AttributeError( "Field {!r} unknown in this record".format(name) )
+  
 # Work with Occurs Depending On. The :meth:`variably_located` question
 # may only apply to top-level (01, parent=None) DDE's.
 #
@@ -1080,10 +1142,10 @@ class DDE:
         if self.occurs.static:
             return any( c.variably_located for c in self.children )
         return True # Not static
-    
+  
     def setSizeAndOffset( self, aRow ):
         setSizeAndOffset( self, aRow )
-        
+      
 # DDE Preparation Processing
 # ===========================
 #
@@ -1155,18 +1217,25 @@ def search( top, aName ):
     for aDDE in top:
         if aDDE.name == aName: 
             return aDDE
-    
+  
 # ..  py:function:: resolver( top )
 #
 #     Apply :py:meth:`Allocation.resolve` throughout the structure.
 #     For each ``REDEFINES`` or ``OCCURS DEPENDING ON`` clause, locate the DDE to which
-#     it refers, saving a repeated searches.  
+#     it refers, saving a repeated searches.
+#
+#     For ``USAGE``, locate the parent.
 #
 # ::
 
 def resolver( top ):
-    """For each DDE.allocation which is based on REDEFINES, locate the referenced
-    name.  For each DDE.occurs which has OCCURS DEPENDING ON, locate the
+    """
+    Resolved references among DDE items.
+
+    For each DDE.allocation which is based on REDEFINES, locate the referenced
+    name.
+
+    For each DDE.occurs which has OCCURS DEPENDING ON, locate the
     referenced name.
     """
     for aDDE in top:
@@ -1183,9 +1252,12 @@ def resolver( top ):
 # For occurs, we also have three versions:
 # Default (effectively 1), Fixed, and Depends On.
 # The first two don't involve names. Only Depends On involves a name that we want
-# to resolve before proceeding. 
+# to resolve before proceeding.
 #
-#       
+# The Usage clause propagates down the hierarchy, also.
+# We need to establish the usage first, so we can then resolve the other sizes.
+#
+#      
 # ..  py:function:: setDimensionality( top )
 #
 #     Set Dimensionality for each DDE.
@@ -1198,7 +1270,7 @@ def resolver( top ):
 
 def setDimensionality( top ):
     def dimensions( aDDE ):
-        """:returns: A tuple of parental DDE's with non-1 occurs clauses."""
+        """:returns: A tuple of all parental DDE's with non-1 occurs clauses."""
         if aDDE.occurs.default:
             this_level= tuple()
         else:
@@ -1208,6 +1280,28 @@ def setDimensionality( top ):
         else:
             # Reached the top!
             return this_level
+    def usage( aDDE ):
+        """:returns: First non-UsageParent usage clause working up the hierarchy."""
+        if isinstance(aDDE.usage, UsageParent):
+            # Check the parent or create a default when we reach the top.
+            if aDDE.parent:
+                parent_usage = usage(aDDE.parent())
+                # Clone the usage class found above us. Then set our picture and DDE reference
+                new_usage = parent_usage.__class__(parent_usage.source())
+            else:
+                new_usage = UsageDisplay("")
+            if aDDE.usage.picture:
+                new_usage.setTypeInfo(aDDE.usage.picture)
+            new_usage.resolve(aDDE)
+            return new_usage
+        else:
+            return aDDE.usage
+    for aDDE in top:
+        # print(f"Usage for aDDE started {aDDE.usage}", end='...')
+        aDDE.usage = usage(aDDE)
+        aDDE.size = aDDE.usage.size()
+        # print(f"resolved to {aDDE.usage}")
+
     for aDDE in top:
         aDDE.dimensionality = dimensions( aDDE )
 
@@ -1244,10 +1338,10 @@ def setSizeAndOffset( aDDE, aRow=None, base=0 ):
     """Given a top-level DDE, a Row of data (or None), 
     assign offset, size, totalSize.
     Also, the case of an 88-level item, copy the parent USAGE to the child.
-    
+  
     size is the instance size. For non-group items, it comes from the
     PIC and OCCURS. For group items it's the sum of the children's sizes.
-    
+  
     totalSize = size * occurs.
     """
     # Pre-order: handle this item first.
@@ -1262,11 +1356,12 @@ def setSizeAndOffset( aDDE, aRow=None, base=0 ):
         # base= aDDE.offset= allocation.offset( base )
         aDDE.offset= aDDE.allocation.offset(base)
         aDDE.totalSize= 0
-    # Initialize the size -- it may get updated below for group-level items.
-    aDDE.size= aDDE.usage.size()            
-            
+
+    # Initialize the size -- If it's a group-level item, it will get updated.
+    aDDE.size= aDDE.usage.size()
+          
     ## logger.debug( "{0} Enter {1} offset={2}".format(">"*aDDE.indent, aDDE, aDDE.offset) )
-    
+  
     # For non-picture group-level, handle all of the children.
     for child in aDDE.children:
         setSizeAndOffset( child, aRow, base )
@@ -1282,13 +1377,13 @@ def setSizeAndOffset( aDDE, aRow=None, base=0 ):
                 pass
             else:
                 aDDE.size+= child.totalSize
-    
+  
     # Collect final results from handling the children.
     aDDE.totalSize = aDDE.size * aDDE.occurs.number(aRow)
-    
+  
     ## logger.debug( "{0} Exit  {1} size={2}*{3}={4}".format(
     ##     "<"*aDDE.indent, aDDE, aDDE.size, aDDE.occurs.number(aRow), aDDE.totalSize) )
-   
+ 
 # This function can be used during DDE load time if there are no Occurs Depending On.
 # Otherwise, it must be used for each individual row which is read.
 # See :py:class:`sheet.LazyRow`.

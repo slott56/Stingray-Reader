@@ -15,6 +15,6 @@
 """stingray --  Schema-based File Reader helps handle physical format and logical 
 layout of workbooks and flat files.
 
-Requires Python 3.3, xlrd 0.9.2
+Requires Python 3.5, xlrd 1.1.0
 """
-__version__ = "4.4.7"
+__version__ = "4.4.10"

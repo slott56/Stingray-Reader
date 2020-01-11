@@ -19,9 +19,9 @@
 #
 #     Combine (Workspace,Table) into a 2-tuple, and call this a "sheet" name when working
 #     with Numbers documents.
-#    
+#   
 #     This will fit with Stingray acceptably. 
-#    
+#   
 # The imports required to process this kind of file.
 #
 # ::
@@ -38,7 +38,7 @@ import stingray.sheet
 import stingray.cell
 
 # ..  py:module:: workbook.numbers09
-#        
+#       
 # The iWork Numbers 09 format is a Zip file with an XML document inside it.
 # There may be slight variations between native Numbers '09 and Numbers '13 doing
 # a "save as" in Numbers '09 format. It's not clear; we haven't done
@@ -49,20 +49,20 @@ import stingray.cell
 # ..  py:class:: Numbers09_Workbook
 #
 #     Extract sheets, rows and cells from a Numbers '09 format file.
-#        
+#       
 #     The ``.numbers`` "file" is a ZIP file.
-#        
+#       
 #     The :file:`index.xml` element the interesting part of the archive.
 #
 #     In addition to the superclass attributes, some additional unique
 #     attributes are introduced here.
-#        
+#       
 #     ..  py:attribute:: zip_archive
-#    
+#   
 #         A zip archive for this file.
-#        
+#       
 #     ..  py:attribute:: workspace
-#    
+#   
 #         The "workspaces": pages with tables inside them.
 #
 # ::
@@ -166,7 +166,7 @@ class Numbers09_Workbook( Workbook ):
             delta= datetime.timedelta( seconds=seconds )
             theDate= epoch + delta
             return stingray.cell.DateCell( theDate, self )
-            
+          
         elif cell.tag == formula_tag: # formula or error.
             s= cell.get(s_attr)
             fo= cell.find('sf:fo', namespaces=self.NUMBERS_NS)
@@ -187,7 +187,7 @@ class Numbers09_Workbook( Workbook ):
                 #self._cell_warning("Formula error", cell)
                 value= "#Error in {0}".format(fo.get(fs_attr))
                 return stingray.cell.ErrorCell( value, self )
-                
+              
         elif cell.tag == general_tag: # General?
             return stingray.cell.EmptyCell( '', self )
         elif cell.tag == number_tag: # Number
@@ -242,10 +242,10 @@ class Numbers09_Workbook( Workbook ):
 
         fs= None # cell_style.get(fs_attr) # Doesn't seem correct
         fdp= None # cell_style.get(fdp_attr) # Doesn't seem correct
-        
+      
         # Transform fs into proper Python format, otherwise, use the number of 
         # decimal places.
-        
+      
         if fs is not None:
             fmt= self._rewrite_fmt( fs )
             #print( "Decimal: {{0:{0}}}.format({1}) = ".format( fmt, value_txt ), end="" )
@@ -317,7 +317,7 @@ class Numbers09_Workbook( Workbook ):
                     if ident is not None:
                         self.cell_style[ident]= number_format.attrib
                 #print( ID, self.cell_style.get(ID,None) )
-        
+      
 # Rewrite a number format from Numbers to Python
 #
 # ::
@@ -334,7 +334,7 @@ class Numbers09_Workbook( Workbook ):
         precision= len(frac)
         return "{digits}{comma}.{precision}f".format(
             digits= digits, comma=comma, precision=precision )
-                    
+                  
 # ..  py:method:: Numbers09_Workbook.sheets( )
 #
 #     Return a list of "sheets" (actually underlying tables.)
@@ -372,24 +372,24 @@ class Numbers09_Workbook( Workbook ):
             Each grid-row fetches a number of cell values to assemble a row.
             Row's may be variable length (sigh) but padded to the number of columns
             specified in the grid.
-            
+          
         :param sheet: a Sheet object to retrieve rows from.
         """
         self.log.debug( "rows of {0}: {1}".format(sheet, sheet.name) )
         ws_name, t_name = sheet.name
         ws, tables= self.workspace[ws_name]
         tabular_model= tables[t_name]
-        
+      
         grid= tabular_model.find( 'sf:grid', namespaces=self.NUMBERS_NS )
         numrows_attr= dom.QName( self.NUMBERS_NS["sf"], 'numrows' )
         numcols_attr= dom.QName( self.NUMBERS_NS["sf"], 'numcols' )
         numrows = int(grid.attrib[numrows_attr])
         numcols = int(grid.attrib[numcols_attr])
-        
+      
         nc_attr= dom.QName( self.NUMBERS_NS["sf"], 'nc' )
-        
+      
         datasource= iter( self._datasource(grid) )
-        
+      
         rows = grid.find('sf:rows', namespaces=self.NUMBERS_NS)
         for n, r in enumerate(rows.findall( 'sf:grid-row', namespaces=self.NUMBERS_NS )):
             #print( "ROW", dom.tostring(r) )

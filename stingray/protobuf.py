@@ -21,18 +21,18 @@
 #
 #     "Components are serialized into .iwa (iWork Archive) files, 
 #     a custom format consisting of a Protobuf stream wrapped in a Snappy stream.
-#    
+#   
 #     "Protobuf
-#    
+#   
 #     "The uncompresed IWA contains the Component's objects, serialized consecutively 
 #     in a Protobuf stream. Each object begins with a varint representing the length of 
 #     the ArchiveInfo message, followed by the ArchiveInfo message itself. 
 #     The ArchiveInfo includes a variable number of MessageInfo messages describing 
 #     the encoded Payloads that follow, though in practice iWork files seem to only 
 #     have one payload message per ArchiveInfo.
-#    
+#   
 #     "Payload
-#    
+#   
 #     "The format of the payload is determined by the type field of the associated 
 #     MessageInfo message. The iWork applications manually map these integer values 
 #     to their respective Protobuf message types, and the mappings vary slightly 
@@ -46,7 +46,7 @@
 #     Attaching to Keynote via a debugger and inspecting [TSPRegistry sharedRegistry] shows:
 #
 #     "A full list of the type mappings can be found here."
-#    
+#   
 #     https://github.com/obriensp/iWorkFileFormat/blob/master/iWorkFileInspector/iWorkFileInspector/Persistence/MessageTypes
 #
 # Message ``.proto`` files.
@@ -54,11 +54,11 @@
 # -   Table details 
 #
 #     https://github.com/obriensp/iWorkFileFormat/blob/master/iWorkFileInspector/iWorkFileInspector/Messages/Proto/TSTArchives.proto
-#    
+#   
 # -   Numbers details
 #
 #     https://github.com/obriensp/iWorkFileFormat/blob/master/iWorkFileInspector/iWorkFileInspector/Messages/Proto/TNArchives.proto
-#    
+#   
 # -   Calculating Engine details
 #
 #     https://github.com/obriensp/iWorkFileFormat/blob/master/iWorkFileInspector/iWorkFileInspector/Messages/Proto/TSCEArchives.proto
@@ -78,7 +78,7 @@
 #
 # protobuf
 # ===============================================
-#    
+#   
 # For more information on protobuf, see the following:
 #
 # https://developers.google.com/protocol-buffers/
@@ -93,7 +93,7 @@
 # Each IWA has an ArchiveInfo message.
 #
 # ..  parsed-literal::
-#    
+#   
 #     message ArchiveInfo {
 #         optional uint64 identifier = 1;
 #         repeated MessageInfo message_infos = 2;
@@ -102,7 +102,7 @@
 # Within the ArchiveInfo is a MessageInfo message.
 #
 # ..  parsed-literal::
-#    
+#   
 #     message MessageInfo {
 #         required uint32 type = 1;
 #         repeated uint32 version = 2 [packed = true];
@@ -155,7 +155,7 @@ from stingray.snappy import varint
 
 class Message:
     """Generic protobuf message built from sequence of bytes.
-    
+  
     :ivar name_: the protobuf message name.
     :ivar fields: a dict that maps field numbers to field values.
         The contained message objects are **not** parsed, but left as 
@@ -209,7 +209,7 @@ class Message:
                 '{0:b}, field {1}, type {2}, size {3}, = {4}'.format(
                 item, field_number, wire_type, item_size, field_value) )
             yield field_number, field_value
-    
+  
 # ..  py:method::  Message.parse_protobuf( message_bytes )
 #
 #     Create a bag in the form of a mapping ``{name: [value,value,value], ... }``. This will 
@@ -227,7 +227,7 @@ class Message:
         for name, value in Message.parse_protobuf_iter( message_bytes ):
             bag[name].append( value )
         return dict(bag)
-    
+  
 # A class-level logger. We don't want a logger for each instance, since we'll
 # create many ``Message`` instances.
 #
@@ -291,7 +291,7 @@ class Archive_Reader:
     def make_message( self, messageInfo, payload ):
         name= self.tsp_names[messageInfo[1][0]]
         return Message( name, payload )
-        
+      
 # ..  py:method::  Archive_Reader.archive_iter( data )
 #
 # Iterate through all messages in this IWA archive. Locate the ArchiveInfo,

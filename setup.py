@@ -9,7 +9,7 @@
 # Use the following link to get the latest code:
 #
 #     ``git clone git://git.code.sf.net/p/stingrayreader/code stingrayreader-code``
-#    
+#   
 # It's also possible to get an archive distribution kit. These may be 
 # slightly out of date.
 #
@@ -43,23 +43,23 @@
 # ..  code-block:: bash
 #
 #     python3 build.py
-#    
+#   
 # Installation via Distutils
 # =============================
-#    
+#   
 # To install ``stingray`` you can use the following.
 # On Linux, this may require privileges via ``sudo``.
 #
 # ..  code-block:: bash
 #
 #     sudo python3 setup.py install
-#    
+#   
 # In some cases, you might want to break this down into a build step that
 # doesn't require privileges and the final install step, which does require
 # privileges.
 #
 # ..      code-block:: bash
-#        
+#       
 #         python3 setup.py build
 #         sudo python3 setup.py install
 #
@@ -76,20 +76,15 @@
 #
 # ::
 
-from setuptools import setup
-import sys
+import setuptools
 
-if sys.version_info < (3,3):
-    print( "Stringray requires Python 3.3" )
-    sys.exit(2)
-
-setup(
+setuptools.setup(
     name='stingray',
-    version='4.4.7',
+    version='4.5',
     description='Schema-Based File Reader, COBOL, EBCDIC Conversion, ETL, Data Profiling',
     author='S.Lott',
     author_email='s_lott@yahoo.com',
-    url='https://sourceforge.net/projects/stingray/',
+    url='https://github.com/slott56/Stingray-Reader',
     packages=[
         'stingray', 
         'stingray.schema',
@@ -98,21 +93,15 @@ setup(
         ],
     package_data={'stingray': ['*.json']},
 
-# We depend on the release of Python itself, based on the ``sys.version_info`` named tuple.
-# We have a few Python3.3 features.
-#
-# We depend XLRD, which comes from PyPi. This is required for normal use and operation.
+# We depend XLRD, which comes from PyPi. This is required for working with Excel spreadsheets.
 #
 # For a full build from the source document, we depend on having a new release
 # of Sphinx and PyLit3.
 #
-# The ``obsoletes`` is there in case anyone did happen to download the previous release.
-#
 # ::
 
-    install_requires=["xlrd>=0.9","sphinx>1.2"],
-    obsoletes=["cobol_dde","data_profile"],
-    
+    install_requires=["xlrd>=0.9","sphinx"],
+
 # Here are some `trove classifiers <http://pypi.python.org/pypi?%3Aaction=list_classifiers>`_.
 #
 # ::
@@ -129,4 +118,4 @@ setup(
         "Topic :: Software Development :: Quality Assurance",
         ],
     )
-    
+  

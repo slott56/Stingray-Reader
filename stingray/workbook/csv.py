@@ -21,18 +21,18 @@ import stingray.cell
 # ..  py:class:: CSV_Workbook
 #
 #     Extract sheets, rows and cells from a CSV file.
-#    
+#   
 #     A wrapper for :py:func:`csv.reader`.  This will create proper
 #     :py:class:`cell.TextCell` instances instead of the default string values
 #     that :py:mod:`csv` normally creates.
-#    
+#   
 #     There's only a single sheet and it matches the filename.
-#    
+#   
 #     In addition to the superclass attributes, an additional unique
 #     attribute is introduced here.
-#        
+#       
 #     ..  py:attribute:: rdr
-#    
+#   
 #         The csv reader for this file.
 #
 # ::

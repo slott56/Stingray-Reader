@@ -82,7 +82,7 @@
 #     ``s`` (?),
 #     ``t`` (Text),Cell containing text
 #     ``pm`` (Popup Menu),A popup menu of otherc cell values
-#    
+#   
 # This provides a reasonably complete set of source data types. They vary by 
 # physical format. They all have a common history, starting with VisiCalc and including
 # MultiPlan. Here's a summary:
@@ -90,7 +90,7 @@
 # ..  csv-table::
 #     :header: "Type","XLRD","XLSX","Numbers"
 #     :widths: 22,22,22,22
-#    
+#   
 #     Empty,Two Varieties,No,Two Varieties
 #     Text,Yes,Three Varieties,Yes
 #     Number,Yes,Yes,Yes
@@ -187,7 +187,7 @@ from collections import Hashable
 #
 # ::
 
-__version__ = "4.4.7"
+__version__ = "4.4.9"
 
 # Just to be sure that any locale-based processing will actually
 # work, we establish a default locale.
@@ -204,14 +204,14 @@ locale.setlocale(locale.LC_ALL, '')
 #     The :py:class:`cell.Cell` class hierarchy extends this base class.  Note that we have
 #     a relatively short list of built-in conversions.  
 #     For more complex, application-specific conversions, the raw :py:attr:`value` is available as a property.
-#    
+#   
 #     ..  py:attribute:: value 
-#    
+#   
 #         The raw data, often a String from a workbook. May also be a 
 #         sequence of bytes for COBOL.
-#            
+#           
 #     ..  py:attribute:: workbook
-#    
+#   
 #         The :py:class:`workbook.base.Workbook` that created this Cell.
 #         This is largely used for Excel date conversions, but there
 #         could be other context needs for lazy access to data.
@@ -356,16 +356,16 @@ class NumberCell( Cell ):
         return str(self.value)
     def to_datetime( self, format=None ):
         assert format is None, "Format is not used."
-        
+      
         return self.workbook.float_to_date(self.value)
-        
+      
         #try:
         #    dt= xlrd.xldate_as_tuple(self.value, self.workbook.datemode)
         #except xlrd.xldate.XLDateAmbiguous as e:
         #    ex= ValueError( "Ambiguous Date: {0}".format(self.value) )
         #    raise ex from e
         #return datetime.datetime(*dt)
-        
+      
     def to_digit_str( self, length=5 ):
         txt= "{0:0>{length}d}".format(int(self.value), length=length)
         return txt
@@ -449,15 +449,15 @@ class DateCell( Cell ):
     def to_int( self ):
         return int(self.to_float())
     def to_float( self ):
-        
+      
         return self.workbook.date_to_float(self.value)
-        
+      
         #timetuple= self.value.timetuple()[:6]
         #xl= xlrd.xldate.xldate_from_datetime_tuple(
         #    timetuple,
         #    self.workbook.datemode)
         #return xl
-        
+      
     def to_decimal( self, digits=0 ):
         fmt= "{0:0.{digits}f}"
         return decimal.Decimal( fmt.format(self.to_float(),digits=digits) )
@@ -473,7 +473,7 @@ class DateCell( Cell ):
 # For Apple Nnumbers, the ``<d>`` cells have a native date format.
 # This is a unique feature, since :py:mod:`xlrd`, XLSX and ODS don't have a 
 # proper date cell value.
-#    
+#   
 #
 # Conversion Functions
 # =======================
@@ -489,7 +489,7 @@ class DateCell( Cell ):
 #
 #     A closure based on a format string
 #     that returns a single-argument conversion function.
-#    
+#   
 #     :param format: the format string to use.
 #
 #
@@ -506,7 +506,7 @@ def date_from_string( format ):
 #
 #     A closure based on a format string
 #     that returns a single-argument conversion function.
-#    
+#   
 #     :param format: the format string to use.
 #
 #
@@ -530,7 +530,7 @@ def datecell_from_string( format ):
 #
 #     A closure based on an XLS workbook's datemode setting
 #     that returns a single-argument conversion function.
-#    
+#   
 #     :param workbook: the xlrd workbook with the required datemode.
 #
 # ::

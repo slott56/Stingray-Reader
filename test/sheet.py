@@ -131,13 +131,13 @@ class MockSchema(list):
     def __init__( self, *args, **kw ):
         super().__init__( args )
         self.info= kw
-        
+      
 # ::
 
 class MockAttribute:
     def __init__( self, **kw ):
         self.__dict__.update( kw )
-        
+      
 # ::
 
 class TestLazyRow( unittest.TestCase ):

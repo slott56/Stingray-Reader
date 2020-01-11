@@ -37,15 +37,15 @@ class MockDefaultCell:
             ) )
     def __ne__( self, other ):
         return not self.__eq__( other )
-        
+      
 class MockNonDefaultCell( MockDefaultCell ):
     pass
 
 class SchemaMockWorkbook:
     def __init__( self ):
         self.datemode= 0
-        
-    
+      
+  
 # Attribute Features
 # ===================
 #

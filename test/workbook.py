@@ -167,7 +167,7 @@ class TestODSWorkbook( TestCSVWorkbook ):
         self.assertEqual( 2, len(s.schema) )
         self.assertEqual( 'Sheet 2 \u2013 int', s.schema[0].name )
         self.assertEqual( 'Sheet 2 \u2013 string', s.schema[1].name )
-        
+      
 # XLS_Workbook Tests
 # =====================
 #
@@ -287,8 +287,8 @@ class TestWBFactory( unittest.TestCase ):
     def test_should_open_ods( self ):
         w = stingray.workbook.open_workbook( os.path.join('sample','ooo_workbook.ods') )
         self.assertEqual( set(['Sheet1','Sheet2','Sheet3']), set(w.sheets()) )
-        
-        
+      
+      
 # Test Suite and Runner
 # =====================
 #

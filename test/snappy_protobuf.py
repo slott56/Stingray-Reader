@@ -40,12 +40,12 @@ class Test_Snappy( unittest.TestCase ):
     def setUp( self ):
         #logging.getLogger().setLevel( logging.DEBUG )
         self.buffer = io.BytesIO( 
-            b'\x00\x11\x00\x00' # Header: 17 bytes in frame
+            b'\x00\x12\x00\x00' # Header: 18 bytes in frame
             b'\x18' # Size of the uncompressed data
             b'\x14hi mom' # 000101,00 -> literal of 5+1=6 bytes
             b'\x09\x06' # 000,010,01 00000110 -> copy 4+2=6 bytes offset of 6
-            b'\x16\x00\x0C' # 000101,10 00000000 00001100 -> copy 5+1=6 bytes offset of 12
-            b'\x17\x00\x00\x12' # 000101,11 00000000 00000000 00000000 00010010 -> copy 5+1=6 bytes offset of 18
+            b'\x16\x00\x0c' # 000101,10 00000000 00001100 -> copy 5+1=6 bytes offset of 12
+            b'\x17\x00\x00\x00\x12' # 000101,11 00000000 00000000 00000000 00010010 -> copy 5+1=6 bytes offset of 18
 
             b'\x00\x0a\x00\x00' # Header: 10 bytes in frame
             b'\x08' # Size of the uncompressed data
