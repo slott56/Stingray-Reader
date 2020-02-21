@@ -50,8 +50,3 @@ the source.  And vice-versa.
 The ``build.py`` runs **PyLit3** to convert the RST docs to Python as well
 as HTML.
 
-Here's the license for using Stingray
-
-http://creativecommons.org/licenses/by-nc-sa/4.0/
-
-
