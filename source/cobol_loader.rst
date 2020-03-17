@@ -1299,7 +1299,7 @@ This function gives us two API alternatives for parsing super-complex copybooks.
 
 There's a "Low-Level API" that looks like this:
 
-..  parsed-literal
+..  parsed-literal::
 
     self.lexer= stingray.cobol.loader.Lexer()
     self.rf= stingray.cobol.loader.RecordFactory()
@@ -1311,7 +1311,7 @@ There's a "Low-Level API" that looks like this:
 
 There's a "High-Level API" that looks like this:
 
-..  parsed-literal
+..  parsed-literal::
    
     dde_list, schema_list = stingray.cobol.loader.COBOL_schemata( 
         source, lexer_class=cobol.loader.Lexer_Long_Lines )
