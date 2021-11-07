@@ -9,3 +9,5 @@
 .tox/*
 docs/html/.doctrees/
 .notes
+.ipynb_checkpoints/*
+.mypy_cache/*
