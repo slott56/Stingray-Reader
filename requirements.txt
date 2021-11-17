@@ -1,0 +1,6 @@
+jsonschema>=4.2
+tox>=3.24
+pytest >= 5.2
+pytest-cov >= 3.0
+mypy >= 0.910
+xlrd>=2.0

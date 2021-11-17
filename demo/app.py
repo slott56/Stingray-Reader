@@ -363,9 +363,9 @@ def process( sheet, builder ):
 def process_workbook( source, sheet_func, builder_func ):
     for name in source.sheets():
         logger.info( "{0} :: {1}".format( input, name ) )
-        sheet= source.sheet( name, 
-            stingray.sheet.EmbeddedSchemaSheet,
-            loader_class=stingray.schema.loader.HeadingRowSchemaLoader )
+        sheet= source.sheet(name,
+                            stingray.sheet.EmbeddedSchemaSheet,
+                            loader_class=stingray.schema.loader.HeadingRowSchemaLoader)
         counts= sheet_func( sheet, builder_func )
         logger.info( pprint.pformat(dict(counts)) )
 
@@ -427,7 +427,7 @@ if __name__ == "__main__":
     logger.info( "Mode: {0}".format( sheet_func.__name__ ) )
     try:
         for input in args.file:
-            with stingray.workbook.open_workbook( input ) as source:
+            with stingray.workbook.open_workbook(input) as source:
                 process_workbook( source, sheet_func, builder_func )
         status= 0
     except Exception as e:

@@ -87,7 +87,6 @@
 
 import stingray.cobol.loader
 import stingray.cobol
-import pprint
 import types
 
 # When working with unknown files, we sometimes need to preview a raw dump of the
@@ -97,7 +96,7 @@ import types
     
 def raw_dump( schema, sheet ):
     for row in sheet.rows():
-        stingray.cobol.dump( schema, row )
+        stingray.cobol.dump(schema, row)
     
 # This is a handy expedient for debugging.
 #
@@ -190,10 +189,10 @@ def process_sheet( sheet ):
 # ::
 
 with open("sample/zipcty.cob", "r") as cobol:
-    schema= stingray.cobol.loader.COBOLSchemaLoader( cobol ).load()
+    schema= stingray.cobol.loader.COBOLSchemaLoader(cobol).load()
     #pprint.pprint( schema )
 for filename in 'sample/zipcty1', 'sample/zipcty2':
-    with stingray.cobol.Character_File( filename, schema=schema ) as wb:
+    with stingray.cobol.Character_File(filename, schema=schema) as wb:
         sheet= wb.sheet( filename )
         #counts= process_sheet( sheet )
         #pprint.pprint( counts )

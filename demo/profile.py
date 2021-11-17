@@ -154,9 +154,9 @@ def validate( sheet ):
 def process_workbook( input ):
     for name in source.sheets():
         logger.info( "{0} :: {1}".format( input, name ) )
-        sheet= source.sheet( name, 
-            stingray.sheet.EmbeddedSchemaSheet,
-            loader_class=stingray.schema.loader.HeadingRowSchemaLoader )
+        sheet= source.sheet(name,
+                            stingray.sheet.EmbeddedSchemaSheet,
+                            loader_class=stingray.schema.loader.HeadingRowSchemaLoader)
         counts= validate( sheet )
         logger.info( pprint.pformat(dict(counts)) )
 
@@ -195,7 +195,7 @@ if __name__ == "__main__":
     logging.getLogger().setLevel( args.verbosity )
     try:
         for input in args.file:
-            with stingray.workbook.open_workbook( input ) as source:
+            with stingray.workbook.open_workbook(input) as source:
                 process_workbook( source )
         status= 0
     except Exception as e:

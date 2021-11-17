@@ -80,27 +80,22 @@ import setuptools
 
 setuptools.setup(
     name='stingray',
-    version='4.5',
+    version='5.0',
     description='Schema-Based File Reader, COBOL, EBCDIC Conversion, ETL, Data Profiling',
     author='S.Lott',
-    author_email='s_lott@yahoo.com',
+    author_email='slott56@gmail.com',
     url='https://github.com/slott56/Stingray-Reader',
     packages=[
         'stingray', 
-        'stingray.schema',
-        'stingray.cobol',
-        'stingray.workbook',
         ],
-    package_data={'stingray': ['*.json']},
 
-# We depend XLRD, which comes from PyPi. This is required for working with Excel spreadsheets.
-#
-# For a full build from the source document, we depend on having a new release
-# of Sphinx and PyLit3.
-#
-# ::
+# XLRD is required for working with Excel .xls spreadsheets.
+# JSONSchema is required to validate schema definitions.
 
-    install_requires=["xlrd>=0.9","sphinx"],
+    install_requires=[
+        'jsonschema>=4.1',
+        "xlrd>=0.9"
+    ],
 
 # Here are some `trove classifiers <http://pypi.python.org/pypi?%3Aaction=list_classifiers>`_.
 #
@@ -118,4 +113,4 @@ setuptools.setup(
         "Topic :: Software Development :: Quality Assurance",
         ],
     )
-  
+
