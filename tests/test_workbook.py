@@ -33,8 +33,7 @@ def mock_workbook_class(mock_unpacker):
     return WB
 
 def test_base_workbook(mock_workbook_class):
-    source = StringIO("Hello World")
-    with mock_workbook_class(Path("test"), source) as wb:
+    with mock_workbook_class(Path("test")) as wb:
         assert wb.sheet("name") == sentinel.SHEET
         assert list(wb.sheet_iter()) == [sentinel.SHEET]
         assert list(wb.instance_iter(sentinel.SHEET)) == [sentinel.ROW]
@@ -42,8 +41,7 @@ def test_base_workbook(mock_workbook_class):
 
 def test_external_schema_base_sheet(mock_unpacker, mock_workbook_class):
     schema = Mock(name="Schema", properties=["a", "b"])
-    source = StringIO("Hello World")
-    with mock_workbook_class(Path("test"), source) as wb:
+    with mock_workbook_class(Path("test")) as wb:
         sheet = Sheet(wb, sentinel.NAME).set_schema(schema)
         assert sheet.name == sentinel.NAME
         assert sheet.schema == schema
@@ -59,8 +57,7 @@ def test_external_schema_base_sheet(mock_unpacker, mock_workbook_class):
 
 def test_repr_external_schema_base_sheet(mock_unpacker, mock_workbook_class):
     schema = Mock(name="Schema", properties=["a", "b"])
-    source = StringIO("Hello World")
-    with mock_workbook_class(Path("test"), source) as wb:
+    with mock_workbook_class(Path("test")) as wb:
         sheet = Sheet(wb, sentinel.NAME).set_schema(schema)
         for row in sheet.row_iter():
             text = repr(row)
@@ -71,8 +68,7 @@ def test_repr_external_schema_base_sheet(mock_unpacker, mock_workbook_class):
 
 def test_str_external_schema_base_sheet(mock_unpacker, mock_workbook_class):
     schema = Mock(name="Schema", properties=["a", "b"])
-    source = StringIO("Hello World")
-    with mock_workbook_class(Path("test"), source) as wb:
+    with mock_workbook_class(Path("test")) as wb:
         sheet = Sheet(wb, sentinel.NAME).set_schema(schema)
         for row in sheet.row_iter():
             assert str(row) == '[sentinel.V1, sentinel.V2]'
@@ -131,15 +127,23 @@ def test_csv_workbook(csv_workbook_1, anscombe_schema, capsys) -> bool:
         ('5.0', '5.68')
     ]
 
-def test_csv_workbook_open(csv_test_file_1) -> bool:
-    wb = open_workbook(csv_test_file_1)
-    # print(wb)
-    assert isinstance(wb, CSV_Workbook)
+def test_csv_open_file(csv_test_file_1):
+    with csv_test_file_1.open() as open_file:
+        wb = CSV_Workbook(csv_test_file_1, open_file)
+        assert len(list(wb.sheet_iter())) == 1
+        assert wb.name == csv_test_file_1
+    assert wb.the_file.closed
 
-def test_bad_workbook_open(tmp_path) -> bool:
+### open_workbook function tests
+
+def test_bad_csv_open_workbook(tmp_path) -> bool:
     does_not_exist = tmp_path/"must.*fail*"
     with pytest.raises(NotImplementedError):
         open_workbook(does_not_exist)
+
+def test_good_csv_open_workbook(csv_test_file_1) -> bool:
+    with open_workbook(csv_test_file_1) as wb:
+        assert isinstance(wb, CSV_Workbook)
 
 ### Test JSON Workbook
 
@@ -170,6 +174,17 @@ def test_json_workbook(json_workbook_1, anscombe_schema, capsys) -> bool:
         (5.0, 5.68)
     ]
 
+def test_json_open_file(json_test_file_1):
+    with json_test_file_1.open() as open_file:
+        wb = JSON_Workbook(json_test_file_1, open_file)
+        assert len(list(wb.sheet_iter())) == 1
+        assert wb.name == json_test_file_1
+    assert wb.the_file.closed
+
+def test_good_json_open_workbook(json_test_file_1) -> bool:
+    with open_workbook(json_test_file_1) as wb:
+        # print(wb)
+        assert isinstance(wb, JSON_Workbook)
 
 ### Test Schema Loaders
 
@@ -187,7 +202,7 @@ def heading_row_workbook() -> Mock:
 
 def test_heading_row_schema_loader(heading_row_workbook):
     sheet = heading_row_workbook.sheet('Sheet1')
-    sheet.set_schema_loader(HeadingRowSchemaLoader(sheet))
+    sheet.set_schema_loader(HeadingRowSchemaLoader())
     rows = list(sheet.rows())
     assert rows == [
         Row(sheet, ('1', '2'))
@@ -198,7 +213,7 @@ def test_heading_row_schema_loader(heading_row_workbook):
 
 def test_integration_csv_workbook_schema_loader(csv_workbook_1, capsys):
     sheet = csv_workbook_1.sheet('Sheet1')
-    sheet.set_schema_loader(HeadingRowSchemaLoader(sheet))
+    sheet.set_schema_loader(HeadingRowSchemaLoader())
     for row in sheet.rows():
         print(row)
     out, err = capsys.readouterr()
@@ -253,7 +268,7 @@ def test_external_schema_loader(external_schema_workbook, metaschema_workbook):
     schema_sheet.set_schema(SchemaMaker().from_json(ExternalSchemaLoader.META_SCHEMA))
 
     json_schema = ExternalSchemaLoader(schema_sheet).load()
-    print(json_schema)
+    # print(json_schema)
     schema = SchemaMaker().from_json(json_schema)
 
     sheet = external_schema_workbook.sheet('Sheet1')
@@ -265,13 +280,17 @@ def test_external_schema_loader(external_schema_workbook, metaschema_workbook):
     assert rows[0].name("a").value() == '1'
     assert rows[0].name("b").value() == '2'
 
+def test_cobol_schema_loader():
+    source_path = Path(os.environ.get("SAMPLES", "sample")) / "EPSPDATA.cpy"
+    schema = COBOL_Schema_Loader(source_path).load()
+    assert schema["title"] == "EPSPDATA"
 
 
 ### Test COBOL "workbook"
 
 
 @pytest.fixture
-def cobol_case_1() -> tuple[Schema, COBOL_Text_File]:
+def cobol_case_1(tmp_path) -> tuple[Schema, COBOL_Text_File]:
     """
     COBOL File Access Case 1: Text
 
@@ -310,23 +329,33 @@ def cobol_case_1() -> tuple[Schema, COBOL_Text_File]:
     }
     assert SchemaValidator.check_schema(text_file_schema) is None
 
-    file_content_1 = BytesIO(b"ASC123.4567890XYZ")
-    text_cobol_file = COBOL_Text_File("name1.dat", file_content_1)
-    return SchemaMaker.from_json(text_file_schema), text_cobol_file
+    file_path_1 = tmp_path/"file_content_1.data"
+    file_path_1.write_text("ASC123.4567890XYZ")
+
+    return SchemaMaker.from_json(text_file_schema), file_path_1
 
 
 def test_cobol_case_1(cobol_case_1, capsys) -> bool:
-    text_file_schema, text_cobol_file = cobol_case_1
-    assert len(list(text_cobol_file.sheet_iter())) == 1
-    sheet = text_cobol_file.sheet("").set_schema(text_file_schema)
-
-    for row in sheet.row_iter():
-        print(row)
+    text_file_schema, text_cobol_path = cobol_case_1
+    with text_cobol_path.open() as file_1:
+        text_cobol_file = COBOL_Text_File(text_cobol_path, file_1)
+        assert len(list(text_cobol_file.sheet_iter())) == 1
+        sheet = text_cobol_file.sheet("").set_schema(text_file_schema)
+        for row in sheet.row_iter():
+            print(row)
 
     out, err = capsys.readouterr()
     assert out.splitlines() == [
-        '["b\'ASC\'", "b\'123.45\'", "b\'67890\'"]'
+        "['ASC', '123.45', '67890']"
     ]
+
+    with COBOL_Text_File(text_cobol_path) as text_cobol_file:
+        assert len(list(text_cobol_file.sheet_iter())) == 1
+
+    with COBOL_Text_File(str(text_cobol_path)) as text_cobol_file:
+        assert len(list(text_cobol_file.sheet_iter())) == 1
+
+
 
 
 @pytest.fixture
@@ -394,41 +423,47 @@ def cobol_schema_2() -> Schema:
 
 
 @pytest.fixture
-def cobol_schema_2_file_1() -> COBOL_EBCDIC_File:
+def cobol_schema_2_path_2(tmp_path) -> COBOL_EBCDIC_File:
     """COBOL File Access Case 2: EBCDIC with RECFM=F"""
-    file_content = BytesIO(
+    file_path_2 = tmp_path / "file_content_2.data"
+    file_path_2.write_bytes(
         b"\xe9\xd6\xe2"  # WORD == "ZOS"
         b"\xf1\xf2\xf3K\xf4\xf5"  # NUMBER-1 == "123.45"
         b"\xf6\xf7\xf8\xf9\xf0"  # NUMBER-2 == Decimal("678.90")
         b"\x00\x00\x12\x34"  # NUMBER-3 == 4660
         b"\x98\x76\x5d"  # NUMBER-4 == -987.65
     )
-    ebcdic_cobol_file = COBOL_EBCDIC_File("name2.dat", file_content)
-    return ebcdic_cobol_file
+    return file_path_2
 
 
-def test_cobol_case_2_file_1(cobol_schema_2, cobol_schema_2_file_1, capsys) -> bool:
-    assert len(list(cobol_schema_2_file_1.sheet_iter())) == 1
-    sheet = cobol_schema_2_file_1.sheet("").set_schema(cobol_schema_2)
+def test_cobol_case_2_file_2(cobol_schema_2, cobol_schema_2_path_2, capsys) -> bool:
+    with COBOL_EBCDIC_File(cobol_schema_2_path_2) as ebcdic_cobol_file:
+        assert len(list(ebcdic_cobol_file.sheet_iter())) == 1
+        sheet = ebcdic_cobol_file.sheet("").set_schema(cobol_schema_2)
 
-    for row in sheet.row_iter():
-        print(row)
+        for row in sheet.row_iter():
+            print(row)
 
-    out, err = capsys.readouterr()
-    assert out.splitlines() == [
-        "['ZOS', '123.45', Decimal('678.90'), 4660, -987.65]"
-    ]
+        out, err = capsys.readouterr()
+        assert out.splitlines() == [
+            "['ZOS', '123.45', Decimal('678.90'), 4660, -987.65]"
+        ]
 
-    assert cobol_schema_2_file_1.lrecl == 21
+    assert ebcdic_cobol_file.lrecl == 21
+
+    with cobol_schema_2_path_2.open('rb') as file_2:
+        COBOL_EBCDIC_File(cobol_schema_2_path_2, file_2)
+        assert len(list(ebcdic_cobol_file.sheet_iter())) == 1
 
 
 @pytest.fixture
-def cobol_schema_2_file_2() -> COBOL_EBCDIC_File:
+def cobol_schema_2_path_3(tmp_path) -> COBOL_EBCDIC_File:
     """
     COBOL File Access Case 3: EBCDIC with RECFM=V
     Sample data has Record Descriptor Word (RDW) added for RECFM=V
     """
-    file_content = BytesIO(
+    file_path_3 = tmp_path/"file_content_3.data"
+    file_path_3.write_bytes(
         b"\x00\x19\x00\x00"  # RDW for 0x19 = 24 bytes, 4 byte header plus 21 bytes of data.
         b"\xe9\xd6\xe2"  # WORD == "ZOS"
         b"\xf1\xf2\xf3K\xf4\xf5"  # NUMBER-1 == "123.45"
@@ -436,22 +471,21 @@ def cobol_schema_2_file_2() -> COBOL_EBCDIC_File:
         b"\x00\x00\x12\x34"  # NUMBER-3 == 4660
         b"\x98\x76\x5d"  # NUMBER-4 == -987.65
     )
+    return file_path_3
 
-    return COBOL_EBCDIC_File("name3.dat", file_content, recfm_class=estruct.RECFM_V)
+def test_cobol_case_2_file_3(cobol_schema_2, cobol_schema_2_path_3, capsys) -> bool:
+    with COBOL_EBCDIC_File(cobol_schema_2_path_3, recfm_class=estruct.RECFM_V) as ebcdic_cobol_file:
+        sheet = ebcdic_cobol_file.sheet("").set_schema(cobol_schema_2)
 
+        lrecl = (
+            LocationMaker(EBCDIC(), cobol_schema_2)
+            .from_schema()
+            .end
+        )
+        assert lrecl == 21
 
-def test_cobol_case_2_file_2(cobol_schema_2, cobol_schema_2_file_2, capsys) -> bool:
-    sheet = cobol_schema_2_file_2.sheet("").set_schema(cobol_schema_2)
-
-    lrecl = (
-        LocationMaker(EBCDIC(), cobol_schema_2)
-        .from_schema()
-        .end
-    )
-    assert lrecl == 21
-
-    for row in sheet.row_iter():
-        print(row)
+        for row in sheet.row_iter():
+            print(row)
 
     out, err = capsys.readouterr()
     assert out.splitlines() == [
@@ -460,13 +494,14 @@ def test_cobol_case_2_file_2(cobol_schema_2, cobol_schema_2_file_2, capsys) -> b
 
 
 @pytest.fixture
-def cobol_schema_2_file_3() -> COBOL_EBCDIC_File:
+def cobol_schema_2_path_4(tmp_path) -> COBOL_EBCDIC_File:
     """
     COBOL File Access Case 4: EBCDIC with RECFM=VB
     Sample data has Block Descriptor Word (BDW) and Record Descriptor Word (RDW) added for RECFM=VB
     """
 
-    file_content = BytesIO(
+    file_path_4 = tmp_path / "file_content_4.data"
+    file_path_4.write_bytes(
         b"\x00\x36\x00\x00"  # BDW: 54 = 4+sum of RDW's
         b"\x00\x19\x00\x00"  # RDW: 25=4+len(data)
         b"\xe9\xd6\xe2"  # WORD="ZOS"
@@ -495,11 +530,12 @@ def cobol_schema_2_file_3() -> COBOL_EBCDIC_File:
         b"\x98\x76\x5d"  # NUMBER-4=-987.65
     )
 
-    return COBOL_EBCDIC_File("name4.dat", file_content, recfm_class=estruct.RECFM_VB)
+    return file_path_4
 
 
-def test_cobol_case_2_file_3(cobol_schema_2, cobol_schema_2_file_3, capsys) -> bool:
-    sheet = cobol_schema_2_file_3.sheet("").set_schema(cobol_schema_2)
+def test_cobol_case_2_file_4(cobol_schema_2, cobol_schema_2_path_4, capsys) -> bool:
+    cobol_ebcdic_file = COBOL_EBCDIC_File(cobol_schema_2_path_4, recfm_class=estruct.RECFM_VB)
+    sheet = cobol_ebcdic_file.sheet("").set_schema(cobol_schema_2)
 
     for row in sheet.row_iter():
         print(row)
@@ -514,15 +550,16 @@ def test_cobol_case_2_file_3(cobol_schema_2, cobol_schema_2_file_3, capsys) -> b
 
 
 @pytest.fixture
-def cobol_schema_2_file_4() -> COBOL_EBCDIC_File:
+def cobol_schema_2_file_5(tmp_path) -> COBOL_EBCDIC_File:
     """
     COBOL File Access Case 5: EBCDIC without RECFM information.
 
     This is essentially RECFM=V, but without RDW. The size comes from the ``Location`` and is computed dynamically.
     This is *not* typical of COBOL. But. We can support it.
     """
+    file_path_5 = tmp_path/"file_content_5.data"
 
-    file_content = BytesIO(
+    file_path_5.write_bytes(
         b"\xe9\xd6\xe2"  # WORD="ZOS"
         b"\xf1\xf2\xf3K\xf4\xf5"  # NUMBER-1="123.45"
         b"\xf6\xf7\xf8\xf9\xf0"  # NUMBER-2=Decimal("678.90")
@@ -534,15 +571,14 @@ def cobol_schema_2_file_4() -> COBOL_EBCDIC_File:
         b"\x00\x00\x12\x34"  # NUMBER-3=4660
         b"\x98\x76\x5d"  # NUMBER-4=-987.65
     )
+    return file_path_5
 
-    return COBOL_EBCDIC_File("name5.dat", file_content)
 
-
-def test_cobol_case_2_file_4(cobol_schema_2, cobol_schema_2_file_4, capsys) -> bool:
-    sheet = cobol_schema_2_file_4.sheet("").set_schema(cobol_schema_2)
-
-    for row in sheet.row_iter():
-        print(row)
+def test_cobol_case_2_file_5(cobol_schema_2, cobol_schema_2_file_5, capsys) -> bool:
+    with COBOL_EBCDIC_File(cobol_schema_2_file_5) as ebcdic_file:
+        sheet = ebcdic_file.sheet("").set_schema(cobol_schema_2)
+        for row in sheet.row_iter():
+            print(row)
 
     out, err = capsys.readouterr()
     assert out.splitlines() == [
@@ -552,39 +588,56 @@ def test_cobol_case_2_file_4(cobol_schema_2, cobol_schema_2_file_4, capsys) -> b
 
 
 @pytest.fixture
-def cobol_schema_2_file_5() -> COBOL_EBCDIC_File:
+def cobol_schema_2_file_6(tmp_path) -> COBOL_EBCDIC_File:
     """
     COBOL File Access Case 6: EBCDIC bad COMP-3 data.
 
     See Case 2 for schema.
     """
-
-    file_content = BytesIO(
+    file_path_6 = tmp_path / "file_content_6.data"
+    file_path_6.write_bytes(
         b"\xe9\xd6\xe2\xf1\xd6\xf3K\xf4\xd6\xf6\xf7\xf8\xd6\xf0\x00\x00\x12\xd6\x00\x00\x00\x00\x00"
     )
-    return COBOL_EBCDIC_File("name6.dat", file_content)
+    return file_path_6
 
 
-def test_cobol_case_2_file_5(cobol_schema_2, cobol_schema_2_file_5, capsys) -> bool:
-    sheet = cobol_schema_2_file_5.sheet("").set_schema(cobol_schema_2)
+def test_cobol_case_2_file_5(cobol_schema_2, cobol_schema_2_file_6, capsys) -> bool:
+    with COBOL_EBCDIC_File(cobol_schema_2_file_6) as ebcdic_file:
+        sheet = ebcdic_file.sheet("").set_schema(cobol_schema_2)
 
-    assert cobol_schema_2_file_5.lrecl == 21
+        assert ebcdic_file.lrecl == 21
 
-    row = next(sheet.row_iter())
-    assert row.name("WORD").value() == "ZOS"
+        row = next(sheet.row_iter())
+        assert row.name("WORD").value() == "ZOS"
 
-    assert row.name("NUMBER-1").raw() == b"\xf1\xd6\xf3K\xf4\xd6"
-    with pytest.raises(ValueError):
-        # Note letter "O" not zero "0" -- Doesn't match pattern of 999.99. Should raise exception...
-        v = row.name("NUMBER-1").value()
+        assert row.name("NUMBER-1").raw() == b"\xf1\xd6\xf3K\xf4\xd6"
+        with pytest.raises(ValueError):
+            # Note letter "O" not zero "0" -- Doesn't match pattern of 999.99. Should raise exception...
+            v = row.name("NUMBER-1").value()
 
-    assert row.name("NUMBER-2").raw() == b"\xf6\xf7\xf8\xd6\xf0"
-    assert row.name("NUMBER-2").value() == Decimal('678.60')
+        assert row.name("NUMBER-2").raw() == b"\xf6\xf7\xf8\xd6\xf0"
+        assert row.name("NUMBER-2").value() == Decimal('678.60')
 
-    assert row.name("NUMBER-3").raw() == b"\x00\x00\x12\xd6"
-    assert row.name("NUMBER-3").value() == Decimal("4822")
+        assert row.name("NUMBER-3").raw() == b"\x00\x00\x12\xd6"
+        assert row.name("NUMBER-3").value() == Decimal("4822")
 
-    # What about low values? Should this raise an exception? Or is it valid Z/OS behavior?
-    assert row.name("NUMBER-4").raw() == b"\x00\x00\x00"
-    assert row.name("NUMBER-4").value() == Decimal("0")
+        # What about low values? Should this raise an exception? Or is it valid Z/OS behavior?
+        assert row.name("NUMBER-4").raw() == b"\x00\x00\x00"
+        assert row.name("NUMBER-4").value() == Decimal("0")
+
+@pytest.fixture
+def xls_path():
+    return Path(os.environ.get("SAMPLES", "sample")) / "excel97_workbook.xls"
+
+def test_xls_workbook(xls_path, capsys):
+    with XLS_Workbook(xls_path) as wb:
+        assert list(s.name for s in wb.sheet_iter()) == ['Sheet1', 'Sheet2', 'Sheet3']
+        sheet_1 = wb.sheet("Sheet1").set_schema_loader(HeadingRowSchemaLoader())
+        for row in sheet_1.row_iter():
+            print(row)
+        out, err = capsys.readouterr()
+        assert out.splitlines() == [
+            "[42.0, 3.1415926, 'string', 20708.0, 1, '', 7]",
+            "[9973.0, 2.7182818280000003, 'data', 21568.0, 0, '', 15]"
+        ]
 

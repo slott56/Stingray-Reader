@@ -37,65 +37,66 @@ A given workbook has two possible sources for a schema: internal and external. A
 
 Generally, the schema applies to a sheet (or a Table in a Workspace for Numbers.)
 
+..  code-block::
 
-@startuml
-    abstract class Schema
-    abstract class Unpacker
-    class Location
-    Location --> Schema
-    'abstract class NDInstance
-    'Location -> NDInstance
-    class LocationMaker {
-        from_instance(instance): Location
-    }
-    Unpacker --> LocationMaker
-    LocationMaker --> "n" Location : creates
-    /'Details...
-    abstract class Nav
-    class NDNav
-    class DNav
-    class WBNav
-    Nav <|-- NDNav
-    Nav <|-- DNav
-    Nav <|-- WBNav
+    @startuml
+        abstract class Schema
+        abstract class Unpacker
+        class Location
+        Location --> Schema
+        'abstract class NDInstance
+        'Location -> NDInstance
+        class LocationMaker {
+            from_instance(instance): Location
+        }
+        Unpacker --> LocationMaker
+        LocationMaker --> "n" Location : creates
+        /'Details...
+        abstract class Nav
+        class NDNav
+        class DNav
+        class WBNav
+        Nav <|-- NDNav
+        Nav <|-- DNav
+        Nav <|-- WBNav
 
-    Unpacker --> NDNav : creates
-    Unpacker --> DNav : creates
+        Unpacker --> NDNav : creates
+        Unpacker --> DNav : creates
 
-    NDNav --> Location
+        NDNav --> Location
 
-    class JSON
-    DNav --> JSON
-    '/
+        class JSON
+        DNav --> JSON
+        '/
 
-    class File
-    abstract class Workbook ##[bold]blue
+        class File
+        abstract class Workbook ##[bold]blue
 
-    Workbook --> Unpacker
-    Workbook --> File : opens
-    Unpacker --> File : reads
+        Workbook --> Unpacker
+        Workbook --> File : opens
+        Unpacker --> File : reads
 
-    class Sheet ##[bold]blue {
-        row_iter(): Row
-    }
-    Workbook *-- "1:n" Sheet
-    Sheet --> Schema
-    class Row  ##[bold]blue {
-        name(): Any
-    }
-    Sheet *-- "n" Row
-    Row --> NDNav : "[non-delimited]"
-    Row --> DNav : "[delimited]"
-    Row --> WBNav : "[workbook]"
-    class EmbeddedSchemaSheet
-    class ExternalSchemaSheet
-    Sheet <|-- EmbeddedSchemaSheet
-    Sheet <|-- ExternalSchemaSheet
-    class SchemaLoader
-    EmbeddedSchemaSheet --> SchemaLoader
-    ExternalSchemaSheet --> SchemaLoader
-    SchemaLoader --> Schema : creates
-@enduml
+        class Sheet ##[bold]blue {
+            row_iter(): Row
+        }
+        Workbook *-- "1:n" Sheet
+        Sheet --> Schema
+        class Row  ##[bold]blue {
+            name(): Any
+        }
+        Sheet *-- "n" Row
+        Row --> NDNav : "[non-delimited]"
+        Row --> DNav : "[delimited]"
+        Row --> WBNav : "[workbook]"
+        class EmbeddedSchemaSheet
+        class ExternalSchemaSheet
+        Sheet <|-- EmbeddedSchemaSheet
+        Sheet <|-- ExternalSchemaSheet
+        class SchemaLoader
+        EmbeddedSchemaSheet --> SchemaLoader
+        ExternalSchemaSheet --> SchemaLoader
+        SchemaLoader --> Schema : creates
+    @enduml
 
 Legacy API Concept
 ==================
@@ -234,6 +235,7 @@ from stingray.schema_instance import (
     Location,
     LocationMaker,
 )
+from stingray.cobol_parser import schema_iter
 from types import TracebackType
 
 try:  # pragma: no cover
@@ -248,26 +250,23 @@ class Mode:
 
 class Workbook(Generic[Instance]):
     mode = Mode.TEXT
-    def __init__(
-        self, name: Union[Path, str], file_object: Optional[IO[AnyStr]] = None
-    ) -> None:
-        self.the_file: Union[IO[str], IO[bytes]]
+    def __init__(self, name: Union[Path, str]) -> None:
+        """
+        Subclass can leverage super().__init__(name or Path)
+        Subclass must set self.unpacker.
+        Subclass will probably want to open a file or deal with a file object provided as an argument.
+        """
         if isinstance(name, str):
             self.name = Path(name)
         else:
             self.name = name
-        if file_object:
-            self.the_file = file_object
-        else:
-            self.the_file = self.name.open(self.mode)
         self.unpacker: Unpacker[Instance]
 
     def __enter__(self) -> "Workbook[Instance]":
         return self
 
     def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException], exc_tb: TracebackType) -> None:
-        if self.the_file:
-            self.the_file.close()
+        pass
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Workbook):
@@ -291,45 +290,7 @@ class Workbook(Generic[Instance]):
     def instance_iter(self, sheet: "Sheet[Instance]") -> Iterator[Instance]:
         ...  # pragma: no cover
 
-
 WB = Union[Workbook[NDInstance], Workbook[WBInstance], Workbook[DInstance]]
-WB_Type = Type[WB]
-
-class WBFileRegistry:
-    """
-    A global registry for Workbook classes and their associated file suffixes.
-    It makes an open_workbook() function that can open a wide variety of file types.
-
-    >>> file_registry = WBFileRegistry()
-    >>> @file_registry.file_suffix(".xyz")
-    ... class XYZ_Workbook(Workbook):
-    ...     pass
-    >>> file_registry.suffix_map[".xyz"] == XYZ_Workbook
-    True
-    """
-    def __init__(self) -> None:
-        self.suffix_map: dict[str, WB_Type] = {}
-
-    def file_suffix(self, *name_list: str) -> Callable[[WB_Type], WB_Type]:
-        def concrete_decorator(cls: WB_Type) -> WB_Type:
-            for name in name_list:
-                self.suffix_map[name] = cls
-            return cls
-        return concrete_decorator
-
-    def open_workbook(self, source: Path) -> WB:
-        """
-        Opens an appropriate subclass of Workbook for the given file.
-        """
-        try:
-            cls = self.suffix_map[source.suffix]
-        except KeyError:
-            raise NotImplementedError(f"unsupported {source.suffix!r} suffix")
-        return cls(source)
-
-
-file_registry = WBFileRegistry()
-open_workbook = file_registry.open_workbook
 
 class Sheet(Generic[Instance]):
     """
@@ -344,15 +305,16 @@ class Sheet(Generic[Instance]):
     def __init__(self, workbook: WB, sheet_name: str) -> None:
         self.workbook = weakref.ref(workbook)
         self.name = sheet_name
+        # Plug in a do-nothing schema loader in case the schema is supplied externally.
+        self.loader: SchemaLoader[Instance] = SchemaLoader()
+        # Either schema supplied via `set_schema()` or an Internal schema loader will be provided.
         self.schema: Schema
-        self.loader: SchemaLoader[Instance]
         self.raw_instance_iter: Iterator[Instance]
         self.row: "Row[Instance]"  # Cache of last yielded row
 
     def set_schema(self, schema: Schema) -> "Sheet[Instance]":
         """An externally-supplied schema."""
         self.schema = schema
-        # Plug in a do-nothing schema loader when the schema is supplied externally.
         self.loader = SchemaLoader()
         return self
 
@@ -473,13 +435,9 @@ class HeadingRowSchemaLoader(SchemaLoader[Instance]):
     parsed by a WBUnpacker.
     """
 
-    def __init__(self, sheet: Sheet[Instance]) -> None:
-        self.sheet: Sheet[Instance] = sheet
-
     def header(self, source: Iterator[Instance]) -> JSON:
         first = cast(list[Any], next(source))
         json_schema = {
-            "title": repr(self.sheet),
             "type": "object",
             "properties": {
                 name: {"title": name, "$anchor": str(name), "type": "string", "position": n}
@@ -541,6 +499,58 @@ class ExternalSchemaLoader(SchemaLoader[Instance]):
         }
         return json_schema
 
+class COBOL_Schema_Loader():
+    """
+    The most common case is a single COBOL Schema.
+    For other, more complex situations, the single schema assumption may not be appropriate.
+    """
+    def __init__(self, source: Path) -> None:
+        self.source = source
+
+    def load(self) -> JSON:
+        with self.source.open() as source:
+            self.schemas = list(schema_iter(source))
+        return self.schemas[0]
+
+### Registry to map file suffix to implementation
+
+WB_Type = Type[WB]
+
+class WBFileRegistry:
+    """
+    A global registry for Workbook classes and their associated file suffixes.
+    It makes an open_workbook() function that can open a wide variety of file types.
+
+    >>> file_registry = WBFileRegistry()
+    >>> @file_registry.file_suffix(".xyz")
+    ... class XYZ_Workbook(Workbook):
+    ...     pass
+    >>> file_registry.suffix_map[".xyz"] == XYZ_Workbook
+    True
+    """
+    def __init__(self) -> None:
+        self.suffix_map: dict[str, WB_Type] = {}
+
+    def file_suffix(self, *name_list: str) -> Callable[[WB_Type], WB_Type]:
+        def concrete_decorator(cls: WB_Type) -> WB_Type:
+            for name in name_list:
+                self.suffix_map[name] = cls
+            return cls
+        return concrete_decorator
+
+    def open_workbook(self, source: Path) -> WB:
+        """
+        Opens an appropriate subclass of Workbook for the given file.
+        """
+        try:
+            cls = self.suffix_map[source.suffix]
+        except KeyError:
+            raise NotImplementedError(f"unsupported {source.suffix!r} suffix")
+        return cls(source)
+
+
+file_registry = WBFileRegistry()
+open_workbook = file_registry.open_workbook
 
 """
 CSV Implementation
@@ -549,11 +559,21 @@ CSV Implementation
 @file_registry.file_suffix(".csv")
 class CSV_Workbook(Workbook[WBInstance]):
     def __init__(
-        self, name: Union[str, Path], file_object: Optional[IO[AnyStr]] = None, **kwargs: str
+        self, name: Union[str, Path], file_object: Optional[IO[AnyStr]] = None, **kwargs: Any
     ) -> None:
-        super().__init__(name, file_object)
+        super().__init__(name)
         self.csv_args = kwargs
         self.unpacker = CSVUnpacker()
+        self.the_file: Union[IO[str], IO[bytes]]
+        if file_object:
+            self.the_file = file_object
+        else:
+            self.the_file = self.name.open(self.mode)
+
+    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException],
+                 exc_tb: TracebackType) -> None:
+        if hasattr(self, "the_file") and self.the_file:
+            self.the_file.close()
 
     def sheet(self, name: str) -> Sheet[WBInstance]:
         return CSV_Sheet(self, "")
@@ -578,9 +598,20 @@ class JSON_Workbook(Workbook[DInstance]):
     def __init__(
         self, name: Union[str, Path], file_object: Optional[IO[AnyStr]] = None, **kwargs: Any
     ) -> None:
-        super().__init__(name, file_object)
+        super().__init__(name)
         self.json_args = kwargs
         self.unpacker = JSONUnpacker()
+        self.the_file: Union[IO[str], IO[bytes]]
+        if file_object:
+            self.the_file = file_object
+        else:
+            self.the_file = self.name.open(self.mode)
+        self.csv_args = kwargs
+
+    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException],
+                 exc_tb: TracebackType) -> None:
+        if hasattr(self, "the_file") and self.the_file:
+            self.the_file.close()
 
     def sheet(self, name: str) -> Sheet[DInstance]:
         return JSON_Sheet(self, "")
@@ -597,9 +628,7 @@ class JSON_Workbook(Workbook[DInstance]):
 class JSON_Sheet(Sheet[DInstance]):
     pass
 
-### xlrd for .xls files
-
-
+### COBOL Files
 
 """
 COBOL File Implementation -- EBCDIC and Text
@@ -629,8 +658,18 @@ class COBOL_Text_File(Workbook[NDInstance]):
     def __init__(
         self, name: Union[str, Path], file_object: Optional[IO[AnyStr]] = None, **kwargs: str
     ) -> None:
-        super().__init__(name, file_object)
+        super().__init__(name)
         self.unpacker = TextUnpacker()
+        self.the_file: Union[IO[str], IO[bytes]]
+        if file_object:
+            self.the_file = file_object
+        else:
+            self.the_file = self.name.open(self.mode)
+
+    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException],
+                 exc_tb: TracebackType) -> None:
+        if hasattr(self, "the_file") and self.the_file:
+            self.the_file.close()
 
     def sheet(self, name: str) -> Sheet[NDInstance]:
         return COBOL_Text_Sheet(self, "")
@@ -664,10 +703,20 @@ class COBOL_EBCDIC_File(Workbook[NDInstance]):
         lrecl: Optional[int] = None,
         **kwargs: str,
     ) -> None:
-        super().__init__(name, file_object)
+        super().__init__(name)
         self.unpacker = EBCDIC()
         self.recfm_class = recfm_class or estruct.RECFM_N
         self.lrecl: Optional[int] = None
+        self.the_file: Union[IO[str], IO[bytes]]
+        if file_object:
+            self.the_file = file_object
+        else:
+            self.the_file = self.name.open(self.mode)
+
+    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException],
+                 exc_tb: TracebackType) -> None:
+        if hasattr(self, "the_file") and self.the_file:
+            self.the_file.close()
 
     def sheet(self, name: str) -> Sheet[NDInstance]:
         return COBOL_EBCDIC_Sheet(self, "")
@@ -702,3 +751,53 @@ class COBOL_EBCDIC_Sheet(Sheet[NDInstance]):
             self.row = row
             yield self.row
 
+
+### xlrd for .xls files
+# Note that this is *only* for historical .XLS files.
+# Openpyxl is recommended for modern .XLSX files.
+# See http://www.python-excel.org/ for a complete list of implementations.
+
+try:
+    import xlrd  # type: ignore [import]
+
+    # We _could_ define an XLRD_Unpacker to work with the ``list[Cell]``
+    # definitions for each row. This _could_ allow some more flexibility in
+    # extracting the ``Cell.value`` and ``Cell.type`` information.
+    # It, however, doesn't seem to be required.
+
+    @file_registry.file_suffix(".xls")
+    class XLS_Workbook(Workbook[WBInstance]):
+        def __init__(
+                self, name: Union[str, Path], **kwargs: Any
+        ) -> None:
+            super().__init__(name)
+            self.xlrd_args = kwargs
+            self.unpacker = WBUnpacker()
+            self.xlrd_file = xlrd.open_workbook(name, **self.xlrd_args)
+
+        def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException],
+                     exc_tb: TracebackType) -> None:
+            if hasattr(self, "xlrd_file") and self.xlrd_file:
+                del self.xlrd_file
+
+        def sheet(self, name: str) -> Sheet[WBInstance]:
+            return XLS_Sheet(self, name)
+
+        def sheet_iter(self) -> Iterator[Sheet[WBInstance]]:
+            return (XLS_Sheet(self, name) for name in self.xlrd_file.sheet_names())
+
+        def instance_iter(self, sheet: Sheet[WBInstance]) -> Iterator[WBInstance]:
+            sheet = cast(XLS_Sheet, sheet)
+            for row in sheet.xlrd_sheet.get_rows():
+                sheet.raw_row = row
+                yield cast(WBInstance, [cell.value for cell in row])
+
+    class XLS_Sheet(Sheet[WBInstance]):
+        def __init__(self, wb: XLS_Workbook, name: str) -> None:
+            super().__init__(wb, name)
+            self.xlrd_sheet = wb.xlrd_file.sheet_by_name(name)
+            self.name = self.xlrd_sheet.name
+            self.raw_row: list[xlrd.CELL]
+
+except ImportError:  #pragma: no cover
+    pass

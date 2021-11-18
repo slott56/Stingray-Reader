@@ -79,8 +79,6 @@
 # the source  :file:`demo/zipcty.cob` schema and create a COBOL file we
 # can process. 
 #
-# We'll use ``types.SimpleNamespace`` to build objects from the source data.
-#
 # We might use ``pprint`` to dump values.
 #
 # ::

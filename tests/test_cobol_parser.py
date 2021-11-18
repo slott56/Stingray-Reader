@@ -482,28 +482,29 @@ def test_schemamaker_sample(sample_cobol):
 
 def test_extended_schemamaker_sample(sample_cobol):
     with sample_cobol.open() as source:
-        copy_book_list = structure(dde_sentences(reference_format(source)))
-    maker = JSONSchemaMakerExtendedVocabulary(copy_book_list[0])
-    s = maker.jsonschema()
-    assert s == {
-        '$anchor': 'EPSPDATA',
+        schema_list = list(schema_iter(source))
+    assert schema_list[0] == {
+         '$anchor': 'EPSPDATA',
          'cobol': '01 EPSPDATA',
          'properties': {'EPSPDATA-NUMBER-OF-MONTHS': {'$anchor': 'EPSPDATA-NUMBER-OF-MONTHS',
                                                       'cobol': '03 '
                                                                'EPSPDATA-NUMBER-OF-MONTHS '
                                                                'PIC S9(4) COMP',
+                                                      'contentEncoding': 'bigendian-int',
                                                       'title': 'EPSPDATA-NUMBER-OF-MONTHS',
                                                       'type': 'integer'},
                         'EPSPDATA-NUMBER-OF-YEARS': {'$anchor': 'EPSPDATA-NUMBER-OF-YEARS',
                                                      'cobol': '03 '
                                                               'EPSPDATA-NUMBER-OF-YEARS '
                                                               'PIC S9(4) COMP',
+                                                     'contentEncoding': 'bigendian-int',
                                                      'title': 'EPSPDATA-NUMBER-OF-YEARS',
                                                      'type': 'integer'},
                         'EPSPDATA-PRINCIPLE-DATA': {'$anchor': 'EPSPDATA-PRINCIPLE-DATA',
                                                     'cobol': '03 '
                                                              'EPSPDATA-PRINCIPLE-DATA '
                                                              'PIC S9(9)V99 COMP',
+                                                    'contentEncoding': 'bigendian-int',
                                                     'title': 'EPSPDATA-PRINCIPLE-DATA',
                                                     'type': 'integer'},
                         'EPSPDATA-QUOTED-INTEREST-RATE': {'$anchor': 'EPSPDATA-QUOTED-INTEREST-RATE',
@@ -511,23 +512,27 @@ def test_extended_schemamaker_sample(sample_cobol):
                                                                    'EPSPDATA-QUOTED-INTEREST-RATE '
                                                                    'PIC S9(2)v9(3) '
                                                                    'COMP',
+                                                          'contentEncoding': 'bigendian-int',
                                                           'title': 'EPSPDATA-QUOTED-INTEREST-RATE',
                                                           'type': 'integer'},
                         'EPSPDATA-RETURN-ERROR': {'$anchor': 'EPSPDATA-RETURN-ERROR',
                                                   'cobol': '03 EPSPDATA-RETURN-ERROR '
                                                            'PIC X(80)',
+                                                  'contentEncoding': 'cp037',
                                                   'title': 'EPSPDATA-RETURN-ERROR',
                                                   'type': 'string'},
                         'EPSPDATA-RETURN-MONTH-PAYMENT': {'$anchor': 'EPSPDATA-RETURN-MONTH-PAYMENT',
                                                           'cobol': '03 '
                                                                    'EPSPDATA-RETURN-MONTH-PAYMENT '
                                                                    'PIC S9(7)V99 COMP',
+                                                          'contentEncoding': 'bigendian-int',
                                                           'title': 'EPSPDATA-RETURN-MONTH-PAYMENT',
                                                           'type': 'integer'},
                         'EPSPDATA-YEAR-MONTH-IND': {'$anchor': 'EPSPDATA-YEAR-MONTH-IND',
                                                     'cobol': '03 '
                                                              'EPSPDATA-YEAR-MONTH-IND '
                                                              'PIC X',
+                                                    'contentEncoding': 'cp037',
                                                     'title': 'EPSPDATA-YEAR-MONTH-IND',
                                                     'type': 'string'}},
          'title': 'EPSPDATA',
@@ -2255,6 +2260,7 @@ def all_types_source() -> str:
                    05  BINARY-D             PIC S9999 BINARY.
                    05  TEXT-A               PIC  9999 DISPLAY.
                    05  TEXT-B               PIC  9999.
+                   05  TEXT-C               PIC  XXXX.
         """
     )
 
@@ -2337,7 +2343,14 @@ def test_schemamaker_all_types(all_types_source: str) -> None:
                                    'contentEncoding': 'cp037',
                                    'conversion': 'decimal',
                                    'title': 'TEXT-B',
-                                   'type': 'string'}},
+                                   'type': 'string'},
+                        'TEXT-C': {'$anchor': 'TEXT-C',
+                                   'cobol': '05 TEXT-C PIC XXXX',
+                                   'contentEncoding': 'cp037',
+                                   'title': 'TEXT-C',
+                                   'type': 'string'}
+
+                        },
          'title': 'ALL-TYPES',
          'type': 'object'}
 
@@ -2403,7 +2416,12 @@ def test_extended_schemamaker_all_types(all_types_source: str) -> None:
                         'TEXT-B': {'$anchor': 'TEXT-B',
                                    'cobol': '05 TEXT-B PIC 9999',
                                    'title': 'TEXT-B',
-                                   'type': 'decimal'}},
+                                   'type': 'decimal'},
+                        'TEXT-C': {'$anchor': 'TEXT-C',
+                                   'cobol': '05 TEXT-C PIC XXXX',
+                                   'title': 'TEXT-C',
+                                   'type': 'string'}
+                        },
          'title': 'ALL-TYPES',
          'type': 'object'}
 

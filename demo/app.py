@@ -129,7 +129,7 @@
 #         The normal persistent processing subclass then winds up having a **lot** of extra 
 #         stuff added to it.
 #        
-#         The design winds up somewhat better looking if we remove persistence.
+#         The design winds up somewhat better looking when we remove persistence.
 #        
 # Having these two classes allows us to configure our 
 # application processing as follows. We can define high-level functions

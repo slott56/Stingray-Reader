@@ -666,3 +666,17 @@ class JSONSchemaMakerExtendedVocabulary(JSONSchemaMaker):
             # The regular expression pattern is not reflected in this if-statement.
             raise DesignError(f"usage clause {usage!r} unknown")  # pragma: no cover
 
+REPLACING = Optional[list[tuple[str, str]]]
+REFERENCE_FORMAT = Callable[[TextIO, REPLACING], Iterator[str]]
+
+def schema_iter(source: TextIO, deformat: REFERENCE_FORMAT = reference_format) -> Iterator[JSON]:
+    copy_books = structure(
+        dde_sentences(
+            reference_format(
+                source
+            )
+        )
+    )
+    schemas = (JSONSchemaMaker(record).jsonschema() for record in copy_books)
+    return schemas
+

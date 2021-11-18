@@ -22,9 +22,9 @@ historical information on file formats and contents.
 
 Our focus here is validation of the application-schema binding as well as the file-schema binding.
 
-We can use the  :py:mod:`unittest` module to write tests that
+We can use the pytest to write tests that
 validate the schema shared by an application and file.
-There are three levels to this validation.
+There are three levels to this testing.
 
 -   Unit-level.  This is a test of the builder functions more-or-less in isolation.
     There are two kinds of builder validation.
@@ -44,7 +44,6 @@ components. Not an isolated class.
 
 import pytest
 from unittest.mock import Mock
-import unittest
 from collections import defaultdict
 from pathlib import Path
 import os
@@ -92,7 +91,7 @@ def some_builder(aRow: Row) -> dict[str, Any]:
 # ::
 
 
-class TestWB(Workbook):
+class MockWB(Workbook):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.unpacker = WBUnpacker()
@@ -137,7 +136,7 @@ def test_some_builder():
     }
     Draft202012Validator.check_schema(json_schema)
     schema = SchemaMaker().from_json(json_schema)
-    wb = TestWB("workbook", Mock(name="Mock File"))
+    wb = MockWB("workbook")
     sheet = wb.sheet("Sheet 1").set_schema(schema)
     row_iter = sheet.row_iter()
     r = next(row_iter)
@@ -159,20 +158,24 @@ def test_some_builder():
 #
 # ::
 
-class Test_Builder_2_Live( unittest.TestCase ):
-    def setUp( self ):
-        workbook_path = Path(os.environ.get("SAMPLES", "sample")) / "excel97_workbook.xls"
-        self.wb = open_workbook(workbook_path)
-        self.sheet = EmbeddedSchemaSheet(self.wb, 'Sheet1', HeadingRowSchemaLoader)
-        self.schema = self.sheet.schema
-    def test_should_build_all_rows( self ):
-        summary= defaultdict( int )
-        for row in self.sheet.rows():
-            dict_row= dict( (a.name,row.cell(a)) for a in self.schema )
-            result= some_builder( dict_row )
-            summary[result['key']] += 1
-        self.assertEqual( 1, summary['string'] )
-        self.assertEqual( 1, summary['data'] )
+@pytest.fixture
+def sample_workbook_sheet():
+    workbook_path = Path(os.environ.get("SAMPLES", "sample")) / "excel97_workbook.xls"
+    wb = open_workbook(workbook_path)
+    sheet = wb.sheet("Sheet1").set_schema_loader(HeadingRowSchemaLoader())
+    # This is essential for keeping the workbook open.
+    # Once the `wb` variable goes out of scope, the workbook is closed.
+    yield wb, sheet
+
+def test_should_build_all_rows(sample_workbook_sheet):
+    wb, sheet = sample_workbook_sheet
+    summary = defaultdict(int)
+    for row in sheet.rows():
+        dict_row = {name: row.name(name) for name in sheet.schema.properties}
+        result = some_builder(dict_row)
+        summary[result['key']] += 1
+    assert summary['string'] == 1
+    assert summary['data'] == 1
 
 # Sheet-Level Testing
 # ========================
@@ -198,10 +201,14 @@ class Test_Builder_2_Live( unittest.TestCase ):
 #
 # ::
 
-def process_some_sheet( sheet ):
-    counts= defaultdict( int )
-    for row in sheet.schema.rows_as_dict_iter(sheet):
-        row_dict= some_builder( row )
+def process_some_sheet(sheet: Sheet):
+    counts = defaultdict(int)
+    rows_as_dict = (
+        {name: row.name(name) for name in sheet.schema.properties}
+        for row in sheet.rows()
+    )
+    for row in rows_as_dict:
+        row_dict = some_builder(row)
         counts['key',row_dict['key']] += 1
         counts['read'] += 1
     return counts
@@ -218,33 +225,20 @@ def process_some_sheet( sheet ):
 #
 # ::
 
-class Test_Sheet_Builder_2_Live( unittest.TestCase ):
-    def setUp( self ):
-        workbook_path = Path(os.environ.get("SAMPLES", "sample")) / "excel97_workbook.xls"
-        self.wb = open_workbook(workbook_path)
-        self.sheet = EmbeddedSchemaSheet(self.wb, 'Sheet1', HeadingRowSchemaLoader)
-        self.schema = self.sheet.schema
-    def test_should_load_schema( self ):
-        self.assertEqual( 'Col 1 - int', self.sheet.schema[0].name )
-        self.assertEqual( 'Col 2.0 - float', self.sheet.schema[1].name )
-        self.assertEqual( 'Column "3" - string', self.sheet.schema[2].name )
-        self.assertEqual( "Column '4' - date", self.sheet.schema[3].name )
-        self.assertEqual( 'Column 5 - boolean', self.sheet.schema[4].name )
-        self.assertEqual( 'Column 6 - empty', self.sheet.schema[5].name )
-        self.assertEqual( 'Column 7 - Error', self.sheet.schema[6].name )
-    def test_should_build_sample_row( self ):
-        counts= process_some_sheet( self.sheet )
-        self.assertEqual( 2, counts['read'] )
-        self.assertEqual( 1, counts['key','string'] )
-        self.assertEqual( 1, counts['key','data'] )
+def test_should_build_sample_row(sample_workbook_sheet):
+    wb, sheet = sample_workbook_sheet
+    counts = process_some_sheet(sheet)
+    assert counts['read'] == 2
+    assert counts['key','string'] == 1
+    assert counts['key','data'] == 1
 
-# Main Program Switch
-# ====================
-#
-# This is a common unittest main program.  Ideally, we'd create an actual
-# suite object to allow combining tests.
-#
-# ::
-
-if __name__ == "__main__":
-    unittest.main()
+    column_names = list(sheet.schema.properties.keys())
+    assert column_names == [
+        'Col 1 - int',
+        'Col 2.0 - float',
+        'Column "3" - string',
+        "Column '4' - date",
+        'Column 5 - boolean',
+        'Column 6 - empty',
+        'Column 7 - Error',
+    ]
