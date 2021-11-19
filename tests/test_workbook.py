@@ -60,11 +60,8 @@ def test_repr_external_schema_base_sheet(mock_unpacker, mock_workbook_class):
     with mock_workbook_class(Path("test")) as wb:
         sheet = Sheet(wb, sentinel.NAME).set_schema(schema)
         for row in sheet.row_iter():
-            text = repr(row)
-            assert re.fullmatch(
-                r'Row\(\<stingray.workbook.Sheet object at 0x.+\>, \[sentinel.V1, sentinel.V2\]\)',
-                text
-            ), f"bad {text!r}"
+            assert row.sheet() == sheet
+            assert row.instance == sentinel.ROW
 
 def test_str_external_schema_base_sheet(mock_unpacker, mock_workbook_class):
     schema = Mock(name="Schema", properties=["a", "b"])
@@ -83,14 +80,15 @@ def anscombe_schema() -> Schema:
         "type": "object",
         "properties": {
             "x123": {
+                "title": "x123",
                 "type": "number",
                 "description": "X values for series 1, 2, and 3.",
             },
-            "y1": {"type": "number", "description": "Y value for series 1."},
-            "y2": {"type": "number", "description": "Y value for series 2."},
-            "y3": {"type": "number", "description": "Y value for series 3."},
-            "x4": {"type": "number", "description": "X value for series 4."},
-            "y4": {"type": "number", "description": "Y value for series 4."},
+            "y1": {"title": "y1", "type": "number", "description": "Y value for series 1."},
+            "y2": {"title": "y2", "type": "number", "description": "Y value for series 2."},
+            "y3": {"title": "y3", "type": "number", "description": "Y value for series 3."},
+            "x4": {"title": "x4", "type": "number", "description": "X value for series 4."},
+            "y4": {"title": "y4", "type": "number", "description": "Y value for series 4."},
         },
     }
     assert SchemaValidator.check_schema(json_schema) is None
@@ -108,9 +106,13 @@ def test_csv_workbook(csv_workbook_1, anscombe_schema, capsys) -> bool:
     assert len(list(csv_workbook_1.sheet_iter())) == 1
     sheet = csv_workbook_1.sheet("").set_schema(anscombe_schema)
     rows = sheet.row_iter()
-    # NOTE: The file has a header row, which we're carefully skipping.
+    # NOTE: The file has a header row, which we're carefully extracting.
     row_0 = next(rows)
     assert row_0.values() == ['x123', 'y1', 'y2', 'y3', 'x4', 'y4']
+    assert re.fullmatch(
+        r"Row\(CSV_Sheet\(\<stingray.workbook.CSV_Workbook object at .+?\>, '', schema=ObjectSchema\(.+?\), loader=\<stingray.workbook.SchemaLoader object at .+?\>\), \['x123', 'y1', 'y2', 'y3', 'x4', 'y4'\]\)",
+        repr(row_0)
+    )
     # Non-header rows.
     pairs = [(row.name("x123").value(), row.name("y1").value()) for row in rows]
     assert pairs == [
@@ -125,6 +127,24 @@ def test_csv_workbook(csv_workbook_1, anscombe_schema, capsys) -> bool:
         ('12.0', '10.84'),
         ('7.0', '4.82'),
         ('5.0', '5.68')
+    ]
+
+def test_csv_workbook_row(csv_workbook_1, anscombe_schema, capsys) -> bool:
+    sheet = csv_workbook_1.sheet("").set_schema(anscombe_schema)
+    rows = sheet.row_iter()
+    row_0 = next(rows)
+    row_1 = next(rows)
+    row_1.dump()
+    out, err = capsys.readouterr()
+    assert out.splitlines() == [
+        'Field                                                 Value',
+         'spike/Anscombe_quartet_data.csv',
+         "  x123                                                '10.0'",
+         "  y1                                                  '8.04'",
+         "  y2                                                  '9.14'",
+         "  y3                                                  '7.46'",
+         "  x4                                                  '8.0'",
+         "  y4                                                  '6.58'"
     ]
 
 def test_csv_open_file(csv_test_file_1):
@@ -282,7 +302,7 @@ def test_external_schema_loader(external_schema_workbook, metaschema_workbook):
 
 def test_cobol_schema_loader():
     source_path = Path(os.environ.get("SAMPLES", "sample")) / "EPSPDATA.cpy"
-    schema = COBOL_Schema_Loader(source_path).load()
+    schema = COBOLSchemaLoader(source_path).load()
     assert schema["title"] == "EPSPDATA"
 
 
@@ -624,20 +644,3 @@ def test_cobol_case_2_file_5(cobol_schema_2, cobol_schema_2_file_6, capsys) -> b
         # What about low values? Should this raise an exception? Or is it valid Z/OS behavior?
         assert row.name("NUMBER-4").raw() == b"\x00\x00\x00"
         assert row.name("NUMBER-4").value() == Decimal("0")
-
-@pytest.fixture
-def xls_path():
-    return Path(os.environ.get("SAMPLES", "sample")) / "excel97_workbook.xls"
-
-def test_xls_workbook(xls_path, capsys):
-    with XLS_Workbook(xls_path) as wb:
-        assert list(s.name for s in wb.sheet_iter()) == ['Sheet1', 'Sheet2', 'Sheet3']
-        sheet_1 = wb.sheet("Sheet1").set_schema_loader(HeadingRowSchemaLoader())
-        for row in sheet_1.row_iter():
-            print(row)
-        out, err = capsys.readouterr()
-        assert out.splitlines() == [
-            "[42.0, 3.1415926, 'string', 20708.0, 1, '', 7]",
-            "[9973.0, 2.7182818280000003, 'data', 21568.0, 0, '', 15]"
-        ]
-

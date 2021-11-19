@@ -1,37 +1,41 @@
 """
 Row, Sheet, and Workbook Definitions.
 
-This includes the built-in workbook formats:
-
--   CSV
--   NDJSON a/k/a JSON Newline
--   COBOL
-
 The Stingray Reader treats all workbooks alike. This means wrapping CSV files, Numbers_13, ODS, and XLSX files so they have a uniform "workbook" interface.
 
-    Note: This implementation drops Numbers_09 and XLS files.
+The idea is to have a **Facade** of :py:class:`Workbook`, :py:class:`Sheet`, and :py:class:`Row` that describe all of these file formats.
+The definitions are mostly protocols to handle non-delimited (i.e., COBOL files), delimited files, and workbooks.
 
-The idea is to have a **Facade** of ``Workbook```, ``Sheet``, and ``Row`` that describe all of these related file formats: non-delimited, delimited, and workbooks.
+This depends on the lower-level :py:class:`Schema`, :py:class:`Instance`, :py:class:`Nav`, and :py:class:`Location` constructs.
 
-This depends on the lower-level `Location`, `Nav`, and `Schema` constructs.
+This includes the following built-in workbook formats:
+
+-   CSV via built-in :py:mod:`csv` module.
+
+-   NDJSON a/k/a JSON Newline via the built-in :py:mod:`json` module.
+
+-   COBOL via the :py:mod:`stingray.estruct` module.
+
 
 Here are some additional side-bar considerations for other formats that depend on external modules.
 
 - CSV is built-in. We permit kwargs to provide additional dialect details.
 
-- JSON is built-in.  We'll treate newline delimited JSON like CSV. An `Unpacker` subclass can decompose a "one big list" JSON document into individual rows.
+- JSON is built-in.  We'll treate newline delimited JSON like CSV.
 
-- XLS is a weird proprietary thing. The xlrd project (https://pypi.org/project/xlrd/) supports this.
+- XLS is a weird proprietary thing. The ``xlrd`` project (https://pypi.org/project/xlrd/) supports it.
 
 - ODS and XLSX are XML files. Incremental parsing is helpful here because they can be large. See https://openpyxl.readthedocs.io/en/stable/ and http://docs.pyexcel.org/en/v0.0.6-rc2/.
 
-- Numbers_13 is protobuf. The legacy version had  protobuf definitions which appear to work and a snappy decoder. See https://pypi.org/project/numbers-parser/ for a better solution.
+- Numbers_13 is protobuf. The legacy version of Stingray Reader had  protobuf definitions which appear to work and a snappy decoder. See https://pypi.org/project/numbers-parser/ for a better solution.
 
 - TOML requires an external library.  An `Unpacker` subclass can decompose a "one big list" TOML document into individual rows.
 
 - YAML requires an external library. We'll use the iterative parser as a default. An `Unpacker` subclass can decompose a "one big list" YAML document into individual rows.
 
-- XML is built-in. The schema drives navgiation through the XML document, locating the various tags which he schema requires. Other tags which may be present are ignored.
+- XML is built-in. A schema can drive navgiation through the XML document, name the various tags of interest. Other tags which may be present would be ignored.
+
+..  Note: This implementation drops Numbers_09 files.
 
 A given workbook has two possible sources for a schema: internal and external. An internal schema might be the first row or it might require more sophisticated parsing. An external schema might be hard-coded in the application, or might be a separate document with its own meta-schema.
 
@@ -132,23 +136,6 @@ COBOL, External Schema
 
 For COBOL, there were `TextFile` and a `EBCDICFile` subclasses of `Workbook`.
 
-Sheet and Row
--------------
-
-The `Sheet` class contained metadata about the sheet, and a row iterator.
-
-::
-
-    def process_sheet(sheet: Sheet) -> None:
-        for row in sheet.rows():
-            process_row(row)
-
-A `Row` contained an `Instance` of the sheet's `Schema`. This was decorated to describe the structure of non-delimited text or bytes. A number of subclasses of `Row` handled eager vs. lazy value computation, and occurs-depending-on processing.
-
-The extraction of values was part of workbook parsing, leading to a number of `Cell` subclass definitions.
-
-The location information was buried in a COBOL DDE dependency that was not properly foundational to the schema processing. Generally, the APi seems to be useful, however, as a model.
-
 API Concept
 ===========
 
@@ -159,12 +146,30 @@ Once a sheet has been bound to a schema, the rows can be processed.
 
 ::
 
-    from stingray.workbook import open_workbook, HeadingRowSchemaLoader
+    >>> from stingray import open_workbook, HeadingRowSchemaLoader, Row
+    >>> from pathlib import Path
+    >>> import os
+    >>> from typing import Iterable
+    >>> source_path = Path(os.environ.get("SAMPLES", "sample")) / "Anscombe_quartet_data.csv"
 
-    with open_workbook(path) as workbook:
-        sheet = workbook.sheet('Sheet1')
-        sheet.set_schema_loader(HeadingRowSchemaLoader(sheet))
-        process_sheet(sheet.rows())
+    >>> def process_sheet(rows: Iterable[Row]) -> None:
+    ...     for row in rows:
+    ...         row.dump()
+    ...         break  # Stop after 1 row.
+
+    >>> with open_workbook(source_path) as workbook:
+    ...    sheet = workbook.sheet('Sheet1')
+    ...    _ = sheet.set_schema_loader(HeadingRowSchemaLoader())
+    ...    process_sheet(sheet.rows())
+    Field                                                 Value
+    object
+      x123                                                '10.0'
+      y1                                                  '8.04'
+      y2                                                  '9.14'
+      y3                                                  '7.46'
+      x4                                                  '8.0'
+      y4                                                  '6.58'
+
 
 In this case, the ``rows()`` method of the ``Sheet`` will exclude the header rows consumed
 by the ``HeadingRowSchemaLoader``.
@@ -173,20 +178,33 @@ by the ``HeadingRowSchemaLoader``.
 
 ::
 
-    from stingray.workbook import open_workbook, ExternalSchemaLoader
+    >>> from stingray import open_workbook, HeadingRowSchemaLoader, Row
+    >>> from pathlib import Path
+    >>> import os
+    >>> from typing import Iterable
+    >>> source_path = Path(os.environ.get("SAMPLES", "sample")) / "Anscombe_quartet_data.csv"
+    >>> schema_path = Path(os.environ.get("SAMPLES", "sample")) / "Anscombe_schema.csv"
 
-    with open_workbook(schema_path) as metaschema_workbook:
-        schema_sheet = metaschema_workbook.sheet('Sheet1')
-        schema_sheet.set_schema(SchemaMaker().from_json(ExternalSchemaLoader.META_SCHEMA))
-        json_schema = ExternalSchemaLoader(schema_sheet).parse()
+    >>> with open_workbook(schema_path) as metaschema_workbook:
+    ...     schema_sheet = metaschema_workbook.sheet('Sheet1')
+    ...     _ = schema_sheet.set_schema(SchemaMaker().from_json(ExternalSchemaLoader.META_SCHEMA))
+    ...     json_schema = ExternalSchemaLoader(schema_sheet).load()
+    ...     schema = SchemaMaker().from_json(json_schema)
 
-    schema = SchemaMaker().from_json(json_schema)
-
-    with open_workbook(path) as workbook:
-        sheet = workbook.sheet('Sheet1').set_schema(schema)
-        process_sheet(sheet.rows())
+    >>> with open_workbook(source_path) as workbook:
+    ...     sheet = workbook.sheet('Sheet1').set_schema(schema)
+    ...     process_sheet(sheet.rows())
+    Field                                                 Value
+    object
+      x123                                                'x123'
+      y1                                                  'y1'
+      y2                                                  'y2'
+      y3                                                  'y3'
+      x4                                                  'x4'
+      y4                                                  'y4'
 
 In this case, the ``rows()`` method of the ``Sheet`` will include all rows.
+This means the header row is treated like data when an external schema is applied.
 
 The **process_sheet()** method:
 
@@ -199,17 +217,52 @@ The **process_sheet()** method:
 The ``name()`` method returns a ``Nav`` object. This has a ``value()`` method that will extract the value
 for a given attribute.
 
+
+Sheet and Row
+-------------
+
+The :py:class:`Sheet` class contained metadata about the sheet, and a row iterator.
+It's generally used like this:
+
+::
+
+    def process_sheet(sheet: Sheet) -> None:
+        for row in sheet.rows():
+            process_row(row)
+
+A :py:class:`Row` contains an instance that's bound to the :py:class:`Unpacker` and the :py:class:`Schema`.
+This will build :py:class:`Nav` objects for navigation. Where necessary, this may involve creating
+:py:class:`Location` objects as part of :py:class:`NDNav` navigation.
+
+Formats Handled Here
+====================
+
+-   .CSV
+
+-   NDJSON
+
+-   COBOL in native Text
+
+-   COBOL in EBCDIC
+
+-   .TAB file via CSV reader with dialetc options
+
+-   Pure Text via External Schema.
+    See ``workbook.simple`` and the metadata in ``simple.csv``.
+
 """
 
 import abc
 import csv
 from decimal import Decimal
 import json
+import logging
 from pathlib import Path
 from typing import (
     Iterator, Union, Optional, IO, Type, TextIO, BinaryIO, Any, Iterable, Callable, cast,
     AnyStr, TypeVar, Generic
 )
+import warnings
 import weakref
 
 from stingray import estruct
@@ -218,7 +271,6 @@ from stingray.schema_instance import (
     DInstance,
     WBInstance,
     NDInstance,
-    ListInstance,
     Nav,
     WBNav,
     NDNav,
@@ -243,6 +295,7 @@ try:  # pragma: no cover
 except ImportError:  # pragma: no cover
     from jsonschema import Draft7Validator as SchemaValidator  # type: ignore[import]
 
+logger = logging.getLogger("stingray.workbook")
 
 class Mode:
     TEXT = "r"
@@ -307,13 +360,21 @@ class Sheet(Generic[Instance]):
         self.name = sheet_name
         # Plug in a do-nothing schema loader in case the schema is supplied externally.
         self.loader: SchemaLoader[Instance] = SchemaLoader()
-        # Either schema supplied via `set_schema()` or an Internal schema loader will be provided.
+        # Either schema supplied via :py:meth:`set_schema` or by the loader during row processing.
         self.schema: Schema
         self.raw_instance_iter: Iterator[Instance]
         self.row: "Row[Instance]"  # Cache of last yielded row
 
+    def __repr__(self) -> str:
+        schema = self.schema if hasattr(self, "schema") else None
+        return f"{self.__class__.__name__}({self.workbook()}, {self.name!r}, schema={schema}, loader={self.loader})"
+
     def set_schema(self, schema: Schema) -> "Sheet[Instance]":
-        """An externally-supplied schema."""
+        """
+        Provides an externally-supplied schema.
+
+        This also sets a "do nothing" schema loader
+        """
         self.schema = schema
         self.loader = SchemaLoader()
         return self
@@ -332,9 +393,12 @@ class Sheet(Generic[Instance]):
         self.raw_instance_iter = cast("Workbook[Instance]", self.workbook()).instance_iter(self)
         json_schema = self.loader.header(self.raw_instance_iter)
         if json_schema:
-            # Not all loaders build a schema. Some only pass instances through.
-            # Optionally, validate the JSONSchema
+            # Not all loaders build a schema. If no schema was created, do nothing.
+            # TODO: Optionally, validate the JSONSchema before proceeding.
             self.schema = SchemaMaker().from_json(json_schema)
+        # It's not clear if this is helpful...
+        # if self.schema is None:
+        #     warnings.warn(f"Reading sheet {self} without a schema")
         rows = (Row(self, x) for x in self.loader.body(self.raw_instance_iter))
         # Cache the most recent row in the sheet.
         for self.row in rows:
@@ -349,18 +413,23 @@ class Sheet(Generic[Instance]):
                 self.name == other.name,
                 self.schema == other.schema,
             ]
-            # print(f"{self} == {other}: {details_match}")
             return all(details_match)
         return NotImplemented  # pragma: no cover
 
 class Row(Generic[Instance]):
-    """Wrapper around a :py:class:`Nav` object bound to an :py:class:`Instance`."""
+    """Wrapper around a :py:class:`Nav` object bound to an :py:class:`Instance`.
+
+    Note that both Instance and Sheet have the schema. While can be excessive,
+    it's also possible the sheet suffers from many schema and the assignment
+    is on an instance-by-instance basis.
+    """
 
     def __init__(self, sheet: Sheet[Instance], instance: Instance) -> None:
         self.sheet: weakref.ReferenceType[Sheet[Instance]] = weakref.ref(sheet)
         self.instance: Instance = instance
-        unpacker: Unpacker[Instance] = cast(Workbook[Instance], sheet.workbook()).unpacker
-        self.nav = unpacker.nav(sheet.schema, self.instance)
+        # Compute these eargerly. They *could* be deferred and cached.
+        self.unpacker: Unpacker[Instance] = cast(Workbook[Instance], sheet.workbook()).unpacker
+        self.nav = self.unpacker.nav(sheet.schema, self.instance)
 
     @property
     def schema(self) -> Schema:
@@ -378,6 +447,9 @@ class Row(Generic[Instance]):
             for name in cast(ObjectSchema, cast(Sheet[Instance], self.sheet()).schema).properties
         ]
 
+    def dump(self) -> None:
+        self.unpacker.nav(cast(Sheet[Instance], self.sheet()).schema, self.instance).dump()
+
     def __repr__(self) -> str:
         return f"Row({self.sheet()}, {self.values()!r})"
 
@@ -390,7 +462,6 @@ class Row(Generic[Instance]):
                 self.sheet == other.sheet,
                 self.instance == other.instance
             ]
-            # print(f"{self} == {other}: {details_match}")
             return all(details_match)
         return NotImplemented  # pragma: no cover
 
@@ -483,7 +554,6 @@ class ExternalSchemaLoader(SchemaLoader[Instance]):
 
     def load(self) -> JSON:
         json_schema = {
-            "title": repr(self.sheet),
             "type": "object",
             "properties": {
                 row.name("name").value(): {
@@ -499,7 +569,7 @@ class ExternalSchemaLoader(SchemaLoader[Instance]):
         }
         return json_schema
 
-class COBOL_Schema_Loader():
+class COBOLSchemaLoader():
     """
     The most common case is a single COBOL Schema.
     For other, more complex situations, the single schema assumption may not be appropriate.
@@ -545,7 +615,7 @@ class WBFileRegistry:
         try:
             cls = self.suffix_map[source.suffix]
         except KeyError:
-            raise NotImplementedError(f"unsupported {source.suffix!r} suffix")
+            raise NotImplementedError(f"unsupported {source.suffix!r} suffix; not one of {self.suffix_map.keys()}")
         return cls(source)
 
 
@@ -583,7 +653,8 @@ class CSV_Workbook(Workbook[WBInstance]):
 
     def instance_iter(self, sheet: Sheet[WBInstance]) -> Iterator[WBInstance]:
         self.rdr = csv.reader(cast(TextIO, self.the_file), **self.csv_args)
-        return (cast(WBInstance, row) for row in self.rdr)
+        for instance in self.rdr:
+            yield cast(WBInstance, instance)
 
 
 class CSV_Sheet(Sheet[WBInstance]):
@@ -621,8 +692,9 @@ class JSON_Workbook(Workbook[DInstance]):
 
     def instance_iter(self, sheet: Sheet[DInstance]) -> Iterator[DInstance]:
         for line in self.the_file:
-            document = json.loads(line, **self.json_args)
-            yield document
+            instance = json.loads(line, **self.json_args)
+            # instance.unpacker(self.unpacker).schema(sheet.schema)
+            yield instance
 
 
 class JSON_Sheet(Sheet[DInstance]):
@@ -751,53 +823,3 @@ class COBOL_EBCDIC_Sheet(Sheet[NDInstance]):
             self.row = row
             yield self.row
 
-
-### xlrd for .xls files
-# Note that this is *only* for historical .XLS files.
-# Openpyxl is recommended for modern .XLSX files.
-# See http://www.python-excel.org/ for a complete list of implementations.
-
-try:
-    import xlrd  # type: ignore [import]
-
-    # We _could_ define an XLRD_Unpacker to work with the ``list[Cell]``
-    # definitions for each row. This _could_ allow some more flexibility in
-    # extracting the ``Cell.value`` and ``Cell.type`` information.
-    # It, however, doesn't seem to be required.
-
-    @file_registry.file_suffix(".xls")
-    class XLS_Workbook(Workbook[WBInstance]):
-        def __init__(
-                self, name: Union[str, Path], **kwargs: Any
-        ) -> None:
-            super().__init__(name)
-            self.xlrd_args = kwargs
-            self.unpacker = WBUnpacker()
-            self.xlrd_file = xlrd.open_workbook(name, **self.xlrd_args)
-
-        def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException],
-                     exc_tb: TracebackType) -> None:
-            if hasattr(self, "xlrd_file") and self.xlrd_file:
-                del self.xlrd_file
-
-        def sheet(self, name: str) -> Sheet[WBInstance]:
-            return XLS_Sheet(self, name)
-
-        def sheet_iter(self) -> Iterator[Sheet[WBInstance]]:
-            return (XLS_Sheet(self, name) for name in self.xlrd_file.sheet_names())
-
-        def instance_iter(self, sheet: Sheet[WBInstance]) -> Iterator[WBInstance]:
-            sheet = cast(XLS_Sheet, sheet)
-            for row in sheet.xlrd_sheet.get_rows():
-                sheet.raw_row = row
-                yield cast(WBInstance, [cell.value for cell in row])
-
-    class XLS_Sheet(Sheet[WBInstance]):
-        def __init__(self, wb: XLS_Workbook, name: str) -> None:
-            super().__init__(wb, name)
-            self.xlrd_sheet = wb.xlrd_file.sheet_by_name(name)
-            self.name = self.xlrd_sheet.name
-            self.raw_row: list[xlrd.CELL]
-
-except ImportError:  #pragma: no cover
-    pass

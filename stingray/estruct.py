@@ -44,10 +44,13 @@ Module Contents
 """
 
 import abc
+import logging
 from typing import Any, NamedTuple, Type, Optional, Dict, TextIO, BinaryIO, Iterator
 import re
 from decimal import Decimal
 import struct
+
+logger = logging.getLogger("stingray.estruct")
 
 class DesignError(BaseException):
     pass
@@ -203,7 +206,7 @@ def unpack(format: str, buffer: bytes) -> Any:
             all(d == "9" for d in digit_groups[3]),
         )
         zoned_decimal = all(numeric_options) and not edit_options
-        # print(f"PIC {digit_groups}: all({numeric_options}) and not {edit_options} = {zoned_decimal}")
+        logger.debug(f"PIC {digit_groups}: all({numeric_options}) and not {edit_options} = {zoned_decimal}")
         if zoned_decimal:
             text = "".join(str(b & 0x0F) for b in buffer)
             sign_half = (buffer[-1] & 0xF0) >> 4
@@ -213,7 +216,7 @@ def unpack(format: str, buffer: bytes) -> Any:
             return base * scale * sign
         # Match text with a regular expression derived from the picture to see if it's valid.
         text = buffer.decode("CP037")
-        # print(f'estruct.unpack: {buffer!r} == {text=}')
+        logger.debug(f'estruct.unpack: {buffer!r} == {text=}')
         if not re.match(pattern, text):
             raise ValueError(f"{text!r} doesn't match pattern {pattern!r}")
         # It's display text.
@@ -300,7 +303,7 @@ class RECFM_Reader(abc.ABC):
         Used by a row to announce the number of bytes consumed.
         Supports the rare case of RECFM_N, where records are variable length with no RDW or BDW headers.
         """
-        # print("Consumed {0} Bytes".format(size))
+        logger.debug("Consumed {0} Bytes".format(size))
         self._used = size
 
 

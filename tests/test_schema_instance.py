@@ -60,30 +60,33 @@ def bad_ref_to_schema():
     return ObjectSchema(json_schema, {"a": a_field, "b": RefToSchema(json_schema["properties"]["b"], None)})
 
 def test_schema_class(atomic_schema, object_schema, array_schema, depends_on_array_schema, one_of_schema, ref_to_schema):
+    atomic_nav = Mock(name="atomic_nav", value=Mock(return_value=42))
     assert atomic_schema.type == "number"
     assert atomic_schema.json() == {"type": "number"}
     assert repr(atomic_schema) == "AtomicSchema({'type': 'number'})"
-    assert list(atomic_schema.dump_iter(42)) == [(0, AtomicSchema({'type': 'number'}), (), 42)]
+    assert list(atomic_schema.dump_iter(atomic_nav)) == [(0, AtomicSchema({'type': 'number'}), (), 42)]
 
+    object_nav = Mock()
+    object_nav.name=Mock(return_value=atomic_nav)  # Two-step dance required to avoid special-case use of "name"
     assert object_schema.type == "object"
     assert repr(object_schema) == (
-        "ObjectSchema({'type': 'object', 'properties': {'field': {'type': "
-        "'number'}}}, {'field': AtomicSchema({'type': 'number'})})"
+        "ObjectSchema({'type': 'object', 'properties': {'field': {'type': 'number'}}}, {'field': AtomicSchema({'type': 'number'})})"
     )
-    assert list(object_schema.dump_iter({"field": 42})) == [
-        (0, ObjectSchema({'type': 'object', 'properties': {'field': {'type': 'number'}}}, {'field': AtomicSchema({'type': 'number'})}),  (),  {'field': 42}),
+    assert list(object_schema.dump_iter(object_nav)) == [
+        (0, ObjectSchema({'type': 'object', 'properties': {'field': {'type': 'number'}}}, {'field': AtomicSchema({'type': 'number'})}),  (),  None),
         (1, AtomicSchema({'type': 'number'}), (), 42)
     ]
 
+    array_nav = Mock(name="array_nav", index=Mock(return_value=atomic_nav))
     assert array_schema.type == "array"
     assert array_schema.maxItems == 42
     assert repr(array_schema) == (
         "ArraySchema({'type': 'array', 'items': {'type': 'string'}, 'maxItems': 42}, "
         "AtomicSchema({'type': 'string'}))"
     )
-    assert list(array_schema.dump_iter(["hello", "world"])) == [
-        (0, ArraySchema({'type': 'array', 'items': {'type': 'string'}, 'maxItems': 42}, AtomicSchema({'type': 'string'})),  (),  ["hello", "world"]),
-        (1, AtomicSchema({'type': 'string'}), (), "hello")
+    assert list(array_schema.dump_iter(array_nav)) == [
+        (0, ArraySchema({'type': 'array', 'items': {'type': 'string'}, 'maxItems': 42}, AtomicSchema({'type': 'string'})), (), None),
+        (1, AtomicSchema({'type': 'string'}), (), 42)
     ]
 
     assert depends_on_array_schema.type == "array"
@@ -102,10 +105,10 @@ def test_schema_class(atomic_schema, object_schema, array_schema, depends_on_arr
         "OneOfSchema({'oneOf': [{'type': 'number'}, {'type': 'string'}]}, "
         "[AtomicSchema({'type': 'number'}), AtomicSchema({'type': 'string'})])"
     )
-    assert list(one_of_schema.dump_iter("42")) == [
-        (0, OneOfSchema({'oneOf':[{'type': 'number'}, {'type': 'string'}]}, [AtomicSchema({'type': 'number'}), AtomicSchema({'type': 'string'})]), (), '42'),
-        (1, AtomicSchema({'type': 'number'}), (), '42'),
-        (1, AtomicSchema({'type': 'string'}), (), '42')
+    assert list(one_of_schema.dump_iter(atomic_nav)) == [
+        (0, OneOfSchema({'oneOf':[{'type': 'number'}, {'type': 'string'}]}, [AtomicSchema({'type': 'number'}), AtomicSchema({'type': 'string'})]), (), None),
+        (1, AtomicSchema({'type': 'number'}), (), 42),
+        (1, AtomicSchema({'type': 'string'}), (), 42)
     ]
 
     assert ref_to_schema.properties["b"].type == "string"
@@ -116,8 +119,10 @@ def test_schema_class(atomic_schema, object_schema, array_schema, depends_on_arr
         assert ref_to_schema.properties["b"].items
     assert repr(ref_to_schema.properties["b"]) == "RefToSchema({'$ref': '#a'}, #a)"
     assert repr(ref_to_schema.properties["a"]) == "AtomicSchema({'$anchor': 'a', 'type': 'string'})"
-    assert list(ref_to_schema.dump_iter({"a": "42"})) == [
-        (0, ObjectSchema({'type': 'object', 'properties': {'a': {'$anchor': 'a', 'type': 'string'}, 'b': {'$ref': '#a'}}}, {'a': AtomicSchema({'$anchor': 'a', 'type': 'string'}), 'b': RefToSchema({'$ref': '#a'}, "#a")}), (), {'a': '42'}),
+    nav = Mock()
+    nav.name = Mock(side_effect=lambda name: {"a": Mock(value=Mock(return_value="42")), "b": Mock()}.get(name))
+    assert list(ref_to_schema.dump_iter(nav)) == [
+        (0, ObjectSchema({'type': 'object', 'properties': {'a': {'$anchor': 'a', 'type': 'string'}, 'b': {'$ref': '#a'}}}, {'a': AtomicSchema({'$anchor': 'a', 'type': 'string'}), 'b': RefToSchema({'$ref': '#a'}, "#a")}), (), None),
         (1, AtomicSchema({'$anchor': 'a', 'type': 'string'}), (), '42'),
         (1, RefToSchema({'$ref': '#a'}, '#a'), (), None)
     ]
@@ -466,8 +471,9 @@ def test_json_unpacker():
 def test_bytes_instance(capsys):
     schema = SchemaMaker.from_json({"type": "object", "properties": {"field-1": {"type": "string", "cobol": "PIC X(12)"}}})
     data = BytesInstance('blahblahblah'.encode("CP037"))
-    assert data.unpacker(EBCDIC()).schema(schema).name("field-1").value() == 'blahblahblah'
-    data.dump()
+    nav = EBCDIC().nav(schema, data)
+    assert nav.name("field-1").value() == 'blahblahblah'
+    nav.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         "Field                                         Off Sz  Raw Value",
@@ -829,13 +835,12 @@ def copy_t1_schema_data() -> tuple[JSON, BytesInstance]:
 
 def test_copy_t1(copy_t1_schema_data, capsys) -> bool:
     test_1_schema, test_1_data = copy_t1_schema_data
-    test_1_data.unpacker(EBCDIC())
-    test_1_data.schema(SchemaMaker.from_json(test_1_schema))
-    nav = test_1_data.name("SOME-COLUMN")
+    base_nav = EBCDIC().nav(SchemaMaker.from_json(test_1_schema), test_1_data)
+    nav = base_nav.name("SOME-COLUMN")
     assert nav.value() == "12345"
     with pytest.raises(TypeError):
-        r = test_1_data.array_index(2)
-    test_1_data.dump()
+        r = base_nav.index(2)
+    base_nav.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         "Field                                         Off Sz  Raw Value",
@@ -896,16 +901,15 @@ def copy_t2_schema_data() -> tuple[JSON, BytesInstance]:
 
 def test_copy_t2(copy_t2_schema_data, capsys) -> bool:
     test_2_schema, test_2_data = copy_t2_schema_data
-    test_2_data.unpacker(EBCDIC())
-    test_2_data.schema(SchemaMaker.from_json(test_2_schema))
-    nav = test_2_data.name("REPEAT")
+    base_nav = EBCDIC().nav(SchemaMaker.from_json(test_2_schema), test_2_data)
+    nav = base_nav.name("REPEAT")
     assert nav.value() == [{'REPEAT': 'ABC'}, {'REPEAT': 'DEF'}, {'REPEAT': 'GHI'}, {'REPEAT': 'JKL'}]
     assert nav.index(0).value() == {'REPEAT': 'ABC'}
     assert nav.index(1).value() == {'REPEAT': 'DEF'}
     assert nav.index(2).value() == {'REPEAT': 'GHI'}
     assert nav.index(3).value() == {'REPEAT': 'JKL'}
 
-    test_2_data.dump()
+    base_nav.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                         Off Sz  Raw Value',
@@ -980,20 +984,18 @@ def copy_t3_schema_data() -> tuple[JSON, BytesInstance]:
 
 def test_copy_t3(copy_t3_schema_data, capsys) -> bool:
     test_3_schema, test_3_data = copy_t3_schema_data
-
-    test_3_data.unpacker(EBCDIC())
-    test_3_data.schema(SchemaMaker.from_json(test_3_schema))
-    nav_item_1_0 = test_3_data.name("REPEAT").index(1).name("ITEM").index(0)
+    base_nav = EBCDIC().nav(SchemaMaker.from_json(test_3_schema), test_3_data)
+    nav_item_1_0 = base_nav.name("REPEAT").index(1).name("ITEM").index(0)
     assert nav_item_1_0.value() == {'ITEM': 'ab'}, f"{nav_item_1_0.value()=} != {'ITEM': 'ab'}"
-    nav_item_1_1 = test_3_data.name("REPEAT").index(1).name("ITEM").index(1)
+    nav_item_1_1 = base_nav.name("REPEAT").index(1).name("ITEM").index(1)
     assert nav_item_1_1.value() == {'ITEM': 'cd'}, f"{nav_item_1_1.value()=} != {'ITEM': 'ab'}"
 
-    nav_item_2_0 = test_3_data.name("REPEAT").index(2).name("ITEM").index(0)
+    nav_item_2_0 = base_nav.name("REPEAT").index(2).name("ITEM").index(0)
     assert nav_item_2_0.value() == {'ITEM': 'IJ'}, f"{nav_item_2_0.value()=} != {'ITEM': 'IJ'}"
-    nav_item_2_1 = test_3_data.name("REPEAT").index(2).name("ITEM").index(1)
+    nav_item_2_1 = base_nav.name("REPEAT").index(2).name("ITEM").index(1)
     assert nav_item_2_1.value() == {'ITEM': 'KL'}, f"{nav_item_2_1.value()=} != {'ITEM': 'KL'}"
 
-    test_3_data.dump()
+    base_nav.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                         Off Sz  Raw Value',
@@ -1062,27 +1064,25 @@ def copy_3_schema_data() -> tuple[JSON, BytesInstance]:
 
 def test_copy_3(copy_3_schema_data, capsys) -> bool:
     test_4_schema, test_4_data = copy_3_schema_data
-    test_4_data.unpacker(EBCDIC())
-    test_4_data.schema(SchemaMaker.from_json(test_4_schema))
-
-    nav_item_0_0 = test_4_data.name("QUESTION-NUMBER").index(0).name("RESPONSE-CATEGORY").index(0)
+    base_nav = EBCDIC().nav(SchemaMaker.from_json(test_4_schema), test_4_data)
+    nav_item_0_0 = base_nav.name("QUESTION-NUMBER").index(0).name("RESPONSE-CATEGORY").index(0)
     assert nav_item_0_0.name("ANSWER").value() == Decimal('11'), f'{nav_item_0_0.value()=} != 11'
 
-    nav_item_1_0 = test_4_data.name("QUESTION-NUMBER").index(1).name("RESPONSE-CATEGORY").index(0)
+    nav_item_1_0 = base_nav.name("QUESTION-NUMBER").index(1).name("RESPONSE-CATEGORY").index(0)
     assert nav_item_1_0.name("ANSWER").value() == Decimal('21'), f'{nav_item_1_0.value()=} != 21'
-    nav_item_1_1 = test_4_data.name("QUESTION-NUMBER").index(1).name("RESPONSE-CATEGORY").index(1)
+    nav_item_1_1 = base_nav.name("QUESTION-NUMBER").index(1).name("RESPONSE-CATEGORY").index(1)
     assert nav_item_1_1.name("ANSWER").value() == Decimal('22'), f'{nav_item_1_1.value()=} != 22'
-    nav_item_1_2 = test_4_data.name("QUESTION-NUMBER").index(1).name("RESPONSE-CATEGORY").index(2)
+    nav_item_1_2 = base_nav.name("QUESTION-NUMBER").index(1).name("RESPONSE-CATEGORY").index(2)
     assert nav_item_1_2.name("ANSWER").value() == Decimal('23'), f'{nav_item_1_2.value()=} != 23'
 
-    nav_item_8_2 = test_4_data.name("QUESTION-NUMBER").index(8).name("RESPONSE-CATEGORY").index(2)
+    nav_item_8_2 = base_nav.name("QUESTION-NUMBER").index(8).name("RESPONSE-CATEGORY").index(2)
     assert nav_item_8_2.name("ANSWER").value() == Decimal('93'), f'{nav_item_8_2.value()=} != 93'
 
     # Group-Level (Non-elementary item) response...
-    nav_item_1 = test_4_data.name("QUESTION-NUMBER").index(1).name("RESPONSE-CATEGORY")
+    nav_item_1 = base_nav.name("QUESTION-NUMBER").index(1).name("RESPONSE-CATEGORY")
     assert nav_item_1.value() == [{'ANSWER': Decimal('21')}, {'ANSWER': Decimal('22')}, {'ANSWER': Decimal('23')}], f"{nav_item_1.value()=} != [{{'ANSWER': '21'}}, {{'ANSWER': '22'}}, {{'ANSWER': '23'}}]"
 
-    test_4_data.dump()
+    base_nav.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                         Off Sz  Raw Value',
@@ -1176,15 +1176,12 @@ def copy_5_schema_data() -> tuple[JSON, BytesInstance]:
 
 def test_copy_5(copy_5_schema_data, capsys) -> bool:
     test_5_schema, test_5_data = copy_5_schema_data
+    base_nav = EBCDIC().nav(SchemaMaker.from_json(test_5_schema), test_5_data)
+    assert base_nav.name("A").value() == "AB1234"
+    assert base_nav.name("B").value() == {'B-1': 'AB', 'B-2': Decimal('1234')}
+    assert base_nav.name("C").value() == Decimal('56.78')
 
-    test_5_data.unpacker(EBCDIC())
-    test_5_data.schema(SchemaMaker.from_json(test_5_schema))
-
-    assert test_5_data.name("A").value() == "AB1234"
-    assert test_5_data.name("B").value() == {'B-1': 'AB', 'B-2': Decimal('1234')}
-    assert test_5_data.name("C").value() == Decimal('56.78')
-
-    test_5_data.dump()
+    base_nav.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                         Off Sz  Raw Value',
@@ -1307,19 +1304,16 @@ def copy_6_schema_data() -> tuple[JSON, BytesInstance]:
 
 def test_copy_6(copy_6_schema_data, capsys) -> bool:
     test_6_schema, test_6_data = copy_6_schema_data
+    base_nav = EBCDIC().nav(SchemaMaker.from_json(test_6_schema), test_6_data)
+    assert base_nav.name("NAME-2").name("SALARY").value() == 'ABC'
+    assert base_nav.name("NAME-2").name("SO-SEC-NO").value() == '123456789'
+    assert base_nav.name("NAME-2").name("MONTH").value() == 'DE'
 
-    test_6_data.unpacker(EBCDIC())
-    test_6_data.schema(SchemaMaker.from_json(test_6_schema))
+    assert base_nav.name("NAME-1").name("WAGE").value() == Decimal('123.123')
+    assert base_nav.name("NAME-1").name("EMP-NO").value() == '456789'
+    assert base_nav.name("NAME-1").name("YEAR").value() == 'DE'
 
-    assert test_6_data.name("NAME-2").name("SALARY").value() == 'ABC'
-    assert test_6_data.name("NAME-2").name("SO-SEC-NO").value() == '123456789'
-    assert test_6_data.name("NAME-2").name("MONTH").value() == 'DE'
-
-    assert test_6_data.name("NAME-1").name("WAGE").value() == Decimal('123.123')
-    assert test_6_data.name("NAME-1").name("EMP-NO").value() == '456789'
-    assert test_6_data.name("NAME-1").name("YEAR").value() == 'DE'
-
-    test_6_data.dump()
+    base_nav.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                         Off Sz  Raw Value',
@@ -1474,11 +1468,9 @@ def copy_7_schema_data() -> tuple[JSON, BytesInstance]:
 
 def test_copy_7(copy_7_schema_data, capsys) -> bool:
     test_7_schema, test_7_data = copy_7_schema_data
-
-    test_7_data[0].unpacker(EBCDIC())
-    test_7_data[0].schema(SchemaMaker.from_json(test_7_schema))
-    assert test_7_data[0].name("REGULAR-EMPLOYEE").name("SEMI-MONTHLY-PAY").value() == Decimal('1234.56')
-    test_7_data[0].dump()
+    base_nav = [EBCDIC().nav(SchemaMaker.from_json(test_7_schema), instance) for instance in test_7_data]
+    assert base_nav[0].name("REGULAR-EMPLOYEE").name("SEMI-MONTHLY-PAY").value() == Decimal('1234.56')
+    base_nav[0].dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                         Off Sz  Raw Value',
@@ -1497,10 +1489,8 @@ def test_copy_7(copy_7_schema_data, capsys) -> bool:
         "      10 HOURLY-PAY PICTURE 99V99              14   4 b'\\xf3\\xf4\\xf5\\xf6' Decimal('34.56')",
     ]
 
-    test_7_data[1].unpacker(EBCDIC())
-    test_7_data[1].schema(SchemaMaker.from_json(test_7_schema))
-    assert test_7_data[1].name("TEMPORARY-EMPLOYEE").name("HOURLY-PAY").value() == Decimal('12.34')
-    test_7_data[1].dump()
+    assert base_nav[1].name("TEMPORARY-EMPLOYEE").name("HOURLY-PAY").value() == Decimal('12.34')
+    base_nav[1].dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
             'Field                                         Off Sz  Raw Value',
@@ -1659,12 +1649,10 @@ def copy_8_schema_data() -> tuple[JSON, BytesInstance]:
 
 def test_copy_8(copy_8_schema_data, capsys) -> bool:
     test_8_schema, test_8_data = copy_8_schema_data
-
-    test_8_data[0].unpacker(EBCDIC())
-    test_8_data[0].schema(SchemaMaker.from_json(test_8_schema))
+    base_nav = [EBCDIC().nav(SchemaMaker.from_json(test_8_schema), instance) for instance in test_8_data]
     # REDEFINES-RECORD.REGULAR-EMPLOYEE.SEMI-MONTHLY-PAY
-    assert test_8_data[0].name("REGULAR-EMPLOYEE").name("SEMI-MONTHLY-PAY").value() == Decimal('123.456')
-    test_8_data[0].dump()
+    assert base_nav[0].name("REGULAR-EMPLOYEE").name("SEMI-MONTHLY-PAY").value() == Decimal('123.456')
+    base_nav[0].dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                         Off Sz  Raw Value',
@@ -1682,12 +1670,10 @@ def test_copy_8(copy_8_schema_data, capsys) -> bool:
         "      10 FILLER PICTURE X(6)                   12   6 b'\\xf1\\xf2\\xf3\\xf4\\xf5\\xf6' '123456'",
     ]
 
-    test_8_data[1].unpacker(EBCDIC())
-    test_8_data[1].schema(SchemaMaker.from_json(test_8_schema))
     # REDEFINES-RECORD.TEMPORARY-EMPLOYEE.HOURLY-PAY
-    assert test_8_data[1].name("TEMPORARY-EMPLOYEE").name("HOURLY-PAY").value() == Decimal('12.34')
-    assert test_8_data[1].name("TEMPORARY-EMPLOYEE").name("CODE-H").value() == Decimal('1234')
-    test_8_data[1].dump()
+    assert base_nav[1].name("TEMPORARY-EMPLOYEE").name("HOURLY-PAY").value() == Decimal('12.34')
+    assert base_nav[1].name("TEMPORARY-EMPLOYEE").name("CODE-H").value() == Decimal('1234')
+    base_nav[1].dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
          'Field                                         Off Sz  Raw Value',
@@ -1807,20 +1793,18 @@ def copy_9_schema_data() -> tuple[JSON, BytesInstance]:
 def test_copy_9(copy_9_schema_data, capsys) -> bool:
     test_9_schema, test_9_data = copy_9_schema_data
     test_9_schema_1, test_9_schema_2 = test_9_schema
+    base_nav_1 = EBCDIC().nav(SchemaMaker.from_json(test_9_schema_1), test_9_data)
 
-    test_9_data.unpacker(EBCDIC())
-    test_9_data.schema(SchemaMaker.from_json(test_9_schema_1))
+    assert base_nav_1.name("QUESTION").value() == '01'
+    assert base_nav_1.name("PRINT-YES").value() == '02'
+    assert base_nav_1.name("PRINT-NO").value() == '03'
+    assert base_nav_1.name("NOT-SURE").value() == '04'
 
-    assert test_9_data.name("QUESTION").value() == '01'
-    assert test_9_data.name("PRINT-YES").value() == '02'
-    assert test_9_data.name("PRINT-NO").value() == '03'
-    assert test_9_data.name("NOT-SURE").value() == '04'
+    base_nav_2 = EBCDIC().nav(SchemaMaker.from_json(test_9_schema_2), test_9_data)
 
-    test_9_data.unpacker(EBCDIC())
-    test_9_data.schema(SchemaMaker.from_json(test_9_schema_2))
-    assert test_9_data.name("COUNT").value() == '01'
+    assert base_nav_2.name("COUNT").value() == '01'
 
-    test_9_data.dump()
+    base_nav_2.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                         Off Sz  Raw Value',
@@ -1894,17 +1878,16 @@ def copy_10_schema_data() -> tuple[JSON, BytesInstance]:
 
 def test_copy_10(copy_10_schema_data, capsys) -> bool:
     test_10_schema, test_10_data = copy_10_schema_data
-    test_10_data.unpacker(EBCDIC())
-    test_10_data.schema(SchemaMaker.from_json(test_10_schema))
+    base_nav = EBCDIC().nav(SchemaMaker.from_json(test_10_schema), test_10_data)
 
-    assert test_10_data.name("REC-1").name("FIELD-1").value() == Decimal('3')
-    assert test_10_data.name("REC-1").name("FIELD-2").index(0).value() == {'FIELD-2': '11111'}
-    assert test_10_data.name("REC-1").name("FIELD-2").index(1).value() == {'FIELD-2': '22222'}
-    assert test_10_data.name("REC-1").name("FIELD-2").index(2).value() == {'FIELD-2': '33333'}
+    assert base_nav.name("REC-1").name("FIELD-1").value() == Decimal('3')
+    assert base_nav.name("REC-1").name("FIELD-2").index(0).value() == {'FIELD-2': '11111'}
+    assert base_nav.name("REC-1").name("FIELD-2").index(1).value() == {'FIELD-2': '22222'}
+    assert base_nav.name("REC-1").name("FIELD-2").index(2).value() == {'FIELD-2': '33333'}
     with pytest.raises(IndexError):
-        test_10_data.name("REC-1").name("FIELD-2").index(3).value()
+        base_nav.name("REC-1").name("FIELD-2").index(3).value()
 
-    test_10_data.dump()
+    base_nav.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                         Off Sz  Raw Value',
@@ -2019,18 +2002,17 @@ def copy_11_schema_data() -> tuple[JSON, BytesInstance]:
 
 def test_copy_11(copy_11_schema_data, capsys) -> bool:
     test_11_schema, test_11_data = copy_11_schema_data
-    test_11_data.unpacker(EBCDIC())
-    test_11_data.schema(SchemaMaker.from_json(test_11_schema))
+    base_nav = EBCDIC().nav(SchemaMaker.from_json(test_11_schema), test_11_data)
 
-    assert test_11_data.name("REC-1").name("FIELD-1").value() == 3
-    assert test_11_data.name("REC-1").name("FIELD-3").value() == 2
-    assert test_11_data.name("REC-1").name("FIELD-2").index(0).value() == {'FIELD-2': '11111'}
-    assert test_11_data.name("REC-1").name("FIELD-2").index(1).value() == {'FIELD-2': "22222"}
-    assert test_11_data.name("REC-1").name("FIELD-2").index(2).value() == {'FIELD-2': "33333"}
-    assert test_11_data.name("REC-2").name("FIELD-4").index(0).value() == {'FIELD-4': "44444"}
-    assert test_11_data.name("REC-2").name("FIELD-4").index(1).value() == {'FIELD-4': "55555"}
+    assert base_nav.name("REC-1").name("FIELD-1").value() == 3
+    assert base_nav.name("REC-1").name("FIELD-3").value() == 2
+    assert base_nav.name("REC-1").name("FIELD-2").index(0).value() == {'FIELD-2': '11111'}
+    assert base_nav.name("REC-1").name("FIELD-2").index(1).value() == {'FIELD-2': "22222"}
+    assert base_nav.name("REC-1").name("FIELD-2").index(2).value() == {'FIELD-2': "33333"}
+    assert base_nav.name("REC-2").name("FIELD-4").index(0).value() == {'FIELD-4': "44444"}
+    assert base_nav.name("REC-2").name("FIELD-4").index(1).value() == {'FIELD-4': "55555"}
 
-    test_11_data.dump()
+    base_nav.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                         Off Sz  Raw Value',
@@ -2157,25 +2139,21 @@ def test_copy_13(copy_13_schema_data, capsys) -> bool:
     test_13_schema, test_13_data = copy_13_schema_data
     test_13_schema_1, test_13_schema_2, test_13_schema_3 = test_13_schema
 
-    test_13_data[0].unpacker(EBCDIC())
-    test_13_data[0].schema(SchemaMaker.from_json(test_13_schema_1))
-    assert test_13_data[0].name("HEADER").value() == "ABC"
+    base_nav_1 = [EBCDIC().nav(SchemaMaker.from_json(test_13_schema_1), instance) for instance in test_13_data]
 
-    body = test_13_data[0].name("GENERIC-FIELD").raw_instance()
-    body.schema(SchemaMaker.from_json(test_13_schema_2))
-    assert body.name("ITEM-1").value() == "0123456789"
-    assert body.name("ITEM-2").value() == "TUVWXYZ"
-    body.dump()
+    assert base_nav_1[0].name("HEADER").value() == "ABC"
+    body = base_nav_1[0].name("GENERIC-FIELD").raw_instance()
+    body_nav = EBCDIC().nav(SchemaMaker.from_json(test_13_schema_2), body)
+    assert body_nav.name("ITEM-1").value() == "0123456789"
+    assert body_nav.name("ITEM-2").value() == "TUVWXYZ"
+    body_nav.dump()
 
-    test_13_data[1].unpacker(EBCDIC())
-    test_13_data[1].schema(SchemaMaker.from_json(test_13_schema_1))
-    assert test_13_data[1].name("HEADER").value() == "DEF"
-
-    body = test_13_data[1].name("GENERIC-FIELD").raw_instance()
-    body.schema(SchemaMaker.from_json(test_13_schema_3))
-    assert body.name("ITEM-3").value() == '0123456'
-    assert body.name("ITEM-4").value() == 'QRSTUVWXYZ'
-    body.dump()
+    assert base_nav_1[1].name("HEADER").value() == "DEF"
+    body = base_nav_1[1].name("GENERIC-FIELD").raw_instance()
+    body_nav = EBCDIC().nav(SchemaMaker.from_json(test_13_schema_3), body)
+    assert body_nav.name("ITEM-3").value() == '0123456'
+    assert body_nav.name("ITEM-4").value() == 'QRSTUVWXYZ'
+    body_nav.dump()
 
     out, err = capsys.readouterr()
     assert out.splitlines() == [
@@ -2259,14 +2237,12 @@ def copy_14_schema_data() -> tuple[JSON, BytesInstance]:
 
 def test_copy_14(copy_14_schema_data, capsys) -> bool:
     test_14_schema, test_14_data = copy_14_schema_data
+    base_nav = EBCDIC().nav(SchemaMaker.from_json(test_14_schema), test_14_data)
 
-    test_14_data.unpacker(EBCDIC())
-    test_14_data.schema(SchemaMaker.from_json(test_14_schema))
-
-    assert test_14_data.name("NUMBER-1").value() == Decimal('0.12345')
-    assert test_14_data.name("NUMBER-2").value() == Decimal("0.67890")
-    assert test_14_data.name("NUMBER-3").value() == Decimal("0.00120")
-    assert test_14_data.name("NUMBER-4").value() == Decimal("-0.98765")
+    assert base_nav.name("NUMBER-1").value() == Decimal('0.12345')
+    assert base_nav.name("NUMBER-2").value() == Decimal("0.67890")
+    assert base_nav.name("NUMBER-3").value() == Decimal("0.00120")
+    assert base_nav.name("NUMBER-4").value() == Decimal("-0.98765")
 
 
 @pytest.fixture
@@ -2485,8 +2461,8 @@ def test_array_ndnav(ndnav_array):
 @pytest.fixture
 def dnav_object():
     unpacker = MagicMock(
-        spec=TextUnpacker,
-        name="TextUnpacker"
+        spec=JSONUnpacker,
+        name="JSONUnpacker"
     )
     schema = Mock(
         spec=ObjectSchema,
@@ -2502,7 +2478,7 @@ def dnav_object():
 def test_object_dnav(dnav_object, capsys):
     unpacker, schema, instance, dnav = dnav_object
     assert re.fullmatch(
-        r"DNav\(\<MagicMock name='TextUnpacker' spec='TextUnpacker' id='\d+'\>, "
+        r"DNav\(\<MagicMock name='JSONUnpacker' spec='JSONUnpacker' id='\d+'\>, "
         r"\<Mock name='Schema' spec='ObjectSchema' id='\d+'\>, "
         r"\{'ITEM': 42\}\)",
         repr(dnav)
@@ -2525,7 +2501,8 @@ def test_object_dnav(dnav_object, capsys):
 @pytest.fixture
 def dnav_array():
     unpacker = MagicMock(
-        name="TextUnpacker"
+        spec=JSONUnpacker,
+        name="JSONUnpacker"
     )
     schema = Mock(
         name="Schema",
@@ -2543,7 +2520,7 @@ def dnav_array():
 def test_array_dnav(dnav_array, capsys):
     unpacker, schema, instance, dnav = dnav_array
     assert re.fullmatch(
-        r"DNav\(\<MagicMock name='TextUnpacker' id='\d+'\>, "
+        r"DNav\(\<MagicMock name='JSONUnpacker' spec='JSONUnpacker' id='\d+'\>, "
         r"\<Mock name='Schema' id='\d+'\>, "
         r"\<MagicMock name='ListInstance' id='\d+'\>\)",
         repr(dnav)
@@ -2664,115 +2641,8 @@ def test_csvnav(csvnav_object):
 
 ### Instances
 
-
-def test_object_bytes_instance(capsys):
-    object_schema = Mock(
-        name="Schema",
-        spec=ObjectSchema,
-        type="object",
-        properties={"ITEM": Mock(name="ITEM Subschema", spec=AtomicSchema, _attributes={}, attributes={"cobol": "05  ITEM PIC X(42)"})},
-        _attributes={},
-        attributes={"cobol": "01  RECORD"},
-    )
-    unpacker = Mock(name="EBCDIC", calcsize=Mock(return_value=42), value=Mock(return_value="VALUE"))
-    instance = BytesInstance("Hello World".encode("CP037"))
-    instance.schema(object_schema).unpacker(unpacker)
-    ndnav = instance.name("ITEM")
-    assert re.fullmatch(
-        r"NDNav\(\<Mock name='EBCDIC' id='\d+'\>, AtomicLocation\(\<Mock name='ITEM Subschema' spec='AtomicSchema' id='\d+'\>, 0, 42\), b'.+'\)",
-        repr(ndnav)
-    ), f"Bad {ndnav!r}"
-    with pytest.raises(TypeError):
-        ndnav = instance.array_index(0)
-    instance.dump()
-    out, err = capsys.readouterr()
-    assert out.splitlines() == [
-        'Field                                         Off Sz  Raw Value',
-        "01  RECORD                                      0  42 '' ''",
-        "  05  ITEM PIC X(42)                            0  42 b'\\xc8\\x85\\x93\\x93\\x96@\\xe6\\x96\\x99\\x93\\x84' 'VALUE'"
-    ]
-
-def test_array_bytes_instance(capsys):
-    array_schema = Mock(
-        name="Schema",
-        spec=ArraySchema,
-        type="array",
-        items=Mock(name="ITEM Subschema", spec=AtomicSchema, _attributes={}, attributes={"cobol": "05  ITEM OCCURS 4 PIC X(42)"}),
-        _attributes={},
-        attributes={"cobol": "01  RECORD", "maxItems": 4},
-    )
-    unpacker = Mock(name="EBCDIC", calcsize=Mock(return_value=42), value=Mock(return_value="VALUE"))
-    instance = BytesInstance("Hello World".encode("CP037"))
-    instance.schema(array_schema).unpacker(unpacker)
-    with pytest.raises(TypeError):
-        ndnav = instance.name("ITEM")
-    ndnav = instance.array_index(0)
-    assert re.fullmatch(
-        r"NDNav\(\<Mock name='EBCDIC' id='\d+'\>, AtomicLocation\(\<Mock name='ITEM Subschema' spec='AtomicSchema' id='\d+'\>, 0, 42\), b'.+'\)",
-        repr(ndnav)
-    ), f"Bad {ndnav!r}"
-    instance.dump()
-    out, err = capsys.readouterr()
-    assert out.splitlines() == [
-        'Field                                         Off Sz  Raw Value',
-        "01  RECORD                                      0 168 '' ''",
-        "  05  ITEM OCCURS 4 PIC X(42)                   0  42 b'\\xc8\\x85\\x93\\x93\\x96@\\xe6\\x96\\x99\\x93\\x84' 'VALUE'"
-    ]
-
-def test_object_text_instance(capsys):
-    object_schema = Mock(
-        name="Schema",
-        spec=ObjectSchema,
-        type="object",
-        properties={"ITEM": Mock(name="ITEM Subschema", spec=AtomicSchema, _attributes={}, attributes={"cobol": "05  ITEM PIC X(42)"})},
-        _attributes={},
-        attributes={"cobol": "01  RECORD"},
-    )
-    unpacker = Mock(name="TextUnpacker", calcsize=Mock(return_value=42), value=Mock(return_value="VALUE"))
-    instance = TextInstance("Hello World")
-    instance.schema(object_schema).unpacker(unpacker)
-    ndnav = instance.name("ITEM")
-    assert re.fullmatch(
-        r"NDNav\(\<Mock name='TextUnpacker' id='\d+'\>, AtomicLocation\(\<Mock name='ITEM Subschema' spec='AtomicSchema' id='\d+'\>, 0, 42\), '.+'\)",
-        repr(ndnav)
-    ), f"Bad {ndnav!r}"
-    with pytest.raises(TypeError):
-        ndnav = instance.array_index(0)
-    instance.dump()
-    out, err = capsys.readouterr()
-    assert out.splitlines() == [
-        'Field                                         Off Sz  Raw Value',
-        "01  RECORD                                      0  42 '' ''",
-        "  05  ITEM PIC X(42)                            0  42 'Hello World' 'VALUE'"
-    ]
-
-
-def test_array_text_instance(capsys):
-    array_schema = Mock(
-        name="Schema",
-        spec=ArraySchema,
-        type="array",
-        items=Mock(name="ITEM Subschema", spec=AtomicSchema, _attributes={}, attributes={"cobol": "05  ITEM OCCURS 4 PIC X(42)"}),
-        _attributes={},
-        attributes={"cobol": "01  RECORD", "maxItems": 4},
-    )
-    unpacker = Mock(name="TextUnpacker", calcsize=Mock(return_value=42), value=Mock(return_value="VALUE"))
-    instance = TextInstance("Hello World")
-    instance.schema(array_schema).unpacker(unpacker)
-    with pytest.raises(TypeError):
-        ndnav = instance.name("ITEM")
-    ndnav = instance.array_index(0)
-    assert re.fullmatch(
-        r"NDNav\(\<Mock name='TextUnpacker' id='\d+'\>, AtomicLocation\(\<Mock name='ITEM Subschema' spec='AtomicSchema' id='\d+'\>, 0, 42\), '.+'\)",
-        repr(ndnav)
-    ), f"Bad {ndnav!r}"
-    instance.dump()
-    out, err = capsys.readouterr()
-    assert out.splitlines() == [
-        'Field                                         Off Sz  Raw Value',
-        "01  RECORD                                      0 168 '' ''",
-        "  05  ITEM OCCURS 4 PIC X(42)                   0  42 'Hello World' 'VALUE'"
-    ]
+# These tests are effectively ``Nav`` test cases.
+# They may be redundant.
 
 def test_object_list_instance():
     object_schema = Mock(
@@ -2787,20 +2657,21 @@ def test_object_list_instance():
         _attributes={},
         attributes={"type": "object"},
     )
-    unpacker = Mock(name="TextUnpacker", calcsize=Mock(return_value=42), value=Mock(return_value="VALUE"))
-    instance = ListInstance(["Hello World", "42", "3.1415926"])
-    instance.schema(object_schema).unpacker(unpacker)
+    unpacker = Mock(name="WBUnpacker", calcsize=Mock(return_value=1), value=Mock(return_value="VALUE"))
+    instance = ["Hello World", "42", "3.1415926"]
+    nav = WBNav(unpacker, object_schema, instance)
+    # instance.schema(object_schema).unpacker(unpacker)
     assert instance == instance
     assert re.fullmatch(
-        r"WBNav\(\<Mock name='TextUnpacker' id='\d+'\>, \<Mock name='ITEM Subschema' spec='AtomicSchema' id='\d+'\>, 'Hello World'\)",
-        repr(instance.name("F1"))
+        r"WBNav\(\<Mock name='WBUnpacker' id='\d+'\>, \<Mock name='ITEM Subschema' spec='AtomicSchema' id='\d+'\>, 'Hello World'\)",
+        repr(nav.name("F1"))
     )
-    assert instance.name("F1").value() == "Hello World"
-    assert instance.name("F2").value() == "42"
+    assert nav.name("F1").value() == "Hello World"
+    assert nav.name("F2").value() == "42"
     with pytest.raises(TypeError):
-        instance.name("F2").name("EXPECTED ERROR").value()
+        nav.name("F2").name("EXPECTED ERROR").value()
     with pytest.raises(TypeError):
-        instance.array_index(0).value()
+        nav.index(0).value()
 
 def test_array_list_instance(capsys):
     array_schema = Mock(
@@ -2810,25 +2681,26 @@ def test_array_list_instance(capsys):
         items=Mock(name="ITEM Subschema", spec=AtomicSchema, _attributes={}, attributes={"type": "string"}),
         _attributes={},
         attributes={"type": "object"},
-        dump_iter=Mock(return_value=iter([(0, sentinel.SCHEMA, (), sentinel.VALUE)]))
+        dump_iter=Mock(return_value=iter([(0, Mock(name="SCHEMA", attributes={"$anchor": "name"}), (), sentinel.VALUE)]))
     )
     unpacker = Mock(name="TextUnpacker", calcsize=Mock(return_value=42), value=Mock(return_value="VALUE"))
-    instance = ListInstance(["Hello World", 42, "3.1415926"])
-    instance.schema(array_schema).unpacker(unpacker)
+    instance = ["Hello World", 42, "3.1415926"]
+    nav = WBNav(unpacker, array_schema, instance)
+    # instance.schema(array_schema).unpacker(unpacker)
     assert instance == instance
     assert re.fullmatch(
         r"WBNav\(\<Mock name='TextUnpacker' id='\d+'\>, \<Mock name='ITEM Subschema' spec='AtomicSchema' id='\d+'\>, 'Hello World'\)",
-        repr(instance.array_index(0))
+        repr(nav.index(0))
     )
-    assert instance.array_index(0).value() == "Hello World"
-    assert instance.array_index(1).value() == 42
+    assert nav.index(0).value() == "Hello World"
+    assert nav.index(1).value() == 42
     with pytest.raises(TypeError):
-        instance.name("F2").value()
-    instance.dump()
+        nav.name("F2").value()
+    nav.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                                 Value',
-        'array                                                 sentinel.VALUE'
+        'name                                                  sentinel.VALUE'
     ]
 
 def test_object_json_instance(capsys):
@@ -2846,18 +2718,19 @@ def test_object_json_instance(capsys):
         dump_iter=Mock(return_value=iter([(0, sentinel.SCHEMA, (), sentinel.VALUE)]))
     )
     unpacker = Mock(name="JSONUnpacker", calcsize=Mock(return_value=42), value=Mock(return_value="VALUE"))
-    instance = JSONInstance({"F1": "Hello World", "F2": "42"})
-    instance.schema(object_schema).unpacker(unpacker)
+    instance = {"F1": "Hello World", "F2": "42"}
+    nav = DNav(unpacker, object_schema, instance)
+    # instance.schema(object_schema).unpacker(unpacker)
     assert instance == instance
     assert re.fullmatch(
         r"DNav\(\<Mock name='JSONUnpacker' id='\d+'\>, \<Mock name='ITEM Subschema' spec='AtomicSchema' id='\d+'\>, 'Hello World'\)",
-        repr(instance.name("F1"))
-    ), f"Bad {instance.name('F1')!r}"
-    assert instance.name("F1").value() == "Hello World"
-    assert instance.name("F2").value() == "42"
+        repr(nav.name("F1"))
+    ), f"Bad {nav.name('F1')!r}"
+    assert nav.name("F1").value() == "Hello World"
+    assert nav.name("F2").value() == "42"
     with pytest.raises(TypeError):
-        instance.array_index(0)
-    instance.dump()
+        nav.index(0)
+    nav.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                                 Value',
@@ -2876,17 +2749,18 @@ def test_array_json_instance(capsys):
         dump_iter=Mock(return_value=iter([(0, sentinel.SCHEMA, (), sentinel.VALUE)]))
     )
     unpacker = Mock(name="JSONUnpacker", calcsize=Mock(return_value=42), value=Mock(return_value="VALUE"))
-    instance = JSONInstance(["Hello World", 42, 3.1415926])
-    instance.schema(array_schema).unpacker(unpacker)
+    instance = ["Hello World", 42, 3.1415926]
+    nav = DNav(unpacker, array_schema, instance)
+    # instance.schema(array_schema).unpacker(unpacker)
     assert re.fullmatch(
         r"DNav\(\<Mock name='JSONUnpacker' id='\d+'\>, \<Mock name='ITEM Subschema' spec='AtomicSchema' id='\d+'\>, 'Hello World'\)",
-        repr(instance.array_index(0))
-    ), f"Bad {instance.array_index(0)!r}"
-    assert instance.array_index(0).value() == "Hello World"
-    assert instance.array_index(1).value() == 42
+        repr(nav.index(0))
+    ), f"Bad {nav.index(0)!r}"
+    assert nav.index(0).value() == "Hello World"
+    assert nav.index(1).value() == 42
     with pytest.raises(TypeError):
-        instance.name("Nope")
-    instance.dump()
+        nav.name("Nope")
+    nav.dump()
     out, err = capsys.readouterr()
     assert out.splitlines() == [
         'Field                                                 Value',

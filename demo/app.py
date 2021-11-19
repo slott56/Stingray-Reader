@@ -1,190 +1,180 @@
-#!/usr/bin/env python3
+"""
+##########################################################
+Application Level Data Validation Technique
+##########################################################
 
-# ..  _`demo_validate`:
-#
-# ##########################################################
-# Application Level Data Validation Technique
-# ##########################################################
-#
-# We validate that that a file actually matches a schema through a three-part valiation process.  
-# We looked at the first two parts in :ref:`demo_sqa`.
-#
-# -   Validate an application's use of a schema via conventional unit testing.
-#
-# -   Validate file conformance to a schema via "live-file testing".
-#
-# In this section we'll show how to include 
-# a **File Validation** mode in every file processing application.  
-#
-# Having a validation mode means that we must disentangle all of the persistent state change 
-# operations from the input and processing in our application.  
-# The "normal" mode uses persistent changes based on the output.
-# The validation mode doesn't make persistent changes;
-# it can be viewed as a sort of "dry run": all the processing; none of the writing.
-#
-# We'll do this with a combination of the **Command** and the **Strategy** design patterns.
-# We'll create applications
-# which validate their input file and have a simple plug-in strategy for 
-# doing any final persistent processing on that file.
-#
-# ..  note:: Simple File Structures
-#
-#     This validation is designed for simple CSV files with embedded schema.
-#     The assumption is that each sheet within the workbook
-#     has a consistent structure. There's no filter applied to pass
-#     or reject sheets.
-#            
-#     Some kind of extension to this application is required
-#     to handle named sheets within a more complex workbook or 
-#     to handle sheets which have no header.
-#
-# State Change Commands
-# =======================
-#
-# The **Command** design patterns is helpful for isolating state changes in an application.
-#
-# Each change (create, update, delete) creates a **Command**.  
-# In validate mode, these are created but not applied. 
-# In "normal" processing mode, these are created and applied.
-#
-# For Extract-Transform-Load (ETL) applications, the commands are the loads.
-#
-# For create-retrieve-update-delete (CRUD) programs, the commands are variations on create, update and delete.
-#
-# For data warehouse dimensional conformance applications, the 
-# command may be a slowly-changing dimension (SCD) algorithm that does insert
-# or update (or both) into a dimension table.
-#
-# For applications that involve a (potentially) complex multi-step workflow with
-# (potentially) several state changes along the way, each change is a command.
-#
-# In some cases, a fairly sophisticated **Command** class hierarchy is
-# called for.  In other cases, however, the individual commands can be
-# merged into the validate **Strategy** object as methods.
-#
-# Persistence Context Manager
-# =============================
-#
-# One good way to distinguish between persistent and transient processing 
-# is to use a **Strategy** class hierarchy.
-# This will have two variations on the persistent state changes.
-#
-# -   **Validate**.  This subclass does nothing.
-#
-# -   **Process**.  This subclass actually makes persistent state changes.
-#
-# Combining the validate **Strategy** with the state change **Command** 
-# leads to class similar to the following.
-#
-# The superclass does the persistent processing. This is the "normal" mode
-# that makes proper changes to the filesystem or database.
-#
-# ..  parsed-literal::
-#
-#     class Persistent_Processing:
-#         stop_on_exception= True
-#         def __init__( self, context ):
-#             self.context= context
-#         def save_this( self, this_instance ):
-#             this_instance.save()
-#         def save_that( self, this_instance ):
-#             that_instance.save()
-#
-# We'll fold in the Context Manager interface.  This is a polite way to support
-# any preparation or finalization.  For example, we would use the context manager
-# to create database connections, or finalize file system operations, etc.
-#
-# ..  parsed-literal::
-#
-#         def __enter__( self ):
-#             return self
-#         def __exit__( self, exc_type, exc_val, exc_tb ):
-#             if exc_type is not None: return False
-#     
-# Here's a subclass which implements a safe, do-nothing strategy.  This 
-# is used for "validate-mode" processing. It's a subclass that turns off
-# persistence.
-#       
-# ..  parsed-literal::
-#
-#     class Validate_Only_Processing( Persistent_Processing ):
-#         stop_on_exception= False
-#         def __init__( self, context ):
-#             self.context= context
-#         def save_this( self, this_instance ):
-#             pass
-#         def save_that( self, this_instance ):
-#             pass
-#
-# ..      note:: Alternate Design
-#
-#         We could revise this design to make the validation mode the superclass.
-#         The subclass could then add the persistence features.
-#        
-#         This doesn't actually work out well in practice.
-#        
-#         Why not?
-#        
-#         It's too easy to overlook things in the validation mode superclass.
-#         The normal persistent processing subclass then winds up having a **lot** of extra 
-#         stuff added to it.
-#        
-#         The design winds up somewhat better looking when we remove persistence.
-#        
-# Having these two classes allows us to configure our 
-# application processing as follows. We can define high-level functions
-# like :py:func:`validate` and :py:func:`process` that are identical
-# except for the context manager that's used.
-#
-# ..  parsed-literal::
-#
-#     def validate( sheet, some_context ):
-#         with Validate_Only_Processing( some_context ) as mode:
-#             counts= process_sheet( sheet, mode )
-#         return counts
-#
-#     def process( sheet, some_context ):        
-#         with Persistent_Processing( some_context ) as mode:
-#             counts= process_sheet( sheet, mode )
-#         return counts
-#
-# Both of these :py:func:`validate` and :py:func:`process` functions
-# rely on a common :py:func:`process_sheeet`. This is agnostic of the
-# processing context; it simply does its work.
-#
-# ..  parsed-literal::
-#
-#     def process_sheet( sheet, persistence ):
-#         for row in sheet.schema.rows_as_dict_iter(sheet):
-#             try:
-#                 this= build_this( row )
-#                 f= ThisForm( this )
-#                 if f.is_valid():
-#                     persistence.save_this( this )
-#             except Exception, e:
-#                 if persistence.stop_on_exception: raise
-#                
-# This allows us to effectively unit test by creating a 
-# mock version of ``Persistent_Processing`` and invoking
-# the ``process_sheet`` function.
-#
-# Example Application
-# =======================
-#
-# We depend on a number of Python libraries.  Plus, of course, we're
-# creating workbooks, working with sheets and schema.
-#
-# ::
+We validate that that a file actually matches a schema through a three-part valiation process.
+We looked at the first two parts in :ref:`demo_sqa`.
+
+-   Validate an application's use of a schema via conventional unit testing.
+
+-   Validate file conformance to a schema via "live-file testing".
+
+In this section we'll show how to include
+a **File Validation** mode in every file processing application.
+
+Having a validation mode means that we must disentangle all of the persistent state change
+operations from the input and processing in our application.
+The "normal" mode uses persistent changes based on the output.
+The validation mode doesn't make persistent changes;
+it can be viewed as a sort of "dry run": all the processing; none of the writing.
+
+We'll do this with a combination of the **Command** and the **Strategy** design patterns.
+We'll create applications
+which validate their input file and have a simple plug-in strategy for
+doing any final persistent processing on that file.
+
+..  note:: Simple File Structures
+
+    This validation is designed for simple CSV files with embedded schema.
+    The assumption is that each sheet within the workbook
+    has a consistent structure. There's no filter applied to pass
+    or reject sheets.
+
+    Some kind of extension to this application is required
+    to handle named sheets within a more complex workbook or
+    to handle sheets which have no header.
+
+State Change Commands
+=======================
+
+The **Command** design patterns is helpful for isolating state changes in an application.
+
+Each change (create, update, delete) creates a **Command**.
+In validate mode, these are created but not applied.
+In "normal" processing mode, these are created and applied.
+
+For Extract-Transform-Load (ETL) applications, the commands are the loads.
+
+For create-retrieve-update-delete (CRUD) programs, the commands are variations on create, update and delete.
+
+For data warehouse dimensional conformance applications, the
+command may be a slowly-changing dimension (SCD) algorithm that does insert
+or update (or both) into a dimension table.
+
+For applications that involve a (potentially) complex multi-step workflow with
+(potentially) several state changes along the way, each change is a command.
+
+In some cases, a fairly sophisticated **Command** class hierarchy is
+called for.  In other cases, however, the individual commands can be
+merged into the validate **Strategy** object as methods.
+
+Persistence Context Manager
+=============================
+
+One good way to distinguish between persistent and transient processing
+is to use a **Strategy** class hierarchy.
+This will have two variations on the persistent state changes.
+
+-   **Validate**.  This subclass does nothing.
+
+-   **Process**.  This subclass actually makes persistent state changes.
+
+Combining the validate **Strategy** with the state change **Command**
+leads to class similar to the following.
+
+The superclass does the persistent processing. This is the "normal" mode
+that makes proper changes to the filesystem or database.
+
+..  parsed-literal::
+
+    class Persistent_Processing:
+        stop_on_exception= True
+        def __init__( self, context ):
+            self.context= context
+        def save_this( self, this_instance ):
+            this_instance.save()
+        def save_that( self, this_instance ):
+            that_instance.save()
+
+We'll fold in the Context Manager interface.  This is a polite way to support
+any preparation or finalization.  For example, we would use the context manager
+to create database connections, or finalize file system operations, etc.
+
+..  parsed-literal::
+
+        def __enter__( self ):
+            return self
+        def __exit__( self, exc_type, exc_val, exc_tb ):
+            if exc_type is not None: return False
+
+Here's a subclass which implements a safe, do-nothing strategy.  This
+is used for "validate-mode" processing. It's a subclass that turns off
+persistence.
+
+..  parsed-literal::
+
+    class Validate_Only_Processing( Persistent_Processing ):
+        stop_on_exception= False
+        def __init__( self, context ):
+            self.context= context
+        def save_this( self, this_instance ):
+            pass
+        def save_that( self, this_instance ):
+            pass
+
+..      note:: Alternate Design
+
+        We could revise this design to make the validation mode the superclass.
+        The subclass could then add the persistence features.
+
+        This doesn't actually work out well in practice.
+
+        Why not?
+
+        It's too easy to overlook things in the validation mode superclass.
+        The normal persistent processing subclass then winds up having a **lot** of extra
+        stuff added to it.
+
+        The design winds up somewhat better looking when we remove persistence.
+
+Having these two classes allows us to configure our
+application processing as follows. We can define high-level functions
+like :py:func:`validate` and :py:func:`process` that are identical
+except for the context manager that's used.
+
+..  parsed-literal::
+
+    def validate( sheet, some_context ):
+        with Validate_Only_Processing( some_context ) as mode:
+            counts= process_sheet( sheet, mode )
+        return counts
+
+    def process( sheet, some_context ):
+        with Persistent_Processing( some_context ) as mode:
+            counts= process_sheet( sheet, mode )
+        return counts
+
+Both of these :py:func:`validate` and :py:func:`process` functions
+rely on a common :py:func:`process_sheeet`. This is agnostic of the
+processing context; it simply does its work.
+
+..  parsed-literal::
+
+    def process_sheet( sheet, persistence ):
+        for row in sheet.schema.rows_as_dict_iter(sheet):
+            try:
+                this= build_this( row )
+                f= ThisForm( this )
+                if f.is_valid():
+                    persistence.save_this( this )
+            except Exception, e:
+                if persistence.stop_on_exception: raise
+
+This allows us to effectively unit test by creating a
+mock version of ``Persistent_Processing`` and invoking
+the ``process_sheet`` function.
+
+"""
 
 import logging
 import sys
 import argparse
 import pprint
+from pathlib import Path
 from collections import defaultdict
 
 import stingray.workbook
-import stingray.sheet
-import stingray.schema
 
 logger= logging.getLogger( __name__ )
 
@@ -264,14 +254,14 @@ class Validate_Only_Processing( Persistent_Processing ):
         
 def builder_1( row ):
     return dict( 
-        key= row['Column "3" - string'].to_str(),
-        value= row['Col 2.0 - float'].to_float()
+        key= row['Column "3" - string'].value(),
+        value= row['Col 2.0 - float'].value()
     )
     
 def builder_2( row ):
     return dict( 
-        key= row['Column 3'].to_str(),
-        value= row['Column 2'].to_float()
+        key= row['Column 3'].value(),
+        value= row['Column 2'].value()
     )
     
 # Note that these builder functions are frequently added to. It's rare to get these 
@@ -307,10 +297,7 @@ def make_builder( args ):
 
 def process_sheet( sheet, builder, persistence ):
     counts= defaultdict( int )
-    if sheet.schema is None:
-        # Empty sheet -- no embedded schema
-        return counts
-    for source_row in sheet.schema.rows_as_dict_iter(sheet):
+    for source_row in sheet.rows():
         try:
             counts['read'] += 1
             row_dict= builder( source_row )
@@ -361,11 +348,9 @@ def process( sheet, builder ):
 
 
 def process_workbook( source, sheet_func, builder_func ):
-    for name in source.sheets():
+    for name in source.sheet_iter():
         logger.info( "{0} :: {1}".format( input, name ) )
-        sheet= source.sheet(name,
-                            stingray.sheet.EmbeddedSchemaSheet,
-                            loader_class=stingray.schema.loader.HeadingRowSchemaLoader)
+        sheet = source.sheet(name).set_schema_loader(stingray.workbook.HeadingRowSchemaLoader())
         counts= sheet_func( sheet, builder_func )
         logger.info( pprint.pformat(dict(counts)) )
 
@@ -397,7 +382,7 @@ def process_workbook( source, sheet_func, builder_func ):
 
 def parse_args():
     parser= argparse.ArgumentParser()
-    parser.add_argument( 'file', nargs='+' )
+    parser.add_argument( 'file', type=Path, nargs='+' )
     parser.add_argument( '-d', '--dry-run', default=False, action='store_true',  )
     parser.add_argument( '-l', '--layout', default='1', choices=('1','2') )
     parser.add_argument( '-v', '--verbose', dest='verbosity',

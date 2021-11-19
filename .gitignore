@@ -7,7 +7,7 @@
 
 .idea/*
 .tox/*
-docs/html/.doctrees/
+v4.5/docs/html/.doctrees/
 .notes
 .ipynb_checkpoints/*
 .mypy_cache/*

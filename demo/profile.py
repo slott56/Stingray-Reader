@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-
-# ..  _`demo_profile`:
-#
 # ##########################################################
 # Data Profiling Demonstration
 # ##########################################################
@@ -31,12 +27,12 @@
 import logging
 import sys
 import argparse
+from pathlib import Path
 import pprint
 from collections import defaultdict
 
-import stingray.workbook
-import stingray.sheet
-import stingray.schema
+from stingray.workbook import open_workbook, HeadingRowSchemaLoader
+
 
 logger= logging.getLogger( __name__ )
 
@@ -87,24 +83,23 @@ class Gather_Statistics:
 
 def process_sheet( sheet, persistence ):
     counts= defaultdict( int )
-    for source_row in sheet.schema.rows_as_dict_iter(sheet):
+    for source_row in sheet.rows():
         try:
             counts['read'] += 1
-            for attr in source_row:
-                persistence.count( attr, source_row[attr] )
+            for name in sheet.schema.properties:
+                persistence.count( name, source_row[name].value() )
         except Exception as e:
             counts['invalid'] += 1
             if persistence.stop_on_exception: raise
-            summary= "{0} '{1}'".format( e.__class__.__name__, e.message )
+            summary= "{0} '{1}'".format( e.__class__.__name__, e )
             logger.error( summary )
             counts['error '+summary] += 1
             
-    title= "{0} :: {1}".format( sheet.workbook.name, sheet.name )
+    title= "{0} :: {1}".format( sheet.workbook().name, sheet.name )
     print( title )
     print( "="*len(title) )
     print()
-    for attr in sheet.schema:
-        name= attr.name
+    for name, attr in sheet.schema.properties.items():
         print( name )
         print( "-"*len(name) )
         print()
@@ -152,11 +147,9 @@ def validate( sheet ):
 # ::
 
 def process_workbook( input ):
-    for name in source.sheets():
-        logger.info( "{0} :: {1}".format( input, name ) )
-        sheet= source.sheet(name,
-                            stingray.sheet.EmbeddedSchemaSheet,
-                            loader_class=stingray.schema.loader.HeadingRowSchemaLoader)
+    for sheet in input.sheet_iter():
+        logger.info( "{0} :: {1}".format( input, sheet.name ) )
+        sheet.set_schema_loader(HeadingRowSchemaLoader())
         counts= validate( sheet )
         logger.info( pprint.pformat(dict(counts)) )
 
@@ -170,7 +163,7 @@ def process_workbook( input ):
 
 def parse_args():
     parser= argparse.ArgumentParser()
-    parser.add_argument( 'file', nargs='+' )
+    parser.add_argument( 'file', type=Path, nargs='+' )
     parser.add_argument( '-v', '--verbose', dest='verbosity',
         default=logging.INFO, action='store_const', const=logging.DEBUG )
     return parser.parse_args()
@@ -195,7 +188,7 @@ if __name__ == "__main__":
     logging.getLogger().setLevel( args.verbosity )
     try:
         for input in args.file:
-            with stingray.workbook.open_workbook(input) as source:
+            with open_workbook(input) as source:
                 process_workbook( source )
         status= 0
     except Exception as e:
@@ -225,57 +218,57 @@ if __name__ == "__main__":
 #         -----------
 #
 #         ..  csv-table::
-
-            "TextCell('9973')","1"
-            "TextCell('42')","1"
-
+#
+#             "TextCell('9973')","1"
+#             "TextCell('42')","1"
+#
 #         Col 2.0 - float
 #         ---------------
 #
 #         ..  csv-table::
-
-            "TextCell('3.1415926')","1"
-            "TextCell('2.7182818')","1"
-
+#
+#             "TextCell('3.1415926')","1"
+#             "TextCell('2.7182818')","1"
+#
 #         Column "3" - string
 #         -------------------
 #
 #         ..  csv-table::
-
-            "TextCell('string')","1"
-            "TextCell('data')","1"
-
+#
+#             "TextCell('string')","1"
+#             "TextCell('data')","1"
+#
 #         Column '4' - date
 #         -----------------
 #
 #         ..  csv-table::
-
-            "TextCell('09/10/56')","1"
-            "TextCell('01/18/59')","1"
-
+#
+#             "TextCell('09/10/56')","1"
+#             "TextCell('01/18/59')","1"
+#
 #         Column 5 - boolean
 #         ------------------
 #
 #         ..  csv-table::
-
-            "TextCell('TRUE')","1"
-            "TextCell('FALSE')","1"
-
+#
+#             "TextCell('TRUE')","1"
+#             "TextCell('FALSE')","1"
+#
 #         Column 6 - empty
 #         ----------------
 #
 #         ..  csv-table::
-
-            "TextCell('')","2"
-
+#
+#             "TextCell('')","2"
+#
 #         Column 7 - Error
 #         ----------------
 #
 #         ..  csv-table::
-
-            "TextCell('#DIV/0!')","1"
-            "TextCell('#NAME?')","1"
-
+#
+#             "TextCell('#DIV/0!')","1"
+#             "TextCell('#NAME?')","1"
+#
 #         sample/simple.csv :: simple
 #         ===========================
 #
@@ -283,44 +276,44 @@ if __name__ == "__main__":
 #         ----
 #
 #         ..  csv-table::
-
-            "TextCell('Column 6 – empty')","1"
-            "TextCell('Column “3” - string')","1"
-            "TextCell('Col 2.0 – float')","1"
-            "TextCell("Column '4' – date")","1"
-            "TextCell('Column 7 – Error')","1"
-            "TextCell('Column 5 – boolean')","1"
-            "TextCell('Col 1 - int')","1"
-
+#
+#             "TextCell('Column 6 – empty')","1"
+#             "TextCell('Column “3” - string')","1"
+#             "TextCell('Col 2.0 – float')","1"
+#             "TextCell("Column '4' – date")","1"
+#             "TextCell('Column 7 – Error')","1"
+#             "TextCell('Column 5 – boolean')","1"
+#             "TextCell('Col 1 - int')","1"
+#
 #         offset
 #         ------
 #
 #         ..  csv-table::
-
-            "TextCell('45')","1"
-            "TextCell('56')","1"
-            "TextCell('34')","1"
-            "TextCell('67')","1"
-            "TextCell('1')","1"
-            "TextCell('23')","1"
-            "TextCell('12')","1"
-
+#
+#             "TextCell('45')","1"
+#             "TextCell('56')","1"
+#             "TextCell('34')","1"
+#             "TextCell('67')","1"
+#             "TextCell('1')","1"
+#             "TextCell('23')","1"
+#             "TextCell('12')","1"
+#
 #         size
 #         ----
 #
 #         ..  csv-table::
-
-            "TextCell('11')","7"
-
+#
+#             "TextCell('11')","7"
+#
 #         type
 #         ----
 #
 #         ..  csv-table::
-
-            "TextCell('float')","1"
-            "TextCell('bool')","1"
-            "TextCell('datetime')","1"
-            "TextCell('str')","3"
-            "TextCell('int')","1"
-
+#
+#             "TextCell('float')","1"
+#             "TextCell('bool')","1"
+#             "TextCell('datetime')","1"
+#             "TextCell('str')","3"
+#             "TextCell('int')","1"
+#
 

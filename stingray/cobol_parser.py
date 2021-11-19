@@ -76,8 +76,8 @@ This module's purpose is to translate COBOL to JSON Schema. This involves the fo
     - ``OCCURS DEPENDING ON`` builds a ``"$ref": "#name"`` to a ``"$anchor": "name"`` item in the schema.
 
 - ``REDEFINES`` refers to another item under this parent. While this is similar to a "oneOf" definition, it's a bit more complex because the alternatives each have separate names. The structure is not simply a ``{"name": {"type": {"oneOf": [base-A, redefine-B, redefine-C, etc.]}}``.
-The "redefines" property is effectively anonymous and each of the subtypes has a distinct name. It's ``{"redefine-A-B-C": {"type": {"oneOf": [{"type": "object", "properties": {"A": base}}, {"type: "object", "properties": {"B": redefined}}, etc.]}}}``.
-This is cumbersome, but is required to capture the COBOL semantics accurately in JSONSchema.
+  The "redefines" property is effectively anonymous and each of the subtypes has a distinct name. It's ``{"redefine-A-B-C": {"type": {"oneOf": [{"type": "object", "properties": {"A": base}}, {"type: "object", "properties": {"B": redefined}}, etc.]}}}``.
+  This is cumbersome, but is required to capture the COBOL semantics accurately in JSONSchema.
 
 We require some extensions or adaptations to cover two COBOL issues:
 
@@ -91,6 +91,7 @@ Because COBOL flattens the namespace of records, we define an ``$anchor`` for ea
 
 """
 
+import logging
 import re
 from typing import (
     Iterator,
@@ -111,9 +112,7 @@ class DesignError(BaseException):
 
 JSON = Union[None, bool, int, float, str, list[Any], dict[str, Any]]
 
-
-DEBUG_REF_FORMAT = False  # TODO: Use a separate logger for this.
-
+logger = logging.getLogger("stingray.cobol_parser")
 
 def reference_format(source: TextIO, replacing: Optional[list[tuple[str, str]]] = None) -> Iterator[str]:
     """
@@ -152,12 +151,10 @@ def reference_format(source: TextIO, replacing: Optional[list[tuple[str, str]]] 
         else:
             if line.strip().startswith("COPY"):
                 raise ValueError(f"directive not supported: {line!r}")
-            if DEBUG_REF_FORMAT:
-                print(f"{line!r}")  # pragma: no cover
+            logger.debug(f"reference_format: {line!r}")
             yield line
             line = next_line
-    if DEBUG_REF_FORMAT:
-        print(f"{line!r}")  # pragma: no cover
+    logger.debug(f"reference_format: {line!r}")
     yield line
 
 

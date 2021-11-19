@@ -1,46 +1,65 @@
-"""
-Schema and Instance models.
+r"""
+#############################
+Schema and Navigation models.
+#############################
 
-A number of file formats require a schema to unpack (or decode) the data. Even a simple CSV file offers headings in the first row as a kind of schema. Each row can be interpreted as a dictionary where the headers are keys.
+A number of file formats require a schema to unpack (or decode) the data. Even a simple CSV file offers headings in
+the first row as a kind of schema. Each row can be interpreted as a dictionary where the headers are keys.
 
-The JSON Schema permits definition of a schema that can be used to navigate spreadsheet files, like CSV. It can be used to unpack more sophisticated generic structures in JSON, YAML, and TOML format, as well as XML.
+The JSON Schema permits definition of a schema that can be used to navigate spreadsheet files, like CSV. It can be
+used to unpack more sophisticated generic structures in JSON, YAML, and TOML format, as well as XML.
 
-It can also be used to unpack COBOL files, in Unicode or ASCII text as well as EBCDIC. Most of the features of a COBOL DDE definition parallel JSON Schema constructs.
+It can also be used to unpack COBOL files, in Unicode or ASCII text as well as EBCDIC. Most of the features of a
+COBOL DDE definition parallel JSON Schema constructs.
 
-- COBOL has Atomic fields of type text (with vaious format details), and a variety of "Computational" variants. The most important is `COMP-3`, which is a decimal representation with digits packed two per byte. THe JSON Schema presumes types "null", "boolean", "number", or "string" types have text representations that fit well with COBOL.
+- COBOL has Atomic fields of type text (with vaious format details), and a variety of "Computational" variants. The
+  most important is `COMP-3`, which is a decimal representation with digits packed two per byte. THe JSON Schema
+  presumes types "null", "boolean", "number", or "string" types have text representations that fit well with COBOL.
 
 - The hierarchy of COBOL DDE's is the JSON Schema "object" type.
 
-- The COBOL `OCCURS` clause is the JSON Schema "array" type. The simple case, with a single, literal `TIMES` option is expressed with `maxItems` and `minItems`.
+- The COBOL `OCCURS` clause is the JSON Schema "array" type. The simple case, with a single, literal `TIMES` option
+  is expressed with `maxItems` and `minItems`.
 
-While COBOL is more sophisticated than CSV, it's generally comprarable to JSON/YAML/TOML/XML. There are some unique specializations related to COBOL processing.
+While COBOL is more sophisticated than CSV, it's generally comprarable to JSON/YAML/TOML/XML. There are some unique
+specializations related to COBOL processing.
 
 COBOL Processing
 ================
 
-The parallels between COBOL and JSON Schema suggest that COBOL Data Definition Entries (DDE's) can be translated to JSON Schema constructs. The JSON Schema (with extensions) can be used to decode bytes from COBOL representation to create native Python objects. There are three areas: handling `REDEFINES`,  `OCCURS DEPENDING ON` structures, and EBCDIC unpacking.
+The parallels between COBOL and JSON Schema suggest that COBOL Data Definition Entries (DDE's) can be translated to
+JSON Schema constructs. The JSON Schema (with extensions) can be used to decode bytes from COBOL representation to
+create native Python objects. There are three areas: handling `REDEFINES`,  `OCCURS DEPENDING ON` structures,
+and EBCDIC unpacking.
 
 Redefines
 ---------
 
-A COBOL `REDEFINES` clause defines a free union of types for a given sequence of bytes. Within the application code, there are generally fields that imply a more useful tagged union. The tags used for discrimination is not part of the COBOL definition.
+A COBOL `REDEFINES` clause defines a free union of types for a given sequence of bytes. Within the application code,
+there are generally fields that imply a more useful tagged union. The tags used for discrimination is not part of the
+COBOL definition.
 
 To make this work, each field within the JSON schema has an implied starting offset and length.
 A COBOL `REDEFINES` clause can be described with a JSON Schema extension that includes a JSON Pointer to name a field with which a given field is co-located.
 
-The COBOL language requires a strict backwards reference to a previously-defined field, and the names must have the name indentation level, making them peers within the same parent, reducing the need for complex pointers.
+The COBOL language requires a strict backwards reference to a previously-defined field, and the names must have the
+name indentation level, making them peers within the same parent, reducing the need for complex pointers.
 
 Occurs Depending On
 -------------------
 
-The complexity of `OCCURS DEPENDING ON` constructs arises because the size (`maxItems`) of the array is the value of another field in the COBOL record definition.
+The complexity of `OCCURS DEPENDING ON` constructs arises because the size (`maxItems`) of the array is the value of
+another field in the COBOL record definition.
 
-Ideally, a JSON Pointer names the referenced field as the `maxItems` attribute for an array. This, however, is not supported, so an extension vocabulary is required.
+Ideally, a JSON Reference names the referenced field as the `maxItems` attribute for an array. This, however,
+is not supported, so an extension vocabulary is required.
 
 EBCDIC Unpacking
 ----------------
 
-There are a number of distinctive data types used by COBOL and represented in EBCDIC. The most notable of these is the packed decimal representation of numbers. Each byte has two decimal digits. The final byte as a digit and sign information in the lower four bits.
+There are a number of distinctive data types used by COBOL and represented in EBCDIC. The most notable of these is
+the packed decimal representation of numbers. Each byte has two decimal digits. The final byte as a digit and sign
+information in the lower four bits.
 
 Further, COBOL records have a "RECFM" wrapper that may include bytes to describe the record's physical length.
 
@@ -52,9 +71,11 @@ See https://json-schema.org/draft/2020-12/relative-json-pointer.html#RFC6901 for
 Terminology
 -----------
 
-The JSON Schema specification talks about the data described by the schema as a "instance" of the schema. The schema is essentially a class of object, the data is an instance of that class.
+The JSON Schema specification talks about the data described by the schema as a "instance" of the schema. The schema
+is essentially a class of object, the data is an instance of that class.
 
-It's awkward to distinguish the more general use of instance from the specific use of "Instance of a JSON Schema". We'll try to use `Instance`, and `NDInstance` to talk about the object described by a JSON Schema.
+It's awkward to distinguish the more general use of "instance" from the specific use of "Instance of a JSON Schema".
+We'll try to use `Instance`, and `NDInstance` to talk about the object described by a JSON Schema.
 
 Goals
 =====
@@ -139,34 +160,39 @@ We can slice :math:`I` using start, :math:`s`, and end, :math:`e` locations to c
     I[s: e] = \{ i_x \mid s \leq x < e \}
 
 
-It seems like :math:`I_{s:e}: might be slightly more traditional notation than :math:`I[s:e]:. :math:`I_{\{x \mid s \leq x < e\}}: seems fussy.
+It seems like :math:`I_{s:e}` might be slightly more traditional notation than :math:`I[s:e]`. :math:`I_{\{x \mid s \leq x < e\}}` seems fussy.
 
-We can follow the Python convention of omitting :math:`s: when :math:`s = 0: and omitting :math:`e: when :math:`e = b:. This means that :math:`I \equiv I[:]:.
+We can follow the Python convention of omitting :math:`s` when :math:`s = 0` and omitting :math:`e` when :math:`e = b`. This means that :math:`I \equiv I[:]`.
 
-A Schema, :math:`S:, is a static description of a number of instances, :math:`I_0, I_1, I_2, ...:. We say the schema models an instance: :math:`S \tilde \models I:. The modelling is approximate; the model is incomplete. A more complete model requires resolution of `OCCURS DEPENDING ON` to compute locations, :math:`L:. This is :math:`S \circ L \models I:. The schema, :math:`S:, composed with additionl location information, :math:`L:, models the instance, :math:`I:.
+A Schema, :math:`S`, is a static description of a number of instances, :math:`I_0, I_1, I_2, ...`. We say the schema models an instance: :math:`S \tilde \models I`. The modelling is approximate; the model is incomplete. A more complete model requires resolution of ``OCCURS DEPENDING ON`` to compute locations, :math:`L`. This is :math:`S \circ L \models I`.
+The schema, :math:`S`, composed with additional location information, :math:`L`, models the instance, :math:`I`.
 
 A Schema has a structure with three kinds of elements:
 
-- Atomic, with no further structure. This has a type conversion (or "decode") function, :math:`t(I):, to extract a value from an instance. It requires a length, :math:`l:, that defines a slice from the instance.
-We can say :math:`t_{S}(I[:l]): to refer to the type conversion function for a specific Schema, :math:`S:, used to decode an instance, :math:`I:. JSON Schema defines types of number, int, string, boolean, and null. Other types may need to be added to handle COBOL data.
+- Atomic, with no further structure. This has a type conversion (or "unpack") function, :math:`t(I)`, to extract a value from an instance.
+  It requires a length, :math:`l`, that defines a slice from the instance.
+  We can say :math:`t_{S}(I[:l])` to refer to the type conversion function for a specific Schema, :math:`S`, used to decode an instance, :math:`I`.
+  JSON Schema defines types of number, int, string, boolean, and null. Other types may need to be added to handle COBOL data.
 
-- Array, with an Items subschema, :math:`S_i: that describes a repeating sub-instance. The number of sub instances, :math:`r: may be provided explicitly. In the `OCCURS DEPENDING ON` case, the value of :math:`r: is the value of another field. This means :math:`r = t_{S_d}(I): because the ocurrences depend on the value in field :math:`S_d:.
+- Array, with an Items subschema, :math:`S_i` that describes a repeating sub-instance.
+  The number of sub instances, :math:`r` may be provided explicitly.
+  In the ``OCCURS DEPENDING ON`` case, the value of :math:`r` is the value of another field.
+  This means :math:`r = t_{S_d}(I)` because the ocurrences depend on the value in field :math:`S_d`.
 
-- Object, with Properties structure that describes a number of subschema, :math:`S_{p_x}:.
+- Object, with Properties structure that describes a number of subschema, :math:`S_{p_x}`.
 
 We can summarize these three definitions as follows:
 
 ..  math::
 
-    S =
-    \begin{cases}
+    S = \begin{cases}
         \langle t(I), l \rangle &\text{if atomic} \\
         \langle S_i, r \rangle &\text{if array} \\
-        \{S_{p_0}, S_{p_1}, S_{p_2}, ...\} &\text{if object} \\
+        \{S_{p_0}, S_{p_1}, S_{p_2}, ...\} &\text{if object}
     \end{cases}
 
 
-The value of an instance, :math:`I:, interpreted by given schema, :math:`S:, is the type conversion function, :math:`t_S(I):, applied to a slice of the instance defined by the length, :math:`l:, which is :math:`I[:l_S]:.
+The value of an instance, :math:`I`, interpreted by given schema, :math:`S`, is the type conversion function, :math:`t_S(I)`, applied to a slice of the instance defined by the length, :math:`l`, which is :math:`I[:l_S]`.
 
 
 ..  math::
@@ -174,18 +200,18 @@ The value of an instance, :math:`I:, interpreted by given schema, :math:`S:, is 
     v = t_S(I[:l_S])
 
 
-As suggested above, the `OCCURS DEPENDING ON` means the locations of sub-instances depend on  values elsewhere in the instance.
+As suggested above, the ``OCCURS DEPENDING ON`` means the locations of sub-instances depend on  values elsewhere in the instance.
 
 The starting location of a slice is computed for each schema item as follows:
 
-- For an atomic item, it is the schema, :math:`S:. The starting offset, :math:`s:, is zero, and can be omitted, :math:`I[s=0: l] \equiv I[:l]:.
+- For an atomic item, it is the schema, :math:`S`. The starting offset, :math:`s`, is zero, and can be omitted, :math:`I[s=0: l] \equiv I[:l]`.
 
-- For an array, each item within the array has its own start based on the index value, :math:`x:, and the length of the item sub-schema, :math:`S_i:. The start for a given index value, :math:`s(x) = x \times l(S_i):; :math:`I[s: s+l] = I[x \times l(S_i): x \times l(S_i)+l(S_i)]:. The overall size of the array is :math:`r \times l(S_i):; note that :math:`r: may be dependent on the value of another field.
+- For an array, each item within the array has its own start based on the index value, :math:`x`, and the length of the item sub-schema, :math:`S_i`. The start for a given index value, :math:`s(x) = x \times l(S_i)`; :math:`I[s: s+l] = I[x \times l(S_i): x \times l(S_i)+l(S_i)]`. The overall size of the array is :math:`r \times l(S_i)`; note that :math:`r` may be dependent on the value of another field.
 
-- For an object, each property begins after the previous property. :math:`s(S_{p+1}) = s(S_{p}) + l(S_{p}):. This recurrence is a summation. :math:`s(S_{p+1}) = \sum_{0 \leq i < p+1}l(S_i):.
+- For an object, each property begins after the previous property. :math:`s(S_{p+1}) = s(S_{p}) + l(S_{p})`. This recurrence is a summation. :math:`s(S_{p+1}) = \sum_{0 \leq i < p+1}l(S_i)`.
 
 
-The length of a schema, :math:`l(S):, is the sum of the lengths of the items within the schema.
+The length of a schema, :math:`l(S)`, is the sum of the lengths of the items within the schema.
 
 ..  math::
 
@@ -337,6 +363,7 @@ naming for an elements and the element(s) which redefine it.
 import abc
 import csv
 from decimal import Decimal
+import logging
 from pprint import pprint
 import sys
 from typing import (
@@ -346,6 +373,8 @@ from typing import (
 import weakref
 
 from stingray import estruct
+
+logger = logging.getLogger("stingray.schema_instance")
 
 class DesignError(BaseException):
     pass
@@ -380,7 +409,7 @@ class Schema:
         try:
             return cast(str, self._attributes["type"])
         except KeyError as ex:
-            print(f"{ex} on {self!r}")
+            logger.error(f"{ex} on {self!r}")
             raise
     @property
     def attributes(self) -> JSON:
@@ -397,9 +426,10 @@ class Schema:
         print(line)
     def json(self) -> JSON:
         return self._attributes
-    def dump_iter(self, instance: Optional["DInstance"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
-        """Yield nesting, schema, indices, and object"""
-        yield indent, self, (), instance
+    def dump_iter(self, nav: Optional["Nav"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+        """Yield nesting, schema, indices, and value"""
+        if nav:
+            yield indent, self, (), nav.value()
 
 class AtomicSchema(Schema):
     pass
@@ -424,11 +454,12 @@ class ArraySchema(Schema):
     def print(self, indent: int=0, hide: set[str] = set()) -> None:
         super().print(indent, hide={"items"})
         self._items.print(indent+1)
-    def dump_iter(self, instance: Optional["DInstance"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+    def dump_iter(self, nav: Optional["Nav"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
         """Yield nesting, schema, indices, and object"""
         # TODO: Enumerate index values from minItems or 0 to maxItems
-        yield indent, self, (), instance
-        yield from self._items.dump_iter(cast(list[Any], instance)[0], indent+1)
+        yield indent, self, (), None
+        if nav:
+            yield from self._items.dump_iter(nav.index(0), indent+1)
 
 class DependsOnArraySchema(ArraySchema):
     """
@@ -455,11 +486,12 @@ class ObjectSchema(Schema):
         super().print(indent, hide={"properties"})
         for prop in self.properties.values():
             prop.print(indent+1)
-    def dump_iter(self, instance: Optional["DInstance"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+    def dump_iter(self, nav: Optional["Nav"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
         """Yield nesting, schema, indices, and object"""
-        yield indent, self, (), instance
-        for name, child in self.properties.items():
-            yield from child.dump_iter(cast(dict[str, DInstance], instance).get(name), indent+1)
+        yield indent, self, (), None
+        if nav:
+            for name, child in self.properties.items():
+                yield from child.dump_iter(nav.name(name), indent+1)
 
 class OneOfSchema(Schema):
     def __init__(self, attributes: JSON, alternatives: list["Schema"]) -> None:
@@ -474,15 +506,16 @@ class OneOfSchema(Schema):
         super().print(indent, hide={"oneOf"})
         for alt in self.alternatives:
             alt.print(indent+1)
-    def dump_iter(self, instance: Optional["DInstance"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+    def dump_iter(self, nav: Optional["Nav"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
         """Yield nesting, schema, indices, and object"""
-        yield indent, self, (), instance
-        for alt in self.alternatives:
-            # Not all alternatives will be valid.
-            try:
-                yield from alt.dump_iter(instance, indent+1)
-            except (IndexError, KeyError):  # pragma: no cover
-                pass
+        yield indent, self, (), None
+        if nav:
+            for alt in self.alternatives:
+                # Not all alternatives will be valid.
+                try:
+                    yield from alt.dump_iter(nav, indent+1)
+                except (IndexError, KeyError):  # pragma: no cover
+                    pass
 
 class RefToSchema(Schema):
     """Must deference type and attributes properties."""
@@ -514,7 +547,7 @@ class RefToSchema(Schema):
         if self.ref_to:
             return cast(ArraySchema, self.ref_to).items
         raise ValueError(f"Invalid {self.__class__.__name__}")
-    def dump_iter(self, instance: Optional["DInstance"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+    def dump_iter(self, nav: Optional["Nav"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
         """Yield nesting, schema, indices, and object"""
         yield indent, self, (), None
 
@@ -629,7 +662,7 @@ The JSON Schema's intent is to depend on delimited files, using a separate parse
 To work with the variety of instance data, we have several subclasses of `Instance` and related `Unpacker` classes:
 
 - **Non-Delimited**. These cases use `Location` objects. We define an ``NDInstance`` as a common protocol
-  wrapped around ``AnyStr`` types. There are three sub-cases depending on how the data must be unpacked.
+  wrapped around ``AnyStr`` types. There are three sub-cases depending on the underlying object.
 
     - **COBOL Bytes**. An `NDInstance` type union includes `bytes`. The `estruct` module is a COBOL replacement for the `struct` module. The JSON Schema requires extensions to handle COBOL complexities.
 
@@ -639,16 +672,16 @@ To work with the variety of instance data, we have several subclasses of `Instan
 
 - **Delimited**. These cases do not use `Location` objects. There are two sub-cases:
 
-    - **JSON Objects**. This is a Union of `dict[str, Any] | Any | list[Any]`. 
+    - **JSON Objects**. This is a Union of ``dict[str, Any] | Any | list[Any]``. 
       The instance is created by some external unpacker, and is already in a Python native structure. 
       Unpackers include ``json``, ``toml``, and ``yaml``. A wrapper around an ``xml`` parser
       can be used, also.
-      We'll use a ``JSON`` type hint for this.
+      We'll use a ``JSON`` type hint for objects this unpacker works with.
 
     - **Workbook Rows**. These include CSV, ODS, XLSX, and Numbers documents. 
       The instance is a structure created by the workbook module as an unpacker. 
-      The `csv` unpacker is built-in. 
-      These generally use a ``ListInstance`` to narrow the available Python structures.
+      The :py:mod:`csv` unpacker is built-in. 
+      These all use ``list[Any]`` for objects this unpacker works with.
 
 Unpacking is a plug-in strategy. 
 For non-delimited data, it combines some essential location information with a `value()` method that's unique to the instance source data. 
@@ -701,7 +734,7 @@ The JSON Schema extensions to drive unpacking include the `"cobol"` keyword. The
 Implementation Notes
 ====================
 
-We need three separate kinds of `Unpacker` subclasses to manage the kinds of `Instance` subclasses:
+We need three separate kinds of ``Unpacker`` subclasses to manage the kinds of ``Instance`` subclasses:
 
 - The `NonDelimited` subclass of `Unpacker` handles an `NDInstance` 
   which is either a string or bytes with non-delimited data. 
@@ -710,9 +743,15 @@ We need three separate kinds of `Unpacker` subclasses to manage the kinds of `In
 - The `Delimited` subclass of `Unpacker` handles delimited data, generally using ``JSON`` 
   as a type hint. This will have a `dict[str, Any] | list[Any] | Any` structure. 
 
-- A `Workbook` subclass of `Unpacker` wraps a workbook parser creating a ``WBInstance``, of which
-  ``ListInstance`` is the implementation class. 
+- A `Workbook` subclass of `Unpacker` wraps a workbook parser creating a ``WBInstance``.
   Generally workbook rows are `list[Any]` structures.
+
+An ``Unpacker`` instance is a factory for ``Nav`` objects. When we need to navigate around
+an instance, we'll leverage ``unpacker.nav(schema, instance)``. Since the
+schema binding doesn't change very often, ``nav = partial(unpacker.nav, (schema,))`` is
+a helpful simplification. With this partial, ``nav(instance).name(n)`` or ``nav(instance).index(n)`` are all that's needed
+to locate a named field or apply array indices.
+
 
 Unpacker Size Computations
 --------------------------
@@ -762,9 +801,11 @@ class NDInstance(Protocol):
     The essential features of a non-delimited instance.
     The underlying data is ``AnyStr``, either bytes or text.
     """
+    # Not Used
     def __init__(self, source: AnyStr) -> None: ...
     def unpacker(self, unpacker: "NonDelimited") -> "NDInstance": ...
     def schema(self, schema: "Schema") -> "NDInstance": ...
+
     @overload
     def __getitem__(self, index: int) -> Union[str, int]: ...
     @overload
@@ -777,7 +818,7 @@ class DInstance(Protocol):
     Pragmatically, we want o supplement these classes with methods
     that emit ``DNav`` objects to manage navigating an object and a schema in parallel.
 
-    Not sure how helpful this protocol really is...
+    Not sure this is useful...
     """
     def __init__(self, source: JSON) -> None: ...
     def unpacker(self, unpacker: "Delimited") -> "DInstance": ...
@@ -790,9 +831,11 @@ class WBInstance(Protocol):
     because their unpacker modules do conversions.
     We'll tolerate any sequence type.
     """
+    # Not Used
     def __init__(self, source: Sequence[Any]) -> None: ...
     def unpacker(self, unpacker: "WBUnpacker") -> "WBInstance": ...
     def schema(self, schema: "Schema") -> "WBInstance": ...
+
     @overload
     def __getitem__(self, index: int) -> Any: ...
     @overload
@@ -1077,7 +1120,7 @@ class Location(abc.ABC):
         return NotImplemented  # pragma: no cover
 
     @abc.abstractmethod
-    def dump_iter(self, instance: NDInstance, indent: int = 0) -> Iterator[tuple[int, "Location", tuple[int, ...], Optional[bytes], Any]]: ...
+    def dump_iter(self, nav: "NDNav", indent: int = 0) -> Iterator[tuple[int, "Location", tuple[int, ...], Optional[bytes], Any]]: ...
 
 
 class AtomicLocation(Location):
@@ -1089,7 +1132,7 @@ class AtomicLocation(Location):
         """
         For an atomic value, locate the underlying value. This may involve unpacking.
         """
-        # print(f"{self}, {instance}, {instance[self.start+offset: self.end+offset]!r}")
+        logger.debug(f"{self}, {instance}, {instance[self.start+offset: self.end+offset]!r}")
         return self.unpacker.value(
             self.schema, 
             cast(NDInstance, instance[self.start+offset: self.end+offset])
@@ -1097,11 +1140,11 @@ class AtomicLocation(Location):
     def raw(self, instance: NDInstance, offset: int = 0 ) -> Any:
         return instance[self.start+offset: self.end+offset]
 
-    def dump_iter(self, instance: NDInstance, indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+    def dump_iter(self, nav: "NDNav", indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
         """
         An Iterator over tuples of (indent, Location, array indices, raw bytes, value)
         """
-        yield indent, self, (), self.raw(instance), self.value(instance)
+        yield indent, self, (), nav.raw(), nav.value()
 
 
 class ArrayLocation(Location):
@@ -1130,14 +1173,14 @@ class ArrayLocation(Location):
         return array_value
     def raw(self, instance: NDInstance, offset: int = 0 ) -> Any:
         return instance[self.start+offset: self.end+offset]
-    def dump_iter(self, instance: NDInstance, indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+    def dump_iter(self, nav: "NDNav", indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
         """
         An Iterator over tuples of (indent, Location, array indices, raw bytes, value)
         """
         # TODO: Step through array index combinations.
         # For now, we provide the index=0 value only
         yield indent, self, (), None, None
-        yield from self.items.dump_iter(instance, indent+1)
+        yield from self.items.dump_iter(nav.index(0), indent+1)
 
 
 class ObjectLocation(Location):
@@ -1163,19 +1206,19 @@ class ObjectLocation(Location):
         return object_value
     def raw(self, instance: NDInstance, offset: int = 0 ) -> Any:
         return instance[self.start+offset: self.end+offset]
-    def dump_iter(self, instance: NDInstance, indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+    def dump_iter(self, nav: "NDNav", indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
         """
         An Iterator over tuples of (indent, Location, array indices, raw bytes, value)
         """
         yield indent, self, (), None, None
-        for child in self.properties.values():
-            yield from child.dump_iter(instance, indent+1)
+        for name, child in self.properties.items():
+            yield from child.dump_iter(nav.name(name), indent+1)
 
     
 class OneOfLocation(Location):
     """
     type(Schema) == OneOfSchema
-    The location of an object with a list of REDEFINES alternatives.
+    The location of an object which has a list of REDEFINES alternatives.
     """
     def __init__(self, schema: Schema, alternatives: list[Location], start: int, end: int) -> None:
         super().__init__(schema, start, end)
@@ -1192,13 +1235,14 @@ class OneOfLocation(Location):
         return first.value(instance, offset)
     def raw(self, instance: NDInstance, offset: int = 0 ) -> Any:
         return instance[self.start+offset: self.end+offset]
-    def dump_iter(self, instance: NDInstance, indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+    def dump_iter(self, nav: "NDNav", indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
         """
         An Iterator over tuples of (indent, Location, array indices, raw bytes, value)
         """
         yield indent, self, (), None, None
-        for alt in self.alternatives.values():
-            yield from alt.dump_iter(instance, indent+1)
+        for index, alt in enumerate(self.alternatives.values()):
+            sub_nav = NDNav(self.unpacker, alt, nav.instance)
+            yield from alt.dump_iter(sub_nav, indent+1)
 
     
 class RefToLocation(Location):
@@ -1229,7 +1273,7 @@ class RefToLocation(Location):
         
     def raw(self, instance: NDInstance, offset: int = 0 ) -> Any:
         return self.referent.raw(instance, offset)
-    def dump_iter(self, instance: NDInstance, indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+    def dump_iter(self, nav: "NDNav", indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
         """
         An Iterator over tuples of (indent, Location, array indices, raw bytes, value)
         These are silenced -- they were already displayed in an earlier OneOf.
@@ -1270,6 +1314,15 @@ class LocationMaker:
         return self.walk(self.schema, start)
 
     def walk(self, schema: Schema, start: int) -> Location:
+        """
+        ..  note: This can't easily be refactored into the :py:class:`Schema` class hierarchy.
+
+            Doing so has the unfortunate consequence of binding schema with Location.
+            We don't really want that.
+
+            The composition choice is to attach a **Strategy** object to each  :py:class:`Schema` object
+            that can emit an appropriate :py:class:`Location` object for that  :py:class:`Schema` subclass.
+        """
         loc: Location
         if isinstance(schema, AtomicSchema):
             size = self.size(schema)
@@ -1327,7 +1380,7 @@ class LocationMaker:
             # Redefines a name as a reference to an alternative in a oneOf.
             # This is a reference to an $anchor within the existing schema.
             # This should *not* be a forward reference, since this is used for Redefines and OccursDependingOn.
-            # print(f"$ref to {schema.ref=}")
+            logger.debug(f"$ref to {schema.ref=}")
             # Size is self.anchors[schema.ref].size
             offset = 0  # Only a reference, no actual size allocated here. 
             loc = RefToLocation(schema, self.anchors, start, offset)
@@ -1442,17 +1495,8 @@ class Nav(Protocol):
 
     - For Workbook, an index is used because we only know the cells of a row by position.
 
-    As a convenience, we add two methods to our Instance wrappers, ``name()`` and ``index()``.
-    These two names first create a ``Nav`` object, then perform the requested navigation.
-    This helps conceal the presence of ``Nav`` helpers.
-
-    An alternative is to introduce some other Nav constructor, but it seems contrived.
-    ``instance.nav.name()`` and ``instance.nav.index()`` could build the ``nav`` object
-    explicitly, but, it seems kind of awkward, and we have to be sure we've provided
-    the needed schema and unpacker details.
-
-    Really, it's ``instance.schema(schema).unpacker(unpacker).nav()``, which doesn't seem
-    much better.
+    A ``Nav`` is built by an ``Unpacker``.
+    ``unpacker.nav(schema, instance)``.
     """
     def name(self, name: str) -> "Nav": ...
 
@@ -1493,8 +1537,8 @@ class NDNav(Nav):
         # For ObjectLocation (and all others) referent == self
         sublocation = cast(ObjectLocation, self.location).properties[name].referent
 
-        # print(f"{self.__class__.__name__}.name({name})")
-        # pprint(locals())
+        logger.debug(f"{self.__class__.__name__}.name({name})")
+        logger.debug(locals())
         
         return NDNav(cast(Unpacker[NDInstance], self.unpacker()), sublocation, self.instance)
     
@@ -1519,8 +1563,8 @@ class NDNav(Nav):
             .from_instance(self.instance, start=base_location.start+item_offset)
         )
 
-        # print(f"{self.__class__.__name__}.index({index})")
-        # pprint(locals())
+        logger.debug(f"{self.__class__.__name__}.index({index})")
+        logger.debug(locals())
         
         return NDNav(cast(Unpacker[NDInstance], self.unpacker()), item_location, self.instance)
     
@@ -1535,21 +1579,22 @@ class NDNav(Nav):
     def raw_instance(self) -> "NDInstance":
         """
         Clone a piece of this instance as a new :py:class:`NDInstance` object.
-        Since NDInstance is an alias Union[bytes, str], there are two paths:
+        Since NDInstance is Union[BytesInstance, TextInstance], there are two paths:
         a new bytes or a new str.
         """
         unpacker: NonDelimited = cast(NonDelimited, self.unpacker())
         cls: Type[NDInstance] = self.instance.__class__
-        return cls(self.raw()).unpacker(unpacker)
+        return cls(self.raw())
 
     def dump(self) -> None:
         """
-        Navigates this non-delimited Schema using Location (based on the Schema)
+        Navigates a non-delimited Schema using :py:class:`Location` (based on the Schema)
         to expose values in the instance.
+        This is similar to the way DNav and WBNav objects work.
         """
         layout = "{:45s} {:3d} {:3d} {!r} {!r}"
         print("{:45s} {:3s} {:3s} {!s} {!s}".format("Field", "Off", "Sz", "Raw", "Value"))
-        for indent, loc, indices, raw, value in self.location.dump_iter(self.instance):
+        for indent, loc, indices, raw, value in self.location.dump_iter(self):
             print(
                 layout.format(
                     indent*'  '+cast(dict[str, Any], loc.schema.attributes).get("cobol", ""),
@@ -1562,7 +1607,7 @@ class NDNav(Nav):
 class DNav(Nav):
     """
     Navigate through a ``DInstance`` using a ``Schema``.
-    The implementation is a ``JSONInstance``, a wrapper around a ``JSON`` document.
+    This is a wrapper around a ``JSON`` document.
 
     Note that these objects have an inherent ambiguity. 
     A JSON document can have the form of a dictionary with names and values.
@@ -1602,7 +1647,7 @@ class DNav(Nav):
 
     def value(self) -> Any:
         """
-        Reach into the JSONInstance wrapper for final Python value from the current schema.
+        The final Python value from the current schema.
         Consider refactoring to use Unpacker explicitly
         """
         return self.instance
@@ -1611,7 +1656,7 @@ class DNav(Nav):
         """Navigates a Delimited instance schema and values."""
         layout = "{:53s} {!r}"
         print("{:53s} {!s}".format("Field", "Value"))
-        for indent, schema, indices, value in self.schema.dump_iter(cast(DInstance, self.instance)):
+        for indent, schema, indices, value in self.schema.dump_iter(self):
             print(
                 layout.format(
                     indent*'  '+self.schema.type,
@@ -1655,14 +1700,17 @@ class WBNav(Nav):
         return self.instance
 
     def dump(self) -> None:
-        """Navigates a Delimited instance schema and values."""
-        layout = "{:53s} {!r}"
+        """Navigates a Workbook instance schema and values."""
+        layout = "{:53s} {}"
         print("{:53s} {!s}".format("Field", "Value"))
-        for indent, schema, indices, value in self.schema.dump_iter(cast(DInstance, self.instance)):
+        for indent, schema, indices, value in self.schema.dump_iter(self):
+            attrs = cast(dict[str, Any], schema.attributes)
+            name = attrs.get("$anchor", attrs.get("title", schema.type))
             print(
                 layout.format(
-                    indent*'  '+self.schema.type,
-                    "" if value is None else value)
+                    indent*'  '+name,
+                    "" if value is None else repr(value)
+                ).rstrip()
             )
 
     
@@ -1675,10 +1723,13 @@ class CSVNav(WBNav):
 Instances
 =========
 
-We cannot easily extend the various source parsers to provide the needed additional
-attributes. So we need to create **Adaptors** to provide a few supplemental methods.
+For bytes and strings, we provide wrapper :py:class:`Instance` definitions.
+These :py:class:`BytesInstance` and :py:class:`TextInstance`
+are used by :py:class:`NDNav` and :py:class:`Location` objects.
 
-
+For :py:class:`DInstance` and :py:class:`WBInstance`, however, we don't 
+really need any additional features. We can use native ``JSON`` or ``list[Any]``
+objects.
 """
 
 class BytesInstance(bytes):
@@ -1693,29 +1744,12 @@ class BytesInstance(bytes):
     >>> schema = SchemaMaker.from_json({"type": "object", "properties": {"field-1": {"type": "string", "cobol": "PIC X(12)"}}})
     >>> unpacker = EBCDIC()
     >>> data = BytesInstance('blahblahblah'.encode("CP037"))
-    >>> data.schema(schema).unpacker(unpacker).name("field-1").value()
+    >>> unpacker.nav(schema, data).name("field-1").value()
     'blahblahblah'
     
     The ``Sheet.row_iter()`` build ``Row`` objects that wrap an unpacker, schema, and instance.
     """
-    def schema(self, schema: Schema) -> "NDInstance":
-        self._schema = schema
-        return self
-    def unpacker(self, unpacker: NonDelimited) -> "NDInstance":
-        self._unpacker = unpacker
-        return self
-    def nav(self) -> NDNav:
-        return LocationMaker(self._unpacker, self._schema).ndnav(self)
-    def name(self, name: str) -> NDNav:
-        if self._schema.type != "object":
-            raise TypeError(f"{self._schema!r} is not of type object")
-        return self.nav().name(name)
-    def array_index(self, index: int) -> NDNav:
-        if self._schema.type != "array":
-            raise TypeError(f"{self._schema!r} is not of type array")
-        return self.nav().index(index)
-    def dump(self) -> None:
-        self.nav().dump()
+    pass
 
 class TextInstance(str):
     """
@@ -1728,100 +1762,9 @@ class TextInstance(str):
     >>> schema = SchemaMaker.from_json({"type": "object", "properties": {"field-1": {"type": "string", "cobol": "PIC X(12)"}}})
     >>> unpacker = TextUnpacker()
     >>> data = TextInstance('blahblahblah')
-    >>> data.schema(schema).unpacker(unpacker).name("field-1").value()
+    >>> unpacker.nav(schema, data).name("field-1").value()
     'blahblahblah'
 
     The ``Sheet.row_iter()`` build ``Row`` objects that wrap an unpacker, schema, and instance.
     """
-
-    def schema(self, schema: Schema) -> "NDInstance":
-        self._schema = schema
-        return self
-
-    def unpacker(self, unpacker: NonDelimited) -> "NDInstance":
-        self._unpacker = unpacker
-        return self
-
-    def nav(self) -> NDNav:
-        return LocationMaker(self._unpacker, self._schema).ndnav(self)
-
-    def name(self, name: str) -> NDNav:
-        if self._schema.type != "object":
-            raise TypeError(f"{self._schema!r} is not of type object")
-        return self.nav().name(name)
-
-    def array_index(self, index: int) -> NDNav:
-        if self._schema.type != "array":
-            raise TypeError(f"{self._schema!r} is not of type array")
-        return self.nav().index(index)
-
-    def dump(self) -> None:
-        self.nav().dump()
-
-
-class JSONInstance(DInstance):
-    """
-    Fulfills the protocol for an ``DInstance`` useful for ``JSONUnpacker``
-
-    To create an :py:class:`DNav`, this object requires two things:
-    - A `Schema` which provides names, expected types from the Unpacker and conversions..
-    - A `Delimited` subclass of `Unpacker`. This might be a `JSONUnpacker`.
-    """
-    def __init__(self, instance: JSON) -> None:
-        self.instance = instance
-        self._schema: Schema
-        self._unpacker: Delimited
-
-    def schema(self, schema: Schema) -> "JSONInstance":
-        self._schema = schema
-        return self
-    def unpacker(self, unpacker: Delimited) -> "JSONInstance":
-        self._unpacker = unpacker
-        return self
-    def nav(self) -> DNav:
-        return DNav(self._unpacker, self._schema, self.instance)
-    def name(self, name: str) -> DNav:
-        if self._schema.type != "object":
-            raise TypeError(f"{self._schema!r} is not of type object")
-        return self.nav().name(name)
-    def array_index(self, index: int) -> DNav:
-        if self._schema.type != "array":
-            raise TypeError(f"{self._schema!r} is not of type array")
-        return self.nav().index(index)
-    def dump(self) -> None:
-        self.nav().dump()
-    def __eq__(self, other: Any) -> bool:
-        if isinstance(other, JSONInstance):
-            return (
-                self.instance == other.instance
-                and (self.unpacker is None and other.unpacker is None or self.unpacker == other.unpacker)
-                and (self.schema is None and other.schema is None or self.schema == other.schema)
-            )
-        return NotImplemented  # pragma: no cover
-
-class ListInstance(list[Any], WBInstance):
-    """
-    Fulfills the protocol for an ``WBInstance`` useful for ``WBUnpacker`` (and ``CSVUnpacker``)
-
-    To create an :py:class:`WBNav`, this object requires two things:
-    - A `Schema` which provides names, expected types from the Unpacker and conversions..
-    - A `Delimited` subclass of `Unpacker`. This might be a `CSVUnpacker` or some `WBUnpacker`.
-    """
-    def schema(self, schema: Schema) -> "ListInstance":
-        self._schema = schema
-        return self
-    def unpacker(self, unpacker: WBUnpacker) -> "ListInstance":
-        self._unpacker = unpacker
-        return self
-    def nav(self) -> WBNav:
-        return WBNav(self._unpacker, self._schema, self)
-    def name(self, name: str) -> WBNav:
-        if self._schema.type != "object":
-            raise TypeError(f"{self._schema!r} is not of type object")
-        return self.nav().name(name)
-    def array_index(self, index: int) -> WBNav:
-        if self._schema.type != "array":
-            raise TypeError(f"{self._schema!r} is not of type array")
-        return self.nav().index(index)
-    def dump(self) -> None:
-        self.nav().dump()
+    pass

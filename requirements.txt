@@ -1,6 +1,13 @@
-jsonschema>=4.2
+# Build/Test
 tox>=3.24
-pytest >= 5.2
-pytest-cov >= 3.0
-mypy >= 0.910
+pytest>=5.2
+pytest-cov>=3.0
+mypy>=0.910
+sphinx>=4.2y
+# Dependencies
+jsonschema>=4.2
 xlrd>=2.0
+openpyxl>=3.0
+pyexcel>=0.6
+pyexcel-ods3>=0.6
+numbers-parser>=2.0

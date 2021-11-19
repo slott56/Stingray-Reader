@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-
-# ..  _`demo_cobol`:
-#
 # ##########################################################
 # Reading COBOL Files
 # ##########################################################
@@ -83,8 +79,7 @@
 #
 # ::
 
-import stingray.cobol.loader
-import stingray.cobol
+from stingray.workbook import COBOL_Text_File, schema_iter
 import types
 
 # When working with unknown files, we sometimes need to preview a raw dump of the
@@ -92,9 +87,9 @@ import types
 #
 # ::
     
-def raw_dump( schema, sheet ):
+def raw_dump( sheet ):
     for row in sheet.rows():
-        stingray.cobol.dump(schema, row)
+        row.dump()
     
 # This is a handy expedient for debugging.
 #
@@ -106,10 +101,10 @@ def raw_dump( schema, sheet ):
 
 def header_builder(row, schema):
     return types.SimpleNamespace( 
-        file_version_year= row.cell(schema['FILE-VERSION-YEAR']).to_str(),
-        file_version_month= row.cell(schema['FILE-VERSION-MONTH']).to_str(),
-        copyright_symbol= row.cell(schema['COPYRIGHT-SYMBOL']).to_str(),
-        tape_sequence_no= row.cell(schema['TAPE-SEQUENCE-NO']).to_str(),
+        file_version_year= row['FILE-VERSION-YEAR'].value(),
+        file_version_month= row['FILE-VERSION-MONTH'].value(),
+        copyright_symbol= row['COPYRIGHT-SYMBOL'].value(),
+        tape_sequence_no= row['TAPE-SEQUENCE-NO'].value(),
     )
   
 # The ``detail_builder()`` function creates a detail object from the subsequent
@@ -127,15 +122,15 @@ def header_builder(row, schema):
 
 def detail_builder(row, schema):
     return types.SimpleNamespace( 
-        zip_code= row.cell(schema['ZIP-CODE']).to_str(),
-        update_key_no= row.cell(schema['UPDATE-KEY-NO']).to_str(),
-        low_sector= row.cell(schema['COUNTY-CROSS-REFERENCE-RECORD.ZIP-ADD-ON-RANGE.ZIP-ADD-ON-LOW-NO.ZIP-SECTOR-NO']).to_str(),
-        low_segment= row.cell(schema['COUNTY-CROSS-REFERENCE-RECORD.ZIP-ADD-ON-RANGE.ZIP-ADD-ON-LOW-NO.ZIP-SEGMENT-NO']).to_str(),
-        high_sector= row.cell(schema['COUNTY-CROSS-REFERENCE-RECORD.ZIP-ADD-ON-RANGE.ZIP-ADD-ON-HIGH-NO.ZIP-SECTOR-NO']).to_str(),
-        high_segment= row.cell(schema['COUNTY-CROSS-REFERENCE-RECORD.ZIP-ADD-ON-RANGE.ZIP-ADD-ON-HIGH-NO.ZIP-SEGMENT-NO']).to_str(),
-        state_abbrev= row.cell(schema['STATE-ABBREV']).to_str(),
-        county_no= row.cell(schema['COUNTY-NO']).to_str(),
-        county_name= row.cell(schema['COUNTY-NAME']).to_str(),
+        zip_code= row['ZIP-CODE'].value(),
+        update_key_no= row['UPDATE-KEY-NO'].value(),
+        low_sector= row['COUNTY-CROSS-REFERENCE-RECORD']['ZIP-ADD-ON-RANGE']['ZIP-ADD-ON-LOW-NO']['ZIP-SECTOR-NO'].value(),
+        low_segment= row['COUNTY-CROSS-REFERENCE-RECORD']['ZIP-ADD-ON-RANGE']['ZIP-ADD-ON-LOW-NO']['ZIP-SEGMENT-NO'].value(),
+        high_sector= row['COUNTY-CROSS-REFERENCE-RECORD']['ZIP-ADD-ON-RANGE']['ZIP-ADD-ON-HIGH-NO']['ZIP-SECTOR-NO'].value(),
+        high_segment= row['COUNTY-CROSS-REFERENCE-RECORD']['ZIP-ADD-ON-RANGE']['ZIP-ADD-ON-HIGH-NO']['ZIP-SEGMENT-NO'].value(),
+        state_abbrev= row['STATE-ABBREV'].value(),
+        county_no= row['COUNTY-NO'].value(),
+        county_name= row['COUNTY-NAME'].value(),
     )
 
 # Here's the ``process_sheet()`` function which applies the builders to the various
@@ -187,14 +182,17 @@ def process_sheet( sheet ):
 # ::
 
 with open("sample/zipcty.cob", "r") as cobol:
-    schema= stingray.cobol.loader.COBOLSchemaLoader(cobol).load()
-    #pprint.pprint( schema )
+    parser = schema_iter(cobol)
+    schema_1 = next(parser)
+    schema_2 = next(parser)
+    #pprint.pprint( schema_1 )
+    # pprint.pprint( schema_2 )
 for filename in 'sample/zipcty1', 'sample/zipcty2':
-    with stingray.cobol.Character_File(filename, schema=schema) as wb:
-        sheet= wb.sheet( filename )
+    with COBOL_Text_File(filename) as wb:
+        sheet= wb.sheet("").set_schema(schema_1)
         #counts= process_sheet( sheet )
         #pprint.pprint( counts )
-        raw_dump( schema, sheet )
+        raw_dump(sheet )
         
 # Running the demo
 # ================
