@@ -258,9 +258,10 @@ from decimal import Decimal
 import json
 import logging
 from pathlib import Path
+import re
 from typing import (
     Iterator, Union, Optional, IO, Type, TextIO, BinaryIO, Any, Iterable, Callable, cast,
-    AnyStr, TypeVar, Generic
+    AnyStr, TypeVar, Generic, Match
 )
 import warnings
 import weakref
@@ -274,18 +275,21 @@ from stingray.schema_instance import (
     Nav,
     WBNav,
     NDNav,
+    DNav,
     JSON,
     Schema,
     ObjectSchema,
     SchemaMaker,
     Unpacker,
     WBUnpacker,
-    CSVUnpacker,
-    JSONUnpacker,
+    Delimited,
     TextUnpacker,
+    Struct,
     EBCDIC,
+    Mode,
     Location,
     LocationMaker,
+    CONVERSION
 )
 from stingray.cobol_parser import schema_iter
 from types import TracebackType
@@ -297,13 +301,9 @@ except ImportError:  # pragma: no cover
 
 logger = logging.getLogger("stingray.workbook")
 
-class Mode:
-    TEXT = "r"
-    BYTES = "rb"
 
 class Workbook(Generic[Instance]):
-    mode = Mode.TEXT
-    def __init__(self, name: Union[Path, str]) -> None:
+    def __init__(self, name: Union[Path, str], **kwargs: Any) -> None:
         """
         Subclass can leverage super().__init__(name or Path)
         Subclass must set self.unpacker.
@@ -313,13 +313,17 @@ class Workbook(Generic[Instance]):
             self.name = Path(name)
         else:
             self.name = name
+        self.kwargs = kwargs
         self.unpacker: Unpacker[Instance]
+
+    def close(self) -> None:
+        self.unpacker.close()
 
     def __enter__(self) -> "Workbook[Instance]":
         return self
 
     def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException], exc_tb: TracebackType) -> None:
-        pass
+        self.close()
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Workbook):
@@ -331,19 +335,16 @@ class Workbook(Generic[Instance]):
             )
         return NotImplemented  # pragma: no cover
 
-    @abc.abstractmethod
     def sheet(self, name: str) -> "Sheet[Instance]":
-        ...  # pragma: no cover
+        return Sheet(self, name)
 
-    @abc.abstractmethod
     def sheet_iter(self) -> Iterator["Sheet[Instance]"]:
-        ...  # pragma: no cover
+        yield from (Sheet(self, name) for name in self.unpacker.sheet_iter())
 
-    @abc.abstractmethod
-    def instance_iter(self, sheet: "Sheet[Instance]") -> Iterator[Instance]:
-        ...  # pragma: no cover
 
-WB = Union[Workbook[NDInstance], Workbook[WBInstance], Workbook[DInstance]]
+WB = Union[
+    Workbook[NDInstance], Workbook[WBInstance], Workbook[DInstance]
+]
 
 class Sheet(Generic[Instance]):
     """
@@ -355,8 +356,8 @@ class Sheet(Generic[Instance]):
     OR an internal Schema loader is used to extract a schema from the first few rows of the sheet.
     """
 
-    def __init__(self, workbook: WB, sheet_name: str) -> None:
-        self.workbook = weakref.ref(workbook)
+    def __init__(self, workbook: Workbook[Instance], sheet_name: str) -> None:
+        self.workbook: weakref.ReferenceType[Workbook[Instance]] = weakref.ref(workbook)
         self.name = sheet_name
         # Plug in a do-nothing schema loader in case the schema is supplied externally.
         self.loader: SchemaLoader[Instance] = SchemaLoader()
@@ -390,7 +391,8 @@ class Sheet(Generic[Instance]):
         Extracts a schema from the header.
         Applies the schema to the body to create a :py:class:`Row` instances.
         """
-        self.raw_instance_iter = cast("Workbook[Instance]", self.workbook()).instance_iter(self)
+        wb = cast("Workbook[Instance]", self.workbook())
+        self.raw_instance_iter = wb.unpacker.instance_iter(self.name, **wb.kwargs)  # type: ignore [attr-defined]
         json_schema = self.loader.header(self.raw_instance_iter)
         if json_schema:
             # Not all loaders build a schema. If no schema was created, do nothing.
@@ -411,7 +413,7 @@ class Sheet(Generic[Instance]):
             details_match = [
                 self.workbook is other.workbook,
                 self.name == other.name,
-                self.schema == other.schema,
+                (self.schema is None and other.schema is None or self.schema == other.schema) if hasattr(self, "schema") and hasattr(other, "schema") else True,
             ]
             return all(details_match)
         return NotImplemented  # pragma: no cover
@@ -466,6 +468,30 @@ class Row(Generic[Instance]):
         return NotImplemented  # pragma: no cover
 
 
+def name_cleaner(name: str) -> str:
+    """
+    JSON Schema names for anchors and properties are validated
+    against patterns defined in places like core/$defs/anchorString.
+
+    Names must match the following pattern.
+    We replace illegal characters with "_"
+
+    r"^[A-Za-z_][-A-Za-z0-9._]*$"
+
+    >>> name_cleaner("TYPICAL-COBOL")
+    'TYPICAL-COBOL'
+    >>> name_cleaner("common_python")
+    'common_python'
+    >>> name_cleaner("Not a 'good' name")
+    'Not_a_good_name'
+    """
+    while (
+            groups := cast(Match[str], re.match(r"(^[A-Za-z_][-A-Za-z0-9._]*)(.*)$", name)).groups()
+    )[1]:
+        bad_char = groups[1][0]
+        name = name.replace(bad_char, "_").replace("__", "_")
+    return name
+
 class SchemaLoader(Generic[Instance]):
     """
     Loads a schema.
@@ -511,7 +537,7 @@ class HeadingRowSchemaLoader(SchemaLoader[Instance]):
         json_schema = {
             "type": "object",
             "properties": {
-                name: {"title": name, "$anchor": str(name), "type": "string", "position": n}
+                str(name): {"title": name, "$anchor": name_cleaner(str(name)), "type": "string", "position": n}
                 for n, name in enumerate(first)
             },
         }
@@ -558,7 +584,7 @@ class ExternalSchemaLoader(SchemaLoader[Instance]):
             "properties": {
                 row.name("name").value(): {
                     "title": row.name("name").value(),
-                    "$anchor": row.name("name").value(),
+                    "$anchor": name_cleaner(row.name("name").value()),
                     "type": "string",
                     "position": n,
                     "description": row.name("description").value(),
@@ -626,43 +652,80 @@ open_workbook = file_registry.open_workbook
 CSV Implementation
 """
 
+
+class CSVUnpacker(WBUnpacker):
+    """Upacker that wraps the :py:mod:`csv` module."""
+    the_file: IO[str]
+    def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None) -> None:
+        if file_object:
+            self.the_file = cast(IO[str], file_object)
+        else:
+            self.the_file = name.open(mode=Mode.TEXT)
+
+    def close(self) -> None:
+        if hasattr(self, "the_file") and self.the_file:
+            self.the_file.close()
+            del self.the_file
+
+    def sheet_iter(self) -> Iterator[str]:
+        yield ""
+
+    def instance_iter(self, sheet: str, **kwargs: Any) -> Iterator[WBInstance]:
+        self.rdr = csv.reader(self.the_file, **kwargs)
+        for instance in self.rdr:
+            yield cast(WBInstance, instance)
+
 @file_registry.file_suffix(".csv")
 class CSV_Workbook(Workbook[WBInstance]):
     def __init__(
         self, name: Union[str, Path], file_object: Optional[IO[AnyStr]] = None, **kwargs: Any
     ) -> None:
-        super().__init__(name)
-        self.csv_args = kwargs
+        super().__init__(name, **kwargs)
         self.unpacker = CSVUnpacker()
-        self.the_file: Union[IO[str], IO[bytes]]
-        if file_object:
-            self.the_file = file_object
-        else:
-            self.the_file = self.name.open(self.mode)
+        self.unpacker.open(self.name, file_object)
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException],
-                 exc_tb: TracebackType) -> None:
-        if hasattr(self, "the_file") and self.the_file:
-            self.the_file.close()
-
-    def sheet(self, name: str) -> Sheet[WBInstance]:
-        return CSV_Sheet(self, "")
-
-    def sheet_iter(self) -> Iterator[Sheet[WBInstance]]:
-        yield CSV_Sheet(self, "")
-
-    def instance_iter(self, sheet: Sheet[WBInstance]) -> Iterator[WBInstance]:
-        self.rdr = csv.reader(cast(TextIO, self.the_file), **self.csv_args)
-        for instance in self.rdr:
-            yield cast(WBInstance, instance)
-
-
-class CSV_Sheet(Sheet[WBInstance]):
-    pass
+    def close(self) -> None:
+        self.unpacker.close()
 
 """
 NDJSON Implementation
 """
+
+class JSONUnpacker(Delimited):
+    """
+    Unpacker that wraps the :py:mod:`json` module..
+    """
+    the_file: IO[str]
+
+    def calcsize(self, schema: Schema) -> int:
+        return 1
+
+    def value(self, schema: Schema, instance: "DInstance") -> Any:
+        type_value = cast(dict[str, Any], schema.attributes).get("type", "object")
+        conversion = CONVERSION.get(cast(dict[str, Any], schema.attributes).get("conversion", type_value), lambda x: x)
+        return conversion(instance)
+
+    def nav(self, schema: Schema, instance: "DInstance") -> "Nav":
+        return DNav(self, schema, cast(JSON, instance))
+
+    def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None, **kwargs: Any) -> None:
+        if file_object:
+            self.the_file = cast(IO[str], file_object)
+        else:
+            self.the_file = name.open(mode=Mode.TEXT)
+
+    def close(self) -> None:
+        if hasattr(self, "the_file") and self.the_file:
+            self.the_file.close()
+            del self.the_file
+
+    def sheet_iter(self) -> Iterator[str]:
+        yield ""
+
+    def instance_iter(self, name: str, **kwargs: Any) -> Iterator[DInstance]:
+        for line in self.the_file:
+            instance = json.loads(line, **kwargs)
+            yield instance
 
 @file_registry.file_suffix(".json", ".ndjson", ".jsonnl")
 class JSON_Workbook(Workbook[DInstance]):
@@ -670,35 +733,12 @@ class JSON_Workbook(Workbook[DInstance]):
         self, name: Union[str, Path], file_object: Optional[IO[AnyStr]] = None, **kwargs: Any
     ) -> None:
         super().__init__(name)
-        self.json_args = kwargs
+        self.kwargs = kwargs
         self.unpacker = JSONUnpacker()
-        self.the_file: Union[IO[str], IO[bytes]]
-        if file_object:
-            self.the_file = file_object
-        else:
-            self.the_file = self.name.open(self.mode)
-        self.csv_args = kwargs
+        self.unpacker.open(self.name, file_object)
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException],
-                 exc_tb: TracebackType) -> None:
-        if hasattr(self, "the_file") and self.the_file:
-            self.the_file.close()
-
-    def sheet(self, name: str) -> Sheet[DInstance]:
-        return JSON_Sheet(self, "")
-
-    def sheet_iter(self) -> Iterator[Sheet[DInstance]]:
-        yield JSON_Sheet(self, "")
-
-    def instance_iter(self, sheet: Sheet[DInstance]) -> Iterator[DInstance]:
-        for line in self.the_file:
-            instance = json.loads(line, **self.json_args)
-            # instance.unpacker(self.unpacker).schema(sheet.schema)
-            yield instance
-
-
-class JSON_Sheet(Sheet[DInstance]):
-    pass
+    def close(self) -> None:
+        self.unpacker.close()
 
 ### COBOL Files
 
@@ -732,30 +772,10 @@ class COBOL_Text_File(Workbook[NDInstance]):
     ) -> None:
         super().__init__(name)
         self.unpacker = TextUnpacker()
-        self.the_file: Union[IO[str], IO[bytes]]
-        if file_object:
-            self.the_file = file_object
-        else:
-            self.the_file = self.name.open(self.mode)
+        self.unpacker.open(self.name, file_object)
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException],
-                 exc_tb: TracebackType) -> None:
-        if hasattr(self, "the_file") and self.the_file:
-            self.the_file.close()
-
-    def sheet(self, name: str) -> Sheet[NDInstance]:
-        return COBOL_Text_Sheet(self, "")
-
-    def sheet_iter(self) -> Iterator[Sheet[NDInstance]]:
-        yield COBOL_Text_Sheet(self, "")
-
-    def instance_iter(self, sheet: Sheet[NDInstance]) -> Iterator[NDInstance]:
-        self.row_source = cast(Iterator[NDInstance], iter(self.the_file))
-        return self.row_source
-
-class COBOL_Text_Sheet(Sheet[NDInstance]):
-    """The single "Sheet" in a file. This is a container for the rows."""
-    pass
+    def close(self) -> None:
+        self.unpacker.close()
 
 
 class COBOL_EBCDIC_File(Workbook[NDInstance]):
@@ -766,7 +786,6 @@ class COBOL_EBCDIC_File(Workbook[NDInstance]):
     This is narrower than that, and could be bytes only, not NDInstance.
     """
 
-    mode = Mode.BYTES
     def __init__(
         self,
         name: Union[str, Path],
@@ -776,50 +795,45 @@ class COBOL_EBCDIC_File(Workbook[NDInstance]):
         **kwargs: str,
     ) -> None:
         super().__init__(name)
-        self.unpacker = EBCDIC()
         self.recfm_class = recfm_class or estruct.RECFM_N
-        self.lrecl: Optional[int] = None
-        self.the_file: Union[IO[str], IO[bytes]]
-        if file_object:
-            self.the_file = file_object
-        else:
-            self.the_file = self.name.open(self.mode)
+        self.lrecl: Optional[int] = lrecl
+        self.unpacker = EBCDIC()
+        self.unpacker.open(self.name, file_object)
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException],
-                 exc_tb: TracebackType) -> None:
-        if hasattr(self, "the_file") and self.the_file:
-            self.the_file.close()
+    def close(self) -> None:
+        self.unpacker.close()
 
     def sheet(self, name: str) -> Sheet[NDInstance]:
         return COBOL_EBCDIC_Sheet(self, "")
 
     def sheet_iter(self) -> Iterator[Sheet[NDInstance]]:
-        yield COBOL_EBCDIC_Sheet(self, "")
+        yield from (COBOL_EBCDIC_Sheet(self, name) for name in self.unpacker.sheet_iter())
 
-    def instance_iter(self, sheet: Sheet[NDInstance]) -> Iterator[NDInstance]:
-        recfm_parser = self.recfm_class(cast(BinaryIO, self.the_file), self.lrecl)
-        for r in recfm_parser.record_iter():
-            yield cast(NDInstance, r)
-            # Ideally, all bytes are used.
-            recfm_parser.used(cast(NDNav, sheet.row.nav).location.end)
 
 class COBOL_EBCDIC_Sheet(Sheet[NDInstance]):
     """
     The single "Sheet" in a file. This is a container for the rows.
-    It also retains the most recent row so we can determine the actual size
-    in the presence of complex OCCURS DEPENDING ON clauses.
+    It handles the RECFM and LRECL complexities of variable-length non-delimited records.
     """
     def set_schema(self, schema: Schema) -> Sheet[NDInstance]:
-        super().set_schema(schema)
+        """Done eagerly to make the LRECL more visible."""
+        result = super().set_schema(schema)
         wb = cast(COBOL_EBCDIC_File, self.workbook())
-        if not wb.lrecl:
-            # Compute lrecl from simple layout DDE's.
+        if wb.lrecl:
+            self.lrecl = wb.lrecl
+        else:
+            # Compute lrecl from layout DDE's, assuming no Occurs Depending On clauses.
             loc = LocationMaker(wb.unpacker, self.schema).from_schema()
-            wb.lrecl = loc.end
-        return self
+            self.lrecl = loc.end
+        return result
 
-    def row_iter(self) -> Iterator[Row[NDInstance]]:
-        for row in super().row_iter():
-            self.row = row
+    def row_iter(self) -> Iterator["Row[NDInstance]"]:
+        wb = cast(COBOL_EBCDIC_File, self.workbook())
+        self.raw_instance_iter = wb.unpacker.instance_iter(self.name, recfm_class=wb.recfm_class, lrecl=self.lrecl)  # type: ignore [attr-defined]
+        for instance in self.raw_instance_iter:
+            self.row = Row(self, instance)
             yield self.row
+            # Ideally, all bytes are used.
+            wb.unpacker.used(cast(NDNav, self.row.nav).location.end)
 
+    rows = row_iter

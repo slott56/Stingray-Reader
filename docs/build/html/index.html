@@ -42,23 +42,23 @@ processing a file’s data:</p>
 <li><p>What do the bytes <em>mean</em>?  What is the Conceptual Content?</p></li>
 <li><p>How can we assure ourselves that our applications will work with this file?</p></li>
 </ul>
-<p>The problem we have is that the schema is not always bound
+<p>The problem is caused because the file’s schema is not always bound
 to the file nor is the schema clearly bound to an application program.
-There are two examples of this separation between schema and content:</p>
-<ul class="simple">
-<li><p>We might have a spreadsheet where there aren’t even column titles.</p></li>
-<li><p>We might have a pure data file (for example from a legacy COBOL program)
-which is described by a separate schema.</p></li>
-</ul>
+For example, a spreadsheet that lacks column titles is devoid of useful
+logical or conceptual schema information. The physical spreadsheet file
+format has a schema that’s bound to the spreadsheet processing tools.</p>
+<p>An application that reads spreadsheet data can treat each row as a list
+of objects, and process items by index within the row. The schema is, therefore,
+implicit in the code.</p>
 <p>One goal of good software is to cope reasonably well with variability
-of user-supplied inputs.  Providing data by spreadsheet is
-often a desirable choice for users.  Since spreadsheets are tweaked manually, they
+of user-supplied inputs.  Providing data by spreadsheet workbook is
+often a desirable choice for users.  Since workbook data can be tweaked manually, it
 may not have a simple, fixed schema or logical layout.</p>
 <p>A workbook (the container of individual sheets)
 can be encoded in any of a number of physical
 formats: XLS, CSV, XLSX, ODS to name a few.  We would like our applications
 to be independent of these physical formats, focusing on the logical layout.</p>
-<p>Data supplied in the form of a workbook can suffer from numerous data quality issues.
+<p>Additionally, data supplied in the form of a workbook can suffer from data quality issues.
 We need to be assured that a file actually conforms to the expected
 schema.</p>
 <p>A COBOL file parallels a workbook sheet in several ways. It also introduces
@@ -71,9 +71,9 @@ uniformity in processing data from a variety of sources.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="design.html">Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Using <strong>Stingray Reader</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/index.html">Demo Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">6. History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing/index.html">7. Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
@@ -120,9 +120,9 @@ uniformity in processing data from a variety of sources.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="design.html">Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Using <strong>Stingray Reader</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/index.html">Demo Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">6. History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing/index.html">7. Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>

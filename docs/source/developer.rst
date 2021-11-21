@@ -12,14 +12,13 @@ either external or complex (or both). We can tackle this question:
     
 Or, more concretely, 
 
-    **How do we make a program independent of Physical Format 
-    and Logical Layout?**
+    **How do we make a program independent of Physical Format and Logical Layout?**
     
 We can also use **Stingray** to answer questions about files, the schema those
 files purport to use, and the data on those files.
 Specifically, we can tackle this question:
 
-    **How do we assure that a file and an application use the same schema?**
+    **How do we ensure that a file and an application use the same schema?**
         
 There are two sides to schema use: 
 
@@ -50,21 +49,23 @@ As noted in :ref:`intro`, there are three levels of schema that need to be bound
     it might be the top row of a sheet in a workbook, for example.
     Sometimes the logical layout can be separate: a COBOL data definition, or perhaps
     a metadata sheet in a workbook.
-    
-    We can't make the logical layout transparent.
-    Our applications and files both need to agree on a logical layout. 
-    The column names in the metadata, for example, must be agreed to.
-    The order or position of the columns, however, need not be fixed.
-    
+
 -   **Conceptual Content**.  
     A single conceptual schema may be implemented by a number of physical
     formats and logical layouts.  
     An application should be able to tolerate variability in the logical
     layout as long is it matches the expected **conceptual content**.
-    
-    Since we're working in Python, the conceptual schema is often a class
-    definition. It might be a namedtuple or a SimpleNamespace, also. 
-    
+
+We can't make the logical layout completely transparent to our applications.
+Our suite of applications all need to agree on a logical layout. A change to one
+must lead to a change to the oythers.
+The column names in the metadata, for example, must be agreed to.
+The order or position of the columns, however, need not be fixed.
+
+Since we're working in Python, the conceptual schema is often a class
+definition. The idea is to provide many ways to build a class instance
+based on variations in the logical layout.
+
 We'll tackle the schema binding in several pieces.
 
 -   **File Schema**.  `Binding a Schema to a File`_ describes some preliminary
@@ -82,44 +83,47 @@ We'll tackle the schema binding in several pieces.
 
 -   **FAQ**. Some other design questions. `Frequently Asked Questions`_.
         
-We'll look at some demonstration programs in :ref:`demo`.
+We'll look at some demonstration software in :ref:`demo`.
 
 Binding a Schema to a File 
 =================================
 
-We're only going to bind two levels of schema to a file.  The conceptual schema
-would require some kind of formal ontology, something that's rarely available.
+The file suffix, e.g., ``.xlsx`` binds a file to a physical format.
+This is relatively universal. A single :py:func:`stingray.open_workbook` function
+looks at the file suffix and locates an appropriate class.
 
-**Logical Layout**.  We rely on a schema, :py:class:`schema.Schema` to manage
+A decorator is available to extend the file suffix mapping to introduce new
+physical format bindings.
+
+We need to bind the logical layout to the file also.
+This means relying on a schema, defined by the
+:py:class:`stingray.schema_instance.Schema` class to describe
 the logical layout of a file.
+The :py:class:`stingray.workbook.Sheet` and :py:class:`stingray.workbook.Row` classes
+use a :py:class:`stingray.schema_instance.Schema` object to describe each row.
 
-A workbook has two ways to bind logical layout to data values. 
-Our :py:class:`sheet.Sheet` subclass hierarchy requires a schema object.
-We'll load the schema using a :py:mod:`schema.loader` 
-components.
+An application must load the schema first. There several sources for schema:
 
 -   **Embedded**.  This is commonly seen as column titles within the sheet.  Or
     any variation on that theme. The common case of column titles is handled
-    by a built-in schema loader, :py:class:`schema.loader.HeadingRowSchemaLoader`.
+    by a built-in schema loader, :py:class:`stingray.workbook.HeadingRowSchemaLoader`.
     Other variations are managed by building different schema loaders.
     
 -   **External**.  This is a separate sheet or separate file. In this case, we
-    can start with :py:class:`schema.loader.BareExternalSchemaLoader` to read
+    can start with :py:class:`stingray.workbook.ExternalSchemaLoader` to read
     an external schema. In the case of COBOL files, there's a separate 
-    :py:class:`cobol.loader.COBOLSchemaLoader` that parses COBOL source to create
+    :py:class:`stingray.workbook.COBOLSchemaLoader` that parses COBOL source to create
     a usable schema.
-    
-**Physical Format**.  Generally, a file name provides a hint as to the physical file format.
-:file:`.csv`, :file:`.xls`, :file:`.xlsx`, :file:`.xlsm`, :file:`.ods`,
-:file:`.numbers` describe the physical format.   
 
-Our :py:class:`cell.Cell`, :py:class:`sheet.Sheet`, and
-:py:class:`workbook.base.Workbook` handles many physical format details nicely.
+The schema all start as JSONSchema documents. These are Python ``dict[str, Any]`` structures.
+A :py:class:`stingray.workbook.SchemaMaker` object is used to transform the JSONSchema
+document into a usable :py:class:`stingray.schema_instance.Schema` object. This permits
+pre-processing the schema to add features or correct problems.
 
 Data Attribute Mapping -- Using a Schema
 ==========================================
 
-Using a schema is the heart of the semantic problem.
+Using a schema is the heart of solving the semantic problem witn spreadsheet and COBOL files.
 
 We want to have just one application that is adaptable to a number
 of closely-related data file schemata.  Ideally, there's one, 

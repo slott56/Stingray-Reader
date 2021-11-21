@@ -10,12 +10,18 @@ from io import StringIO, BytesIO
 from stingray.workbook import *
 
 ### Base Workbook/Sheet/Row Features
+
 @pytest.fixture
 def mock_unpacker():
     sub_nav = Mock(value=Mock(side_effect=[sentinel.V1, sentinel.V2]))
     nav = Mock()
     nav.name = Mock(return_value=sub_nav)
-    unpacker = Mock(name="Unpacker", nav=Mock(return_value=nav))
+    unpacker = Mock(
+        name="Unpacker",
+        nav=Mock(return_value=nav),
+        sheet_iter=Mock(return_value=[sentinel.SHEET]),
+        instance_iter=Mock(return_value=[sentinel.ROW]),
+    )
     return unpacker
 
 @pytest.fixture
@@ -24,19 +30,13 @@ def mock_workbook_class(mock_unpacker):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             self.unpacker = mock_unpacker
-        def sheet(self, name):
-            return sentinel.SHEET
-        def sheet_iter(self):
-            yield sentinel.SHEET
-        def instance_iter(self, sheet):
-            yield sentinel.ROW
+
     return WB
 
 def test_base_workbook(mock_workbook_class):
     with mock_workbook_class(Path("test")) as wb:
-        assert wb.sheet("name") == sentinel.SHEET
-        assert list(wb.sheet_iter()) == [sentinel.SHEET]
-        assert list(wb.instance_iter(sentinel.SHEET)) == [sentinel.ROW]
+        assert wb.sheet("name") == Sheet(wb, "name")
+        assert list(wb.sheet_iter()) == [Sheet(wb, sentinel.SHEET)]
         assert wb == wb
 
 def test_external_schema_base_sheet(mock_unpacker, mock_workbook_class):
@@ -110,7 +110,7 @@ def test_csv_workbook(csv_workbook_1, anscombe_schema, capsys) -> bool:
     row_0 = next(rows)
     assert row_0.values() == ['x123', 'y1', 'y2', 'y3', 'x4', 'y4']
     assert re.fullmatch(
-        r"Row\(CSV_Sheet\(\<stingray.workbook.CSV_Workbook object at .+?\>, '', schema=ObjectSchema\(.+?\), loader=\<stingray.workbook.SchemaLoader object at .+?\>\), \['x123', 'y1', 'y2', 'y3', 'x4', 'y4'\]\)",
+        r"Row\(Sheet\(\<stingray.workbook.CSV_Workbook object at .+?\>, '', schema=ObjectSchema\(.+?\), loader=\<stingray.workbook.SchemaLoader object at .+?\>\), \['x123', 'y1', 'y2', 'y3', 'x4', 'y4'\]\)",
         repr(row_0)
     )
     # Non-header rows.
@@ -152,7 +152,7 @@ def test_csv_open_file(csv_test_file_1):
         wb = CSV_Workbook(csv_test_file_1, open_file)
         assert len(list(wb.sheet_iter())) == 1
         assert wb.name == csv_test_file_1
-    assert wb.the_file.closed
+    assert wb.unpacker.the_file.closed
 
 ### open_workbook function tests
 
@@ -199,7 +199,7 @@ def test_json_open_file(json_test_file_1):
         wb = JSON_Workbook(json_test_file_1, open_file)
         assert len(list(wb.sheet_iter())) == 1
         assert wb.name == json_test_file_1
-    assert wb.the_file.closed
+    assert wb.unpacker.the_file.closed
 
 def test_good_json_open_workbook(json_test_file_1) -> bool:
     with open_workbook(json_test_file_1) as wb:
@@ -210,13 +210,18 @@ def test_good_json_open_workbook(json_test_file_1) -> bool:
 
 @pytest.fixture
 def heading_row_workbook() -> Mock:
+    unpacker = Mock(
+        name="Mock CSVUnpacker",
+        instance_iter=Mock(name="CSVUnpacker.instance_iter", return_value=iter([("a", "b"), ("1", "2")])),
+    )
+    unpacker.nav = Mock(side_effect=lambda schema, instance: WBNav(unpacker, schema, instance))
     wb = Mock(
-        name="mock workbook",
-        instance_iter = Mock(return_value=iter([("a", "b"), ("1", "2")])),
-        unpacker=CSVUnpacker(),
+        name="mock Workbook",
+        unpacker=unpacker,
+        kwargs={},
     )
     wb.sheet = Mock(
-        return_value = Sheet(wb, "mock"),
+        return_value=Sheet(wb, "mock"),
     )
     return wb
 
@@ -261,10 +266,15 @@ def test_integration_csv_workbook_schema_loader(csv_workbook_1, capsys):
 
 @pytest.fixture
 def external_schema_workbook() -> Mock:
-    wb = Mock(
-        name="mock workbook",
+    unpacker = Mock(
+        name="Mock CSVUnpacker",
         instance_iter = Mock(return_value=iter([("1", "2")])),
-        unpacker=CSVUnpacker(),
+    )
+    unpacker.nav = Mock(side_effect=lambda schema, instance: WBNav(unpacker, schema, instance))
+    wb = Mock(
+        name="mock Workbook",
+        unpacker=unpacker,
+        kwargs={},
     )
     wb.sheet = Mock(
         return_value = Sheet(wb, "mock"),
@@ -273,10 +283,15 @@ def external_schema_workbook() -> Mock:
 
 @pytest.fixture
 def metaschema_workbook() -> Mock:
+    unpacker = Mock(
+        name="Mock CSVUnpacker",
+        instance_iter=Mock(return_value=iter([("a", "first column", "number"), ("b", "second", "number")])),
+    )
+    unpacker.nav = Mock(side_effect=lambda schema, instance: WBNav(unpacker, schema, instance))
     schema_wb = Mock(
         name="mock schema workbook",
-        instance_iter = Mock(return_value=iter([("a", "first column", "number"), ("b", "second", "number")])),
-        unpacker = CSVUnpacker(),
+        unpacker=unpacker,
+        kwargs={},
     )
     schema_wb.sheet = Mock(
         return_value = Sheet(schema_wb, "mock"),
@@ -289,6 +304,7 @@ def test_external_schema_loader(external_schema_workbook, metaschema_workbook):
 
     json_schema = ExternalSchemaLoader(schema_sheet).load()
     # print(json_schema)
+    assert list(json_schema["properties"].keys()) == ["a", "b"]
     schema = SchemaMaker().from_json(json_schema)
 
     sheet = external_schema_workbook.sheet('Sheet1')
@@ -469,7 +485,7 @@ def test_cobol_case_2_file_2(cobol_schema_2, cobol_schema_2_path_2, capsys) -> b
             "['ZOS', '123.45', Decimal('678.90'), 4660, -987.65]"
         ]
 
-    assert ebcdic_cobol_file.lrecl == 21
+    assert sheet.lrecl == 21
 
     with cobol_schema_2_path_2.open('rb') as file_2:
         COBOL_EBCDIC_File(cobol_schema_2_path_2, file_2)
@@ -554,7 +570,7 @@ def cobol_schema_2_path_4(tmp_path) -> COBOL_EBCDIC_File:
 
 
 def test_cobol_case_2_file_4(cobol_schema_2, cobol_schema_2_path_4, capsys) -> bool:
-    cobol_ebcdic_file = COBOL_EBCDIC_File(cobol_schema_2_path_4, recfm_class=estruct.RECFM_VB)
+    cobol_ebcdic_file = COBOL_EBCDIC_File(cobol_schema_2_path_4, recfm_class=estruct.RECFM_VB, lrecl=21)
     sheet = cobol_ebcdic_file.sheet("").set_schema(cobol_schema_2)
 
     for row in sheet.row_iter():
@@ -612,7 +628,7 @@ def cobol_schema_2_file_6(tmp_path) -> COBOL_EBCDIC_File:
     """
     COBOL File Access Case 6: EBCDIC bad COMP-3 data.
 
-    See Case 2 for schema.
+    See Case 2 for the schema used here.
     """
     file_path_6 = tmp_path / "file_content_6.data"
     file_path_6.write_bytes(
@@ -623,9 +639,10 @@ def cobol_schema_2_file_6(tmp_path) -> COBOL_EBCDIC_File:
 
 def test_cobol_case_2_file_5(cobol_schema_2, cobol_schema_2_file_6, capsys) -> bool:
     with COBOL_EBCDIC_File(cobol_schema_2_file_6) as ebcdic_file:
+        assert len(list(ebcdic_file.sheet_iter())) == 1
         sheet = ebcdic_file.sheet("").set_schema(cobol_schema_2)
 
-        assert ebcdic_file.lrecl == 21
+        assert sheet.lrecl == 21
 
         row = next(sheet.row_iter())
         assert row.name("WORD").value() == "ZOS"

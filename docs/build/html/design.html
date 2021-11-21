@@ -15,7 +15,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Implementation" href="implementation/index.html" />
+    <link rel="next" title="Using Stingray Reader" href="developer.html" />
     <link rel="prev" title="Introduction" href="introduction.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -40,9 +40,7 @@
 will inform the rest of the design.</p>
 <section id="workbook-schema-issues">
 <h2>Workbook Schema Issues<a class="headerlink" href="#workbook-schema-issues" title="Permalink to this headline">¶</a></h2>
-<p>There are several sensible ways to represent workbook schema information.
-Two of these are seen in the wild, and must be handled gracefully. Others
-could be seen, and should be part of the use cases for this package.</p>
+<p>There are several ways to represent workbook schema information.</p>
 <ol class="arabic simple">
 <li><p>One (or more) rows in each workbook sheet that provides the attribute
 name.  The type is often left implicit.  This is often bound to the
@@ -55,28 +53,25 @@ making it more likely to be useful. If it describes a COBOL file,
 however, the binding is more tenuous.</p></li>
 <li><p>A Python module that’s built from source information.  This
 allows us to trivially <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">schema.foo</span></code> and have lots of cool
-classes and functions in the <code class="docutils literal notranslate"><span class="pre">schema.foo</span></code> module. Ideally the
-module is properly bound to the file, but there’s little guarantee
-of this.</p></li>
-<li><p>Some standardized metadata format.  XSD (or even XMI) pops into mind.
-These are detailed and potentially useful.
-This is vanishingly rare in practice. The external XSD may not
-be bound in any way to the data.</p></li>
+classes and functions in the <code class="docutils literal notranslate"><span class="pre">schema.foo</span></code> module.</p></li>
+<li><p>Some standardized metadata format. JSONSchema is preferred.
+XSD can also be used.</p></li>
 </ol>
 <p>Options 1 and 2 (workbook-based schema) cover over 99%
 of the cases in practice.  While the data is casual and error-prone, it’s
 often readily available.</p>
-<p>Option 3 (a Python module) – while cool – breaks the DRY
-principle.  Refreshing a Python schema when a source <code class="file docutils literal notranslate"><span class="pre">.XLS</span></code> document
-changes means that we have a multi-step binding: document to schema followed
-by schema to application.</p>
+<p>Option 3 (a Python module) – while cool – can break the DRY
+principle. Using JSONSchema means the schema can be encoded as a Python <code class="docutils literal notranslate"><span class="pre">dict</span></code>.
+This module would have to be used through an application ecosystem.</p>
+<p>Refreshing a Python schema when a source <code class="file docutils literal notranslate"><span class="pre">.XLS</span></code> document
+changes can be a problem. It creates a multi-step binding: document to schema module followed
+by schema module to application.</p>
 <p>Option 4 is rarely used in practice.  In the rare cases when an organization
-will consent to providing XSD files, they’re often prepared separately
+will consent to providing schema files in a standard format, they’re often prepared separately
 from the data and do not actually reflect the application software
 that is used to build the data file.</p>
 <p>How do we extend this to handle COBOL DDE’s?</p>
-<p>How do we extend this to handle JSON, YAML, or XML?</p>
-<p>Clearly, we need to load schema information from a source every time
+<p>It seems sensible to load schema information from a source file every time
 it’s needed.  There are two paths:</p>
 <ul class="simple">
 <li><p>Either we’ll parse the embedded schema buried in each
@@ -84,42 +79,48 @@ sheet of a workbook,</p></li>
 <li><p>or we’ll load an external schema definition from
 a file.</p></li>
 </ul>
-<p>We’ll need to design schema loaders as well as data extractors which
-depend on the schema loaders.</p>
+<p>This causes us to partition the design into several components.</p>
+<ul class="simple">
+<li><p>Schena definition.</p></li>
+<li><p>Schema parsing and loading.</p></li>
+<li><p>Application data access using a schema.</p></li>
+</ul>
+<p>The idea is to have a universal schema representation. An application
+can load this from a variety of sources, including JSON, COBOL, and heading
+rows of a spreadsheet.</p>
 </section>
 <section id="some-cobol-file-issues">
 <h2>Some COBOL File Issues<a class="headerlink" href="#some-cobol-file-issues" title="Permalink to this headline">¶</a></h2>
-<p>When dealing with “Flat Files” from legacy COBOL problems, there are several
-additional problems that need to be solved.</p>
+<p>Non-spreadsheet files, including legacy COBOL files, introduce
+additional problems:</p>
 <ol class="arabic simple">
 <li><p>The files have a fixed field layout, without delimiters.
 This means that the offset of each field must be used to
 decompose the record into its individual elements.</p></li>
-<li><p>Numeric fields can have an implied decimal point, making
-it difficult to determine the value of a string of digits.
-The COBOL DDE is essential for parsing the file contents.</p></li>
+<li><p>Numeric fields can have an implied decimal point.
+The COBOL DDE is essential for parsing the file contents into number values.</p></li>
 <li><p>COBOL can make use of numeric data represented in a variety
-of “Computational” forms.  The “Computational-3” (“COMP-3”)
-form is very popular and rather complex because decimal digits are
+of “Computational” forms.  The <code class="docutils literal notranslate"><span class="pre">COMP-3</span></code>
+form, for example, is very popular: decimal digits are
 packed two per byte and the final half-byte encodes
 sign information.</p></li>
-<li><p>The string data may be encoded in EBCDIC bytes.</p></li>
+<li><p>The string data may be encoded in EBCDIC bytes, requiring decoding.</p></li>
 <li><p>COBOL encourages the use of data aliases (or “unions”) via the <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> clause.
 Without the entire unviverse of COBOL programs that work with a given file,
 the general handling of <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code>
-data elements can become an insoluable problem.
+data elements can become an insoluable problem. While it’s clear some field
+discriminates among the union alternatives, that detail is not part of the COBOL DDE.
 Only lazy field access can work;
 eager creation of individual cell values is doomed because a
 <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> alternative may be defined over invalid data.</p></li>
-<li><p>COBOL has an <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> (ODO) feature where one attribute
-determines the size of another attribute. This means the data
-of every attribute after the ODO attribute has a location which varies.
-The positions within the flat file cannot be computed statically.</p></li>
+<li><p>COBOL has an <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> feature where one attribute of a DDE
+determines the size of an array. This means every attribute after the array has a location which varies.
+The locations within the flat file can only be computed with an actual
+instance of the record.</p></li>
 </ol>
 <p>Generally, COBOL files are defined by a “Data Definition Entry” (DDE)
 that provides the record layout.
-It’s essential to
-parse this source DDE, which has the original COBOL
+It’s essential to parse this source DDE, which has the original COBOL
 definition for the file.  A schema can be built from the parsed DDE.
 There’s no good reason to rely on any intermediate description separate from
 the DDE’s themselves.</p>
@@ -149,12 +150,12 @@ the DDE’s themselves.</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Using <strong>Stingray Reader</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/index.html">Demo Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">6. History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing/index.html">7. Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">8. Installation via <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Commercial Use</a></li>
 </ul>
 
@@ -163,7 +164,7 @@ the DDE’s themselves.</p>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="introduction.html" title="previous chapter">Introduction</a></li>
-      <li>Next: <a href="implementation/index.html" title="next chapter">Implementation</a></li>
+      <li>Next: <a href="developer.html" title="next chapter">Using <strong>Stingray Reader</strong></a></li>
   </ul></li>
 </ul>
 </div>

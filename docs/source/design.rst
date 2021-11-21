@@ -9,9 +9,7 @@ will inform the rest of the design.
 Workbook Schema Issues
 -------------------------------------
 
-There are several sensible ways to represent workbook schema information. 
-Two of these are seen in the wild, and must be handled gracefully. Others
-could be seen, and should be part of the use cases for this package.
+There are several ways to represent workbook schema information.
 
 1.  One (or more) rows in each workbook sheet that provides the attribute
     name.  The type is often left implicit.  This is often bound to the
@@ -26,34 +24,31 @@ could be seen, and should be part of the use cases for this package.
 
 #.  A Python module that's built from source information.  This
     allows us to trivially ``import schema.foo`` and have lots of cool
-    classes and functions in the ``schema.foo`` module. Ideally the 
-    module is properly bound to the file, but there's little guarantee 
-    of this.
+    classes and functions in the ``schema.foo`` module.
 
-#.  Some standardized metadata format.  XSD (or even XMI) pops into mind.
-    These are detailed and potentially useful.
-    This is vanishingly rare in practice. The external XSD may not 
-    be bound in any way to the data.
+#.  Some standardized metadata format. JSONSchema is preferred.
+    XSD can also be used.
 
 Options 1 and 2 (workbook-based schema) cover over 99%
 of the cases in practice.  While the data is casual and error-prone, it's
 often readily available.
 
-Option 3 (a Python module) -- while cool -- breaks the DRY
-principle.  Refreshing a Python schema when a source :file:`.XLS` document
-changes means that we have a multi-step binding: document to schema followed
-by schema to application.
+Option 3 (a Python module) -- while cool -- can break the DRY
+principle. Using JSONSchema means the schema can be encoded as a Python ``dict``.
+This module would have to be used through an application ecosystem.
+
+Refreshing a Python schema when a source :file:`.XLS` document
+changes can be a problem. It creates a multi-step binding: document to schema module followed
+by schema module to application.
 
 Option 4 is rarely used in practice.  In the rare cases when an organization
-will consent to providing XSD files, they're often prepared separately
+will consent to providing schema files in a standard format, they're often prepared separately
 from the data and do not actually reflect the application software
 that is used to build the data file.
 
 How do we extend this to handle COBOL DDE's? 
 
-How do we extend this to handle JSON, YAML, or XML?
-
-Clearly, we need to load schema information from a source every time
+It seems sensible to load schema information from a source file every time
 it's needed.  There are two paths:
 
 -   Either we'll parse the embedded schema buried in each
@@ -62,48 +57,57 @@ it's needed.  There are two paths:
 -   or we'll load an external schema definition from
     a file.
     
-We'll need to design schema loaders as well as data extractors which
-depend on the schema loaders.
+This causes us to partition the design into several components.
+
+-   Schena definition.
+
+-   Schema parsing and loading.
+
+-   Application data access using a schema.
+
+The idea is to have a universal schema representation. An application
+can load this from a variety of sources, including JSON, COBOL, and heading
+rows of a spreadsheet.
+
 
 Some COBOL File Issues
 -------------------------
 
-When dealing with "Flat Files" from legacy COBOL problems, there are several
-additional problems that need to be solved.
+Non-spreadsheet files, including legacy COBOL files, introduce
+additional problems:
 
 1.  The files have a fixed field layout, without delimiters.
     This means that the offset of each field must be used to
     decompose the record into its individual elements.
 
-#.  Numeric fields can have an implied decimal point, making
-    it difficult to determine the value of a string of digits.
-    The COBOL DDE is essential for parsing the file contents.
+#.  Numeric fields can have an implied decimal point.
+    The COBOL DDE is essential for parsing the file contents into number values.
 
 #.  COBOL can make use of numeric data represented in a variety
-    of "Computational" forms.  The "Computational-3" ("COMP-3")
-    form is very popular and rather complex because decimal digits are
+    of "Computational" forms.  The ``COMP-3``
+    form, for example, is very popular: decimal digits are
     packed two per byte and the final half-byte encodes
     sign information.
 
-#.  The string data may be encoded in EBCDIC bytes.
+#.  The string data may be encoded in EBCDIC bytes, requiring decoding.
 
 #.  COBOL encourages the use of data aliases (or "unions") via the ``REDEFINES`` clause.
     Without the entire unviverse of COBOL programs that work with a given file,
     the general handling of ``REDEFINES``
-    data elements can become an insoluable problem.
+    data elements can become an insoluable problem. While it's clear some field
+    discriminates among the union alternatives, that detail is not part of the COBOL DDE.
     Only lazy field access can work;
     eager creation of individual cell values is doomed because a
     ``REDEFINES`` alternative may be defined over invalid data.
     
-#.  COBOL has an ``OCCURS DEPENDING ON`` (ODO) feature where one attribute
-    determines the size of another attribute. This means the data 
-    of every attribute after the ODO attribute has a location which varies.
-    The positions within the flat file cannot be computed statically.
+#.  COBOL has an ``OCCURS DEPENDING ON`` feature where one attribute of a DDE
+    determines the size of an array. This means every attribute after the array has a location which varies.
+    The locations within the flat file can only be computed with an actual
+    instance of the record.
 
 Generally, COBOL files are defined by a "Data Definition Entry" (DDE)
 that provides the record layout.
-It's essential to
-parse this source DDE, which has the original COBOL
+It's essential to parse this source DDE, which has the original COBOL
 definition for the file.  A schema can be built from the parsed DDE.
 There's no good reason to rely on any intermediate description separate from
 the DDE's themselves.

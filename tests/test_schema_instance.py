@@ -9,6 +9,17 @@ try:  # pragma: no cover
 except ImportError:
     from jsonschema import Draft7Validator as SchemaValidator  # type: ignore[import]
 
+import pytest
+from io import StringIO
+import csv
+from stingray.schema_instance import *
+from stingray.workbook import JSONUnpacker, CSVUnpacker
+
+def test_conversions():
+    assert digits_5(1020) == "01020"
+    assert decimal_2(3.14) == Decimal('3.14')
+    assert decimal_2(355/113) == Decimal('3.14')
+
 @pytest.fixture
 def atomic_schema():
     json_schema = {"type": "number"}
@@ -799,11 +810,6 @@ def test_instance_location_maker(capsys):
 
 # We've manually translated COBOL DDE's into JSON Schema for these tests.
 # See `cobol_parser` for the COBOL Parser that emits JSON Schema.
-
-import pytest
-from io import StringIO
-import csv
-from stingray.schema_instance import *
 
 @pytest.fixture
 def copy_t1_schema_data() -> tuple[JSON, BytesInstance]:

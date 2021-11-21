@@ -50,7 +50,7 @@ import os
 from typing import Any
 from stingray.workbook import (
     open_workbook, HeadingRowSchemaLoader, Workbook, Sheet, Row,
-    WBUnpacker, JSON, SchemaMaker
+    WBUnpacker, JSON, SchemaMaker, name_cleaner
 )
 from stingray.schema_instance import JSON
 from jsonschema import Draft202012Validator  # type: ignore [import]
@@ -90,22 +90,21 @@ def some_builder(aRow: Row) -> dict[str, Any]:
 #
 # ::
 
-
-class MockWB(Workbook):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.unpacker = WBUnpacker()
-
-    def sheet(self, name):
-        return Sheet(self, "sheet")
+class MockUnpacker(WBUnpacker):
 
     def sheet_iter(self):
-        yield self.sheet()
+        yield "sheet"
 
     def instance_iter(self, sheet):
         yield [
             42.0, 3.1415926, 'string', 20708.0, True, None, '#DIV/0!'
         ]
+
+class MockWB(Workbook):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.unpacker = MockUnpacker()
+
 
 
 
@@ -136,6 +135,7 @@ def test_some_builder():
     }
     Draft202012Validator.check_schema(json_schema)
     schema = SchemaMaker().from_json(json_schema)
+
     wb = MockWB("workbook")
     sheet = wb.sheet("Sheet 1").set_schema(schema)
     row_iter = sheet.row_iter()

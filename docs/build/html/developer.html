@@ -15,8 +15,8 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Stingray Demo Applications" href="demo/index.html" />
-    <link rel="prev" title="Implementation" href="implementation/index.html" />
+    <link rel="next" title="Demo Applications" href="demo/index.html" />
+    <link rel="prev" title="Design Considerations" href="design.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -42,14 +42,13 @@ either external or complex (or both). We can tackle this question:</p>
 </div></blockquote>
 <p>Or, more concretely,</p>
 <blockquote>
-<div><p><strong>How do we make a program independent of Physical Format
-and Logical Layout?</strong></p>
+<div><p><strong>How do we make a program independent of Physical Format and Logical Layout?</strong></p>
 </div></blockquote>
 <p>We can also use <strong>Stingray</strong> to answer questions about files, the schema those
 files purport to use, and the data on those files.
 Specifically, we can tackle this question:</p>
 <blockquote>
-<div><p><strong>How do we assure that a file and an application use the same schema?</strong></p>
+<div><p><strong>How do we ensure that a file and an application use the same schema?</strong></p>
 </div></blockquote>
 <p>There are two sides to schema use:</p>
 <ul class="simple">
@@ -68,7 +67,7 @@ This is the data quality assurance question.</p></li>
 <section id="concepts">
 <h2>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h2>
 <p>As noted in <a class="reference internal" href="introduction.html#intro"><span class="std std-ref">Introduction</span></a>, there are three levels of schema that need to be bound to a file.</p>
-<ul>
+<ul class="simple">
 <li><p><strong>Physical Format</strong>.  We can make this transparent to our applications.
 Everything is a workbook with a consistent API.</p></li>
 <li><p><strong>Logical Layout</strong>.  This is how an application program will make use
@@ -76,21 +75,21 @@ of the data found in a file.
 Sometimes the Logical layout information can be embedded in a file:
 it might be the top row of a sheet in a workbook, for example.
 Sometimes the logical layout can be separate: a COBOL data definition, or perhaps
-a metadata sheet in a workbook.</p>
-<p>We can’t make the logical layout transparent.
-Our applications and files both need to agree on a logical layout.
-The column names in the metadata, for example, must be agreed to.
-The order or position of the columns, however, need not be fixed.</p>
-</li>
+a metadata sheet in a workbook.</p></li>
 <li><p><strong>Conceptual Content</strong>.
 A single conceptual schema may be implemented by a number of physical
 formats and logical layouts.
 An application should be able to tolerate variability in the logical
-layout as long is it matches the expected <strong>conceptual content</strong>.</p>
-<p>Since we’re working in Python, the conceptual schema is often a class
-definition. It might be a namedtuple or a SimpleNamespace, also.</p>
-</li>
+layout as long is it matches the expected <strong>conceptual content</strong>.</p></li>
 </ul>
+<p>We can’t make the logical layout completely transparent to our applications.
+Our suite of applications all need to agree on a logical layout. A change to one
+must lead to a change to the oythers.
+The column names in the metadata, for example, must be agreed to.
+The order or position of the columns, however, need not be fixed.</p>
+<p>Since we’re working in Python, the conceptual schema is often a class
+definition. The idea is to provide many ways to build a class instance
+based on variations in the logical layout.</p>
 <p>We’ll tackle the schema binding in several pieces.</p>
 <ul class="simple">
 <li><p><strong>File Schema</strong>.  <a class="reference internal" href="#binding-a-schema-to-a-file">Binding a Schema to a File</a> describes some preliminary
@@ -104,38 +103,41 @@ We can then dig into <strong>Stingray</strong> application programming in <a cla
 <a class="reference internal" href="#binding-a-schema-to-an-application">Binding a Schema to an Application</a>, and <a class="reference internal" href="#schema-version-numbering">Schema Version Numbering</a>.</p></li>
 <li><p><strong>FAQ</strong>. Some other design questions. <a class="reference internal" href="#frequently-asked-questions">Frequently Asked Questions</a>.</p></li>
 </ul>
-<p>We’ll look at some demonstration programs in <a class="reference internal" href="demo/index.html#demo"><span class="std std-ref">Stingray Demo Applications</span></a>.</p>
+<p>We’ll look at some demonstration software in <a class="reference internal" href="demo/index.html#demo"><span class="std std-ref">Demo Applications</span></a>.</p>
 </section>
 <section id="binding-a-schema-to-a-file">
 <h2>Binding a Schema to a File<a class="headerlink" href="#binding-a-schema-to-a-file" title="Permalink to this headline">¶</a></h2>
-<p>We’re only going to bind two levels of schema to a file.  The conceptual schema
-would require some kind of formal ontology, something that’s rarely available.</p>
-<p><strong>Logical Layout</strong>.  We rely on a schema, <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.Schema</span></code> to manage
-the logical layout of a file.</p>
-<p>A workbook has two ways to bind logical layout to data values.
-Our <code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.Sheet</span></code> subclass hierarchy requires a schema object.
-We’ll load the schema using a <code class="xref py py-mod docutils literal notranslate"><span class="pre">schema.loader</span></code>
-components.</p>
+<p>The file suffix, e.g., <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code> binds a file to a physical format.
+This is relatively universal. A single <code class="xref py py-func docutils literal notranslate"><span class="pre">stingray.open_workbook()</span></code> function
+looks at the file suffix and locates an appropriate class.</p>
+<p>A decorator is available to extend the file suffix mapping to introduce new
+physical format bindings.</p>
+<p>We need to bind the logical layout to the file also.
+This means relying on a schema, defined by the
+<a class="reference internal" href="implementation/index.html#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.schema_instance.Schema</span></code></a> class to describe
+the logical layout of a file.
+The <a class="reference internal" href="implementation/index.html#stingray.workbook.Sheet" title="stingray.workbook.Sheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.Sheet</span></code></a> and <a class="reference internal" href="implementation/index.html#stingray.workbook.Row" title="stingray.workbook.Row"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.Row</span></code></a> classes
+use a <a class="reference internal" href="implementation/index.html#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.schema_instance.Schema</span></code></a> object to describe each row.</p>
+<p>An application must load the schema first. There several sources for schema:</p>
 <ul class="simple">
 <li><p><strong>Embedded</strong>.  This is commonly seen as column titles within the sheet.  Or
 any variation on that theme. The common case of column titles is handled
-by a built-in schema loader, <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.HeadingRowSchemaLoader</span></code>.
+by a built-in schema loader, <a class="reference internal" href="implementation/index.html#stingray.workbook.HeadingRowSchemaLoader" title="stingray.workbook.HeadingRowSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.HeadingRowSchemaLoader</span></code></a>.
 Other variations are managed by building different schema loaders.</p></li>
 <li><p><strong>External</strong>.  This is a separate sheet or separate file. In this case, we
-can start with <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.loader.BareExternalSchemaLoader</span></code> to read
+can start with <a class="reference internal" href="implementation/index.html#stingray.workbook.ExternalSchemaLoader" title="stingray.workbook.ExternalSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.ExternalSchemaLoader</span></code></a> to read
 an external schema. In the case of COBOL files, there’s a separate
-<code class="xref py py-class docutils literal notranslate"><span class="pre">cobol.loader.COBOLSchemaLoader</span></code> that parses COBOL source to create
+<a class="reference internal" href="implementation/index.html#stingray.workbook.COBOLSchemaLoader" title="stingray.workbook.COBOLSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.COBOLSchemaLoader</span></code></a> that parses COBOL source to create
 a usable schema.</p></li>
 </ul>
-<p><strong>Physical Format</strong>.  Generally, a file name provides a hint as to the physical file format.
-<code class="file docutils literal notranslate"><span class="pre">.csv</span></code>, <code class="file docutils literal notranslate"><span class="pre">.xls</span></code>, <code class="file docutils literal notranslate"><span class="pre">.xlsx</span></code>, <code class="file docutils literal notranslate"><span class="pre">.xlsm</span></code>, <code class="file docutils literal notranslate"><span class="pre">.ods</span></code>,
-<code class="file docutils literal notranslate"><span class="pre">.numbers</span></code> describe the physical format.</p>
-<p>Our <code class="xref py py-class docutils literal notranslate"><span class="pre">cell.Cell</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.Sheet</span></code>, and
-<code class="xref py py-class docutils literal notranslate"><span class="pre">workbook.base.Workbook</span></code> handles many physical format details nicely.</p>
+<p>The schema all start as JSONSchema documents. These are Python <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Any]</span></code> structures.
+A <code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.SchemaMaker</span></code> object is used to transform the JSONSchema
+document into a usable <a class="reference internal" href="implementation/index.html#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.schema_instance.Schema</span></code></a> object. This permits
+pre-processing the schema to add features or correct problems.</p>
 </section>
 <section id="data-attribute-mapping-using-a-schema">
 <h2>Data Attribute Mapping – Using a Schema<a class="headerlink" href="#data-attribute-mapping-using-a-schema" title="Permalink to this headline">¶</a></h2>
-<p>Using a schema is the heart of the semantic problem.</p>
+<p>Using a schema is the heart of solving the semantic problem witn spreadsheet and COBOL files.</p>
 <p>We want to have just one application that is adaptable to a number
 of closely-related data file schemata.  Ideally, there’s one,
 but as a practical matter, there
@@ -467,7 +469,7 @@ provides all the files to profile.</p>
 <p>This main program switch allows us to test the various functions (<a class="reference internal" href="#process_workbook" title="process_workbook"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_workbook()</span></code></a>, <a class="reference internal" href="#process_sheet" title="process_sheet"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_sheet()</span></code></a>, the builders, etc.) in isolation.</p>
 <p>It also allows us to reuse these functions to build larger (and more complete)
 applications from smaller components.</p>
-<p>In <a class="reference internal" href="demo/index.html#demo"><span class="std std-ref">Stingray Demo Applications</span></a> we’ll look at two demonstration applications, as well as a unit
+<p>In <a class="reference internal" href="demo/index.html#demo"><span class="std std-ref">Demo Applications</span></a> we’ll look at two demonstration applications, as well as a unit
 test.</p>
 </section>
 </section>
@@ -803,13 +805,13 @@ arguments for opening a workbook.</p>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="design.html">2. Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Design Considerations</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Using <strong>Stingray Reader</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="demo/index.html"><strong>Stingray</strong> Demo Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demo/index.html">Demo Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">6. History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing/index.html">7. Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">8. Installation via <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Commercial Use</a></li>
 </ul>
 
@@ -817,8 +819,8 @@ arguments for opening a workbook.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="implementation/index.html" title="previous chapter">Implementation</a></li>
-      <li>Next: <a href="demo/index.html" title="next chapter"><strong>Stingray</strong> Demo Applications</a></li>
+      <li>Previous: <a href="design.html" title="previous chapter">Design Considerations</a></li>
+      <li>Next: <a href="demo/index.html" title="next chapter">Demo Applications</a></li>
   </ul></li>
 </ul>
 </div>

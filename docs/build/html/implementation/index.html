@@ -16,8 +16,8 @@
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Using Stingray Reader" href="../developer.html" />
-    <link rel="prev" title="Design Considerations" href="../design.html" />
+    <link rel="next" title="6. History" href="../history.html" />
+    <link rel="prev" title="Data Conversion – ETL with Validation" href="../demo/conversion.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -1498,14 +1498,6 @@ This is narrower than that, and could be bytes only, not NDInstance.</p>
 It also retains the most recent row so we can determine the actual size
 in the presence of complex OCCURS DEPENDING ON clauses.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="stingray.workbook.COBOL_EBCDIC_Sheet.row_iter">
-<span class="sig-name descname"><span class="pre">row_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.workbook.Row" title="stingray.workbook.Row"><span class="pre">stingray.workbook.Row</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.NDInstance" title="stingray.schema_instance.NDInstance"><span class="pre">stingray.schema_instance.NDInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.workbook.COBOL_EBCDIC_Sheet.row_iter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Passes instances through the schema loader.  (An external schema will have a dummy loader.)
-Extracts a schema from the header.
-Applies the schema to the body to create a <a class="reference internal" href="#stingray.workbook.Row" title="stingray.workbook.Row"><code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code></a> instances.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="stingray.workbook.COBOL_EBCDIC_Sheet.set_schema">
 <span class="sig-name descname"><span class="pre">set_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><span class="pre">stingray.schema_instance.Schema</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stingray.workbook.Sheet" title="stingray.workbook.Sheet"><span class="pre">stingray.workbook.Sheet</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.NDInstance" title="stingray.schema_instance.NDInstance"><span class="pre">stingray.schema_instance.NDInstance</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.workbook.COBOL_EBCDIC_Sheet.set_schema" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides an externally-supplied schema.</p>
@@ -1708,9 +1700,9 @@ It makes an open_workbook() function that can open a wide variety of file types.
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../design.html">Design Considerations</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../developer.html">Using <strong>Stingray Reader</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/index.html">Demo Applications</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../history.html">6. History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../testing/index.html">7. Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
@@ -1721,8 +1713,8 @@ It makes an open_workbook() function that can open a wide variety of file types.
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../design.html" title="previous chapter">Design Considerations</a></li>
-      <li>Next: <a href="../developer.html" title="next chapter">Using <strong>Stingray Reader</strong></a></li>
+      <li>Previous: <a href="../demo/conversion.html" title="previous chapter">Data Conversion – ETL with Validation</a></li>
+      <li>Next: <a href="../history.html" title="next chapter"><span class="section-number">6. </span>History</a></li>
   </ul></li>
 </ul>
 </div>

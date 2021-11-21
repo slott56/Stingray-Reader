@@ -15,18 +15,19 @@ processing a file's data:
 -   What do the bytes *mean*?  What is the Conceptual Content?
 -   How can we assure ourselves that our applications will work with this file?
 
-The problem we have is that the schema is not always bound
+The problem is caused because the file's schema is not always bound
 to the file nor is the schema clearly bound to an application program.
-There are two examples of this separation between schema and content:
+For example, a spreadsheet that lacks column titles is devoid of useful
+logical or conceptual schema information. The physical spreadsheet file
+format has a schema that's bound to the spreadsheet processing tools.
 
--	We might have a spreadsheet where there aren't even column titles.
+An application that reads spreadsheet data can treat each row as a list
+of objects, and process items by index within the row. The schema is, therefore,
+implicit in the code.
 
--	We might have a pure data file (for example from a legacy COBOL program)
-	which is described by a separate schema.
-	
 One goal of good software is to cope reasonably well with variability
-of user-supplied inputs.  Providing data by spreadsheet is 
-often a desirable choice for users.  Since spreadsheets are tweaked manually, they
+of user-supplied inputs.  Providing data by spreadsheet workbook is
+often a desirable choice for users.  Since workbook data can be tweaked manually, it
 may not have a simple, fixed schema or logical layout. 
 
 A workbook (the container of individual sheets)
@@ -34,7 +35,7 @@ can be encoded in any of a number of physical
 formats: XLS, CSV, XLSX, ODS to name a few.  We would like our applications
 to be independent of these physical formats, focusing on the logical layout.
 
-Data supplied in the form of a workbook can suffer from numerous data quality issues.  
+Additionally, data supplied in the form of a workbook can suffer from data quality issues.
 We need to be assured that a file actually conforms to the expected
 schema.
 
@@ -52,9 +53,9 @@ Contents
    
    introduction
    design
-   implementation/index
    developer
    demo/index
+   implementation/index
    history
    testing/index
    installation

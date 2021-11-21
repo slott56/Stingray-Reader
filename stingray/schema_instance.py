@@ -363,12 +363,14 @@ naming for an elements and the element(s) which redefine it.
 import abc
 import csv
 from decimal import Decimal
+from functools import partial
 import logging
+from pathlib import Path
 from pprint import pprint
 import sys
 from typing import (
-    Union, Any, NamedTuple, Protocol, TextIO, Optional, overload, Iterator, cast, Type,
-    Callable, TypeVar, Generic, AnyStr, Sequence
+    Union, Any, NamedTuple, Protocol, TextIO, BinaryIO, Optional, overload, Iterator, cast, Type,
+    Callable, TypeVar, Generic, AnyStr, Sequence, SupportsInt, IO
 )
 import weakref
 
@@ -387,6 +389,11 @@ class Reference(Protocol):
     # TODO: Formalize a ref_to protocol, used by ``RefToSchema`` and ``DependsOnArraySchema``.
     """
     pass
+
+
+# TODO: Refactor schema_instance??
+#  - Schema & Nav superclass -> stingray.schema
+#  - Location and Nav subclasses -> stingray.navigation
 
 class Schema:
     """
@@ -551,6 +558,7 @@ class RefToSchema(Schema):
         """Yield nesting, schema, indices, and object"""
         yield indent, self, (), None
 
+
 class SchemaMaker:
     """
     Build a Schema structure from a JSON Schema document.
@@ -566,7 +574,7 @@ class SchemaMaker:
     def __init__(self) -> None:
         self.name_cache: dict[str, Schema] = {}
         self.fixup_list: list[Schema] = []
-        
+
     def walk_schema(self, source: JSON, path: tuple[str, ...] = ()) -> Schema:
         """
         Starting with JSON Schema document, create Schema objects.
@@ -781,10 +789,36 @@ The sizes are *highly* dependent on format information that comes from COBOL DDE
 **Workbook**. Generally, an underlying workbook unpacker is required. For CSV, the data is all strings, conversions are defined only in the schema.
 """
 
-# These are values for the "conversion" keyword, part of the extended vocabulary for COBOL
-# and Workbooks.
-# Date, Time, Timestamp, Duration, and Error may also be part of these conversions.
-# Also, a "decimal_2" might be useful for truncating float values to pennies.
+"""
+Conversions
+===========
+
+The ``CONVERSION`` mapping has values for the "conversion" keyword.
+Some of these are extensions that could also be part of a vocabulary for COBOL and Workbooks.
+
+Date, Time, Timestamp, Duration, and Error may need to be part of these conversions.
+The problem with non-ISO standard dates means that a package like ``dateutil`` is required
+to guess at the format. 
+
+For US ZIP codes, a ``digit_string(size, value)`` function turns an integer to a string padded with zeroes. 
+The partial function ``digits_5 = partial(digit_string, 5)`` is used to transforms spreadsheet zip 
+codes from integers back into useful strings. 
+
+For currency in many countries, a ``decimal_places()`` function will transform a float value back to Decimal
+with an appropriate number of decimal places. The partial function ``decimal_2 = partial(decimal_places, 2)``
+will transform float dollars into a decimal value rounded to the nearest penny
+"""
+
+def digit_string(size: int, value: SupportsInt) -> str:
+    return (size*"0" + str(value))[-size:]
+
+digits_5 = partial(digit_string, 5)
+
+def decimal_places(digits: int, value: Any) -> Decimal:
+    digits_right = Decimal(f"0.{(digits-1)*'0'}1")
+    return Decimal(value).quantize(digits_right)
+
+decimal_2 = partial(decimal_places, 2)
 
 CONVERSION: dict[Union[str, None], Callable[[Any], Any]] = {
     "null": lambda x: None,
@@ -803,7 +837,7 @@ class NDInstance(Protocol):
     """
     # Not Used
     def __init__(self, source: AnyStr) -> None: ...
-    def unpacker(self, unpacker: "NonDelimited") -> "NDInstance": ...
+    def unpacker(self, unpacker: "Unpacker[NDInstance]") -> "NDInstance": ...
     def schema(self, schema: "Schema") -> "NDInstance": ...
 
     @overload
@@ -846,12 +880,19 @@ class WBInstance(Protocol):
 # objects.
 Instance = TypeVar('Instance', NDInstance, DInstance, WBInstance)
 
+class Mode:
+    TEXT = "r"
+    BINARY = "rb"
+
 class Unpacker(Generic[Instance]):
     """
     An Unpacker helps convert data from an ``Instance``.
     For NDInstances, this involves size calculations and value conversions.
     For WBInstances and JSON, this is a pass-through because the sizes don't matter and
     the values are already Native Python objects.
+
+    An Unpacker is a generic procotol. A class that implements the protocol **should**
+    provide all of the methods.
     """
     def calcsize(self, schema: Schema) -> int: ...
         
@@ -859,17 +900,18 @@ class Unpacker(Generic[Instance]):
         
     def nav(self, schema: Schema, instance: Instance) -> "Nav": ...
 
+    def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None) -> None: ...
 
-class NonDelimited(Unpacker[NDInstance]):
-    """
-    NDInstance protocol is a Sequence, either bytes or str, the AnyStr type.
-    This abstract Unpacker can perform size calculations or value conversions on the underlying data.
-    """
-    def nav(self, schema: Schema, instance: NDInstance) -> "Nav":
-        location = LocationMaker(self, schema).from_instance(instance)
-        return NDNav(self, location, instance)
+    def close(self) -> None: ...
 
-class EBCDIC(NonDelimited):
+    def sheet_iter(self) -> Iterator[str]: ...
+
+    def used(self, count: int) -> None: ...
+
+    # Can't be sensibly defined here; there are too many variations.
+    # def instance_iter(self, sheet: str, **kwargs: Any) -> Iterator[Instance]: ...
+
+class EBCDIC(Unpacker[NDInstance]):
     """
     Unpacker for Non-Delimited EBCDIC bytes.
 
@@ -894,19 +936,46 @@ class EBCDIC(NonDelimited):
         format = cast(dict[str, Any], schema.attributes).get("cobol", "USAGE DISPLAY")
         conversion_func = CONVERSION[cast(dict[str, Any], schema.attributes).get("conversion")]
         return conversion_func(estruct.unpack(format, cast(bytes, instance)))
-    
-class Struct(NonDelimited):
+
+    def nav(self, schema: Schema, instance: NDInstance) -> "NDNav":
+        location = LocationMaker(cast(Unpacker[NDInstance], self), schema).from_instance(instance)
+        return NDNav(self, location, instance)
+
+    def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None) -> None:
+        if file_object:
+            self.the_file = file_object
+        else:
+            self.the_file = name.open(mode=Mode.BINARY)
+
+    def close(self) -> None:
+        if hasattr(self, "the_file") and self.the_file:
+            self.the_file.close()
+            del self.the_file
+
+    def sheet_iter(self) -> Iterator[str]:
+        yield ""
+
+    def instance_iter(self, sheet: str, recfm_class: Type["estruct.RECFM_Reader"], lrecl: int, **kwargs: Any) -> Iterator[NDInstance]:
+        """Delegate instance iteration to a recfm_parser instance."""
+        self.recfm_parser = recfm_class(cast(BinaryIO, self.the_file), lrecl)
+        return cast(Iterator[NDInstance], self.recfm_parser.record_iter())
+
+    def used(self, length: int) -> None:
+        """Delegate number of bytes consumed to the recfm_parser."""
+        self.recfm_parser.used(length)
+
+class Struct(Unpacker[NDInstance]):
     """
-    Unpacker for Non-Delimited bytes.
+    Unpacker for Non-Delimited native (i.e., not EBCDIC-encoding) bytes.
 
     Uses built-in :py:mod:`struct` module for calcsize and value.
     TODO: Finish this.
     """
     pass
 
-class TextUnpacker(NonDelimited):
+class TextUnpacker(Unpacker[NDInstance]):
     """
-    Unpacker for Non-Delimited string values.
+    Unpacker for Non-Delimited text values.
 
     Uses string slicing and built-ins.
     This is for a native Unicode (or ASCII) text-based format.
@@ -934,6 +1003,8 @@ class TextUnpacker(NonDelimited):
     This is often {"type": "string", "pattern": "^.{64}$"} or similar. This can provide a length.
     Because patterns can be hard to reverse engineer, we don't use this.)
     """
+    the_file: IO[str]
+
     def calcsize(self, schema: Schema) -> int:
         if "maxLength" in cast(dict[str, Any], schema.attributes):
             return int(cast(dict[str, Any], schema.attributes)["maxLength"])
@@ -942,25 +1013,53 @@ class TextUnpacker(NonDelimited):
             return representation.picture_size
         else:
             raise ValueError(f"can't compute size of {schema}; neither maxLength nor cobol provided")
+
     def value(self, schema: Schema, instance: NDInstance) -> Any:
         type_value = cast(dict[str, Any], schema.attributes).get("type", "object")
         conversion = CONVERSION.get(cast(dict[str, Any], schema.attributes).get("conversion", type_value), lambda x: x)
         return conversion(instance)
 
+    def nav(self, schema: Schema, instance: NDInstance) -> "NDNav":
+        location = LocationMaker(cast(Unpacker[NDInstance], self), schema).from_instance(instance)
+        return NDNav(self, location, instance)
+
+    def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None) -> None:
+        if file_object:
+            self.the_file = cast(IO[str], file_object)
+        else:
+            self.the_file = name.open(mode=Mode.TEXT)
+
+    def close(self) -> None:
+        if hasattr(self, "the_file") and self.the_file:
+            self.the_file.close()
+            del self.the_file
+
+    def sheet_iter(self) -> Iterator[str]:
+        yield ""
+
+    def instance_iter(self, sheet: str, **kwargs: Any) -> Iterator[NDInstance]:
+        self.row_source = cast(Iterator[NDInstance], iter(self.the_file))
+        return self.row_source
+
+
 class Delimited(Unpacker[DInstance]):
     """
-    Unpacker for Delimited values, i.e. ``JSON`` documents wrapped as a ``DInstance``.
+    An Abstract Unpacker for delimited instances, i.e. ``JSON`` documents.
 
     An instance will be ``list[Any] | dict[str, Any] | Any``.
-    It will is built by a separate parser.
+    It will is built by a separate parser, often :py:mod:`json`, YAML, or TOML.
 
-    For JSON/YAML/TOML, the instance *should* have same structure as the schema.
-    For XML, this should also be true.
+    For JSON/YAML/TOML, the instance *should* have the same structure as the schema.
+    JSONSchema validation can be applied to confirm this.
 
-    A subclass handles workbooks which are narrowed to be ``list[Any]``.
+    For XML, the source instance should be transformed into native Python objects, following
+    a schema definition. A schema structure may ignore XML tags or extract text from a tag
+    with a mixed content model.
 
     The sizes and formats of delimited data don't matter:
     the :py:func:`calcsize` function returns 1 to act as a position in a sequence of values.
+
+    Concrete subclasses include open, close, and instance_iter.
     """
     def calcsize(self, schema: Schema) -> int:
         return 1
@@ -968,7 +1067,6 @@ class Delimited(Unpacker[DInstance]):
         return instance
     def nav(self, schema: Schema, instance: DInstance) -> "Nav":
         return DNav(self, schema, cast(JSON, instance))
-
 
 class WBUnpacker(Unpacker[WBInstance]):
     """
@@ -979,7 +1077,8 @@ class WBUnpacker(Unpacker[WBInstance]):
     
     While it's tempting to use "type": "number" on CSV data, it's technically suspicious.
     The file has strings, and only strings. Conversions are part of the application's use 
-    of the data, not the data itself.
+    of the data, not the data itself. The schema can use the ``"conversion"`` keyword
+    to specify one of the conversion functions.
     """
     def calcsize(self, schema: Schema) -> int:
         return 1
@@ -989,31 +1088,6 @@ class WBUnpacker(Unpacker[WBInstance]):
         return conversion(instance)
     def nav(self, schema: Schema, instance: WBInstance) -> "Nav":
         return WBNav(self, schema, instance)
-
-# A handy alias
-CSVUnpacker = WBUnpacker
-
-class JSONUnpacker(Delimited):
-    """
-    Unpacker for delimited values from JSON documents.
-
-    JSON, however, relies on the :py:mod:`json` module, where the instance can
-    be ``list[Any]`` or ``dict[str, Any]``.
-
-    TODO: This should be the same as Delimited.
-    """
-
-    def calcsize(self, schema: Schema) -> int:
-        return 1
-
-    def value(self, schema: Schema, instance: "DInstance") -> Any:
-        type_value = cast(dict[str, Any], schema.attributes).get("type", "object")
-        conversion = CONVERSION.get(cast(dict[str, Any], schema.attributes).get("conversion", type_value), lambda x: x)
-        return conversion(instance)
-
-    def nav(self, schema: Schema, instance: "DInstance") -> "Nav":
-        return DNav(self, schema, cast(JSON, instance))
-
 
 """
 Locations
@@ -1072,7 +1146,7 @@ class Location(abc.ABC):
     """
     A Location is used to navigate within an `NDInstance` objects.
 
-    The ``Unpacker[NDInstnace]`` strategy is a subclass of NonDelimited,
+    The ``Unpacker[NDInstance]`` strategy is a subclass of NonDelimited,
     one of EBCDIC(), Struct(), or TextUnpacker().
 
     The value() method delegates the work to the ``Unpacker`` strategy.
@@ -1582,7 +1656,7 @@ class NDNav(Nav):
         Since NDInstance is Union[BytesInstance, TextInstance], there are two paths:
         a new bytes or a new str.
         """
-        unpacker: NonDelimited = cast(NonDelimited, self.unpacker())
+        unpacker: Unpacker[NDInstance] = cast(Unpacker[NDInstance], self.unpacker())
         cls: Type[NDInstance] = self.instance.__class__
         return cls(self.raw())
 
