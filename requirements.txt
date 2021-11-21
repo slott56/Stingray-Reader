@@ -10,4 +10,4 @@ xlrd>=2.0
 openpyxl>=3.0
 pyexcel>=0.6
 pyexcel-ods3>=0.6
-numbers-parser>=2.0
+numbers-parser>=2.1

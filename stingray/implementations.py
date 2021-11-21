@@ -126,17 +126,6 @@ try:
             # return (Sheet(self, name) for name in self.pyxl_file.sheetnames)
             return (Sheet(self, name) for name in self.unpacker.sheet_iter())
 
-    #     def instance_iter(self, sheet: Sheet[WBInstance]) -> Iterator[WBInstance]:
-    #         sheet = cast(XLSX_Sheet, sheet)
-    #         for row in sheet.pyxl_sheet.iter_rows():
-    #             sheet.raw_row = row
-    #             yield cast(WBInstance, [cell.value for cell in row])
-    #
-    # class XLSX_Sheet(Sheet[WBInstance]):
-    #     def __init__(self, wb: XLSX_Workbook, name: str) -> None:
-    #         super().__init__(wb, name)
-    #         self.pyxl_sheet = wb.pyxl_file[name]
-    #         self.raw_row: list[openpyxl.cell.cell.Cell]
 
 except ImportError:  #pragma: no cover
     pass
@@ -180,24 +169,31 @@ try:
             # return (Sheet(self, name) for name in self.pyexcel_book.keys())
             return (Sheet(self, name) for name in self.unpacker.sheet_iter())
 
-    #     def instance_iter(self, sheet: Sheet[WBInstance]) -> Iterator[WBInstance]:
-    #         sheet = cast(ODS_Sheet, sheet)
-    #         for row in sheet.pyexcel_sheet:
-    #             sheet.raw_row = row
-    #             yield cast(WBInstance, row)
-    #
-    # class ODS_Sheet(Sheet[WBInstance]):
-    #     def __init__(self, wb: ODS_Workbook, name: str) -> None:
-    #         super().__init__(wb, name)
-    #         self.pyexcel_sheet = wb.pyexcel_book[name]
-    #         self.raw_row: list[Any]
-
 except ImportError:  #pragma: no cover
     pass
 
 
 try:
     import numbers_parser  # type: ignore [import]
+
+
+    class NumbersUnpacker(WBUnpacker):
+        def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None, **kwargs: Any) -> None:
+            self.the_file = numbers_parser.Document(name, **kwargs)
+        def close(self) -> None:
+            if hasattr(self, "the_file") and self.the_file:
+                del self.the_file
+        def sheet_iter(self) -> Iterator[str]:
+            return (
+                f"{sheet.name}::{table.name}"
+                    for sheet in self.the_file.sheets()
+                        for table in sheet.tables()
+            )
+        def instance_iter(self, name: str, **kwargs: Any) -> Iterator[WBInstance]:
+            sheet, _, table = name.partition("::")
+            numbers_sheet = self.the_file.sheets()[sheet].tables()[table]
+            for row in numbers_sheet.iter_rows():
+                yield cast(WBInstance, [cell.value for cell in row])
 
     @file_registry.file_suffix(".ods")
     class Numbers_Workbook(Workbook[WBInstance]):
@@ -206,38 +202,12 @@ try:
         ) -> None:
             super().__init__(name)
             self.numbers_args = kwargs
-            self.unpacker = WBUnpacker()
-            self.open()
-
-        def open(self, file_object: Optional[IO[AnyStr]] = None) -> None:
-            self.numbers_book = numbers_parser.Document(self.name, **self.numbers_args)
+            self.unpacker = NumbersUnpacker()
+            self.unpacker.open(self.name, None, **self.kwargs)
 
         def close(self) -> None:
-            if hasattr(self, "numbers_book") and self.numbers_book:
-                del self.numbers_book
+            self.unpacker.close()
 
-        def sheet(self, name: str) -> Sheet[WBInstance]:
-            return Numbers_Sheet(self, name)
-
-        def sheet_iter(self) -> Iterator[Sheet[WBInstance]]:
-            return (
-                Numbers_Sheet(self, f"{sheet}::{table}")
-                    for sheet in self.numbers_book.sheets().keys()
-                        for table in self.numbers_book.sheets(sheet).tables().keys()
-            )
-
-        def instance_iter(self, sheet: Sheet[WBInstance]) -> Iterator[WBInstance]:
-            sheet = cast(Numbers_Sheet, sheet)
-            for row in sheet.numbers_sheet.iter_rows():
-                sheet.raw_row = row
-                yield cast(WBInstance, row)
-
-    class Numbers_Sheet(Sheet[WBInstance]):
-        def __init__(self, wb: Numbers_Workbook, name: str) -> None:
-            super().__init__(wb, name)
-            sheet, _, table = name.partition("::")
-            self.numbers_sheet = wb.numbers_book.sheets()[sheet].tables()[table]
-            self.raw_row: list[Any]
 
 except ImportError:  #pragma: no cover
     pass

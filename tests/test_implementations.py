@@ -110,19 +110,17 @@ def test_ods_workbook(ods_path, capsys):
 def numbers_path():
     return Path(os.environ.get("SAMPLES", "sample")) / "numbers_workbook_13.numbers"
 
-@pytest.mark.skip("https://github.com/masaccio/numbers-parser/issues/2")
 def test_numbers_workbook(numbers_path, capsys):
     with Numbers_Workbook(numbers_path) as wb:
-        assert list(s.name for s in wb.sheet_iter()) == ['Sheet1', 'Sheet2', 'Sheet3']
-        sheet_1 = wb.sheet("Sheet1").set_schema_loader(HeadingRowSchemaLoader())
+        assert list(s.name for s in wb.sheet_iter()) == ['Sheet 1::Table 1', 'Sheet 2::Table 1', 'Sheet 3::Table 1']
+        sheet_1 = wb.sheet('Sheet 1::Table 1').set_schema_loader(HeadingRowSchemaLoader())
         for row in sheet_1.row_iter():
             print(row)
         out, err = capsys.readouterr()
         assert out.splitlines() == [
-            "[42, 3.1415926, 'string', datetime.date(1956, 9, 10), True, '', 0]",
-            "[9973, 2.718281828, 'data', datetime.date(1959, 1, 18), False, '', 0]"
+            "[42.0, 3.1415926, 'string', datetime.datetime(1956, 9, 10, 0, 0), True, None, None]",
+            "[9973.0, 2.7182818, 'data', datetime.datetime(1959, 1, 18, 0, 0), False, None, None]"
         ]
-
 
 @pytest.fixture
 def fixed_text_paths():
