@@ -57,7 +57,7 @@ Contents
    demo/index
    implementation/index
    history
-   testing/index
+   testing
    installation
    license
 

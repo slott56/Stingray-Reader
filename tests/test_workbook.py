@@ -72,6 +72,19 @@ def test_str_external_schema_base_sheet(mock_unpacker, mock_workbook_class):
 
 ### Test CSV Workbook
 
+### Part of workbook...
+
+def test_csv_unpacker():
+    json_schema = {"type": "number"}
+    data = "42"
+    schema = SchemaMaker.from_json(json_schema)
+    cu = CSVUnpacker()
+    assert cu.calcsize(schema) == 1
+    assert cu.value(schema, data) == 42.0
+    nav = cu.nav(schema, data)
+    assert nav.schema == schema
+
+
 @pytest.fixture
 def anscombe_schema() -> Schema:
     json_schema = {
@@ -166,6 +179,16 @@ def test_good_csv_open_workbook(csv_test_file_1) -> bool:
         assert isinstance(wb, CSV_Workbook)
 
 ### Test JSON Workbook
+
+def test_json_unpacker():
+    json_schema = {"type": "number"}
+    data = "42"
+    schema = SchemaMaker.from_json(json_schema)
+    ju = JSONUnpacker()
+    assert ju.calcsize(schema) == 1
+    assert ju.value(schema, data) == 42.0
+    nav = ju.nav(schema, data)
+    assert nav.schema == schema
 
 @pytest.fixture
 def json_test_file_1() -> Path:

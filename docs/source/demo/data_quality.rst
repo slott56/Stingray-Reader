@@ -1,154 +1,236 @@
-..    #!/usr/bin/env python3
-
 ..  _`demo_sqa`:
 
 #######################################################
-Unit Level Validation for Application and Data
+Schema-Based Access Validation
 #######################################################
 
-We validate that a given file actually matches the required schema through a three-part valiation process.  
+We validate applications and files both share a schema through a three-tier process.
 
 1.  Validate application's use of a schema via conventional unit testing.
     This is `Unit Test The Builder Function`_, the first part of our testing.
 
 2.  Validate file conformance to a schema via "live-file testing".
-    This is `Live Data Test The Builder Function`_, the second part of our testing. 
+    This is `Live File Test The Builder Function`_, the second part of our testing.
+    This is a kind of accceptance test to confirm the application can work with
+    a data file.
 
 3.  Validate the three-way application-schema-file binding by including a
-    **File Validation** mode in every file processing application.  
+    **Data Validation** mode in every file processing application.
     We'll look at the part 3 (the 3-way binding of app-schema-file) in :ref:`demo_validate`.
 
-Of course, we must do good unit testing on the application overall.  
-We'll assume that without further discussion.  Failure to test is simply failure.
+The examples in this section focus on the schema and workbook processing
+of an application. This lets us confirm that the application
+will handle inputs correctly. See the :file:`demo/test_demo.py` for the complete source.
 
-Live file testing moves beyond simple unit testing into a realm of establishing evidence
-that an application will process a given file correctly.  We're gathering auditable
-historical information on file formats and contents. 
+Of course, the rest of the application also required
+good unit testing.
+We'll assume the remainder of the application
+is also tested properly. Failure to test is simply failure.
 
-Our focus here is validation of the application-schema binding as well as the file-schema binding.  
+The first two levels of testing validate the application-to-schema binding.
+The third level of testing validates the file-to-schema binding.
 
-We can use the  :py:mod:`unittest` module to write tests that 
-validate the schema shared by an application and file.  
-There are three levels to this validation.
+The Application, Capture, and Persistence Layers
+===================================================
 
--   Unit-level.  This is a test of the builder functions more-or-less in isolation.  
-    There are two kinds of builder validation.
-    
-    -   Subsets of rows.  Developers usually start here.
-    
-    -   Whole ("live") files.  Production files are famous for having a few "odd" rows.  
-        Whole-file tests are essential.  
-    
--   Integration-level.  This is a test of a complete application using
-    A test database (or collection of files) is prepared and the application 
-    actually exercised against actual files.  
-        
-Not *everything* is mocked here: the "unit" is an integrated collection of 
-components. Not an isolated class.
+We need to distinguish between three sepaarate
+but closely-related concepts.
 
-Unit level tests look like this.
+-   The foundational objects for our application.
+    It helps to separate the validation rules
+    and object builders from the application objects
+    themselves. The objects may have complex interactions.
+    The validation can also be complex, but is utterly
+    distinct from other behavior.
 
-Overheads
-==========
+-   Peristence for the application objects.
+    This may include object-relational mapping
+    or other serialization techniques.
 
-::
+-   Capture of the source data for the application
+    objects. This is schema-dependent processing.
+    Experience shows that there is wide variability
+    here when working with spreadsheets. It helps
+    to disentangle this from the essential application
+    processing and persistence.
 
-    import unittest
-    from collections import defaultdict
-    import stingray.cell
-    import stingray.sheet
-    import stingray.workbook
-    import stingray.schema
-    import stingray.schema.loader
+The intent here is to follow the SOLID design
+principles and minimize the interfaces as data
+moves from the source document structure to
+an common intermediate dictonary format.
 
-Builder Functions
-==================
+This common dictionary structure can then be validated
+and used to create the application objects
+that define *only* the unique behavior of the
+application, without the clutter of source decoding or
+valdiation.
+
+..  uml::
+
+    @startuml
+
+    package application <<Folder>> {
+        class This {
+            unique: str
+            fields: int
+            serialize(Database)
+        }
+        class That {
+            more: float
+            unique: bool
+            fields: str
+            serialize(Database)
+        }
+
+        class ThisForm {
+            create(): This
+        }
+
+        class ThatForm {
+            create(): That
+        }
+    }
+
+    package persistence <<Database>> {
+        class Database_Or_File {
+            create(object)
+            retrieve(object)
+            update(object)
+            delete(object)
+        }
+    }
+
+    ThisForm --> This : "creates"
+    ThatForm --> That : "creates"
+
+    This --> Database_Or_File : "persists"
+    That --> Database_Or_File : "persists"
+
+    class Row
+
+    package "schema based processing" <<Rectangle>> {
+        class build_this << (F,orchid) Function >>
+        class build_that << (F,orchid) Function >>
+        hide build_this members
+        hide build_that members
+
+        class dict {
+            key: str
+            value: Any
+        }
+
+        build_this --> dict
+        build_that --> dict
+    }
+
+    Row --> build_this
+    Row --> build_that
+
+    dict --> ThisForm
+    dict --> ThatForm
+    @enduml
+
+In this document, we'll focus on the
+builder functions and some higher-level processing.
+There are two tiers of testing, and we'll show
+how to structure the functions and the testing
+to provide confidence that an application will
+support a wide variety of source file formats.
+
+
+Unit Test The Builder Function
+==============================
 
 See :ref:`developer` for background. We're going to need a "builder function."
 This transforms the source row object into the target object or collection.
 
-Normally, we import the unit under test.
-It would look like this:
-    
-..  parsed-literal::
+Here's the essential function we want to test in isolation.
 
-    from demo.some_app import some_builder
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 12-13,28-32
 
-For this demo, here's a sample builder function:
 
-..  py:function:: some_builder(aRow)
+To test this, we need a mock of a :py:class:`stingray.Row` object.
 
-    Build a Python dict from the row of data.
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 34-46
 
-::
+This mock object uses a simple dictionary as a mock
+for a :py:class:`Row` object. For the simplest
+cases, this is a valid assumption.
 
-    def some_builder( aRow ):
-        return dict( 
-            key= aRow['Column "3" - string'].to_str(),
-            value= aRow['Col 2.0 - float'].to_float()
-        )
+The test is effectively this:
 
-This depends on a schema that permits eager row building. That's 
-common outside COBOL file processing.
+..  code-block:: gherkin
 
-Mock Workbook
-===============
+    SCENARIO: Build an intermediate object from a source document
+    GIVEN a row instance
+    WHEN fields are extracted
+    THEN an intermediate object is built
 
-We'll use a mock :py:class:`Workbook` to slightly simplify the builder-in-isolation test.
+Here's the test case.
 
-::
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 48-50
 
-    class MockWorkbook:
-        def rows_of( self, sheet ):
-            self.requested= sheet.name
-            for r in self.mock_rows:
-                yield stingray.sheet.Row( sheet, *r )
-        def sheet( self, name ):
-            return mock_sheet
-        def row_get( self, row, attr ):
-            return row[attr.position]
+This is the essential unit test for a builder.
 
-Unit Test The Builder Function
-===============================
-            
-Step one is to unit test the :py:func:`some_builder` function with selected row-like objects
-from a the :py:class:`MockWorkbook`.
+This works because a Stingray
+:py:class:`Row` is designed to behave like
+a dictionary.
 
-There are two parts: a :py:class:`schema.Schema` and 
-a :py:class:`sheet.ExternalSchemaSheet` that contains the mock row(s).
+We can, of course, create more elaborate mock :py:class:`Row` instances
+including attributes that need to be ignored. And also rows that
+are missing attributes.
 
-::
+For more complex cases, it can become awkward
+to mock all the features of a :py:class:`Row`.
+For this, an integration-style test can be
+easier to write.
 
-    class Test_Builder_2( unittest.TestCase ):
-        def setUp( self ):
-            self.schema= stingray.schema.Schema( 
-                stingray.schema.Attribute( name='Col 1 - int' ), 
-                stingray.schema.Attribute( name='Col 2.0 - float' ), 
-                stingray.schema.Attribute( name='Column "3" - string' ), 
-                stingray.schema.Attribute( name="Column '4' - date" ), 
-                stingray.schema.Attribute( name='Column 5 - boolean' ), 
-                stingray.schema.Attribute( name='Column 6 - empty' ), 
-                stingray.schema.Attribute( name='Column 7 - Error' ), )
-            self.wb= MockWorkbook()
-            self.sheet= stingray.sheet.ExternalSchemaSheet( self.wb, "Test", self.schema )
-            self.row= [
-                stingray.cell.NumberCell(42.0, self.wb), 
-                stingray.cell.NumberCell(3.1415926, self.wb), 
-                stingray.cell.TextCell('string', self.wb), 
-                stingray.cell.FloatDateCell(20708.0, self.wb), 
-                stingray.cell.BooleanCell(1, self.wb),
-                stingray.cell.EmptyCell(None, self.wb),
-                stingray.cell.ErrorCell('#DIV/0!'), ]
-            self.wb.mock_sheet= self.sheet
-            self.wb.mock_rows= [ self.row, ]
-        def test_should_build_from_row( self ):
-            row= next( self.sheet.rows() )
-            dict_row= dict( (a.name, row.cell(a)) for a in self.schema )
-            result= some_builder( dict_row )
-            self.assertEqual( 'string', result['key'] )
-            self.assertAlmostEqual( 3.1415926, result['value'] )
+Integration Test the Builder Function
+=====================================
 
-Live Data Test The Builder Function
+When more features of the :py:class:`Row` object are
+used by a builder, then an integration test
+can be easier to build. There are several ways to tackle this.
+One approach is create an actual :py:class:`Row` using a mocked :py:class:`Sheet`
+object. This works out well for examining more complex issues with navigation
+and data conversion.
+
+A :py:class:`Row` instance uses :py:class:`Nav` objects as helpers to navigate the data structure.
+There are distinct :py:class:`Nav` subclasses for non-delimited data, delimited data,
+and workbooks.
+
+The :py:class:`Row` object requires a :py:class:`Sheet` instance. The :py:class:`Sheet` instance
+requires a schema. Here's how we can build up the required fixture from pieces.
+
+First, the schema.
+
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 55-72
+
+This is used by the mocked :py:class:`Sheet` instance.
+
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 74-83
+
+The :py:class:`Sheet` instance becomes part of the mock :py:class:`Row` instance.
+
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 85-93
+
+This can then be used in the test case.
+
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 95-97
+
+This kind of integration test assures us that
+the more complex navigation features are being
+tested properly.
+
+
+Live File Test The Builder Function
 ====================================
 
 Step two is to unit test the :py:func:`some_builder` function with all rows in a given workbook.
@@ -156,61 +238,63 @@ In this demo, we're using :file:`sample/excel97_workbook.xls`. Generally, we wan
 some aggregate (like a checksum) of various data items to be sure we've read and 
 converted them properly. 
 
-Pragmatically, it's sometimes hard to get a proper checksum, so we have to resort
-to sums, counts, and perhaps even frequency distribution tables.
+Here's a fixture based on a file:
 
-::
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 134-142
 
-    class Test_Builder_2_Live( unittest.TestCase ):
-        def setUp( self ):
-            self.wb= stingray.workbook.open_workbook( "sample/excel97_workbook.xls" )
-            self.sheet = stingray.sheet.EmbeddedSchemaSheet( 
-                self.wb, 'Sheet1', 
-                stingray.schema.loader.HeadingRowSchemaLoader )
-            self.schema= self.sheet.schema
-        def test_should_build_all_rows( self ):
-            summary= defaultdict( int )
-            for row in self.sheet.rows():
-                dict_row= dict( (a.name,row.cell(a)) for a in self.schema )
-                result= some_builder( dict_row )
-                summary[result['key']] += 1
-            self.assertEqual( 1, summary['string'] )
-            self.assertEqual( 1, summary['data'] )
+The fixture creates both a workbook and a sheet.
+Some tests will use the workbook, others will use
+the sheet. It's handy to have a single fixture
+create both for us.
 
-Sheet-Level Testing
-========================
+Here's the test case to assure all rows
+get built from the sheet. In this case, the
+example data has two rows.
+
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 146-151
+
+This tells us that our Builder works properly
+with the sample file. The application consists
+of additional functions. We can test them
+both as isolated units and as an integration
+with the ``some_builder()`` function.
+
+Unit Test the Sheet Function
+============================
         
-See :ref:`developer` for background. We're going to need a "sheet process function."
-This transforms the source sheet into the target collection, usually an output file.
+See :ref:`developer` for background.
+We're going to need a "sheet process function."
+This transforms the source sheet into the target collection.
+It applies the row_builder function and whatever
+processing goes with that to all of the rows of a sheet.
 
-We can also use the unit test tools to test the application's
-higher-level :py:func:`process_some_sheet` function.
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 155-161
 
-Normally, we import the unit under test.
-It looks like this:
-    
-..  parsed-literal::
+For complete isolation, we can provide
+a mock sheet to supply mock rows
+to a mock builder. Yes, that's a lot of mocking.
 
-    from demo.some_app import process_some_sheet
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 163-174
 
-For this demo, here's a sample sheet process function:
+We can then assure ourselves that the
+overall sheet processing takes rows
+from the sheet and provides them to
+the builder.
 
-..  py:function:: process_some_sheet(sheet)
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 176-180
 
-    Process all rows of the named sheet.
 
-::
+Live File Test The Sheet Function
+====================================
 
-    def process_some_sheet( sheet ):
-        counts= defaultdict( int )
-        for row in sheet.schema.rows_as_dict_iter(sheet):
-            row_dict= some_builder( row )
-            counts['key',row_dict['key']] += 1
-            counts['read'] += 1
-        return counts
-
-The unit test checks the embedded schema and the overall row counts
-from processing the live file.
+An integration test can check the overall row counts
+from processing a live file. This confirms
+that the sheet-level processing works as expected.
 
 In this demo, we're using :file:`sample/excel97_workbook.xls`. 
 
@@ -219,54 +303,17 @@ that extracts the schema from the row headers. The test then uses the :py:func:`
 function on the given sheet to extract data. In this case, the extraction is 
 a frequency table.
 
-::
+..  literalinclude:: ../../../demo/test_demo.py
+    :lines: 197-202
 
-    class Test_Sheet_Builder_2_Live( unittest.TestCase ):
-        def setUp( self ):
-            self.wb= stingray.workbook.open_workbook( "sample/excel97_workbook.xls" )
-            self.sheet = stingray.sheet.EmbeddedSchemaSheet( 
-                self.wb, 'Sheet1', 
-                loader_class=stingray.schema.loader.HeadingRowSchemaLoader )
-        def test_should_load_schema( self ):
-            self.assertEqual( 'Col 1 - int', self.sheet.schema[0].name )
-            self.assertEqual( 'Col 2.0 - float', self.sheet.schema[1].name )
-            self.assertEqual( 'Column "3" - string', self.sheet.schema[2].name )
-            self.assertEqual( "Column '4' - date", self.sheet.schema[3].name )
-            self.assertEqual( 'Column 5 - boolean', self.sheet.schema[4].name )
-            self.assertEqual( 'Column 6 - empty', self.sheet.schema[5].name )
-            self.assertEqual( 'Column 7 - Error', self.sheet.schema[6].name )
-        def test_should_build_sample_row( self ):
-            counts= process_some_sheet( self.sheet )
-            self.assertEqual( 2, counts['read'] )
-            self.assertEqual( 1, counts['key','string'] )
-            self.assertEqual( 1, counts['key','data'] )
+This shows how the process sheet is tested
+with a live file to be sure it will step
+through all of the rows.
 
-Main Program Switch
-====================
+The counter provides some assurance that
+all of the processing was correct.
 
-This is a common unittest main program.  Ideally, we'd create an actual
-suite object to allow combining tests.
-
-::
-
-    if __name__ == "__main__":
-        unittest.main()
-        
-Running the Demo
-=================
-
-We can run this program like this:
-
-..  code-block:: bash
-
-    python3 demo/test.py
-
-This produces ordinary unitest output.
-
-..  parsed-literal::
-
-    ....
-    ----------------------------------------------------------------------
-    Ran 4 tests in 0.016s
-
-    OK
+Once we have the foundations of our application
+tested in isolation and with live files,
+we can move on to creating an application
+that includes

@@ -2360,7 +2360,7 @@ def test_extended_schemamaker_all_types(all_types_source: str) -> None:
     for record in copy_book:
         schema = JSONSchemaMakerExtendedVocabulary(record).jsonschema()
     # There's only one DDE to examine.
-    # TODO: provide the extended vocabulary to JSONSchema Validator
+    # TODO: Test with an extended vocabulary in JSONSchema Validator
     # assert SchemaValidator.check_schema(schema) == None
     assert schema == {
          '$anchor': 'ALL-TYPES',

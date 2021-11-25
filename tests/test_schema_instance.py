@@ -397,9 +397,17 @@ def test_schema_maker_bad_type():
 
 ### Unpackers
 
-# TODO: Test with mocks before these integration tests
+@pytest.fixture
+def mock_estruct_recfm_class():
+    instance = Mock(
+        record_iter=Mock(return_value=[sentinel.BYTES])
+    )
+    return Mock(
+        name="RECFM class",
+        return_value=instance
+    )
 
-def test_cobol_ebcdic_unpacker():
+def test_cobol_ebcdic_unpacker(tmp_path, mock_estruct_recfm_class):
     json_schema = {"type": "string", "cobol": "USAGE DISPLAY PICTURE X(42)"}
     expected = "12345678 0 2345678 0 2345678 0 2345678 0 2"
     schema = SchemaMaker.from_json(json_schema)
@@ -408,6 +416,19 @@ def test_cobol_ebcdic_unpacker():
     assert eu.value(schema, expected.encode("CP037")) == expected
     nav = eu.nav(schema, expected.encode("CP037"))
     assert nav.schema == schema
+    eu.open(tmp_path, sentinel.FILE_OBJECT)
+    assert eu.the_file == sentinel.FILE_OBJECT
+    del eu.the_file
+    target = tmp_path/"some_file.data"
+    target.write_bytes(b"hello world")
+    eu.open(target)
+    assert eu.the_file.name == str(target)
+    instances = eu.instance_iter("sheet", mock_estruct_recfm_class, 42)
+    assert list(instances) == [sentinel.BYTES]
+    eu.used(42)
+    assert mock_estruct_recfm_class.return_value.used.mock_calls == [call(42)]
+    eu.close()
+    assert not hasattr(eu, "the_file")
 
 def test_bad_ebcdic_unpacker():
     json_schema = {"type": "string", "cobol": "USAGE DISPLAY"}
@@ -419,7 +440,7 @@ def test_bad_ebcdic_unpacker():
     assert eu.value(schema, expected.encode("CP037")) == expected
 
 
-def test_cobol_text_unpacker():
+def test_cobol_text_unpacker(tmp_path):
     json_schema = {"type": "string", "cobol": "USAGE DISPLAY PICTURE X(42)"}
     data = "12345678 0 2345678 0 2345678 0 2345678 0 2"
     schema = SchemaMaker.from_json(json_schema)
@@ -428,6 +449,16 @@ def test_cobol_text_unpacker():
     assert tu.value(schema, data) == data
     nav = tu.nav(schema, data)
     assert nav.schema == schema
+    tu.open(tmp_path, sentinel.FILE_OBJECT)
+    assert tu.the_file == sentinel.FILE_OBJECT
+    del tu.the_file
+    target = tmp_path/"some_file.data"
+    target.write_text("hello world\n")
+    tu.open(target)
+    assert tu.the_file.name == str(target)
+    assert list(tu.instance_iter("sheet")) == ['hello world\n']
+    tu.close()
+    assert not hasattr(tu, "the_file")
 
 def test_generic_text_unpacker():
     json_schema = {"type": "string", "maxLength": 42}
@@ -456,26 +487,15 @@ def test_delimited_unpacker():
     nav = du.nav(schema, data)
     assert nav.schema == schema
 
-def test_csv_unpacker():
+def test_wb_unpacker():
     json_schema = {"type": "number"}
     data = "42"
     schema = SchemaMaker.from_json(json_schema)
-    cu = CSVUnpacker()
-    assert cu.calcsize(schema) == 1
-    assert cu.value(schema, data) == 42.0
-    nav = cu.nav(schema, data)
+    wu = WBUnpacker()
+    assert wu.calcsize(schema) == 1
+    assert wu.value(schema, data) == 42.0
+    nav = wu.nav(schema, data)
     assert nav.schema == schema
-
-def test_json_unpacker():
-    json_schema = {"type": "number"}
-    data = "42"
-    schema = SchemaMaker.from_json(json_schema)
-    ju = JSONUnpacker()
-    assert ju.calcsize(schema) == 1
-    assert ju.value(schema, data) == 42.0
-    nav = ju.nav(schema, data)
-    assert nav.schema == schema
-
 
 ### Instance & Unpacker Integration Tests
 
@@ -2414,6 +2434,9 @@ def test_object_ndnav(ndnav_object):
     assert ndnav.raw_instance() == str(sentinel.INSTANCE_SLICE)
     with pytest.raises(TypeError):
         ndnav.index(42)
+    alt_nav = ndnav["ITEM"]
+    assert alt_nav.instance == instance
+    assert alt_nav.schema == sentinel.SUBSCHEMA
 
 @pytest.fixture
 def ndnav_array():
@@ -2463,6 +2486,9 @@ def test_array_ndnav(ndnav_array):
     assert ndnav.raw_instance() == str(sentinel.INSTANCE_SLICE)
     with pytest.raises(TypeError):
         ndnav.name("Nope")
+    alt_nav = ndnav[1]
+    assert alt_nav.instance == instance
+    assert alt_nav.schema == loc.schema.items
 
 @pytest.fixture
 def dnav_object():
@@ -2552,12 +2578,19 @@ def wbnav_object():
     schema = Mock(
         name="Schema",
         type="object",
-        properties={"ITEM": Mock(name="Subschema", attributes={})},
+        properties={
+            "ITEM": Mock(name="Subschema", attributes={}),
+            "EXTRA": Mock(name="Missing Value", attributes={}),
+        },
         attributes={}
     )
+    def item_or_error(index):
+        if index == 0:
+            return sentinel.INSTANCE_SLICE
+        raise IndexError
     instance = MagicMock(
         name="WBRow",
-        __getitem__=Mock(return_value=sentinel.INSTANCE_SLICE)
+        __getitem__=Mock(side_effect=item_or_error)
     )
     wbnav = WBNav(unpacker, schema, instance)
     return unpacker, schema, instance, wbnav
@@ -2577,7 +2610,8 @@ def test_object_wbnav(wbnav_object):
     assert wbnav.value() == instance
     with pytest.raises(TypeError):
         wbnav.index(0)
-
+    invalid = wbnav.name("EXTRA")
+    assert invalid.instance == [None]
 
 @pytest.fixture
 def wbnav_array():

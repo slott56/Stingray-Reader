@@ -1,13 +1,12 @@
-..    #!/usr/bin/env python3
-
 ..  _`demo_profile`:
 
 ##########################################################
 Data Profiling Demonstration
 ##########################################################
 
-This is a simple data profiling application that can be applied
-to workbooks to examine the data prior to creating builders.
+This is a data profiling application that can be applied
+to workbooks to examine the data. This can help design
+builder functions for applications.
 
 This produces simple RST-format output on stdout.
 
@@ -15,194 +14,97 @@ A common use case is the following:
 
 ..  code-block:: bash
 
-    python3 demo/profile.py sample/\*.csv >profile_csv.rst
+    python demo/profile.py sample/\*.csv >profile_csv.rst
     rst2html.py profile_csv.rst profile_csv.html
     
-This gives us an HTML-formatted report. 
+This gives us an HTML-formatted report showing distributions
+of values in each column.
 
-Overheads
--------------
+This follows the design patterns shown earlier.
 
-We depend on a number of Python libraries.  Plus, of course, we're
-creating workbooks, working with sheets and schema.
+See ``demo/profile.py``.
 
-::
+Core Processing
+===============
 
-    import logging
-    import sys
-    import argparse
-    import pprint
-    from collections import defaultdict
-    
-    import stingray.workbook
-    import stingray.sheet
-    import stingray.schema
-    
-    logger= logging.getLogger( __name__ )
+The core proessing is to gather counts
+of individual sample values.
+
+..  literalinclude:: ../../../demo/profile.py
+    :lines: 41-70
+
+The serialization is based on a printed report.
+This lets us tinker with the formatting
+via ``print()`` functions. The final serialization
+uses ``contextlib.redirect_stdout`` to capture
+the print output into a single string.
 
 Processing Context
----------------------
+==================
 
-This class handles the accumulation of global statistics on the source data.
-This a context manager which assures that we'll successfully process the 
-statistics in spite of any exception which might occur.
+This is an edge case.
+A data profiling application doesn't, generally,
+produce much stateful output. It doesn't often
+update a database.
 
-::
+This is a "reporting" application, which has
+two important criteria:
 
-    class Gather_Statistics:
-        stop_on_exception= False
-        def __init__( self ):
-            self.stats= defaultdict( lambda: defaultdict(int) )
-        def count( self, column, value ):
-            self.stats[column][value] += 1
-        def __enter__( self ):
-            return self
-        def __exit__( self, exc_type, exc_val, exc_tb ):
-            if exc_type is not None: return False
-            
-See :ref:`demo_validate` for a more complete example of this kind of use
-of a context manager.
+-   The output is meant for human consumption.
 
-Processing
-------------
+-   The processing is fully idempotent.
+    We can run the application as often as
+    needed without worrying about corrupting
+    a database with out-of-order operations
+    or duplicate operations.
 
-See :ref:`developer` for background. We're going to need a "sheet process function."
-This transforms the source sheet into the target collection, usually an output file.
+Because there isn't a significant, persistent
+state change a persistence management class
+is -- perhaps -- unnecessary.
+
+It helps, however, to follow the overall design
+pattern in case some persistent state change
+*does* become part of this application.
+
+
+..  literalinclude:: ../../../demo/profile.py
+    :lines: 76-94
+
+
+Sheet Processing
+=================
 
 The :py:func:`process_sheet` function the heart of the application.
 This handles all the rows present in a given sheet.
 
-We use ``source_row[attr]`` to accumulate the :py:class:`cell.Cell` instance
-information.  This can help identify the source data format as well as the value.
+..  literalinclude:: ../../../demo/profile.py
+    :lines: 100-116
 
-We can use ``source_row[attr].value`` to accumulate the "raw" Python values
-present in the spreadsheet.  
-
-An alternative is to use a :py:class:`cell.Cell` conversion to a desired
-type.  We might, for example, use :py:meth:`cell.Cell.to_str` to convert a raw value
-to a string.  This would better parallel the way that an application will
-use the data.
-
-::
-
-    def process_sheet( sheet, persistence ):
-        counts= defaultdict( int )
-        for source_row in sheet.schema.rows_as_dict_iter(sheet):
-            try:
-                counts['read'] += 1
-                for attr in source_row:
-                    persistence.count( attr, source_row[attr] )
-            except Exception as e:
-                counts['invalid'] += 1
-                if persistence.stop_on_exception: raise
-                summary= "{0} '{1}'".format( e.__class__.__name__, e.message )
-                logger.error( summary )
-                counts['error '+summary] += 1
-                
-        title= "{0} :: {1}".format( sheet.workbook.name, sheet.name )
-        print( title )
-        print( "="*len(title) )
-        print()
-        for attr in sheet.schema:
-            name= attr.name
-            print( name )
-            print( "-"*len(name) )
-            print()
-            print( "..  csv-table::" )
-            print()
-            for k in persistence.stats[name]:
-                print( '    "{0}","{1}"'.format( k, persistence.stats[name][k] ) )
-            print()
-        return counts
         
 Some applications will have variant processing for workbooks that
 contain different types of sheets.  
 This leads to different ``process_this_sheet``  and ``process_that_sheet`` functions.  
 Each  will follow the above template to process all rows of the sheet.
 
-High-Level Interfaces
-------------------------
+Workbook Processing
+===================
 
-This version of :py:func:`validate` doesn't really do very much.  We don't have
-any persistence, so there's no sensible alternative do this for simple
-data gathering. In more complex applications, we might have a :py:func:`process`
-function which does some more complex processing.
+..  literalinclude:: ../../../demo/profile.py
+    :lines: 132-137
 
-However, it's often helpful to follow the template design for other,
-more sophisticated, applications.  For that reason, we provide the 
-processing context as a kind of  **Strategy** object to the :py:func:`process_sheet` function.
-
-::
-
-    def validate( sheet ):        
-        with Gather_Statistics() as mode:
-            counts= process_sheet( sheet, mode )
-        return counts
-
-Note that the following :py:func:`process_workbook` function makes some specific claims about the given
-file.  In particular:
-
--   :py:class:`sheet.EmbeddedSchemaSheet`.  The schema is embedded within each sheet.
-
--   :py:class:`schema.loader.HeadingRowSchemaLoader`.  The schema is the heading row.
-
-If these assumptions are not universally true, then different application
-programs or different :py:func:`process_workbook` functions must be written to handle other kinds of workbooks.
-
-::
-
-    def process_workbook( input ):
-        for name in source.sheets():
-            logger.info( "{0} :: {1}".format( input, name ) )
-            sheet= source.sheet( name, 
-                stingray.sheet.EmbeddedSchemaSheet,
-                loader_class=stingray.schema.loader.HeadingRowSchemaLoader )
-            counts= validate( sheet )
-            logger.info( pprint.pformat(dict(counts)) )
 
 Command-Line Interface
-----------------------
+======================
 
 We have an optional argument for verbosity and a positional argument that
 provides all the files to profile.
 
-::
+..  literalinclude:: ../../../demo/profile.py
+    :lines: 143-156
 
-    def parse_args():
-        parser= argparse.ArgumentParser()
-        parser.add_argument( 'file', nargs='+' )
-        parser.add_argument( '-v', '--verbose', dest='verbosity',
-            default=logging.INFO, action='store_const', const=logging.DEBUG )
-        return parser.parse_args()
+..  literalinclude:: ../../../demo/profile.py
+    :lines: 158-168
 
-The main-import switch allows us to import this module and reuse the components
-or run it as a command-line application.  To run from the command line, we have several issues to address.
-
-1.  Logging.
-#.  Parameter Parsing.  This includes interpreting options.
-#.  Argument Processing.  This means looping over the positional arguments.
-#.  Opening Workbooks.  Some applications can't use the default
-    :py:class:`workbook.Opener`.  A subclass of Opener, or more complex logic,
-    may be required.
-#.  Gracefully catching and logging exceptions.
-#.  Exit Status to the OS.
-
-::
-
-    if __name__ == "__main__":
-        logging.basicConfig( stream=sys.stderr )
-        args= parse_args()
-        logging.getLogger().setLevel( args.verbosity )
-        try:
-            for input in args.file:
-                with stingray.workbook.open_workbook( input ) as source:
-                    process_workbook( source )
-            status= 0
-        except Exception as e:
-            logging.exception( e )
-            status= 3 
-        logging.shutdown()
-        sys.exit( status )
         
 Running the Demo
 ================
@@ -216,111 +118,283 @@ We can run this program like this:
 
 The RST output file looks like this:
 
-..	parsed-literal::
+..	code-block:: text
 
-	sample/csv_workbook.csv :: csv_workbook
-	=======================================
+    sample/Anscombe_quartet_data.csv
+    ====================================
 
-	Col 1 - int
-	-----------
+    x123
+    ----
 
-	..  csv-table::
+    AtomicSchema({'title': 'x123', '$anchor': 'x123', 'type': 'string', 'position': 0})
 
-		"TextCell('9973')","1"
-		"TextCell('42')","1"
+    ..  csv-table::
 
-	Col 2.0 - float
-	---------------
+        "10.0","1"
+        "8.0","1"
+        "13.0","1"
+        "9.0","1"
+        "11.0","1"
+        "14.0","1"
+        "6.0","1"
+        "4.0","1"
+        "12.0","1"
+        "7.0","1"
+        "5.0","1"
 
-	..  csv-table::
+    y1
+    --
 
-		"TextCell('3.1415926')","1"
-		"TextCell('2.7182818')","1"
+    AtomicSchema({'title': 'y1', '$anchor': 'y1', 'type': 'string', 'position': 1})
 
-	Column "3" - string
-	-------------------
+    ..  csv-table::
 
-	..  csv-table::
+        "8.04","1"
+        "6.95","1"
+        "7.58","1"
+        "8.81","1"
+        "8.33","1"
+        "9.96","1"
+        "7.24","1"
+        "4.26","1"
+        "10.84","1"
+        "4.82","1"
+        "5.68","1"
 
-		"TextCell('string')","1"
-		"TextCell('data')","1"
+    y2
+    --
 
-	Column '4' - date
-	-----------------
+    AtomicSchema({'title': 'y2', '$anchor': 'y2', 'type': 'string', 'position': 2})
 
-	..  csv-table::
+    ..  csv-table::
 
-		"TextCell('09/10/56')","1"
-		"TextCell('01/18/59')","1"
+        "9.14","1"
+        "8.14","1"
+        "8.74","1"
+        "8.77","1"
+        "9.26","1"
+        "8.10","1"
+        "6.13","1"
+        "3.10","1"
+        "9.13","1"
+        "7.26","1"
+        "4.74","1"
 
-	Column 5 - boolean
-	------------------
+    y3
+    --
 
-	..  csv-table::
+    AtomicSchema({'title': 'y3', '$anchor': 'y3', 'type': 'string', 'position': 3})
 
-		"TextCell('TRUE')","1"
-		"TextCell('FALSE')","1"
+    ..  csv-table::
 
-	Column 6 - empty
-	----------------
+        "7.46","1"
+        "6.77","1"
+        "12.74","1"
+        "7.11","1"
+        "7.81","1"
+        "8.84","1"
+        "6.08","1"
+        "5.39","1"
+        "8.15","1"
+        "6.42","1"
+        "5.73","1"
 
-	..  csv-table::
+    x4
+    --
 
-		"TextCell('')","2"
+    AtomicSchema({'title': 'x4', '$anchor': 'x4', 'type': 'string', 'position': 4})
 
-	Column 7 - Error
-	----------------
+    ..  csv-table::
 
-	..  csv-table::
+        "8.0","10"
+        "19.0","1"
 
-		"TextCell('#DIV/0!')","1"
-		"TextCell('#NAME?')","1"
+    y4
+    --
 
-	sample/simple.csv :: simple
-	===========================
+    AtomicSchema({'title': 'y4', '$anchor': 'y4', 'type': 'string', 'position': 5})
 
-	name
-	----
+    ..  csv-table::
 
-	..  csv-table::
-
-		"TextCell('Column 6 – empty')","1"
-		"TextCell('Column “3” - string')","1"
-		"TextCell('Col 2.0 – float')","1"
-		"TextCell("Column '4' – date")","1"
-		"TextCell('Column 7 – Error')","1"
-		"TextCell('Column 5 – boolean')","1"
-		"TextCell('Col 1 - int')","1"
-
-	offset
-	------
-
-	..  csv-table::
-
-		"TextCell('45')","1"
-		"TextCell('56')","1"
-		"TextCell('34')","1"
-		"TextCell('67')","1"
-		"TextCell('1')","1"
-		"TextCell('23')","1"
-		"TextCell('12')","1"
-
-	size
-	----
-
-	..  csv-table::
-
-		"TextCell('11')","7"
-
-	type
-	----
-
-	..  csv-table::
-
-		"TextCell('float')","1"
-		"TextCell('bool')","1"
-		"TextCell('datetime')","1"
-		"TextCell('str')","3"
-		"TextCell('int')","1"
+        "6.58","1"
+        "5.76","1"
+        "7.71","1"
+        "8.84","1"
+        "8.47","1"
+        "7.04","1"
+        "5.25","1"
+        "12.50","1"
+        "5.56","1"
+        "7.91","1"
+        "6.89","1"
 
 
+    sample/Anscombe_schema.csv
+    ==============================
+
+    x123
+    ----
+
+    AtomicSchema({'title': 'x123', '$anchor': 'x123', 'type': 'string', 'position': 0})
+
+    ..  csv-table::
+
+        "y1","1"
+        "y2","1"
+        "y3","1"
+        "x4","1"
+        "y4","1"
+
+    X values for series 1, 2, and 3.
+    --------------------------------
+
+    AtomicSchema({'title': 'X values for series 1, 2, and 3.', '$anchor': 'X_values_for_series_1_2_and_3.', 'type': 'string', 'position': 1})
+
+    ..  csv-table::
+
+        "Y value for series 1.","1"
+        "Y value for series 2.","1"
+        "Y value for series 3.","1"
+        "X value for series 4.","1"
+        "Y value for series 4.","1"
+
+    number
+    ------
+
+    AtomicSchema({'title': 'number', '$anchor': 'number', 'type': 'string', 'position': 2})
+
+    ..  csv-table::
+
+        "number","5"
+
+
+    sample/csv_workbook.csv
+    ===========================
+
+    Col 1 - int
+    -----------
+
+    AtomicSchema({'title': 'Col 1 - int', '$anchor': 'Col_1_-_int', 'type': 'string', 'position': 0})
+
+    ..  csv-table::
+
+        "42","1"
+        "9973","1"
+
+    Col 2.0 - float
+    ---------------
+
+    AtomicSchema({'title': 'Col 2.0 - float', '$anchor': 'Col_2.0_-_float', 'type': 'string', 'position': 1})
+
+    ..  csv-table::
+
+        "3.1415926","1"
+        "2.7182818","1"
+
+    Column "3" - string
+    -------------------
+
+    AtomicSchema({'title': 'Column "3" - string', '$anchor': 'Column_3_-_string', 'type': 'string', 'position': 2})
+
+    ..  csv-table::
+
+        "string","1"
+        "data","1"
+
+    Column '4' - date
+    -----------------
+
+    AtomicSchema({'title': "Column '4' - date", '$anchor': 'Column_4_-_date', 'type': 'string', 'position': 3})
+
+    ..  csv-table::
+
+        "09/10/56","1"
+        "01/18/59","1"
+
+    Column 5 - boolean
+    ------------------
+
+    AtomicSchema({'title': 'Column 5 - boolean', '$anchor': 'Column_5_-_boolean', 'type': 'string', 'position': 4})
+
+    ..  csv-table::
+
+        "TRUE","1"
+        "FALSE","1"
+
+    Column 6 - empty
+    ----------------
+
+    AtomicSchema({'title': 'Column 6 - empty', '$anchor': 'Column_6_-_empty', 'type': 'string', 'position': 5})
+
+    ..  csv-table::
+
+        "","2"
+
+    Column 7 - Error
+    ----------------
+
+    AtomicSchema({'title': 'Column 7 - Error', '$anchor': 'Column_7_-_Error', 'type': 'string', 'position': 6})
+
+    ..  csv-table::
+
+        "#DIV/0!","1"
+        "#NAME?","1"
+
+
+    sample/simple.csv
+    =====================
+
+    name
+    ----
+
+    AtomicSchema({'title': 'name', '$anchor': 'name', 'type': 'string', 'position': 0})
+
+    ..  csv-table::
+
+        "Col 1 - int","1"
+        "Col 2.0 – float","1"
+        "Column “3” - string","1"
+        "Column '4' – date","1"
+        "Column 5 – boolean","1"
+        "Column 6 – empty","1"
+        "Column 7 – Error","1"
+
+    offset
+    ------
+
+    AtomicSchema({'title': 'offset', '$anchor': 'offset', 'type': 'string', 'position': 1})
+
+    ..  csv-table::
+
+        "1","1"
+        "12","1"
+        "23","1"
+        "34","1"
+        "45","1"
+        "56","1"
+        "67","1"
+
+    size
+    ----
+
+    AtomicSchema({'title': 'size', '$anchor': 'size', 'type': 'string', 'position': 2})
+
+    ..  csv-table::
+
+        "11","7"
+
+    type
+    ----
+
+    AtomicSchema({'title': 'type', '$anchor': 'type', 'type': 'string', 'position': 3})
+
+    ..  csv-table::
+
+        "int","1"
+        "float","1"
+        "str","3"
+        "datetime","1"
+        "bool","1"
+
+This can be processed by pandoc or docutils
+to create an HTML report.

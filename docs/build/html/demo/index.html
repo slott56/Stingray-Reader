@@ -15,7 +15,7 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="5.1. Unit Level Validation for Application and Data" href="data_quality.html" />
+    <link rel="next" title="Schema-Based Access Validation" href="data_quality.html" />
     <link rel="prev" title="Using Stingray Reader" href="../developer.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -36,7 +36,7 @@
   <section id="demo-applications">
 <span id="demo"></span><h1>Demo Applications<a class="headerlink" href="#demo-applications" title="Permalink to this headline">¶</a></h1>
 <p>Perhaps the most important use case for <strong>Stingray</strong> is to write data extract
-applications. This is shown below in <a class="reference internal" href="validation.html#demo-validate"><span class="std std-ref">Application Level Data Validation Technique</span></a>.
+applications. This is shown below in <a class="reference internal" href="validation.html#demo-validate"><span class="std std-ref">Data Validation Mode</span></a>.
 We can also handle COBOL file conversions. This is shown below in <a class="reference internal" href="cobol_reader.html#demo-cobol"><span class="std std-ref">Reading COBOL Files</span></a>.</p>
 <p>Additionally, we can use <strong>Stingray</strong> to provide
 assurance that  our files and our applications both use the
@@ -45,12 +45,19 @@ same conceptual schema. We need several kinds of assurance.</p>
 <li><p>How do we <strong>confirm</strong> the schema of a given file?</p></li>
 <li><p>More importantly, how do we confirm that an application can successfully use a file?</p></li>
 </ul>
+<p>The answers to these questions involve a two-phased approach.
+First, essential unit testing and integration testing must be done.
+Second, the data itself must be validated.</p>
+<p>We’ll look an examples to show how to do basic unit and integration
+testing. This is followed by several examples to show how to do write data
+validation applications, and how to provide data validation (or a “dry-run” option)
+as part of a converntional file-processing application.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="data_quality.html">5.1. Unit Level Validation for Application and Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="validation.html">Application Level Data Validation Technique</a></li>
-<li class="toctree-l1"><a class="reference internal" href="profile.html">5.3. Data Profiling Demonstration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cobol_reader.html">5.4. Reading COBOL Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_quality.html">Schema-Based Access Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validation.html">Data Validation Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="profile.html">Data Profiling Demonstration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cobol_reader.html">Reading COBOL Files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="conversion.html">Data Conversion – ETL with Validation</a></li>
 </ul>
 </div>
@@ -79,12 +86,12 @@ same conceptual schema. We need several kinds of assurance.</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../design.html">Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../developer.html">Using <strong>Stingray Reader</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Demo Applications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../history.html">6. History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">7. Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">8. Installation via <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">Commercial Use</a></li>
 </ul>
 
@@ -93,7 +100,7 @@ same conceptual schema. We need several kinds of assurance.</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="../developer.html" title="previous chapter">Using <strong>Stingray Reader</strong></a></li>
-      <li>Next: <a href="data_quality.html" title="next chapter"><span class="section-number">5.1. </span>Unit Level Validation for Application and Data</a></li>
+      <li>Next: <a href="data_quality.html" title="next chapter">Schema-Based Access Validation</a></li>
   </ul></li>
 </ul>
 </div>

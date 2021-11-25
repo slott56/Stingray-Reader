@@ -81,14 +81,9 @@ single file, reducing the nested file and sheet processing.</p>
 as the defacto schema for that sheet. Given only column names, the data types must
 be assumed or conversion functions provided as part of the application to
 assure that the column contents are – indeed – objects of useful Python clsses.</p>
-<p>This parallels the way <code class="docutils literal notranslate"><span class="pre">csv.DictReader</span></code> extracts the first row as the keys
-for each row’s dictionary.</p>
-<p>There are several alternative to using the <code class="docutils literal notranslate"><span class="pre">HeadingRowSchemaLoader</span></code>:</p>
-<ul class="simple">
-<li><p>Extend the class to use more than a single row as the schema.</p></li>
-<li><p>Using an external schema.</p></li>
-</ul>
-<p>Some spreadsheets have complex, multi-row titles. These require a more sophisticated parser
+<p>This schema loader parallels the way <code class="docutils literal notranslate"><span class="pre">csv.DictReader</span></code> extracts the first row as the keys
+for each row’s dictionary. It’s explicit, however, permitting change for exceptional cases.
+For example, a spreadsheet with complex, multi-row titles. These require a more sophisticated parser
 that consumes multiple rows of heading.</p>
 <p>In the most complex cases, multiple independent “sections” of data are present in a
 single spreadsheet. This kind of data requires a “heading parser” that can decompose the sheet into sections
@@ -257,10 +252,10 @@ We have to avoid the attractive nuisance of a Domain Specific Language (DSL)
 for mappings and conversions.</p>
 <p>There’s no value in creating a new mapping language. This is bad:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">target</span><span class="o">-</span><span class="n">doc</span><span class="p">::</span> <span class="n">source</span><span class="o">-</span><span class="n">doc</span> <span class="n">WITH</span> <span class="n">headers</span><span class="o">=</span><span class="n">embedded</span> <span class="n">FORMATS</span><span class="p">:</span> <span class="nb">format</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">format</span><span class="o">-</span><span class="mi">2</span>
-        <span class="n">name</span><span class="p">:</span> <span class="n">FROM</span> <span class="s1">&#39;some column&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">1</span> <span class="n">AS</span> <span class="n">string</span><span class="p">,</span> <span class="n">FROM</span> <span class="s1">&#39;some column&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">2</span> <span class="n">AS</span> <span class="n">string</span>
-        <span class="n">address</span><span class="p">:</span> <span class="n">FROM</span> <span class="s1">&#39;another column&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">1</span> <span class="n">AS</span> <span class="n">string</span><span class="p">,</span> <span class="n">FROM</span> <span class="s1">&#39;some column&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">2</span> <span class="n">AS</span> <span class="n">string</span>
-        <span class="nb">zip</span><span class="p">:</span> <span class="n">FROM</span> <span class="s1">&#39;zip&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">1</span> <span class="n">AS</span> <span class="n">string</span> <span class="n">WITH</span> <span class="n">digits_5</span><span class="p">,</span> <span class="n">FROM</span> <span class="s1">&#39;zip-5&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">2</span> <span class="n">AS</span> <span class="n">string</span>
-        <span class="n">phone</span><span class="p">:</span> <span class="n">FROM</span> <span class="s1">&#39;phone&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">1</span> <span class="n">AS</span> <span class="n">string</span><span class="p">,</span> <span class="n">FROM</span> <span class="s1">&#39;phone&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">2</span> <span class="n">AS</span> <span class="n">string</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">FROM</span> <span class="s1">&#39;some column&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">1</span> <span class="n">AS</span> <span class="n">string</span><span class="p">,</span> <span class="n">FROM</span> <span class="s1">&#39;some column&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">2</span> <span class="n">AS</span> <span class="n">string</span>
+<span class="n">address</span><span class="p">:</span> <span class="n">FROM</span> <span class="s1">&#39;another column&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">1</span> <span class="n">AS</span> <span class="n">string</span><span class="p">,</span> <span class="n">FROM</span> <span class="s1">&#39;some column&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">2</span> <span class="n">AS</span> <span class="n">string</span>
+<span class="nb">zip</span><span class="p">:</span> <span class="n">FROM</span> <span class="s1">&#39;zip&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">1</span> <span class="n">AS</span> <span class="n">string</span> <span class="n">WITH</span> <span class="n">digits_5</span><span class="p">,</span> <span class="n">FROM</span> <span class="s1">&#39;zip-5&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">2</span> <span class="n">AS</span> <span class="n">string</span>
+<span class="n">phone</span><span class="p">:</span> <span class="n">FROM</span> <span class="s1">&#39;phone&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">1</span> <span class="n">AS</span> <span class="n">string</span><span class="p">,</span> <span class="n">FROM</span> <span class="s1">&#39;phone&#39;</span> <span class="n">IN</span> <span class="nb">format</span><span class="o">-</span><span class="mi">2</span> <span class="n">AS</span> <span class="n">string</span>
 </pre></div>
 </div>
 <p>We don’t need a cumbersome language outside Python.</p>
@@ -476,8 +471,8 @@ allowing transparent changes to physical format.</p>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Using <strong>Stingray Reader</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/index.html">Demo Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="history.html">6. History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testing/index.html">7. Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Commercial Use</a></li>
 </ul>

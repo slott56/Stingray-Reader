@@ -16,7 +16,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Commercial Use" href="license.html" />
-    <link rel="prev" title="7. Testing" href="testing/index.html" />
+    <link rel="prev" title="Testing" href="testing.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -35,6 +35,7 @@
             
   <section id="installation">
 <span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>Stingray requires Python 3.9.</p>
 <p>Use the following to get the latest code:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">sf</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">stingrayreader</span><span class="o">/</span><span class="n">code</span> <span class="n">stingrayreader</span><span class="o">-</span><span class="n">code</span>
 </pre></div>
@@ -43,6 +44,17 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">stingray</span><span class="o">-</span><span class="n">reader</span>
 </pre></div>
 </div>
+<p>This installation will also download and install a number of dependencies.
+See <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> for the full list.</p>
+<p>Here is a summary:</p>
+<ul class="simple">
+<li><p>jsonschema&gt;=4.2</p></li>
+<li><p>xlrd&gt;=2.0 to read <code class="docutils literal notranslate"><span class="pre">.XLS</span></code> files.</p></li>
+<li><p>openpyxl&gt;=3.0 to read <code class="docutils literal notranslate"><span class="pre">.XLSX</span></code> files.</p></li>
+<li><p>pyexcel&gt;=0.6 and pyexcel-ods3&gt;=0.6 to read <code class="docutils literal notranslate"><span class="pre">.ODS</span></code> files.</p></li>
+<li><p>numbers-parser&gt;=2.1 to read <code class="docutils literal notranslate"><span class="pre">.numbers</span></code> files.</p></li>
+</ul>
+<p>With additional <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">__future__</span> <span class="pre">import</span> <span class="pre">annotations</span></code> it may be able to work with Python 3.8.</p>
 <section id="development">
 <h2>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h2>
 <p>The following tools are used for development</p>
@@ -51,21 +63,8 @@
 <li><p>pytest.</p></li>
 <li><p>pytest-cov.</p></li>
 <li><p>tox.</p></li>
+<li><p>mypy.</p></li>
 </ul>
-</section>
-<section id="installation-via-distutils">
-<h2>Installation via Distutils<a class="headerlink" href="#installation-via-distutils" title="Permalink to this headline">¶</a></h2>
-<p>To install <code class="docutils literal notranslate"><span class="pre">stingray</span></code> you can use the following.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo python setup.py install
-</pre></div>
-</div>
-<p>In some cases, you might want to break this down into a build step that
-doesn’t require privileges and the final install step, which does require
-privileges.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python setup.py build
-sudo python setup.py install
-</pre></div>
-</div>
 </section>
 </section>
 
@@ -92,11 +91,11 @@ sudo python setup.py install
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="design.html">Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Using <strong>Stingray Reader</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/index.html">Demo Applications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="history.html">6. History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testing/index.html">7. Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Commercial Use</a></li>
 </ul>
@@ -105,7 +104,7 @@ sudo python setup.py install
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="testing/index.html" title="previous chapter"><span class="section-number">7. </span>Testing</a></li>
+      <li>Previous: <a href="testing.html" title="previous chapter">Testing</a></li>
       <li>Next: <a href="license.html" title="next chapter">Commercial Use</a></li>
   </ul></li>
 </ul>

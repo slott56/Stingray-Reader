@@ -36,79 +36,92 @@
   <section id="design-considerations">
 <h1>Design Considerations<a class="headerlink" href="#design-considerations" title="Permalink to this headline">¶</a></h1>
 <p>There are several important data representation issues. We’ll look at
-<a class="reference internal" href="#workbook-schema-issues">Workbook Schema Issues</a> and <a class="reference internal" href="#some-cobol-file-issues">Some COBOL File Issues</a> that
+<a class="reference internal" href="#file-schema-issues">File Schema Issues</a>, <a class="reference internal" href="#working-with-a-schema">Working with a schema</a>, and <a class="reference internal" href="#some-cobol-file-issues">Some COBOL File Issues</a> that
 will inform the rest of the design.</p>
-<section id="workbook-schema-issues">
-<h2>Workbook Schema Issues<a class="headerlink" href="#workbook-schema-issues" title="Permalink to this headline">¶</a></h2>
-<p>There are several ways to represent workbook schema information.</p>
+<section id="file-schema-issues">
+<h2>File Schema Issues<a class="headerlink" href="#file-schema-issues" title="Permalink to this headline">¶</a></h2>
+<p>There are several ways to represent file schema information.</p>
 <ol class="arabic simple">
-<li><p>One (or more) rows in each workbook sheet that provides the attribute
-name.  The type is often left implicit.  This is often bound to the
+<li><p>For spreadsheets, one (or more) rows in each workbook sheet can provide the attribute
+names.  The data types and other details are implicit.  This is often bound to the
 data, making it quite useful in practice.</p></li>
 <li><p>A distinct workbook sheet that lists name (and optionally type)
-for each attribute.  Offset and size can
+for each attribute.  Offsets and sizes can
 also be provided, making this useful for fixed-format COBOL files.
 This may be bound to data in a separate sheet of the same workbook,
-making it more likely to be useful. If it describes a COBOL file,
-however, the binding is more tenuous.</p></li>
+making it more likely to be useful.</p></li>
 <li><p>A Python module that’s built from source information.  This
 allows us to trivially <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">schema.foo</span></code> and have lots of cool
 classes and functions in the <code class="docutils literal notranslate"><span class="pre">schema.foo</span></code> module.</p></li>
 <li><p>Some standardized metadata format. JSONSchema is preferred.
-XSD can also be used.</p></li>
+XSD can also be used. While this is separate from the file,
+it can be incorporated into the application.</p></li>
 </ol>
 <p>Options 1 and 2 (workbook-based schema) cover over 99%
 of the cases in practice.  While the data is casual and error-prone, it’s
 often readily available.</p>
-<p>Option 3 (a Python module) – while cool – can break the DRY
-principle. Using JSONSchema means the schema can be encoded as a Python <code class="docutils literal notranslate"><span class="pre">dict</span></code>.
-This module would have to be used through an application ecosystem.</p>
-<p>Refreshing a Python schema when a source <code class="file docutils literal notranslate"><span class="pre">.XLS</span></code> document
-changes can be a problem. It creates a multi-step binding: document to schema module followed
-by schema module to application.</p>
+<p>Option 3 (a Python module) is very cool.
+Using JSONSchema means the schema can be encoded as a Python <code class="docutils literal notranslate"><span class="pre">dict</span></code>.
+This module can then be used through an application ecosystem to provide a
+single, consistent schema to all related applications.</p>
+<p>Option 4 (a JSONSchema document) can be consumed by a library module
+like Stingray Reader to enforce a schema throughout a suite of applications.</p>
 <p>Option 4 is rarely used in practice.  In the rare cases when an organization
 will consent to providing schema files in a standard format, they’re often prepared separately
 from the data and do not actually reflect the application software
 that is used to build the data file.</p>
-<p>How do we extend this to handle COBOL DDE’s?</p>
-<p>It seems sensible to load schema information from a source file every time
-it’s needed.  There are two paths:</p>
+<p>Option 2 also covers COBOL files, where the schema is a separate document with the
+Data Definition Entries (DDE’s).</p>
+</section>
+<section id="working-with-a-schema">
+<h2>Working with a Schema<a class="headerlink" href="#working-with-a-schema" title="Permalink to this headline">¶</a></h2>
+<p>An application needs to load schema information when processing a file
+described by that schema. There are three sources for schema information:</p>
 <ul class="simple">
-<li><p>Either we’ll parse the embedded schema buried in each
-sheet of a workbook,</p></li>
-<li><p>or we’ll load an external schema definition from
-a file.</p></li>
+<li><p>Parse the embedded schema buried in the sheet of a workbook.
+Often, this is a header row.</p></li>
+<li><p>Load an external schema definition from a file.</p></li>
+<li><p>Code the schema into the application. This can be an explicit JSONSchema document.
+The worst case is an implicit schema in the form of code that refers to column
+names without any formalization of the schema.</p></li>
 </ul>
-<p>This causes us to partition the design into several components.</p>
+<p>Making the schema explicit makes it testable at development time and observable when
+used for production. An explicit schema allows us to partition
+application design into several components.</p>
 <ul class="simple">
-<li><p>Schena definition.</p></li>
-<li><p>Schema parsing and loading.</p></li>
+<li><p>Schema definition. These can be shared and pubished. Changes can be tracked explicitly
+and visibly.</p></li>
+<li><p>Schema parsing and loading. For JSONSchema documents, this is relatively simple.
+For COBOL DDE files, this is a bit more complex.</p></li>
 <li><p>Application data access using a schema.</p></li>
 </ul>
 <p>The idea is to have a universal schema representation. An application
 can load this from a variety of sources, including JSON, COBOL, and heading
 rows of a spreadsheet.</p>
-</section>
+<p>Having a published, testable schema assures that all of the applications
+can aggree to the physical format and logical layout of the data.
+It also makes data quality problems observable.</p>
 <section id="some-cobol-file-issues">
-<h2>Some COBOL File Issues<a class="headerlink" href="#some-cobol-file-issues" title="Permalink to this headline">¶</a></h2>
+<h3>Some COBOL File Issues<a class="headerlink" href="#some-cobol-file-issues" title="Permalink to this headline">¶</a></h3>
 <p>Non-spreadsheet files, including legacy COBOL files, introduce
-additional problems:</p>
+some additional complexities that workbook files don’t have.
+Here’s a summary:</p>
 <ol class="arabic simple">
-<li><p>The files have a fixed field layout, without delimiters.
-This means that the offset of each field must be used to
+<li><p>COBOL files have a fixed field layout, without delimiters.
+This means that the offset of each field into a sequence of characters or bytes must be used to
 decompose the record into its individual elements.</p></li>
 <li><p>Numeric fields can have an implied decimal point.
-The COBOL DDE is essential for parsing the file contents into number values.</p></li>
+The COBOL DDE <code class="docutils literal notranslate"><span class="pre">PICTURE</span></code> clause is essential for parsing the file contents into number values.</p></li>
 <li><p>COBOL can make use of numeric data represented in a variety
 of “Computational” forms.  The <code class="docutils literal notranslate"><span class="pre">COMP-3</span></code>
 form, for example, is very popular: decimal digits are
 packed two per byte and the final half-byte encodes
 sign information.</p></li>
 <li><p>The string data may be encoded in EBCDIC bytes, requiring decoding.</p></li>
-<li><p>COBOL encourages the use of data aliases (or “unions”) via the <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> clause.
+<li><p>COBOL permits data aliases (or “unions”) via the <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> clause.
 Without the entire unviverse of COBOL programs that work with a given file,
 the general handling of <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code>
-data elements can become an insoluable problem. While it’s clear some field
+alternatives can become an insoluable problem. While it’s clear some field’s value
 discriminates among the union alternatives, that detail is not part of the COBOL DDE.
 Only lazy field access can work;
 eager creation of individual cell values is doomed because a
@@ -124,6 +137,7 @@ It’s essential to parse this source DDE, which has the original COBOL
 definition for the file.  A schema can be built from the parsed DDE.
 There’s no good reason to rely on any intermediate description separate from
 the DDE’s themselves.</p>
+</section>
 </section>
 </section>
 
@@ -153,8 +167,8 @@ the DDE’s themselves.</p>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Using <strong>Stingray Reader</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/index.html">Demo Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="history.html">6. History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testing/index.html">7. Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Commercial Use</a></li>
 </ul>

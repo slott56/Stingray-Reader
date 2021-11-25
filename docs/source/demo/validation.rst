@@ -1,76 +1,93 @@
-..    #!/usr/bin/env python3
-
 ..  _`demo_validate`:
 
 ##########################################################
-Application Level Data Validation Technique
+Data Validation Mode
 ##########################################################
 
-We validate that that a file actually matches a schema through a three-part valiation process.  
+We validate applications and files both share a schema through a three-tier process.
 
--   Validate an application's use of a schema via conventional unit testing.
+1.  Validate application's use of a schema via conventional unit testing.
+    This is part of the :ref:`demo_sqa` section.
 
--   Validate file conformance to a schema via "live-file testing".
+2.  Validate file conformance to a schema via "live-file testing".
+    This is part of the :ref:`demo_sqa` section.
+
+3.  Validate the three-way application-schema-file binding by including a
+    **Data Validation** mode in every file processing application.
 
 In this section we'll show how to include 
-a **File Validation** mode in every file processing application.  
+a **Data Validation** mode in every file processing application.
 
 Having a validation mode means that we must disentangle all of the persistent state change 
 operations from the input and processing in our application.  
-The "normal" mode uses persistent changes based on the output.
-The validation mode doesn't make persistent changes;
-it can be viewed as a sort of "dry run": all the processing; none of the writing.
+The "normal" mode makes persistent changes to files or databases.
+The "validation" mode doesn't make persistent changes;
+it can be viewed as a sort of "dry run": all the processing with none of the writing.
 
 We'll do this with a combination of the **Command** and the **Strategy** design patterns.
 We'll create applications
 which validate their input file and have a simple plug-in strategy for 
 doing any final persistent processing on that file.
 
+See :file:`demo/app.py` for the complete source.
+
 ..  note:: Simple File Structures
 
-    This validation is designed for simple CSV files with embedded schema.
-    The assumption is that each sheet within the workbook
-    has a consistent structure. There's no filter applied to pass
-    or reject sheets.
-            
-    Some kind of extension to this application is required
-    to handle named sheets within a more complex workbook or 
-    to handle sheets which have no header.
+    The demo app structure is designed for simple files with embedded schema.
+    An assumption is that each sheet within the workbook
+    has a consistent structure. This avoids the complexities
+    of handling data that's not in first Normal Form.
+    (No repeating groups, all values are atomic.)
+
+Design Patterns
+===============
+
+There are two central design patterns
+that allow an application to have a validation
+(or "dry-run") mode that avoid destructive
+writes.
+
+The first part is using **Command** to isolate
+state changes. The second is making a **Context Manager**
+so the command's behavior is controlled by the context.
 
 State Change Commands
-=======================
+---------------------
 
 The **Command** design patterns is helpful for isolating state changes in an application.
 
-Each change (create, update, delete) creates a **Command**.  
-In validate mode, these are created but not applied. 
-In "normal" processing mode, these are created and applied.
+Each state change (create, update, delete) is a  **Command** that can be disabled.
+In validate mode, the state changing commands are disabled.
+In "normal" processing mode, all commands are applied.
 
-For Extract-Transform-Load (ETL) applications, the commands are the loads.
+Here are some examples:
 
-For create-retrieve-update-delete (CRUD) programs, the commands are variations on create, update and delete.
+-   For Extract-Transform-Load (ETL) applications, the state-changing commands are the loads or file writes.
 
-For data warehouse dimensional conformance applications, the 
-command may be a slowly-changing dimension (SCD) algorithm that does insert
-or update (or both) into a dimension table.
+-   For create-retrieve-update-delete (CRUD) programs, the state-changing commands are the variations on create, update and delete.
+    The retrieves don't make state changes.
 
-For applications that involve a (potentially) complex multi-step workflow with
-(potentially) several state changes along the way, each change is a command.
+-   For data warehouse dimensional conformance applications, the
+    command may implement a slowly-changing dimension (SCD) algorithm that does insert
+    or update (or both) into a dimension table.
+
+-   For applications that involve a (potentially) complex multi-step workflow with
+    (potentially) several state changes along the way, each change is a command.
 
 In some cases, a fairly sophisticated **Command** class hierarchy is
 called for.  In other cases, however, the individual commands can be
 merged into the validate **Strategy** object as methods.
 
 Persistence Context Manager
-=============================
+---------------------------
 
 One good way to distinguish between persistent and transient processing 
 is to use a **Strategy** class hierarchy.
 This will have two variations on the persistent state changes.
 
--   **Validate**.  This subclass does nothing.
-
 -   **Process**.  This subclass actually makes persistent state changes.
+
+-   **Validate**.  This subclass avoids persistent state changes.
 
 Combining the validate **Strategy** with the state change **Command** 
 leads to class similar to the following.
@@ -81,13 +98,14 @@ that makes proper changes to the filesystem or database.
 ..  parsed-literal::
 
     class Persistent_Processing:
-        stop_on_exception= True
-        def __init__( self, context ):
-            self.context= context
-        def save_this( self, this_instance ):
-            this_instance.save()
-        def save_that( self, this_instance ):
-            that_instance.save()
+        stop_on_exception = True
+        def __init__(self, target: Union[DB, IO, Whatever]) -> None:
+            self.target = target
+            self.file_or_database: Union[DB, IO, Whatever]
+        def save_this(self, this: This) -> None:
+            this.serialize(self.file_or_database)
+        def save_that(self, that: That -> None):
+            that.serialize(self.file_or_database)
 
 We'll fold in the Context Manager interface.  This is a polite way to support
 any preparation or finalization.  For example, we would use the context manager
@@ -95,10 +113,17 @@ to create database connections, or finalize file system operations, etc.
 
 ..  parsed-literal::
 
-        def __enter__( self ):
+        def __enter__(self) -> "Persistent_Processing":
+            self.file_or_database = file_or_database.open(self.target)
             return self
-        def __exit__( self, exc_type, exc_val, exc_tb ):
-            if exc_type is not None: return False
+        def __exit__(
+            self,
+            exc_type: Optional[Type[BaseException]],
+            exc_val: Optional[BaseException],
+            exc_tb: TracebackType
+        ) -> None:
+            if self.file_or_database:
+                self.file_or_database.close()
      
 Here's a subclass which implements a safe, do-nothing strategy.  This 
 is used for "validate-mode" processing. It's a subclass that turns off
@@ -106,146 +131,182 @@ persistence.
        
 ..  parsed-literal::
 
-    class Validate_Only_Processing( Persistent_Processing ):
-        stop_on_exception= False
-        def __init__( self, context ):
-            self.context= context
-        def save_this( self, this_instance ):
+    class Validate_Only_Processing(Persistent_Processing):
+        stop_on_exception = False
+        def __init__(self, target: Union[DB, IO, Whatever]) -> None:
+            super().__init__(target)
+        def __enter__(self) -> "Persistent_Processing":
+            self.file_or_database = None
+            return self
+        def save_this(self, this: This) -> None:
             pass
-        def save_that( self, this_instance ):
+        def save_that(self, that: That) -> None:
             pass
 
-..	note:: Alternate Design
+An Alternate Design
+--------------------
 
-	We could revise this design to make the validation mode the superclass.
-	The subclass could then add the persistence features.
-	
-	This doesn't actually work out well in practice.
-	
-	Why not?
-	
-	It's too easy to overlook things in the validation mode superclass.
-	The normal persistent processing subclass then winds up having a **lot** of extra 
-	stuff added to it.
-	
-	The design winds up somewhat better looking if we remove persistence.
-	
+We could take a slightly differnt approach
+to this design. We could make validation mode the superclass.
+The subclass could then add the persistence features.
+
+This doesn't actually work out well in practice.
+
+Why not?
+
+It's often too easy to overlook important details when trying to create the validation mode superclass.
+The normal persistent processing subclass can then winds up having a **lot** of extra
+stuff added to it.
+
+The idea is to have the minimal change between
+these two versions.
+
+The design winds up somewhat better looking if we write the complete
+version including persistence as the superclass.
+We can then factor out the state-changing steps to
+create a subclass variant of the command.
+
 Having these two classes allows us to configure our 
-application processing as follows. We can define high-level functions
-like :py:func:`validate` and :py:func:`process` that are identical
-except for the context manager that's used.
-
-..  parsed-literal::
-
-    def validate( sheet, some_context ):
-        with Validate_Only_Processing( some_context ) as mode:
-            counts= process_sheet( sheet, mode )
-        return counts
-
-    def process( sheet, some_context ):        
-        with Persistent_Processing( some_context ) as mode:
-            counts= process_sheet( sheet, mode )
-        return counts
-
-Both of these :py:func:`validate` and :py:func:`process` functions
-rely on a common :py:func:`process_sheeet`. This is agnostic of the
-processing context; it simply does its work.
-
-..  parsed-literal::
-
-    def process_sheet( sheet, persistence ):
-        for row in sheet.schema.rows_as_dict_iter(sheet):
-            try:
-                this= build_this( row )
-                f= ThisForm( this )
-                if f.is_valid():
-                    persistence.save_this( this )
-            except Exception, e:
-                if persistence.stop_on_exception: raise
-                
-This allows us to effectively unit test by creating a 
-mock version of ``Persistent_Processing`` and invoking
-the ``process_sheet`` function.
+application processing at run-time.
 
 Example Application
 =======================
 
-We depend on a number of Python libraries.  Plus, of course, we're
-creating workbooks, working with sheets and schema.
+We'll decompose the application into a number
+of separate areas.
 
-::
+..  uml::
 
-    import logging
-    import sys
-    import argparse
-    import pprint
-    from collections import defaultdict
-    
-    import stingray.workbook
-    import stingray.sheet
-    import stingray.schema
-    
-    logger= logging.getLogger( __name__ )
+    @startuml
+    package app {
+        package model
+        package persistence
+        package builders
+        package stingray
 
-ORM Layer
----------
+        persistence ..> model : "persists"
+        builders --> model : "creates"
+        builders --> stingray : "captures"
+    }
+    @enduml
 
-We'll often have an Object-Relational Mapping (ORM) layer.
-These are components that are widely shared.  They could be SQLAlchemy 
-mapped class or a Django ORM class.  
+We'll start with the core application model.
 
-It's appropriate to supplement the ORM with a "Form" that
-follows the Django design pattern. This is a class that is used for validating 
-and creating model instances.
+Model Components
+-----------------
 
-Here's our fake model object, :py:class:`This`, and it's form, :py:class:`ThisForm`.
+The central model objects embody the useful
+state and processing of our application.
+We want to strip away considerations of
+data capture and validation. We also want to strip
+away details of persistence.
 
-::
+..  uml::
 
-    class This:
-        def __init__( self, key, value ):
-            self.key, self.value= key, value
-        def save( self ):
-            pass # The ORM save operation
-            
-    class ThisForm:
-        def __init__( self, **kw ):
-            self.clean= kw
-        def is_valid( self ):
-            return self.clean['key'] is not None
-        def save( self ):
-            return This( **self.clean )
+    @startuml
+    package app {
+        package model {
+            class This {
+                key: str
+                value: float
+            }
+            class ThisForm {
+                is_valid(): bool
+                create(): This
+            }
+        }
+        ThisForm -> This : "creates"
+    }
+    @enduml
 
-We need to be sure that the ORM's save operation is only invoked through our persistence
-processing **Strategy** object.  With some libraries the persistence can 
-be implicit, making it difficult to assure that persistence is disabled properly.  
+Here's a model object, :py:class:`This`, and it's form, :py:class:`ThisForm`.
 
-There are a number of ways to handle implicit persistence in ORM layers.
-It may be necessary to provide a mock database "engine" or interface 
-in order to disable persistence.
+..  literalinclude:: ../../../demo/app.py
+    :lines: 23-35
+
+The application-specific processing for this
+class is the vague ``other_app_method()`` method.
+For some kinds of applications, there can be a
+great deal of application unique processing.
+For other applications, there's little more than
+serialization to help transfer a representation of
+the object's state to a file or database.
+
+We've borrowed the concept of a Form from the Django
+project. The form is used for input validation.
+We use a generic ``dict[str, Any]`` as the
+source of data for a form. This corresponds with the
+way HTML form input or query strings arrive in a
+web application. It is also relatively easy to
+serialize for multiprocessing applications.
+
+Here's the "form" associated with our ``This`` class:
+
+..  literalinclude:: ../../../demo/app.py
+    :lines: 38-46
+
+The idea here is to build application objects
+with a two-step dance.
+
+1.  A **builder function** uses a schema
+    to transform a source :py:class:`Row` object
+    into a ``dict[str, Any]`` intermediate.
+
+2.  The ``ThisForm`` class validates the intermediate
+    dictionary and can create ``This`` instances
+    when the dictionary's data is valid.
+
+3.  The ``This`` object is the essential processing
+    for the application, and acan be serialized
+    for persistence.
+
+The reason for this decomposition is to make sure
+the application is insulated from
+changes to input sources and the resulting schema changes.
+
+When working with spreadsheets, schema changes
+are a constant source of struggle and conspicuous
+problems. Isolating these details makes the
+schema problems more observable and resulting
+changes have a more constrained impact on the application.
+
+We'll look at an implementation of
+the persistence context manager next.
 
 Persistence Context Manager
 ----------------------------
 
-These two classes define our two modes: validation and normal operations.
+We need to be sure that all state changing
+operations are part of a persistence
+processing **Strategy** object.
+The implementation varies with the kinds of
+persistence.
+
+-   File System writes. Generally, these are easy factor
+    into separate methods. This has to broadly include file creates
+    and filesystem operations like directory creation.
+    These depend on the :py:mod:`io` and :py:mod:`os` modules.
+
+-   Direct database Create-Update-Delete operations.
+    These operations will involve the database connection object.
+    They can be isolated so the database requests are in separate methods.
+
+-   Indirect database operations mediated by an Object-Relational Mapping (ORM) layer.
+    While this is bundled into the application model, this can be a little
+    easier to isolate by creating "do nothing" database engine or interface within the ORM
+    framework.
+
+
+We have two classes to define our two modes: normal operations and validation-only.
 The superclass defines the normal processing mode: we actually save objects.
+
+..  literalinclude:: ../../../demo/app.py
+    :lines: 52-73
+
 The subclass defines validation-only mode: we don't save anything.
 
-::
-
-    class Persistent_Processing:
-        stop_on_exception= True
-        def save_this( self, this_instance ):
-            this_instance.save()
-        def __enter__( self ):
-            return self
-        def __exit__( self, exc_type, exc_val, exc_tb ):
-            if exc_type is not None: return False
-                            
-    class Validate_Only_Processing( Persistent_Processing ):
-        stop_on_exception= False
-        def save_this( self, this_instance ):
-            pass
+..  literalinclude:: ../../../demo/app.py
+    :lines: 76-84
 
 In larger and more sophisticated applications, there may be a much more
 complex set of class definitions to enable or disable persistence.
@@ -253,137 +314,109 @@ complex set of class definitions to enable or disable persistence.
 Builder Functions
 -----------------
 
-See :ref:`developer` for background. We're going to need a "builder function."
-This transforms the source row object into the target object or collection.
+To capture data based on a formalized
+schema, it helps to have a "builder function".
+This transforms the source :py:class:`Row` instances
+created from a workbook into a form our application can use.
+
+As noted earlier, the builder creates a ``dict[str, Any]``
+structure that is used by form classes to create
+instances of the useful application objects.
 
 To handle variant logical layouts, a number of builder functions are provided
 to map the logical schemata to a more standardized conceptual schema.
 
-::
+..  literalinclude:: ../../../demo/app.py
+    :lines: 90-101
         
-    def builder_1( row ):
-        return dict( 
-            key= row['Column "3" - string'].to_str(),
-            value= row['Col 2.0 - float'].to_float()
-        )
-        
-    def builder_2( row ):
-        return dict( 
-            key= row['Column 3'].to_str(),
-            value= row['Column 2'].to_float()
-        )
-        
-Note that these builder functions are frequently added to. It's rare to get these 
-down to a single version that always works.
+Note that these builder functions are frequently added to.
+It's rare to get these down to a single version that always works.
+Instead, each change to input documents will lead to yet another builder function.
 
-Consequently, it's important to always **add** new builder functions.  Logical layouts are a
-moving target.  Old layouts don't go away; making changes to a builder is a bad idea.
+It's important to always **add** new builder functions.
+Logical layouts are a moving target.
+Old layouts don't go away; modifying a builder is a bad idea.
+This follows the **Open-Closed** Design Principle.
+The application is open to extension by adding new builders.
+It's closed to modification because we won't change an existing builder,
+we'll move forward and use a replacement.
+
+As an optimization we can create the form
+objects directly from the row. It's not
+clear that this optimization is deeply beneficial.
+It's best to start with separate classes
+and if the processing around these transient
+dictioanries is a performance problem, then
+the optimization is helpful.
 
 It helps to have a function like this to map argument values to a builder function.
 
-::
+..  literalinclude:: ../../../demo/app.py
+    :lines: 104-111
 
-    def make_builder( args ):
-    	return {
-    		'1': builder_1,
-    		'2': builder_2
-    		}[args.layout]
+We can update the mapping to add new builders
+to the applciation.
 
-It can help to have a better naming convention that "_1" and "_2".  In practice,
-however, it's sometimes hard to determine why a logical layout changed, making
+It can help to have a better naming convention that "builder_1" and "builder_2".
+In practice, however, it's sometimes hard to determine why a logical layout changed, making
 it hard to assign a meaningful name to the layout.
 
-Processing
-------------
+Sheet Processing
+----------------
 
-See :ref:`developer` for background. We're going to need a "sheet process function."
-This transforms the source sheet into the target collection, usually an output file.
+The :py:class:`Row` instances are part of a
+:py:class:`Sheet` collection.
+A "sheet process function."
+captures data from the source sheet,
+processing the individual rows.
 
-The :py:func:`process_sheet` function is the heart of the application.
+A :py:func:`process_sheet` function is the heart of the application.
 This handles all the rows present in a given sheet.
 
-::
+..  literalinclude:: ../../../demo/app.py
+    :lines: 117-138
 
-    def process_sheet( sheet, builder, persistence ):
-        counts= defaultdict( int )
-        if sheet.schema is None:
-            # Empty sheet -- no embedded schema
-            return counts
-        for source_row in sheet.schema.rows_as_dict_iter(sheet):
-            try:
-                counts['read'] += 1
-                row_dict= builder( source_row )
-                f= ThisForm( **row_dict )
-                if f.is_valid():
-                    counts['processed'] += 1
-                    this= f.save()
-                    persistence.save_this( this )
-                else:
-                    counts['rejected'] += 1
-            except Exception as e:
-                counts['invalid'] += 1
-                if persistence.stop_on_exception: raise
-                summary= "{0} {1!r}".format( e.__class__.__name__, e.args )
-                logger.error( summary )
-                counts['error',summary] += 1
-        return counts
-        
+The objective here is to provide some observability
+and audit support in addition to row processing.
+The production of counts acts as confirmation
+that all rows were handled.
+
+If the counts do not add up properly,
+the inconsistency demonstrates the presence
+of programming logic problems.
+
+In the even of an unhandled exception,
+the counts can help locate the row that
+caused the problem.
+
 Some applications will have variant processing for workbooks that
 contain different types of sheets. 
 This leads to different :py:func:`process_this_sheet` and :py:func:`process_that_sheet` functions. 
-Each will follow the above template to process all rows of the sheet.
+Each will follow this design pattern to process all rows of the sheet.
 
-High-Level Interfaces
-------------------------
+Workbook Processing
+-------------------
 
-These are the functions that can be used for live-file unit testing
-of the application as a whole. The :py:func:`validate` function
-uses a context manager for validation only. The :py:func:`process` function
-uses the other context manager to that actual work is performed.
+The sheet (or sheets) are contained
+within a workbook. The **Stingray Reader**
+makes the workbook a common **Facade** over
+workbook files as well as COBOL files.
 
-::
+For newline-delimited JSON, CSV, and flat
+files, the workbook only has a single "sheet."
+For other workbooks, there may be multiple
+sheets; often only one has data and the others
+are empty.
 
-    def validate( sheet, builder ):
-        with Validate_Only_Processing() as mode:
-            counts= process_sheet( sheet, builder, mode )
-        return counts
+..  literalinclude:: ../../../demo/app.py
+    :lines: 144-151
 
-    def process( sheet, builder ):        
-        with Persistent_Processing() as mode:
-            counts= process_sheet( sheet, builder, mode )
-        return counts
-
-These higher-level functions share a common :py:func:`process_workbook`
-function that does the real work.
-     
-::
-
-
-    def process_workbook( source, sheet_func, builder_func ):
-        for name in source.sheets():
-            logger.info( "{0} :: {1}".format( input, name ) )
-            sheet= source.sheet( name, 
-                stingray.sheet.EmbeddedSchemaSheet,
-                loader_class=stingray.schema.loader.HeadingRowSchemaLoader )
-            counts= sheet_func( sheet, builder_func )
-            logger.info( pprint.pformat(dict(counts)) )
+In rare cases, this processing is more complex.
+For example, a workbook may have multiple sheets,
+some of which must be ignored.
 
 When we do live-file testing of a given file, we can do something like the following.
 This uses :py:func:`validate` to assure that the file's schema is correct.
-
-..  parsed-literal::
-
-    from some_app import validate
-    class Test_Some_File( unittest.TestCase ):
-        def setUp( self ):
-            self.source= stingray.workbook.open_workbook( input )
-            self.builder_func= builder_1
-        def test_should_process_sheet1( self ):
-            sheet= source.sheet( "Sheet1", 
-                stingray.sheet.EmbeddedSchemaSheet,
-                loader_class=stingray.schema.loader.HeadingRowSchemaLoader )
-            counts= validate( sheet, self.builder_func )
-            self.assertEqual( 12345, counts['read'] )            
 
 Command-Line Interface
 ----------------------
@@ -391,18 +424,11 @@ Command-Line Interface
 We have some standard arguments.  
 While we'd like to use "-v" for validate mode, this gets confused with setting the verbosity level.
 
-::
+..  literalinclude:: ../../../demo/app.py
+    :lines: 159-173
 
-    def parse_args():
-        parser= argparse.ArgumentParser()
-        parser.add_argument( 'file', nargs='+' )
-        parser.add_argument( '-d', '--dry-run', default=False, action='store_true',  )
-        parser.add_argument( '-l', '--layout', default='1', choices=('1','2') )
-        parser.add_argument( '-v', '--verbose', dest='verbosity',
-            default=logging.INFO, action='store_const', const=logging.DEBUG )
-        return parser.parse_args()
 
-The overall main program looks something like this.  It handles a number of
+The overall ``main()`` function looks something like this.  It handles a number of
 common main-program issues.
 
 1.  Logging.
@@ -414,25 +440,30 @@ common main-program issues.
 #.  Gracefully catching and logging exceptions.
 #.  Exit Status to the OS.
 
-::
+..  literalinclude:: ../../../demo/app.py
+    :lines: 179-192
+    :emphasize-lines: 5
 
-    if __name__ == "__main__":
-        logging.basicConfig( stream=sys.stderr )
-        args= parse_args()
-        logging.getLogger().setLevel( args.verbosity )
-        builder_func= make_builder( args )
-        sheet_func= validate if args.dry_run else process 
-        logger.info( "Mode: {0}".format( sheet_func.__name__ ) )
-        try:
-            for input in args.file:
-                with stingray.workbook.open_workbook( input ) as source:
-                    process_workbook( source, sheet_func, builder_func )
-            status= 0
-        except Exception as e:
-            logging.exception( e )
-            status= 3 
-        logging.shutdown()
-        sys.exit( status )
+The highlighted line makes the selection of
+the persistence class to use, assinging
+the object to ``mode_class``. This encapsulates
+the run-time behavior change for data validation
+separate from data processing.
+
+Since there are no other relevant programming
+changes, we can be confident that unit testing
+will produce a robust application that can be
+used for data validation without
+questions or complications.
+
+This leaves a tiny "main program switch" at the
+end of the module.
+
+..  literalinclude:: ../../../demo/app.py
+    :lines: 195-198
+
+We strongly discourage a main program switch
+with any more code in it than shown above.
         
 Running the Demo
 ================
@@ -441,29 +472,64 @@ We can run this program like this.
 
 ..  code-block:: bash
 
-    python3 demo/app.py -d -l 1 sample/\*.csv
+    python demo/app.py -d -l 1 sample/*.csv
     
 This will apply builder with layout ``1`` against all of the :file:`sample/*.csv` files.
 
-The output looks like this
+The output will cinlude look like this
 
 ..  code-block:: none
 
-    INFO:demo/app.py:Mode: validate
-    INFO:demo/app.py:sample/csv_workbook.csv :: csv_workbook
-    INFO:demo/app.py:{'input': 2, 'valid': 2}
-    INFO:demo/app.py:sample/simple.csv :: simple
-    ERROR:demo/app.py:KeyError 'Column "3" - string'
-    ERROR:demo/app.py:KeyError 'Column "3" - string'
-    ERROR:demo/app.py:KeyError 'Column "3" - string'
-    ERROR:demo/app.py:KeyError 'Column "3" - string'
-    ERROR:demo/app.py:KeyError 'Column "3" - string'
-    ERROR:demo/app.py:KeyError 'Column "3" - string'
-    ERROR:demo/app.py:KeyError 'Column "3" - string'
-    INFO:demo/app.py:{'KeyError \'Column "3" - string\'': 7, 'input': 7}
+    INFO:__main__:Mode: Validate_Only_Processing
+    INFO:__main__:sample/Anscombe_quartet_data.csv ::
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    INFO:__main__:{'read': 11, ('error', 'KeyError (\'Column "3" - string\',)'): 11}
+    INFO:__main__:sample/Anscombe_schema.csv ::
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    INFO:__main__:{'read': 5, ('error', 'KeyError (\'Column "3" - string\',)'): 5}
+    INFO:__main__:sample/csv_workbook.csv ::
+    INFO:__main__:{'processed': 2, 'read': 2}
+    INFO:__main__:sample/simple.csv ::
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    ERROR:__main__:KeyError ('Column "3" - string',)
+    INFO:__main__:{'read': 7, ('error', 'KeyError (\'Column "3" - string\',)'): 7}
 
-We can see that :file:`sample/csv_workbook.csv` has two valid rows.
+Four separate CSV files were examined.
 
-We can see that :file:`sample/simple.csv` has seven rows, all of which are missing the required value.  
-If all the rows are wrong, the schema in the file
+-   :file:`sample/Anscombe_quartet_data.csv` has eleven
+    rows, all of which are missing the required value.
+
+-   :file:`sample/Anscombe_schema.csv` has five
+    rows, all of which are missing the required value.
+
+-   :file:`sample/csv_workbook.csv` has two valid rows.
+
+-   :file:`sample/simple.csv` has seven
+    rows, all invalid.
+
+When all the rows are wrong, the schema in the file
 doesn't match the schema required by the application.
+
+We can -- confidently -- run the application
+on the :file:`sample/csv_workbook.csv` knowing
+that the file has been tested as well as the
+application software.

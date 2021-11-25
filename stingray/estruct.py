@@ -52,8 +52,10 @@ import struct
 
 logger = logging.getLogger("stingray.estruct")
 
+
 class DesignError(BaseException):
     pass
+
 
 clause_pattern = re.compile(
     r"(?:USAGE\s+)?(?:IS\s+)?(?P<usage>BINARY|COMPUTATIONAL-1|COMPUTATIONAL-2|COMPUTATIONAL-3|COMPUTATIONAL-4|COMPUTATIONAL|COMP-1|COMP-2|COMP-3|COMP-4|COMP|DISPLAY|PACKED-DECIMAL)"
@@ -206,7 +208,9 @@ def unpack(format: str, buffer: bytes) -> Any:
             all(d == "9" for d in digit_groups[3]),
         )
         zoned_decimal = all(numeric_options) and not edit_options
-        logger.debug(f"PIC {digit_groups}: all({numeric_options}) and not {edit_options} = {zoned_decimal}")
+        logger.debug(
+            f"PIC {digit_groups}: all({numeric_options}) and not {edit_options} = {zoned_decimal}"
+        )
         if zoned_decimal:
             text = "".join(str(b & 0x0F) for b in buffer)
             sign_half = (buffer[-1] & 0xF0) >> 4
@@ -216,7 +220,7 @@ def unpack(format: str, buffer: bytes) -> Any:
             return base * scale * sign
         # Match text with a regular expression derived from the picture to see if it's valid.
         text = buffer.decode("CP037")
-        logger.debug(f'estruct.unpack: {buffer!r} == {text=}')
+        logger.debug(f"estruct.unpack: {buffer!r} == {text=}")
         if not re.match(pattern, text):
             raise ValueError(f"{text!r} doesn't match pattern {pattern!r}")
         # It's display text.
@@ -282,7 +286,9 @@ def calcsize(format: str) -> int:
         return 2 if size < 5 else (4 if 5 <= size < 10 else 8)
     else:
         # This is a design error: regular expression doesn't match this if statement
-        raise RuntimeError(f"Unparsable {usage} in picture: {format!r}")  # pragma: no cover
+        raise RuntimeError(
+            f"Unparsable {usage} in picture: {format!r}"
+        )  # pragma: no cover
 
 
 class RECFM_Reader(abc.ABC):
@@ -330,7 +336,7 @@ class RECFM_N(RECFM_Reader):
                 raise RuntimeError(
                     f"No bytes consumed from buffer via the .used() method!"
                 )
-            self.buffer = self.buffer[self._used:] + self.source.read(
+            self.buffer = self.buffer[self._used :] + self.source.read(
                 32768 - self._used
             )
 

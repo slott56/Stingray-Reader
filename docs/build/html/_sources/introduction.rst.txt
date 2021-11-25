@@ -65,16 +65,9 @@ as the defacto schema for that sheet. Given only column names, the data types mu
 be assumed or conversion functions provided as part of the application to
 assure that the column contents are -- indeed -- objects of useful Python clsses.
 
-This parallels the way ``csv.DictReader`` extracts the first row as the keys
-for each row's dictionary.
-
-There are several alternative to using the ``HeadingRowSchemaLoader``:
-
--   Extend the class to use more than a single row as the schema.
-
--   Using an external schema.
-
-Some spreadsheets have complex, multi-row titles. These require a more sophisticated parser
+This schema loader parallels the way ``csv.DictReader`` extracts the first row as the keys
+for each row's dictionary. It's explicit, however, permitting change for exceptional cases.
+For example, a spreadsheet with complex, multi-row titles. These require a more sophisticated parser
 that consumes multiple rows of heading.
 
 In the most complex cases, multiple independent "sections" of data are present in a
@@ -290,10 +283,10 @@ There's no value in creating a new mapping language. This is bad:
 ..  parsed-literal::
 
     target-doc:: source-doc WITH headers=embedded FORMATS: format-1, format-2
-            name: FROM 'some column' IN format-1 AS string, FROM 'some column' IN format-2 AS string
-            address: FROM 'another column' IN format-1 AS string, FROM 'some column' IN format-2 AS string
-            zip: FROM 'zip' IN format-1 AS string WITH digits_5, FROM 'zip-5' IN format-2 AS string
-            phone: FROM 'phone' IN format-1 AS string, FROM 'phone' IN format-2 AS string
+    name: FROM 'some column' IN format-1 AS string, FROM 'some column' IN format-2 AS string
+    address: FROM 'another column' IN format-1 AS string, FROM 'some column' IN format-2 AS string
+    zip: FROM 'zip' IN format-1 AS string WITH digits_5, FROM 'zip-5' IN format-2 AS string
+    phone: FROM 'phone' IN format-1 AS string, FROM 'phone' IN format-2 AS string
 
 We don't need a cumbersome language outside Python.
 

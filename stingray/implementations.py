@@ -48,13 +48,21 @@ try:
     # It, however, doesn't seem to be required.
 
     class XLSUnpacker(WBUnpacker):
-        def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None, **kwargs: Any) -> None:
+        def open(
+            self,
+            name: Path,
+            file_object: Optional[Union[IO[str], IO[bytes]]] = None,
+            **kwargs: Any,
+        ) -> None:
             self.the_file = xlrd.open_workbook(name, **kwargs)
+
         def close(self) -> None:
             if hasattr(self, "the_file") and self.the_file:
                 del self.the_file
+
         def sheet_iter(self) -> Iterator[str]:
             yield from (sheet.name for sheet in self.the_file.sheets())
+
         def instance_iter(self, name: str, **kwargs: Any) -> Iterator[WBInstance]:
             xlrd_sheet = self.the_file.sheet_by_name(name)
             for row in xlrd_sheet.get_rows():
@@ -62,9 +70,7 @@ try:
 
     @file_registry.file_suffix(".xls")
     class XLS_Workbook(Workbook[WBInstance]):
-        def __init__(
-                self, name: Union[str, Path], **kwargs: Any
-        ) -> None:
+        def __init__(self, name: Union[str, Path], **kwargs: Any) -> None:
             super().__init__(name)
             self.xlrd_args = kwargs
             self.unpacker = XLSUnpacker()
@@ -81,7 +87,8 @@ try:
         def sheet_iter(self) -> Iterator[Sheet[WBInstance]]:
             return (Sheet(self, name) for name in self.unpacker.sheet_iter())
 
-except ImportError:  #pragma: no cover
+
+except ImportError:  # pragma: no cover
     pass
 
 
@@ -90,14 +97,22 @@ try:
     import openpyxl.cell.cell  # type: ignore [import]
 
     class XLSXUnpacker(WBUnpacker):
-        def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None, **kwargs: Any) -> None:
+        def open(
+            self,
+            name: Path,
+            file_object: Optional[Union[IO[str], IO[bytes]]] = None,
+            **kwargs: Any,
+        ) -> None:
             self.the_file = load_workbook(filename=name, **kwargs)
+
         def close(self) -> None:
             if hasattr(self, "the_file") and self.the_file:
                 self.the_file.close()
                 del self.the_file
+
         def sheet_iter(self) -> Iterator[str]:
             return (cast(str, name) for name in self.the_file.sheetnames)
+
         def instance_iter(self, name: str, **kwargs: Any) -> Iterator[WBInstance]:
             pyxl_sheet = self.the_file[name]
             for row in pyxl_sheet.iter_rows():
@@ -105,9 +120,7 @@ try:
 
     @file_registry.file_suffix(".xlsx")
     class XLSX_Workbook(Workbook[WBInstance]):
-        def __init__(
-                self, name: Union[str, Path], **kwargs: Any
-        ) -> None:
+        def __init__(self, name: Union[str, Path], **kwargs: Any) -> None:
             super().__init__(name)
             self.kwargs = kwargs
             self.unpacker = XLSXUnpacker()
@@ -127,7 +140,7 @@ try:
             return (Sheet(self, name) for name in self.unpacker.sheet_iter())
 
 
-except ImportError:  #pragma: no cover
+except ImportError:  # pragma: no cover
     pass
 
 
@@ -135,13 +148,21 @@ try:
     import pyexcel_ods3  # type: ignore [import]
 
     class ODSUnpacker(WBUnpacker):
-        def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None, **kwargs: Any) -> None:
+        def open(
+            self,
+            name: Path,
+            file_object: Optional[Union[IO[str], IO[bytes]]] = None,
+            **kwargs: Any,
+        ) -> None:
             self.the_file = pyexcel_ods3.get_data(str(name), **kwargs)
+
         def close(self) -> None:
             if hasattr(self, "the_file") and self.the_file:
                 del self.the_file
+
         def sheet_iter(self) -> Iterator[str]:
             return iter(self.the_file.keys())
+
         def instance_iter(self, name: str, **kwargs: Any) -> Iterator[WBInstance]:
             pyexcel_sheet = self.the_file[name]
             for row in pyexcel_sheet:
@@ -149,9 +170,7 @@ try:
 
     @file_registry.file_suffix(".ods")
     class ODS_Workbook(Workbook[WBInstance]):
-        def __init__(
-                self, name: Union[str, Path], **kwargs: Any
-        ) -> None:
+        def __init__(self, name: Union[str, Path], **kwargs: Any) -> None:
             super().__init__(name)
             self.kwargs = kwargs
             self.unpacker = ODSUnpacker()
@@ -169,26 +188,34 @@ try:
             # return (Sheet(self, name) for name in self.pyexcel_book.keys())
             return (Sheet(self, name) for name in self.unpacker.sheet_iter())
 
-except ImportError:  #pragma: no cover
+
+except ImportError:  # pragma: no cover
     pass
 
 
 try:
     import numbers_parser  # type: ignore [import]
 
-
     class NumbersUnpacker(WBUnpacker):
-        def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None, **kwargs: Any) -> None:
+        def open(
+            self,
+            name: Path,
+            file_object: Optional[Union[IO[str], IO[bytes]]] = None,
+            **kwargs: Any,
+        ) -> None:
             self.the_file = numbers_parser.Document(name, **kwargs)
+
         def close(self) -> None:
             if hasattr(self, "the_file") and self.the_file:
                 del self.the_file
+
         def sheet_iter(self) -> Iterator[str]:
             return (
                 f"{sheet.name}::{table.name}"
-                    for sheet in self.the_file.sheets()
-                        for table in sheet.tables()
+                for sheet in self.the_file.sheets()
+                for table in sheet.tables()
             )
+
         def instance_iter(self, name: str, **kwargs: Any) -> Iterator[WBInstance]:
             sheet, _, table = name.partition("::")
             numbers_sheet = self.the_file.sheets()[sheet].tables()[table]
@@ -197,9 +224,7 @@ try:
 
     @file_registry.file_suffix(".ods")
     class Numbers_Workbook(Workbook[WBInstance]):
-        def __init__(
-                self, name: Union[str, Path], **kwargs: Any
-        ) -> None:
+        def __init__(self, name: Union[str, Path], **kwargs: Any) -> None:
             super().__init__(name)
             self.numbers_args = kwargs
             self.unpacker = NumbersUnpacker()
@@ -209,6 +234,5 @@ try:
             self.unpacker.close()
 
 
-except ImportError:  #pragma: no cover
+except ImportError:  # pragma: no cover
     pass
-

@@ -17,6 +17,15 @@ same conceptual schema. We need several kinds of assurance.
 
 -   More importantly, how do we confirm that an application can successfully use a file?
 
+The answers to these questions involve a two-phased approach.
+First, essential unit testing and integration testing must be done.
+Second, the data itself must be validated.
+
+We'll look an examples to show how to do basic unit and integration
+testing. This is followed by several examples to show how to do write data
+validation applications, and how to provide data validation (or a "dry-run" option)
+as part of a converntional file-processing application.
+
 ..  toctree::
     :maxdepth: 1
 

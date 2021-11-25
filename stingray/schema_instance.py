@@ -369,8 +369,24 @@ from pathlib import Path
 from pprint import pprint
 import sys
 from typing import (
-    Union, Any, NamedTuple, Protocol, TextIO, BinaryIO, Optional, overload, Iterator, cast, Type,
-    Callable, TypeVar, Generic, AnyStr, Sequence, SupportsInt, IO
+    Union,
+    Any,
+    NamedTuple,
+    Protocol,
+    TextIO,
+    BinaryIO,
+    Optional,
+    overload,
+    Iterator,
+    cast,
+    Type,
+    Callable,
+    TypeVar,
+    Generic,
+    AnyStr,
+    Sequence,
+    SupportsInt,
+    IO,
 )
 import weakref
 
@@ -378,8 +394,10 @@ from stingray import estruct
 
 logger = logging.getLogger("stingray.schema_instance")
 
+
 class DesignError(BaseException):
     pass
+
 
 JSON = Union[None, bool, int, float, str, list[Any], dict[str, Any]]
 
@@ -388,12 +406,14 @@ class Reference(Protocol):
     """
     # TODO: Formalize a ref_to protocol, used by ``RefToSchema`` and ``DependsOnArraySchema``.
     """
+
     pass
 
 
-# TODO: Refactor schema_instance??
-#  - Schema & Nav superclass -> stingray.schema
+# TODO: Refactor schema_instance module into two pieces:
+#  - Schema, Unpacker, and Nav superclasses -> stingray.schema
 #  - Location and Nav subclasses -> stingray.navigation
+
 
 class Schema:
     """
@@ -406,11 +426,13 @@ class Schema:
     Generally, these should be seen as immutable. To permit forward
     references, the RefTo subclass needs to be mutated.
     """
+
     def __init__(self, attributes: JSON) -> None:
         self._attributes = cast(dict[str, Any], attributes)
         # keys for _attributes include "type", "items", "properties", "format", etc.
         self.ref: Optional[str] = None
         self.ref_to: Optional[Schema] = None
+
     @property
     def type(self) -> str:
         try:
@@ -418,28 +440,38 @@ class Schema:
         except KeyError as ex:
             logger.error(f"{ex} on {self!r}")
             raise
+
     @property
     def attributes(self) -> JSON:
         return self._attributes
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self._attributes})"
+
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Schema):
             return type(self) == type(other) and self._attributes == other._attributes
         return NotImplemented  # pragma: no cover
-    def print(self, indent: int=0, hide: set[str] = set()) -> None:
+
+    def print(self, indent: int = 0, hide: set[str] = set()) -> None:
         show_attr = {k: self._attributes[k] for k in self._attributes if k not in hide}
         line = f"{indent*'  '}{self.__class__.__name__}({show_attr})"
         print(line)
+
     def json(self) -> JSON:
         return self._attributes
-    def dump_iter(self, nav: Optional["Nav"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+
+    def dump_iter(
+        self, nav: Optional["Nav"], indent: int = 0
+    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
         """Yield nesting, schema, indices, and value"""
         if nav:
             yield indent, self, (), nav.value()
 
+
 class AtomicSchema(Schema):
     pass
+
 
 class ArraySchema(Schema):
     def __init__(self, attributes: JSON, items: "Schema") -> None:
@@ -450,23 +482,31 @@ class ArraySchema(Schema):
             or cast(dict[str, Any], attributes).get("minItems")
             or 1
         )
+
     @property
     def items(self) -> "Schema":
         return self._items
+
     @property
     def maxItems(self) -> int:
         return self._maxItems
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self._attributes}, {self.items})"
-    def print(self, indent: int=0, hide: set[str] = set()) -> None:
+
+    def print(self, indent: int = 0, hide: set[str] = set()) -> None:
         super().print(indent, hide={"items"})
-        self._items.print(indent+1)
-    def dump_iter(self, nav: Optional["Nav"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+        self._items.print(indent + 1)
+
+    def dump_iter(
+        self, nav: Optional["Nav"], indent: int = 0
+    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
         """Yield nesting, schema, indices, and object"""
         # TODO: Enumerate index values from minItems or 0 to maxItems
         yield indent, self, (), None
         if nav:
-            yield from self._items.dump_iter(nav.index(0), indent+1)
+            yield from self._items.dump_iter(nav.index(0), indent + 1)
+
 
 class DependsOnArraySchema(ArraySchema):
     """
@@ -474,87 +514,114 @@ class DependsOnArraySchema(ArraySchema):
     The extension "maxItemsDependsOn" attribute has a reference to another
     field in this definition.
     """
-    def __init__(self, attributes: JSON, items: "Schema", ref_to: Optional["Schema"]) -> None:
+
+    def __init__(
+        self, attributes: JSON, items: "Schema", ref_to: Optional["Schema"]
+    ) -> None:
         super().__init__(attributes, items)
         self._items = items
         self.max_ref = self._attributes["maxItemsDependsOn"].get("$ref")
         self.max_ref_to = ref_to
+
     @property
     def maxItems(self) -> int:
         raise TypeError(f"maxItems depends on {self.max_ref_to} value of an instance")
+
 
 class ObjectSchema(Schema):
     def __init__(self, attributes: JSON, properties: dict[str, "Schema"]) -> None:
         super().__init__(attributes)
         self.properties = properties
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self._attributes}, {self.properties})"
-    def print(self, indent: int=0, hide: set[str] = set()) -> None:
+
+    def print(self, indent: int = 0, hide: set[str] = set()) -> None:
         super().print(indent, hide={"properties"})
         for prop in self.properties.values():
-            prop.print(indent+1)
-    def dump_iter(self, nav: Optional["Nav"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+            prop.print(indent + 1)
+
+    def dump_iter(
+        self, nav: Optional["Nav"], indent: int = 0
+    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
         """Yield nesting, schema, indices, and object"""
         yield indent, self, (), None
         if nav:
             for name, child in self.properties.items():
-                yield from child.dump_iter(nav.name(name), indent+1)
+                yield from child.dump_iter(nav.name(name), indent + 1)
+
 
 class OneOfSchema(Schema):
     def __init__(self, attributes: JSON, alternatives: list["Schema"]) -> None:
         super().__init__(attributes)
         self.alternatives = alternatives
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self._attributes}, {self.alternatives})"
+
     @property
     def type(self) -> str:
         return "oneOf"
-    def print(self, indent: int=0, hide: set[str] = set()) -> None:
+
+    def print(self, indent: int = 0, hide: set[str] = set()) -> None:
         super().print(indent, hide={"oneOf"})
         for alt in self.alternatives:
-            alt.print(indent+1)
-    def dump_iter(self, nav: Optional["Nav"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+            alt.print(indent + 1)
+
+    def dump_iter(
+        self, nav: Optional["Nav"], indent: int = 0
+    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
         """Yield nesting, schema, indices, and object"""
         yield indent, self, (), None
         if nav:
             for alt in self.alternatives:
                 # Not all alternatives will be valid.
                 try:
-                    yield from alt.dump_iter(nav, indent+1)
+                    yield from alt.dump_iter(nav, indent + 1)
                 except (IndexError, KeyError):  # pragma: no cover
                     pass
 
+
 class RefToSchema(Schema):
     """Must deference type and attributes properties."""
+
     def __init__(self, attributes: JSON, ref_to: Optional[Schema]) -> None:
         super().__init__(attributes)
         self.ref = self._attributes.get("$ref")
         self.ref_to = ref_to
+
     def __repr__(self) -> str:
         # This isn't exactly right.
         # To avoid recursion and provide a display value, we show a name here.
         return f"{self.__class__.__name__}({self._attributes}, {self.ref})"
+
     @property
     def type(self) -> str:
         if self.ref_to:
             return self.ref_to.type
         raise ValueError(f"Invalid {self.__class__.__name__}")
+
     @property
     def attributes(self) -> JSON:
         if self.ref_to:
             return self.ref_to.attributes
         raise ValueError(f"Invalid {self.__class__.__name__}")
+
     @property
     def properties(self) -> dict[str, "Schema"]:
         if self.ref_to:
             return cast(ObjectSchema, self.ref_to).properties
         raise ValueError(f"Invalid {self.__class__.__name__}")
+
     @property
     def items(self) -> Schema:
         if self.ref_to:
             return cast(ArraySchema, self.ref_to).items
         raise ValueError(f"Invalid {self.__class__.__name__}")
-    def dump_iter(self, nav: Optional["Nav"], indent: int = 0) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+
+    def dump_iter(
+        self, nav: Optional["Nav"], indent: int = 0
+    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
         """Yield nesting, schema, indices, and object"""
         yield indent, self, (), None
 
@@ -569,8 +636,15 @@ class SchemaMaker:
 
     All ``$ref`` names are expected to refer to explicit ``:anchor`` names within this schema.
     """
-    ATOMIC = {"null", "boolean", "integer", "number", "string"}  # Requires extended meta-schema to add "decimal"
-    
+
+    ATOMIC = {
+        "null",
+        "boolean",
+        "integer",
+        "number",
+        "string",
+    }  # Requires extended meta-schema to add "decimal"
+
     def __init__(self) -> None:
         self.name_cache: dict[str, Schema] = {}
         self.fixup_list: list[Schema] = []
@@ -584,9 +658,11 @@ class SchemaMaker:
         source = cast(dict[str, Any], source)
 
         if source.get("oneOf"):
-            alternatives_schema = [self.walk_schema(value, path) for value in source.get("oneOf", [])]
+            alternatives_schema = [
+                self.walk_schema(value, path) for value in source.get("oneOf", [])
+            ]
             schema = OneOfSchema(attributes=source, alternatives=alternatives_schema)
-        
+
         elif source.get("$ref"):
             # A reference to a redefined field.
             # A ``name REDEFINES parent`` is a reference to ``REDFINES-parent.name``.
@@ -603,7 +679,7 @@ class SchemaMaker:
 
         elif source["type"] in self.ATOMIC:
             schema = AtomicSchema(source)
-        
+
         elif source["type"] == "array" or "items" in source:
             items_schema = self.walk_schema(source.get("items", {}), path)
             if "maxItemsDependsOn" in source:
@@ -612,30 +688,36 @@ class SchemaMaker:
                     assert ref_uri.startswith("#"), f"Invalid {ref_uri}"
                     _, _, ref_name = ref_uri.partition("#")
                     ref_to = self.name_cache[ref_name]
-                    schema = DependsOnArraySchema(attributes=source, items=items_schema, ref_to=ref_to)
+                    schema = DependsOnArraySchema(
+                        attributes=source, items=items_schema, ref_to=ref_to
+                    )
                 except KeyError:
                     # Forward references for OCCURS DEPENDS ON are sketchy at best.
                     # If we wanted to resolve them later...
                     # schema = DependsOnArraySchema(attributes=source, items=items_schema, ref_to=None)
                     # self.fixup_list.append(schema)
-                    raise ValueError(f"unknown $ref in {source!r}; forward references for maxItemsDependsOn aren't supported")
+                    raise ValueError(
+                        f"unknown $ref in {source!r}; forward references for maxItemsDependsOn aren't supported"
+                    )
             else:
                 schema = ArraySchema(attributes=source, items=items_schema)
-            
+
         elif source["type"] == "object" or "properties" in source:
             properties_schema = {
-                name: self.walk_schema(value, path+(name,)) 
+                name: self.walk_schema(value, path + (name,))
                 for name, value in source.get("properties", {}).items()
             }
             schema = ObjectSchema(attributes=source, properties=properties_schema)
-        
+
         else:
             # Serious Design Error...
             raise ValueError(f"Unknown {source['type']=!r} in {source}")
-            
-        self.name_cache[source.get("$anchor", source.get("title", "*UNNAMED*"))] = schema
+
+        self.name_cache[
+            source.get("$anchor", source.get("title", "*UNNAMED*"))
+        ] = schema
         return schema
-            
+
     def resolve(self, schema: Schema) -> Schema:
         """
         Resolve forward $ref references.
@@ -647,10 +729,12 @@ class SchemaMaker:
                 _, _, ref_name = ref_uri.partition("#")
                 ref_to = self.name_cache[ref_name]
             except KeyError:
-                raise ValueError(f"Cannot resolve {fixup.ref!r} in {list(self.name_cache.keys())}")
+                raise ValueError(
+                    f"Cannot resolve {fixup.ref!r} in {list(self.name_cache.keys())}"
+                )
             fixup.ref_to = ref_to
         return schema
-                            
+
     @classmethod
     def from_json(cls: Type["SchemaMaker"], source: JSON) -> Schema:
         sm = cls()
@@ -809,14 +893,18 @@ with an appropriate number of decimal places. The partial function ``decimal_2 =
 will transform float dollars into a decimal value rounded to the nearest penny
 """
 
+
 def digit_string(size: int, value: SupportsInt) -> str:
-    return (size*"0" + str(value))[-size:]
+    return (size * "0" + str(value))[-size:]
+
 
 digits_5 = partial(digit_string, 5)
+
 
 def decimal_places(digits: int, value: Any) -> Decimal:
     digits_right = Decimal(f"0.{(digits-1)*'0'}1")
     return Decimal(value).quantize(digits_right)
+
 
 decimal_2 = partial(decimal_places, 2)
 
@@ -830,18 +918,23 @@ CONVERSION: dict[Union[str, None], Callable[[Any], Any]] = {
     None: lambda x: x,
 }
 
+
 class NDInstance(Protocol):
     """
     The essential features of a non-delimited instance.
     The underlying data is ``AnyStr``, either bytes or text.
     """
+
     # Not Used
     def __init__(self, source: AnyStr) -> None: ...
+
     def unpacker(self, unpacker: "Unpacker[NDInstance]") -> "NDInstance": ...
+
     def schema(self, schema: "Schema") -> "NDInstance": ...
 
     @overload
     def __getitem__(self, index: int) -> Union[str, int]: ...
+
     @overload
     def __getitem__(self, index: slice) -> Union[str, bytes]: ...
 
@@ -854,8 +947,11 @@ class DInstance(Protocol):
 
     Not sure this is useful...
     """
-    def __init__(self, source: JSON) -> None: ...
+
+    def __init__(self, source: JSON) -> None:  ...
+
     def unpacker(self, unpacker: "Delimited") -> "DInstance": ...
+
     def schema(self, schema: "Schema") -> "DInstance": ...
 
 
@@ -865,24 +961,31 @@ class WBInstance(Protocol):
     because their unpacker modules do conversions.
     We'll tolerate any sequence type.
     """
+
     # Not Used
     def __init__(self, source: Sequence[Any]) -> None: ...
+
     def unpacker(self, unpacker: "WBUnpacker") -> "WBInstance": ...
+
     def schema(self, schema: "Schema") -> "WBInstance": ...
 
     @overload
     def __getitem__(self, index: int) -> Any: ...
+
     @overload
     def __getitem__(self, index: slice) -> Any: ...
+
 
 # We'll define an Instance type is the union of the protocols for
 # non-delimited instances, workbook instances, and Python native ("Non-delimited" or "JSON")
 # objects.
-Instance = TypeVar('Instance', NDInstance, DInstance, WBInstance)
+Instance = TypeVar("Instance", NDInstance, DInstance, WBInstance)
+
 
 class Mode:
     TEXT = "r"
     BINARY = "rb"
+
 
 class Unpacker(Generic[Instance]):
     """
@@ -894,13 +997,16 @@ class Unpacker(Generic[Instance]):
     An Unpacker is a generic procotol. A class that implements the protocol **should**
     provide all of the methods.
     """
+
     def calcsize(self, schema: Schema) -> int: ...
-        
+
     def value(self, schema: Schema, instance: Instance) -> Any: ...
-        
+
     def nav(self, schema: Schema, instance: Instance) -> "Nav": ...
 
-    def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None) -> None: ...
+    def open(
+        self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None
+    ) -> None: ...
 
     def close(self) -> None: ...
 
@@ -910,6 +1016,7 @@ class Unpacker(Generic[Instance]):
 
     # Can't be sensibly defined here; there are too many variations.
     # def instance_iter(self, sheet: str, **kwargs: Any) -> Iterator[Instance]: ...
+
 
 class EBCDIC(Unpacker[NDInstance]):
     """
@@ -926,6 +1033,7 @@ class EBCDIC(Unpacker[NDInstance]):
     This class implements a ``"contentEncoding"`` using values of "packed-decimal", and "cp037",
     to unwind COBOL Packed Decimal and Binary as strings of bytes.  
     """
+
     def calcsize(self, schema: Schema) -> int:
         # assert schema.attributes.get("contentEncoding") in {"packed-decimal", "cp037"}
         format = cast(dict[str, Any], schema.attributes).get("cobol", "USAGE DISPLAY")
@@ -934,14 +1042,20 @@ class EBCDIC(Unpacker[NDInstance]):
     def value(self, schema: Schema, instance: NDInstance) -> Any:
         # assert schema.attributes.get("contentEncoding") in {"packed-decimal", "cp037"}
         format = cast(dict[str, Any], schema.attributes).get("cobol", "USAGE DISPLAY")
-        conversion_func = CONVERSION[cast(dict[str, Any], schema.attributes).get("conversion")]
+        conversion_func = CONVERSION[
+            cast(dict[str, Any], schema.attributes).get("conversion")
+        ]
         return conversion_func(estruct.unpack(format, cast(bytes, instance)))
 
     def nav(self, schema: Schema, instance: NDInstance) -> "NDNav":
-        location = LocationMaker(cast(Unpacker[NDInstance], self), schema).from_instance(instance)
+        location = LocationMaker(
+            cast(Unpacker[NDInstance], self), schema
+        ).from_instance(instance)
         return NDNav(self, location, instance)
 
-    def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None) -> None:
+    def open(
+        self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None
+    ) -> None:
         if file_object:
             self.the_file = file_object
         else:
@@ -955,7 +1069,13 @@ class EBCDIC(Unpacker[NDInstance]):
     def sheet_iter(self) -> Iterator[str]:
         yield ""
 
-    def instance_iter(self, sheet: str, recfm_class: Type["estruct.RECFM_Reader"], lrecl: int, **kwargs: Any) -> Iterator[NDInstance]:
+    def instance_iter(
+        self,
+        sheet: str,
+        recfm_class: Type["estruct.RECFM_Reader"],
+        lrecl: int,
+        **kwargs: Any,
+    ) -> Iterator[NDInstance]:
         """Delegate instance iteration to a recfm_parser instance."""
         self.recfm_parser = recfm_class(cast(BinaryIO, self.the_file), lrecl)
         return cast(Iterator[NDInstance], self.recfm_parser.record_iter())
@@ -964,6 +1084,7 @@ class EBCDIC(Unpacker[NDInstance]):
         """Delegate number of bytes consumed to the recfm_parser."""
         self.recfm_parser.used(length)
 
+
 class Struct(Unpacker[NDInstance]):
     """
     Unpacker for Non-Delimited native (i.e., not EBCDIC-encoding) bytes.
@@ -971,7 +1092,9 @@ class Struct(Unpacker[NDInstance]):
     Uses built-in :py:mod:`struct` module for calcsize and value.
     TODO: Finish this.
     """
+
     pass
+
 
 class TextUnpacker(Unpacker[NDInstance]):
     """
@@ -992,7 +1115,7 @@ class TextUnpacker(Unpacker[NDInstance]):
     For various native bytes formats, this is a `{"type": "string", "contentEncoding": "struct-xxx"}`
     where the Python :py:mod:`struct` module codes are used to define the number of interpretation of the bytes.
     
-    TODO: For COBOL, the "cobol" keyword provides USAGE and PICTURE. This defines size.
+    For COBOL, the "cobol" keyword provides USAGE and PICTURE. This defines size.
     In this case, since it's not in EBCDIC, we can use :py:mod:`struct` to unpack COMP values.
     
     This requires the "cobol" and "conversion" keywords, part of the extended vocabulary for COBOL.
@@ -1003,27 +1126,39 @@ class TextUnpacker(Unpacker[NDInstance]):
     This is often {"type": "string", "pattern": "^.{64}$"} or similar. This can provide a length.
     Because patterns can be hard to reverse engineer, we don't use this.)
     """
+
     the_file: IO[str]
 
     def calcsize(self, schema: Schema) -> int:
         if "maxLength" in cast(dict[str, Any], schema.attributes):
             return int(cast(dict[str, Any], schema.attributes)["maxLength"])
         elif "cobol" in cast(dict[str, Any], schema.attributes):
-            representation = estruct.Representation.parse(cast(dict[str, Any], schema.attributes)["cobol"])
+            representation = estruct.Representation.parse(
+                cast(dict[str, Any], schema.attributes)["cobol"]
+            )
             return representation.picture_size
         else:
-            raise ValueError(f"can't compute size of {schema}; neither maxLength nor cobol provided")
+            raise ValueError(
+                f"can't compute size of {schema}; neither maxLength nor cobol provided"
+            )
 
     def value(self, schema: Schema, instance: NDInstance) -> Any:
         type_value = cast(dict[str, Any], schema.attributes).get("type", "object")
-        conversion = CONVERSION.get(cast(dict[str, Any], schema.attributes).get("conversion", type_value), lambda x: x)
+        conversion = CONVERSION.get(
+            cast(dict[str, Any], schema.attributes).get("conversion", type_value),
+            lambda x: x,
+        )
         return conversion(instance)
 
     def nav(self, schema: Schema, instance: NDInstance) -> "NDNav":
-        location = LocationMaker(cast(Unpacker[NDInstance], self), schema).from_instance(instance)
+        location = LocationMaker(
+            cast(Unpacker[NDInstance], self), schema
+        ).from_instance(instance)
         return NDNav(self, location, instance)
 
-    def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None) -> None:
+    def open(
+        self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None
+    ) -> None:
         if file_object:
             self.the_file = cast(IO[str], file_object)
         else:
@@ -1061,12 +1196,16 @@ class Delimited(Unpacker[DInstance]):
 
     Concrete subclasses include open, close, and instance_iter.
     """
+
     def calcsize(self, schema: Schema) -> int:
         return 1
+
     def value(self, schema: Schema, instance: DInstance) -> Any:
         return instance
+
     def nav(self, schema: Schema, instance: DInstance) -> "Nav":
         return DNav(self, schema, cast(JSON, instance))
+
 
 class WBUnpacker(Unpacker[WBInstance]):
     """
@@ -1080,14 +1219,21 @@ class WBUnpacker(Unpacker[WBInstance]):
     of the data, not the data itself. The schema can use the ``"conversion"`` keyword
     to specify one of the conversion functions.
     """
+
     def calcsize(self, schema: Schema) -> int:
         return 1
+
     def value(self, schema: Schema, instance: WBInstance) -> Any:
         type_value = cast(dict[str, Any], schema.attributes).get("type", "object")
-        conversion = CONVERSION.get(cast(dict[str, Any], schema.attributes).get("conversion", type_value), lambda x: x)
+        conversion = CONVERSION.get(
+            cast(dict[str, Any], schema.attributes).get("conversion", type_value),
+            lambda x: x,
+        )
         return conversion(instance)
+
     def nav(self, schema: Schema, instance: WBInstance) -> "Nav":
         return WBNav(self, schema, instance)
+
 
 """
 Locations
@@ -1151,16 +1297,17 @@ class Location(abc.ABC):
 
     The value() method delegates the work to the ``Unpacker`` strategy.
 
-    TODO: Add unpacker and locationMaker to initialization.
+    TODO: Add unpacker and locationMaker to __init__() method.
     """
+
     def __init__(self, schema: Schema, start: int, end: int = 0) -> None:
         self.schema = schema
         self.start = start
         if end:
             self.end = end
-            self.size = end-start
+            self.size = end - start
         else:
-            # References to other fields don't have sizes themselves. 
+            # References to other fields don't have sizes themselves.
             self.end = start
             self.size = 0
         # To be set later, by :py:class:`LocationMaker`.
@@ -1174,7 +1321,7 @@ class Location(abc.ABC):
         return f"{cast(dict[str, Any], self.schema.attributes).get('cobol')} {self.start} {self.end}"
 
     @abc.abstractmethod
-    def raw(self, instance: NDInstance, offset: int = 0 ) -> Any: ...
+    def raw(self, instance: NDInstance, offset: int = 0) -> Any: ...
 
     @abc.abstractmethod
     def value(self, instance: NDInstance, offset: int = 0) -> Any: ...
@@ -1194,7 +1341,9 @@ class Location(abc.ABC):
         return NotImplemented  # pragma: no cover
 
     @abc.abstractmethod
-    def dump_iter(self, nav: "NDNav", indent: int = 0) -> Iterator[tuple[int, "Location", tuple[int, ...], Optional[bytes], Any]]: ...
+    def dump_iter(
+        self, nav: "NDNav", indent: int = 0
+    ) -> Iterator[tuple[int, "Location", tuple[int, ...], Optional[bytes], Any]]: ...
 
 
 class AtomicLocation(Location):
@@ -1202,19 +1351,25 @@ class AtomicLocation(Location):
     type(Schema) == AtomicSchema
     The location of a COBOL elementary item.
     """
+
     def value(self, instance: NDInstance, offset: int = 0) -> Any:
         """
         For an atomic value, locate the underlying value. This may involve unpacking.
         """
-        logger.debug(f"{self}, {instance}, {instance[self.start+offset: self.end+offset]!r}")
-        return self.unpacker.value(
-            self.schema, 
-            cast(NDInstance, instance[self.start+offset: self.end+offset])
+        logger.debug(
+            f"{self}, {instance}, {instance[self.start+offset: self.end+offset]!r}"
         )
-    def raw(self, instance: NDInstance, offset: int = 0 ) -> Any:
-        return instance[self.start+offset: self.end+offset]
+        return self.unpacker.value(
+            self.schema,
+            cast(NDInstance, instance[self.start + offset : self.end + offset]),
+        )
 
-    def dump_iter(self, nav: "NDNav", indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+    def raw(self, instance: NDInstance, offset: int = 0) -> Any:
+        return instance[self.start + offset : self.end + offset]
+
+    def dump_iter(
+        self, nav: "NDNav", indent: int = 0
+    ) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
         """
         An Iterator over tuples of (indent, Location, array indices, raw bytes, value)
         """
@@ -1226,35 +1381,49 @@ class ArrayLocation(Location):
     type(Schema) == ArraySchema
     The location of an array of instances with the same schema. A COBOL ``OCCURS`` item.
     """
-    def __init__(self, schema: Schema, item_size: int, item_count: int, items: "Location", start: int, end: int) -> None:
+
+    def __init__(
+        self,
+        schema: Schema,
+        item_size: int,
+        item_count: int,
+        items: "Location",
+        start: int,
+        end: int,
+    ) -> None:
         super().__init__(schema, start, end)
         self.item_size = item_size
         self.item_count = item_count
         self.items = items
+
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.schema}, {self.item_size}, {self.item_count}, {self.items}, {self.start}, {self.end})"
-        )
+        return f"{self.__class__.__name__}({self.schema}, {self.item_size}, {self.item_count}, {self.items}, {self.start}, {self.end})"
+
     def __str__(self) -> str:
         if "cobol" in cast(dict[str, Any], self.schema.attributes):
             return f"{cast(dict[str, Any], self.schema.attributes)['cobol']} {self.start} {self.end}"
         return f"Array [{self.item_count}] {self.start} {self.end}"
+
     def value(self, instance: NDInstance, offset: int = 0) -> Any:
         array_value = [
-            self.items.value(instance, offset=offset+i*self.item_size) 
+            self.items.value(instance, offset=offset + i * self.item_size)
             for i in range(self.item_count)
         ]
         return array_value
-    def raw(self, instance: NDInstance, offset: int = 0 ) -> Any:
-        return instance[self.start+offset: self.end+offset]
-    def dump_iter(self, nav: "NDNav", indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+
+    def raw(self, instance: NDInstance, offset: int = 0) -> Any:
+        return instance[self.start + offset : self.end + offset]
+
+    def dump_iter(
+        self, nav: "NDNav", indent: int = 0
+    ) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
         """
         An Iterator over tuples of (indent, Location, array indices, raw bytes, value)
         """
         # TODO: Step through array index combinations.
         # For now, we provide the index=0 value only
         yield indent, self, (), None, None
-        yield from self.items.dump_iter(nav.index(0), indent+1)
+        yield from self.items.dump_iter(nav.index(0), indent + 1)
 
 
 class ObjectLocation(Location):
@@ -1262,63 +1431,85 @@ class ObjectLocation(Location):
     type(Schema) == ObjectSchema
     The location of an object with a dictionary of named properties. A COBOL group-level item.
     """
-    def __init__(self, schema: Schema, properties: dict[str, "Location"], start: int, end: int) -> None:
+
+    def __init__(
+        self, schema: Schema, properties: dict[str, "Location"], start: int, end: int
+    ) -> None:
         super().__init__(schema, start, end)
         self.properties = properties
         self.size = sum(p.size for p in self.properties.values())
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.schema}, {self.properties}, {self.start}, {self.end})"
+
     def __str__(self) -> str:
         if "cobol" in cast(dict[str, Any], self.schema.attributes):
             return f"{cast(dict[str, Any], self.schema.attributes)['cobol']} {self.start} {self.end}"
         return f"Object {self.start} {self.end}"
+
     def value(self, instance: NDInstance, offset: int = 0) -> Any:
         object_value = {
             name: self.properties[name].value(instance, offset=offset)
             for name in cast(ObjectSchema, self.schema).properties
         }
         return object_value
-    def raw(self, instance: NDInstance, offset: int = 0 ) -> Any:
-        return instance[self.start+offset: self.end+offset]
-    def dump_iter(self, nav: "NDNav", indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+
+    def raw(self, instance: NDInstance, offset: int = 0) -> Any:
+        return instance[self.start + offset : self.end + offset]
+
+    def dump_iter(
+        self, nav: "NDNav", indent: int = 0
+    ) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
         """
         An Iterator over tuples of (indent, Location, array indices, raw bytes, value)
         """
         yield indent, self, (), None, None
         for name, child in self.properties.items():
-            yield from child.dump_iter(nav.name(name), indent+1)
+            yield from child.dump_iter(nav.name(name), indent + 1)
 
-    
+
 class OneOfLocation(Location):
     """
     type(Schema) == OneOfSchema
     The location of an object which has a list of REDEFINES alternatives.
     """
-    def __init__(self, schema: Schema, alternatives: list[Location], start: int, end: int) -> None:
+
+    def __init__(
+        self, schema: Schema, alternatives: list[Location], start: int, end: int
+    ) -> None:
         super().__init__(schema, start, end)
         self.alternatives = {
-            alt.schema._attributes.get("$anchor", alt.schema._attributes.get("title", "UNNAMED")): alt
+            alt.schema._attributes.get(
+                "$anchor", alt.schema._attributes.get("title", "UNNAMED")
+            ): alt
             for alt in alternatives
         }
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.schema}, {list(self.alternatives.values())!r}, {self.start}, {self.end})"
+
     def __str__(self) -> str:
         return f"OneOf [{', '.join(list(self.alternatives.keys()))}] {self.start} {self.end}"
+
     def value(self, instance: NDInstance, offset: int = 0) -> Any:
         first, *others = self.alternatives.values()
         return first.value(instance, offset)
-    def raw(self, instance: NDInstance, offset: int = 0 ) -> Any:
-        return instance[self.start+offset: self.end+offset]
-    def dump_iter(self, nav: "NDNav", indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+
+    def raw(self, instance: NDInstance, offset: int = 0) -> Any:
+        return instance[self.start + offset : self.end + offset]
+
+    def dump_iter(
+        self, nav: "NDNav", indent: int = 0
+    ) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
         """
         An Iterator over tuples of (indent, Location, array indices, raw bytes, value)
         """
         yield indent, self, (), None, None
         for index, alt in enumerate(self.alternatives.values()):
             sub_nav = NDNav(self.unpacker, alt, nav.instance)
-            yield from alt.dump_iter(sub_nav, indent+1)
+            yield from alt.dump_iter(sub_nav, indent + 1)
 
-    
+
 class RefToLocation(Location):
     """
     type(Schema) == RefToSchema
@@ -1328,26 +1519,36 @@ class RefToLocation(Location):
     If used like this, it would be the COBOL-visible name of an item with an array size.
     The OCCURS DEPENDING ON doesn't formalize this, however.
     """
-    def __init__(self, schema: Schema, anchors: dict[str, Location], start: int, end: int) -> None:
+
+    def __init__(
+        self, schema: Schema, anchors: dict[str, Location], start: int, end: int
+    ) -> None:
         super().__init__(schema, start, end)
         self.anchors = anchors
+
     def __str__(self) -> str:
         return f"RefTo {self.schema.ref} {self.start} {self.end}"
+
     @property
     def properties(self) -> dict[str, Location]:
         return cast(ObjectLocation, self.referent).properties
+
     @property
     def referent(self) -> Location:
         uri = cast(str, self.schema.ref)
         assert uri.startswith("#"), f"Invalid $ref in {self.schema}"
         _, _, ref_to_name = uri.partition("#")
         return self.anchors[ref_to_name]
+
     def value(self, instance: NDInstance, offset: int = 0) -> Any:
         return self.referent.value(instance, offset)
-        
-    def raw(self, instance: NDInstance, offset: int = 0 ) -> Any:
+
+    def raw(self, instance: NDInstance, offset: int = 0) -> Any:
         return self.referent.raw(instance, offset)
-    def dump_iter(self, nav: "NDNav", indent: int = 0) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+
+    def dump_iter(
+        self, nav: "NDNav", indent: int = 0
+    ) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
         """
         An Iterator over tuples of (indent, Location, array indices, raw bytes, value)
         These are silenced -- they were already displayed in an earlier OneOf.
@@ -1356,6 +1557,7 @@ class RefToLocation(Location):
         # Makes this a generator function even though it yields nothing.
         # Would it be better to raise StopIteration? I doubt it.
         yield  # pragma: no cover
+
 
 class LocationMaker:
     """
@@ -1373,6 +1575,7 @@ class LocationMaker:
     The algorithm is a post-order traversal of the subschema to build `Location` instances
     that contain references to their children.
     """
+
     def __init__(self, unpacker: Unpacker[NDInstance], schema: Schema) -> None:
         self.unpacker = unpacker
         self.schema = schema
@@ -1382,7 +1585,7 @@ class LocationMaker:
     def from_instance(self, instance: NDInstance, start: int = 0) -> Location:
         self.instance = instance
         return self.walk(self.schema, start)
-    
+
     def from_schema(self, start: int = 0) -> Location:
         """May raise an exception if there is an ``OCCURS DEPENDING ON``."""
         return self.walk(self.schema, start)
@@ -1400,7 +1603,7 @@ class LocationMaker:
         loc: Location
         if isinstance(schema, AtomicSchema):
             size = self.size(schema)
-            loc = AtomicLocation(schema, start, start+size)
+            loc = AtomicLocation(schema, start, start + size)
         elif isinstance(schema, DependsOnArraySchema):
             if not hasattr(self, "instance"):
                 raise ValueError("an Occurs Depending On requires an instance")
@@ -1414,23 +1617,34 @@ class LocationMaker:
             sublocation.locationMaker = weakref.ref(self)
             item_size = sublocation.size
             total_size = item_size * maxItems
-            loc = ArrayLocation(schema, item_size, maxItems, sublocation, start, start+total_size)
-        elif isinstance(schema, ArraySchema):    
-            assert "maxItems" in cast(dict[str, Any], schema.attributes) or "minItems" in cast(dict[str, Any], schema.attributes)
-            maxItems = int(cast(dict[str, Any], schema.attributes).get("maxItems", cast(dict[str, Any], schema.attributes).get("minItems", 0)))
+            loc = ArrayLocation(
+                schema, item_size, maxItems, sublocation, start, start + total_size
+            )
+        elif isinstance(schema, ArraySchema):
+            assert "maxItems" in cast(
+                dict[str, Any], schema.attributes
+            ) or "minItems" in cast(dict[str, Any], schema.attributes)
+            maxItems = int(
+                cast(dict[str, Any], schema.attributes).get(
+                    "maxItems",
+                    cast(dict[str, Any], schema.attributes).get("minItems", 0),
+                )
+            )
             # Compute the locations based on the number of items.
             sublocation = self.walk(schema.items, start)
             sublocation.unpacker = self.unpacker
             sublocation.locationMaker = weakref.ref(self)
             item_size = sublocation.size
             total_size = item_size * maxItems
-            loc = ArrayLocation(schema, item_size, maxItems, sublocation, start, start+total_size)
+            loc = ArrayLocation(
+                schema, item_size, maxItems, sublocation, start, start + total_size
+            )
         elif isinstance(schema, ObjectSchema):
             offset = start
             property_locations: dict[str, Location] = {}
             for name, property_schema in schema.properties.items():
                 # Recursive walk to get size of property_schema.
-                # Note that any RefTo must NOT be dereferenced. 
+                # Note that any RefTo must NOT be dereferenced.
                 # The attributes property deferences, the private _attributes variable doesn't
                 prop_loc = self.walk(property_schema, offset)
                 prop_loc.unpacker = self.unpacker
@@ -1444,7 +1658,10 @@ class LocationMaker:
         elif isinstance(schema, OneOfSchema):
             # Redefines alternatives defined here.
             # All the alternatives *should* be the same size.
-            alt_locs = [self.walk(alternative_schema, start) for alternative_schema in schema.alternatives]
+            alt_locs = [
+                self.walk(alternative_schema, start)
+                for alternative_schema in schema.alternatives
+            ]
             for a in alt_locs:
                 a.unpacker = self.unpacker
                 a.locationMaker = weakref.ref(self)
@@ -1456,7 +1673,7 @@ class LocationMaker:
             # This should *not* be a forward reference, since this is used for Redefines and OccursDependingOn.
             logger.debug(f"$ref to {schema.ref=}")
             # Size is self.anchors[schema.ref].size
-            offset = 0  # Only a reference, no actual size allocated here. 
+            offset = 0  # Only a reference, no actual size allocated here.
             loc = RefToLocation(schema, self.anchors, start, offset)
         else:
             # The subclasses of Schema aren't reflected in this IF-statement
@@ -1466,10 +1683,10 @@ class LocationMaker:
         if anchor_name := loc.schema._attributes.get("$anchor"):
             self.anchors[anchor_name] = loc
         return loc
-    
+
     def size(self, schema: Schema) -> int:
         return self.unpacker.calcsize(schema)
-    
+
     def ndnav(self, instance: "NDInstance") -> "NDNav":
         location = self.from_instance(instance)
         return NDNav(self.unpacker, location, instance)
@@ -1572,6 +1789,7 @@ class Nav(Protocol):
     A ``Nav`` is built by an ``Unpacker``.
     ``unpacker.nav(schema, instance)``.
     """
+
     def name(self, name: str) -> "Nav": ...
 
     def index(self, index: int) -> "Nav": ...
@@ -1585,7 +1803,10 @@ class NDNav(Nav):
     """
     Navigate through an ``NDInstance`` using ``Location`` as a helper.
     """
-    def __init__(self, unpacker: Unpacker[NDInstance], location: Location, instance: NDInstance) -> None:
+
+    def __init__(
+        self, unpacker: Unpacker[NDInstance], location: Location, instance: NDInstance
+    ) -> None:
         self.unpacker = weakref.ref(unpacker)
         self.location = location
         self.instance = instance
@@ -1613,9 +1834,11 @@ class NDNav(Nav):
 
         logger.debug(f"{self.__class__.__name__}.name({name})")
         logger.debug(locals())
-        
-        return NDNav(cast(Unpacker[NDInstance], self.unpacker()), sublocation, self.instance)
-    
+
+        return NDNav(
+            cast(Unpacker[NDInstance], self.unpacker()), sublocation, self.instance
+        )
+
     def index(self, index: int) -> "NDNav":
         """
         Compute an offset into the array of items.
@@ -1631,25 +1854,31 @@ class NDNav(Nav):
         if index >= base_location.item_count:
             raise IndexError
         item_offset = base_location.item_size * index
-        item_location = (
-            LocationMaker(
-                cast(Unpacker[NDInstance], self.unpacker()), subschema)
-            .from_instance(self.instance, start=base_location.start+item_offset)
-        )
+        item_location = LocationMaker(
+            cast(Unpacker[NDInstance], self.unpacker()), subschema
+        ).from_instance(self.instance, start=base_location.start + item_offset)
 
         logger.debug(f"{self.__class__.__name__}.index({index})")
         logger.debug(locals())
-        
-        return NDNav(cast(Unpacker[NDInstance], self.unpacker()), item_location, self.instance)
-    
+
+        return NDNav(
+            cast(Unpacker[NDInstance], self.unpacker()), item_location, self.instance
+        )
+
+    def __getitem__(self, selector: Union[int, str]) -> "NDNav":
+        if isinstance(selector, int):
+            return self.index(selector)
+        else:
+            return self.name(selector)
+
     def value(self) -> Any:
         """The final Python value from the current schema and location."""
         return self.location.value(self.instance)
-    
+
     def raw(self) -> Any:
         """Raw bytes (or text) from the current schema and location."""
-        return self.instance[self.location.start: self.location.end]
-    
+        return self.instance[self.location.start : self.location.end]
+
     def raw_instance(self) -> "NDInstance":
         """
         Clone a piece of this instance as a new :py:class:`NDInstance` object.
@@ -1667,16 +1896,21 @@ class NDNav(Nav):
         This is similar to the way DNav and WBNav objects work.
         """
         layout = "{:45s} {:3d} {:3d} {!r} {!r}"
-        print("{:45s} {:3s} {:3s} {!s} {!s}".format("Field", "Off", "Sz", "Raw", "Value"))
+        print(
+            "{:45s} {:3s} {:3s} {!s} {!s}".format("Field", "Off", "Sz", "Raw", "Value")
+        )
         for indent, loc, indices, raw, value in self.location.dump_iter(self):
             print(
                 layout.format(
-                    indent*'  '+cast(dict[str, Any], loc.schema.attributes).get("cobol", ""),
+                    indent * "  "
+                    + cast(dict[str, Any], loc.schema.attributes).get("cobol", ""),
                     loc.start,
                     loc.size,
                     "" if raw is None else raw,
-                    "" if value is None else value)
+                    "" if value is None else value,
+                )
             )
+
 
 class DNav(Nav):
     """
@@ -1692,11 +1926,14 @@ class DNav(Nav):
     
     We need an option to validate the instance against the schema.
     """
-    def __init__(self, unpacker: Unpacker[DInstance], schema: Schema, instance: JSON) -> None:
+
+    def __init__(
+        self, unpacker: Unpacker[DInstance], schema: Schema, instance: JSON
+    ) -> None:
         self.unpacker = weakref.ref(unpacker)
         self.schema = schema
         self.instance = instance
-        
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.unpacker()}, {self.schema!r}, {self.instance!r})"
 
@@ -1706,18 +1943,14 @@ class DNav(Nav):
             raise TypeError(f"{self.schema!r} is not of type 'object'")
         subschema = cast(ObjectSchema, self.schema).properties[name]
         value = cast(dict[str, JSON], self.instance)[name]
-        return DNav(
-            cast(Unpacker[DInstance], self.unpacker()), subschema, value
-        )
+        return DNav(cast(Unpacker[DInstance], self.unpacker()), subschema, value)
 
     def index(self, index: int) -> "DNav":
         if self.schema.type != "array":
             raise TypeError(f"{self.schema!r} is not of type 'array'")
         subschema = cast(ArraySchema, self.schema).items
         value = cast(list[JSON], self.instance)[index]
-        return DNav(
-            cast(Unpacker[DInstance], self.unpacker()), subschema, value
-        )
+        return DNav(cast(Unpacker[DInstance], self.unpacker()), subschema, value)
 
     def value(self) -> Any:
         """
@@ -1733,9 +1966,10 @@ class DNav(Nav):
         for indent, schema, indices, value in self.schema.dump_iter(self):
             print(
                 layout.format(
-                    indent*'  '+self.schema.type,
-                    "" if value is None else value)
+                    indent * "  " + self.schema.type, "" if value is None else value
+                )
             )
+
 
 class WBNav(Nav):
     """
@@ -1744,7 +1978,10 @@ class WBNav(Nav):
     A Workbook Row is a ``Sequence[Any]`` of cell values. Therefore, navigation
     by name translates to a position within the ``WBInstance`` row.
     """
-    def __init__(self, unpacker: Unpacker[WBInstance], schema: Schema, instance: "WBInstance") -> None:
+
+    def __init__(
+        self, unpacker: Unpacker[WBInstance], schema: Schema, instance: "WBInstance"
+    ) -> None:
         self.unpacker = weakref.ref(unpacker)
         self.schema = schema
         self.instance = instance
@@ -1760,14 +1997,30 @@ class WBNav(Nav):
         if "position" in cast(dict[str, Any], subschema.attributes):
             position = cast(dict[str, Any], subschema.attributes)["position"]
         else:
-            position = list(cast(ObjectSchema, self.schema).properties.keys()).index(name)
-        return WBNav(cast(Unpacker[WBInstance], self.unpacker()), subschema, self.instance[position])
+            position = list(cast(ObjectSchema, self.schema).properties.keys()).index(
+                name
+            )
+        try:
+            return WBNav(
+                cast(Unpacker[WBInstance], self.unpacker()),
+                subschema,
+                self.instance[position],
+            )
+        except IndexError as ex:
+            logger.error(f"Column {name!r} not found in {self.instance}")
+            return WBNav(
+                cast(Unpacker[WBInstance], self.unpacker()),
+                subschema,
+                cast(WBInstance, [None]),
+            )
 
     def index(self, index: int) -> "WBNav":
         if self.schema.type != "array":
             raise TypeError(f"{self.schema!r} is not of type 'array'")
         subschema = cast(ArraySchema, self.schema).items
-        return WBNav(cast(Unpacker[WBInstance], self.unpacker()), subschema, self.instance[index])
+        return WBNav(
+            cast(Unpacker[WBInstance], self.unpacker()), subschema, self.instance[index]
+        )
 
     def value(self) -> Any:
         """The final Python value from the current schema -- relies on the Unpacker."""
@@ -1782,14 +2035,14 @@ class WBNav(Nav):
             name = attrs.get("$anchor", attrs.get("title", schema.type))
             print(
                 layout.format(
-                    indent*'  '+name,
-                    "" if value is None else repr(value)
+                    indent * "  " + name, "" if value is None else repr(value)
                 ).rstrip()
             )
 
-    
+
 class CSVNav(WBNav):
     pass
+
 
 ### Instance Implementations
 
@@ -1805,6 +2058,7 @@ For :py:class:`DInstance` and :py:class:`WBInstance`, however, we don't
 really need any additional features. We can use native ``JSON`` or ``list[Any]``
 objects.
 """
+
 
 class BytesInstance(bytes):
     """
@@ -1823,7 +2077,9 @@ class BytesInstance(bytes):
     
     The ``Sheet.row_iter()`` build ``Row`` objects that wrap an unpacker, schema, and instance.
     """
+
     pass
+
 
 class TextInstance(str):
     """
@@ -1841,4 +2097,5 @@ class TextInstance(str):
 
     The ``Sheet.row_iter()`` build ``Row`` objects that wrap an unpacker, schema, and instance.
     """
+
     pass

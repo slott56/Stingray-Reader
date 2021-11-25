@@ -15,8 +15,8 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="6. History" href="../history.html" />
-    <link rel="prev" title="5.4. Reading COBOL Files" href="cobol_reader.html" />
+    <link rel="next" title="Implementation" href="../implementation/index.html" />
+    <link rel="prev" title="Reading COBOL Files" href="cobol_reader.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -35,7 +35,128 @@
             
   <section id="data-conversion-etl-with-validation">
 <span id="demo-conversion"></span><h1>Data Conversion – ETL with Validation<a class="headerlink" href="#data-conversion-etl-with-validation" title="Permalink to this headline">¶</a></h1>
+<p>This follows the design patterns shown earlier.</p>
 <p>See <code class="docutils literal notranslate"><span class="pre">demo/conversion.py</span></code>.</p>
+<section id="builder">
+<h2>Builder<a class="headerlink" href="#builder" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">builder</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="n">Row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">col</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;x123&quot;</span><span class="p">,</span> <span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="s2">&quot;y2&quot;</span><span class="p">,</span> <span class="s2">&quot;y3&quot;</span><span class="p">,</span> <span class="s2">&quot;x4&quot;</span><span class="p">,</span> <span class="s2">&quot;y4&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">doc</span>
+</pre></div>
+</div>
+</section>
+<section id="persistence">
+<h2>Persistence<a class="headerlink" href="#persistence" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Persistent_Processing</span><span class="p">:</span>
+    <span class="n">stop_on_exception</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_path</span> <span class="o">=</span> <span class="n">target_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_file</span><span class="p">:</span> <span class="n">TextIO</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Persistent_Processing&quot;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">save_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">this_instance</span><span class="p">:</span> <span class="n">JSON</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">this_instance</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="validation">
+<h2>Validation<a class="headerlink" href="#validation" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Validation_Processing</span><span class="p">(</span><span class="n">Persistent_Processing</span><span class="p">):</span>
+    <span class="n">stop_on_exception</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Validation_Processing&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">save_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">this_instance</span><span class="p">:</span> <span class="n">JSON</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">this_instance</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="target-schema-for-output">
+<h2>Target Schema for Output<a class="headerlink" href="#target-schema-for-output" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TARGET_SCHEMA</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Anscombe&#39;s Quartet&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;x123&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;y1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;y2&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;y3&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;x4&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;y4&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="process-sheet">
+<h2>Process Sheet<a class="headerlink" href="#process-sheet" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_sheet</span><span class="p">(</span><span class="n">sheet</span><span class="p">:</span> <span class="n">Sheet</span><span class="p">,</span> <span class="n">persistence</span><span class="p">:</span> <span class="n">Persistent_Processing</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Counter</span><span class="p">:</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
+        <span class="n">counts</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Convert to an intermediate form</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">builder</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="c1"># Vaidate against the target JSONSchema</span>
+        <span class="k">if</span> <span class="n">Draft202012Validator</span><span class="p">(</span><span class="n">TARGET_SCHEMA</span><span class="p">)</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+            <span class="c1"># Persist the valid data.</span>
+            <span class="n">persistence</span><span class="o">.</span><span class="n">save_json</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Report on the invalid data</span>
+            <span class="n">counts</span><span class="p">[</span><span class="s2">&quot;invalid&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;error, </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s2"> produced invalid </span><span class="si">{</span><span class="n">doc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">Draft202012Validator</span><span class="p">(</span><span class="n">TARGET_SCHEMA</span><span class="p">)</span><span class="o">.</span><span class="n">iter_errors</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">counts</span>
+</pre></div>
+</div>
+</section>
+<section id="main-program">
+<h2>Main Program<a class="headerlink" href="#main-program" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="s2">&quot;--output&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--dry-run&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;verbosity&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_const&quot;</span><span class="p">,</span>
+        <span class="n">const</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">mode_class</span> <span class="o">=</span> <span class="n">Validation_Processing</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">dry_run</span> <span class="k">else</span> <span class="n">Persistent_Processing</span>
+    <span class="k">with</span> <span class="n">mode_class</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">)</span> <span class="k">as</span> <span class="n">persistence</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">open_workbook</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="k">as</span> <span class="n">workbook</span><span class="p">:</span>
+                <span class="n">sheet</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span><span class="s2">&quot;Sheet1&quot;</span><span class="p">)</span>
+                <span class="n">sheet</span><span class="o">.</span><span class="n">set_schema_loader</span><span class="p">(</span><span class="n">HeadingRowSchemaLoader</span><span class="p">())</span>
+                <span class="n">counts</span> <span class="o">=</span> <span class="n">process_sheet</span><span class="p">(</span><span class="n">sheet</span><span class="p">,</span> <span class="n">persistence</span><span class="p">)</span>
+            <span class="n">pprint</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 
 
@@ -60,13 +181,13 @@
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../design.html">2. Design Considerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Considerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer.html">Using <strong>Stingray Reader</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Demo Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../developer.html">4. Using <strong>Stingray Reader</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html"><strong>Stingray</strong> Demo Applications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../history.html">6. History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">7. Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">8. Installation via <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">Commercial Use</a></li>
 </ul>
 
@@ -74,9 +195,9 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html"><strong>Stingray</strong> Demo Applications</a><ul>
-      <li>Previous: <a href="cobol_reader.html" title="previous chapter"><span class="section-number">5.4. </span>Reading COBOL Files</a></li>
-      <li>Next: <a href="../history.html" title="next chapter"><span class="section-number">6. </span>History</a></li>
+  <li><a href="index.html">Demo Applications</a><ul>
+      <li>Previous: <a href="cobol_reader.html" title="previous chapter">Reading COBOL Files</a></li>
+      <li>Next: <a href="../implementation/index.html" title="next chapter">Implementation</a></li>
   </ul></li>
   </ul></li>
 </ul>

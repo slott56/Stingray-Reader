@@ -12,7 +12,7 @@
 #
 # import os
 # import sys
-# sys.path.insert(0, os.path.abspath('.'))
+# sys.path.insert(0, os.path.abspath('../demo'))
 
 
 # -- Project information -----------------------------------------------------
@@ -34,7 +34,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.todo',
-    'sphinx.ext.mathjax'
+    'sphinx.ext.mathjax',
+    'sphinxcontrib.plantuml',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -59,3 +60,9 @@ html_theme = 'alabaster'
 html_static_path = ['_static']
 
 html_logo = 'Stingray_belon1553_small.png'
+
+# -- Options for UML -----
+
+from pathlib import Path
+_jar_path = Path.home() / "miniconda3" / "envs" / "stingray" / "share" / "plantuml-1.2021.14.jar"
+plantuml = f'java -jar {_jar_path!s}'

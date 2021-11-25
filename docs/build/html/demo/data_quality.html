@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>5.1. Unit Level Validation for Application and Data &#8212; Stingray-Reader 5.0 documentation</title>
+    <title>Schema-Based Access Validation &#8212; Stingray-Reader 5.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
@@ -15,8 +15,8 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="5.2. Application Level Data Validation Technique" href="validation.html" />
-    <link rel="prev" title="Stingray Demo Applications" href="index.html" />
+    <link rel="next" title="Data Validation Mode" href="validation.html" />
+    <link rel="prev" title="Demo Applications" href="index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -33,238 +33,368 @@
 
           <div class="body" role="main">
             
-  <section id="unit-level-validation-for-application-and-data">
-<span id="demo-sqa"></span><h1>Unit Level Validation for Application and Data<a class="headerlink" href="#unit-level-validation-for-application-and-data" title="Permalink to this headline">¶</a></h1>
-<p>We validate that a given file actually matches the required schema through a three-part valiation process.</p>
+  <section id="schema-based-access-validation">
+<span id="demo-sqa"></span><h1>Schema-Based Access Validation<a class="headerlink" href="#schema-based-access-validation" title="Permalink to this headline">¶</a></h1>
+<p>We validate applications and files both share a schema through a three-tier process.</p>
 <ol class="arabic simple">
 <li><p>Validate application’s use of a schema via conventional unit testing.
 This is <a class="reference internal" href="#unit-test-the-builder-function">Unit Test The Builder Function</a>, the first part of our testing.</p></li>
 <li><p>Validate file conformance to a schema via “live-file testing”.
-This is <a class="reference internal" href="#live-data-test-the-builder-function">Live Data Test The Builder Function</a>, the second part of our testing.</p></li>
+This is <a class="reference internal" href="#live-file-test-the-builder-function">Live File Test The Builder Function</a>, the second part of our testing.
+This is a kind of accceptance test to confirm the application can work with
+a data file.</p></li>
 <li><p>Validate the three-way application-schema-file binding by including a
-<strong>File Validation</strong> mode in every file processing application.
-We’ll look at the part 3 (the 3-way binding of app-schema-file) in <a class="reference internal" href="validation.html#demo-validate"><span class="std std-ref">Application Level Data Validation Technique</span></a>.</p></li>
+<strong>Data Validation</strong> mode in every file processing application.
+We’ll look at the part 3 (the 3-way binding of app-schema-file) in <a class="reference internal" href="validation.html#demo-validate"><span class="std std-ref">Data Validation Mode</span></a>.</p></li>
 </ol>
-<p>Of course, we must do good unit testing on the application overall.
-We’ll assume that without further discussion.  Failure to test is simply failure.</p>
-<p>Live file testing moves beyond simple unit testing into a realm of establishing evidence
-that an application will process a given file correctly.  We’re gathering auditable
-historical information on file formats and contents.</p>
-<p>Our focus here is validation of the application-schema binding as well as the file-schema binding.</p>
-<p>We can use the  <code class="xref py py-mod docutils literal notranslate"><span class="pre">unittest</span></code> module to write tests that
-validate the schema shared by an application and file.
-There are three levels to this validation.</p>
+<p>The examples in this section focus on the schema and workbook processing
+of an application. This lets us confirm that the application
+will handle inputs correctly. See the <code class="file docutils literal notranslate"><span class="pre">demo/test_demo.py</span></code> for the complete source.</p>
+<p>Of course, the rest of the application also required
+good unit testing.
+We’ll assume the remainder of the application
+is also tested properly. Failure to test is simply failure.</p>
+<p>The first two levels of testing validate the application-to-schema binding.
+The third level of testing validates the file-to-schema binding.</p>
+<section id="the-application-capture-and-persistence-layers">
+<h2>The Application, Capture, and Persistence Layers<a class="headerlink" href="#the-application-capture-and-persistence-layers" title="Permalink to this headline">¶</a></h2>
+<p>We need to distinguish between three sepaarate
+but closely-related concepts.</p>
 <ul class="simple">
-<li><p>Unit-level.  This is a test of the builder functions more-or-less in isolation.
-There are two kinds of builder validation.</p>
-<ul>
-<li><p>Subsets of rows.  Developers usually start here.</p></li>
-<li><p>Whole (“live”) files.  Production files are famous for having a few “odd” rows.
-Whole-file tests are essential.</p></li>
+<li><p>The foundational objects for our application.
+It helps to separate the validation rules
+and object builders from the application objects
+themselves. The objects may have complex interactions.
+The validation can also be complex, but is utterly
+distinct from other behavior.</p></li>
+<li><p>Peristence for the application objects.
+This may include object-relational mapping
+or other serialization techniques.</p></li>
+<li><p>Capture of the source data for the application
+objects. This is schema-dependent processing.
+Experience shows that there is wide variability
+here when working with spreadsheets. It helps
+to disentangle this from the essential application
+processing and persistence.</p></li>
 </ul>
-</li>
-<li><p>Integration-level.  This is a test of a complete application using
-A test database (or collection of files) is prepared and the application
-actually exercised against actual files.</p></li>
-</ul>
-<p>Not <em>everything</em> is mocked here: the “unit” is an integrated collection of
-components. Not an isolated class.</p>
-<p>Unit level tests look like this.</p>
-<section id="overheads">
-<h2>Overheads<a class="headerlink" href="#overheads" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">unittest</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">import</span> <span class="nn">stingray.cell</span>
-<span class="kn">import</span> <span class="nn">stingray.sheet</span>
-<span class="kn">import</span> <span class="nn">stingray.workbook</span>
-<span class="kn">import</span> <span class="nn">stingray.schema</span>
-<span class="kn">import</span> <span class="nn">stingray.schema.loader</span>
-</pre></div>
-</div>
-</section>
-<section id="builder-functions">
-<h2>Builder Functions<a class="headerlink" href="#builder-functions" title="Permalink to this headline">¶</a></h2>
-<p>See <a class="reference internal" href="../developer.html#developer"><span class="std std-ref">Using Stingray Reader</span></a> for background. We’re going to need a “builder function.”
-This transforms the source row object into the target object or collection.</p>
-<p>Normally, we import the unit under test.
-It would look like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">demo.some_app</span> <span class="kn">import</span> <span class="n">some_builder</span>
-</pre></div>
-</div>
-<p>For this demo, here’s a sample builder function:</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="some_builder">
-<span class="sig-name descname"><span class="pre">some_builder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aRow</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#some_builder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build a Python dict from the row of data.</p>
-</dd></dl>
+<p>The intent here is to follow the SOLID design
+principles and minimize the interfaces as data
+moves from the source document structure to
+an common intermediate dictonary format.</p>
+<p>This common dictionary structure can then be validated
+and used to create the application objects
+that define <em>only</em> the unique behavior of the
+application, without the clutter of source decoding or
+valdiation.</p>
+<p class="plantuml">
+<img src="../_images/plantuml-e5df46c029c0446606b78b239924877f5ea9d267.png" alt="&#64;startuml
 
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">some_builder</span><span class="p">(</span> <span class="n">aRow</span> <span class="p">):</span>
-    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">key</span><span class="o">=</span> <span class="n">aRow</span><span class="p">[</span><span class="s1">&#39;Column &quot;3&quot; - string&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_str</span><span class="p">(),</span>
-        <span class="n">value</span><span class="o">=</span> <span class="n">aRow</span><span class="p">[</span><span class="s1">&#39;Col 2.0 - float&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_float</span><span class="p">()</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-<p>This depends on a schema that permits eager row building. That’s
-common outside COBOL file processing.</p>
-</section>
-<section id="mock-workbook">
-<h2>Mock Workbook<a class="headerlink" href="#mock-workbook" title="Permalink to this headline">¶</a></h2>
-<p>We’ll use a mock <code class="xref py py-class docutils literal notranslate"><span class="pre">Workbook</span></code> to slightly simplify the builder-in-isolation test.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MockWorkbook</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">rows_of</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span> <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">requested</span><span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="n">name</span>
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mock_rows</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span> <span class="n">sheet</span><span class="p">,</span> <span class="o">*</span><span class="n">r</span> <span class="p">)</span>
-    <span class="k">def</span> <span class="nf">sheet</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">name</span> <span class="p">):</span>
-        <span class="k">return</span> <span class="n">mock_sheet</span>
-    <span class="k">def</span> <span class="nf">row_get</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">attr</span> <span class="p">):</span>
-        <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="n">attr</span><span class="o">.</span><span class="n">position</span><span class="p">]</span>
-</pre></div>
-</div>
+package application &lt;&lt;Folder&gt;&gt; {
+    class This {
+        unique: str
+        fields: int
+        serialize(Database)
+    }
+    class That {
+        more: float
+        unique: bool
+        fields: str
+        serialize(Database)
+    }
+
+    class ThisForm {
+        create(): This
+    }
+
+    class ThatForm {
+        create(): That
+    }
+}
+
+package persistence &lt;&lt;Database&gt;&gt; {
+    class Database_Or_File {
+        create(object)
+        retrieve(object)
+        update(object)
+        delete(object)
+    }
+}
+
+ThisForm --&gt; This : &quot;creates&quot;
+ThatForm --&gt; That : &quot;creates&quot;
+
+This --&gt; Database_Or_File : &quot;persists&quot;
+That --&gt; Database_Or_File : &quot;persists&quot;
+
+class Row
+
+package &quot;schema based processing&quot; &lt;&lt;Rectangle&gt;&gt; {
+    class build_this &lt;&lt; (F,orchid) Function &gt;&gt;
+    class build_that &lt;&lt; (F,orchid) Function &gt;&gt;
+    hide build_this members
+    hide build_that members
+
+    class dict {
+        key: str
+        value: Any
+    }
+
+    build_this --&gt; dict
+    build_that --&gt; dict
+}
+
+Row --&gt; build_this
+Row --&gt; build_that
+
+dict --&gt; ThisForm
+dict --&gt; ThatForm
+&#64;enduml"/>
+</p>
+<p>In this document, we’ll focus on the
+builder functions and some higher-level processing.
+There are two tiers of testing, and we’ll show
+how to structure the functions and the testing
+to provide confidence that an application will
+support a wide variety of source file formats.</p>
 </section>
 <section id="unit-test-the-builder-function">
 <h2>Unit Test The Builder Function<a class="headerlink" href="#unit-test-the-builder-function" title="Permalink to this headline">¶</a></h2>
-<p>Step one is to unit test the <a class="reference internal" href="#some_builder" title="some_builder"><code class="xref py py-func docutils literal notranslate"><span class="pre">some_builder()</span></code></a> function with selected row-like objects
-from a the <code class="xref py py-class docutils literal notranslate"><span class="pre">MockWorkbook</span></code>.</p>
-<p>There are two parts: a <code class="xref py py-class docutils literal notranslate"><span class="pre">schema.Schema</span></code> and
-a <code class="xref py py-class docutils literal notranslate"><span class="pre">sheet.ExternalSchemaSheet</span></code> that contains the mock row(s).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Test_Builder_2</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Schema</span><span class="p">(</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Col 1 - int&#39;</span> <span class="p">),</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Col 2.0 - float&#39;</span> <span class="p">),</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Column &quot;3&quot; - string&#39;</span> <span class="p">),</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Column &#39;4&#39; - date&quot;</span> <span class="p">),</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Column 5 - boolean&#39;</span> <span class="p">),</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Column 6 - empty&#39;</span> <span class="p">),</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">Attribute</span><span class="p">(</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Column 7 - Error&#39;</span> <span class="p">),</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">=</span> <span class="n">MockWorkbook</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">ExternalSchemaSheet</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">,</span> <span class="s2">&quot;Test&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="o">=</span> <span class="p">[</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span><span class="mf">42.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">NumberCell</span><span class="p">(</span><span class="mf">3.1415926</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">TextCell</span><span class="p">(</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">FloatDateCell</span><span class="p">(</span><span class="mf">20708.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">BooleanCell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">EmptyCell</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">),</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">ErrorCell</span><span class="p">(</span><span class="s1">&#39;#DIV/0!&#39;</span><span class="p">),</span> <span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">mock_sheet</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">.</span><span class="n">mock_rows</span><span class="o">=</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span><span class="p">,</span> <span class="p">]</span>
-    <span class="k">def</span> <span class="nf">test_should_build_from_row</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
-        <span class="n">row</span><span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span> <span class="p">)</span>
-        <span class="n">dict_row</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="p">)</span>
-        <span class="n">result</span><span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span> <span class="n">dict_row</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span> <span class="mf">3.1415926</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="p">)</span>
+<p>See <a class="reference internal" href="../developer.html#developer"><span class="std std-ref">Using Stingray Reader</span></a> for background. We’re going to need a “builder function.”
+This transforms the source row object into the target object or collection.</p>
+<p>Here’s the essential function we want to test in isolation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">stingray</span> <span class="kn">import</span> <span class="n">Row</span>
+<span class="k">def</span> <span class="nf">some_builder</span><span class="p">(</span><span class="n">aRow</span><span class="p">:</span> <span class="n">Row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span> 
+        <span class="n">key</span> <span class="o">=</span> <span class="n">aRow</span><span class="p">[</span><span class="s1">&#39;Column &quot;3&quot; - string&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">aRow</span><span class="p">[</span><span class="s1">&#39;Col 2.0 - float&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+    <span class="p">)</span>
 </pre></div>
 </div>
+<p>To test this, we need a mock of a <code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.Row</span></code> object.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">mock_row</span><span class="p">():</span>
+    <span class="n">attr_2</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">Mock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="mf">3.1415926</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">attr_3</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">Mock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Col 2.0 - float&#39;</span><span class="p">:</span> <span class="n">attr_2</span><span class="p">,</span>
+        <span class="s1">&#39;Column &quot;3&quot; - string&#39;</span><span class="p">:</span> <span class="n">attr_3</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">row</span>
+</pre></div>
+</div>
+<p>This mock object uses a simple dictionary as a mock
+for a <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> object. For the simplest
+cases, this is a valid assumption.</p>
+<p>The test is effectively this:</p>
+<div class="highlight-gherkin notranslate"><div class="highlight"><pre><span></span><span class="nf">SCENARIO: Build an intermediate object from a source document</span>
+<span class="nf">GIVEN a row instance</span>
+<span class="nf">WHEN fields are extracted</span>
+<span class="nf">THEN an intermediate object is built</span>
+</pre></div>
+</div>
+<p>Here’s the test case.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_builder</span><span class="p">(</span><span class="n">mock_row</span><span class="p">):</span>
+    <span class="n">document</span> <span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span><span class="n">mock_row</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">document</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">3.1415926</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>This is the essential unit test for a builder.</p>
+<p>This works because a Stingray
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> is designed to behave like
+a dictionary.</p>
+<p>We can, of course, create more elaborate mock <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> instances
+including attributes that need to be ignored. And also rows that
+are missing attributes.</p>
+<p>For more complex cases, it can become awkward
+to mock all the features of a <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code>.
+For this, an integration-style test can be
+easier to write.</p>
 </section>
-<section id="live-data-test-the-builder-function">
-<h2>Live Data Test The Builder Function<a class="headerlink" href="#live-data-test-the-builder-function" title="Permalink to this headline">¶</a></h2>
-<p>Step two is to unit test the <a class="reference internal" href="#some_builder" title="some_builder"><code class="xref py py-func docutils literal notranslate"><span class="pre">some_builder()</span></code></a> function with all rows in a given workbook.
+<section id="integration-test-the-builder-function">
+<h2>Integration Test the Builder Function<a class="headerlink" href="#integration-test-the-builder-function" title="Permalink to this headline">¶</a></h2>
+<p>When more features of the <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> object are
+used by a builder, then an integration test
+can be easier to build. There are several ways to tackle this.
+One approach is create an actual <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> using a mocked <code class="xref py py-class docutils literal notranslate"><span class="pre">Sheet</span></code>
+object. This works out well for examining more complex issues with navigation
+and data conversion.</p>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> instance uses <code class="xref py py-class docutils literal notranslate"><span class="pre">Nav</span></code> objects as helpers to navigate the data structure.
+There are distinct <code class="xref py py-class docutils literal notranslate"><span class="pre">Nav</span></code> subclasses for non-delimited data, delimited data,
+and workbooks.</p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> object requires a <code class="xref py py-class docutils literal notranslate"><span class="pre">Sheet</span></code> instance. The <code class="xref py py-class docutils literal notranslate"><span class="pre">Sheet</span></code> instance
+requires a schema. Here’s how we can build up the required fixture from pieces.</p>
+<p>First, the schema.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">mock_schema</span><span class="p">():</span>
+    <span class="n">json_schema</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Unit test workbook&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;Col 1 - int&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">},</span>
+            <span class="s1">&#39;Col 2.0 - float&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">},</span>
+            <span class="s1">&#39;Column &quot;3&quot; - string&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;Column &#39;4&#39; - date&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;conversion&quot;</span><span class="p">:</span> <span class="s2">&quot;excel_date&quot;</span><span class="p">},</span>
+            <span class="s1">&#39;Column 5 - boolean&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;boolean&quot;</span><span class="p">},</span>
+            <span class="s1">&#39;Column 6 - empty&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;null&quot;</span><span class="p">},</span>
+            <span class="s1">&#39;Column 7 - Error&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">Draft202012Validator</span><span class="o">.</span><span class="n">check_schema</span><span class="p">(</span><span class="n">json_schema</span><span class="p">)</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">SchemaMaker</span><span class="p">()</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">json_schema</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">schema</span>
+</pre></div>
+</div>
+<p>This is used by the mocked <code class="xref py py-class docutils literal notranslate"><span class="pre">Sheet</span></code> instance.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">mock_sheet</span><span class="p">(</span><span class="n">mock_schema</span><span class="p">):</span>
+    <span class="n">workbook</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span>
+        <span class="n">unpacker</span><span class="o">=</span><span class="n">WBUnpacker</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">sheet</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span>
+        <span class="n">workbook</span><span class="o">=</span><span class="n">Mock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="n">workbook</span><span class="p">),</span>
+        <span class="n">schema</span><span class="o">=</span><span class="n">mock_schema</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">sheet</span>
+</pre></div>
+</div>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Sheet</span></code> instance becomes part of the mock <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> instance.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">row_instance</span><span class="p">(</span><span class="n">mock_sheet</span><span class="p">):</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">Row</span><span class="p">(</span>
+        <span class="n">mock_sheet</span><span class="p">,</span>
+        <span class="p">[</span>
+            <span class="mf">42.0</span><span class="p">,</span> <span class="mf">3.1415926</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="mf">20708.0</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;#DIV/0!&#39;</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">row</span>
+</pre></div>
+</div>
+<p>This can then be used in the test case.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_builder_1</span><span class="p">(</span><span class="n">row_instance</span><span class="p">):</span>
+    <span class="n">document</span> <span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span><span class="n">row_instance</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">document</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">3.1415926</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>This kind of integration test assures us that
+the more complex navigation features are being
+tested properly.</p>
+</section>
+<section id="live-file-test-the-builder-function">
+<h2>Live File Test The Builder Function<a class="headerlink" href="#live-file-test-the-builder-function" title="Permalink to this headline">¶</a></h2>
+<p>Step two is to unit test the <code class="xref py py-func docutils literal notranslate"><span class="pre">some_builder()</span></code> function with all rows in a given workbook.
 In this demo, we’re using <code class="file docutils literal notranslate"><span class="pre">sample/excel97_workbook.xls</span></code>. Generally, we want to compute
 some aggregate (like a checksum) of various data items to be sure we’ve read and
 converted them properly.</p>
-<p>Pragmatically, it’s sometimes hard to get a proper checksum, so we have to resort
-to sums, counts, and perhaps even frequency distribution tables.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Test_Builder_2_Live</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">open_workbook</span><span class="p">(</span> <span class="s2">&quot;sample/excel97_workbook.xls&quot;</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">EmbeddedSchemaSheet</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">,</span> <span class="s1">&#39;Sheet1&#39;</span><span class="p">,</span>
-            <span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">HeadingRowSchemaLoader</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">schema</span>
-    <span class="k">def</span> <span class="nf">test_should_build_all_rows</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
-        <span class="n">summary</span><span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span> <span class="nb">int</span> <span class="p">)</span>
-        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
-            <span class="n">dict_row</span><span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">row</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="p">)</span>
-            <span class="n">result</span><span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span> <span class="n">dict_row</span> <span class="p">)</span>
-            <span class="n">summary</span><span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;string&#39;</span><span class="p">]</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="sheet-level-testing">
-<h2>Sheet-Level Testing<a class="headerlink" href="#sheet-level-testing" title="Permalink to this headline">¶</a></h2>
-<p>See <a class="reference internal" href="../developer.html#developer"><span class="std std-ref">Using Stingray Reader</span></a> for background. We’re going to need a “sheet process function.”
-This transforms the source sheet into the target collection, usually an output file.</p>
-<p>We can also use the unit test tools to test the application’s
-higher-level <a class="reference internal" href="#process_some_sheet" title="process_some_sheet"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_some_sheet()</span></code></a> function.</p>
-<p>Normally, we import the unit under test.
-It looks like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">demo.some_app</span> <span class="kn">import</span> <span class="n">process_some_sheet</span>
-</pre></div>
-</div>
-<p>For this demo, here’s a sample sheet process function:</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="process_some_sheet">
-<span class="sig-name descname"><span class="pre">process_some_sheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sheet</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_some_sheet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Process all rows of the named sheet.</p>
-</dd></dl>
+<p>Here’s a fixture based on a file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">sample_workbook_sheet</span><span class="p">():</span>
+    <span class="n">workbook_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SAMPLES&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;excel97_workbook.xls&quot;</span>
+    <span class="n">wb</span> <span class="o">=</span> <span class="n">open_workbook</span><span class="p">(</span><span class="n">workbook_path</span><span class="p">)</span>
+    <span class="n">sheet</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span><span class="s2">&quot;Sheet1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">set_schema_loader</span><span class="p">(</span><span class="n">HeadingRowSchemaLoader</span><span class="p">())</span>
+    <span class="c1"># This is essential for keeping the workbook open.</span>
+    <span class="c1"># Once the `wb` variable goes out of scope, the workbook is closed.</span>
+    <span class="k">yield</span> <span class="n">wb</span><span class="p">,</span> <span class="n">sheet</span>
 
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_some_sheet</span><span class="p">(</span> <span class="n">sheet</span> <span class="p">):</span>
-    <span class="n">counts</span><span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span> <span class="nb">int</span> <span class="p">)</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">rows_as_dict_iter</span><span class="p">(</span><span class="n">sheet</span><span class="p">):</span>
-        <span class="n">row_dict</span><span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span> <span class="n">row</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>The fixture creates both a workbook and a sheet.
+Some tests will use the workbook, others will use
+the sheet. It’s handy to have a single fixture
+create both for us.</p>
+<p>Here’s the test case to assure all rows
+get built from the sheet. In this case, the
+example data has two rows.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="n">summary</span><span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;string&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+
+</pre></div>
+</div>
+<p>This tells us that our Builder works properly
+with the sample file. The application consists
+of additional functions. We can test them
+both as isolated units and as an integration
+with the <code class="docutils literal notranslate"><span class="pre">some_builder()</span></code> function.</p>
+</section>
+<section id="unit-test-the-sheet-function">
+<h2>Unit Test the Sheet Function<a class="headerlink" href="#unit-test-the-sheet-function" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference internal" href="../developer.html#developer"><span class="std std-ref">Using Stingray Reader</span></a> for background.
+We’re going to need a “sheet process function.”
+This transforms the source sheet into the target collection.
+It applies the row_builder function and whatever
+processing goes with that to all of the rows of a sheet.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_some_sheet</span><span class="p">(</span><span class="n">sheet</span><span class="p">:</span> <span class="n">Sheet</span><span class="p">):</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
+        <span class="n">row_dict</span> <span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
         <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span><span class="n">row_dict</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;read&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">counts</span>
 </pre></div>
 </div>
-<p>The unit test checks the embedded schema and the overall row counts
-from processing the live file.</p>
+<p>For complete isolation, we can provide
+a mock sheet to supply mock rows
+to a mock builder. Yes, that’s a lot of mocking.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">mock_sheet_2</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">Mock</span><span class="p">(</span>
+        <span class="n">rows</span><span class="o">=</span><span class="n">Mock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="p">[</span><span class="n">sentinel</span><span class="o">.</span><span class="n">ROW</span><span class="p">])</span>
+    <span class="p">)</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">mock_builder</span><span class="p">():</span>
+    <span class="n">mock_builder</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span>
+        <span class="n">return_value</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">sentinel</span><span class="o">.</span><span class="n">KEY</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">mock_builder</span>
+</pre></div>
+</div>
+<p>We can then assure ourselves that the
+overall sheet processing takes rows
+from the sheet and provides them to
+the builder.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_process_some_sheet</span><span class="p">(</span><span class="n">mock_sheet_2</span><span class="p">,</span> <span class="n">mock_builder</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
+    <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setitem</span><span class="p">(</span><span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;some_builder&#39;</span><span class="p">,</span> <span class="n">mock_builder</span><span class="p">)</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">process_some_sheet</span><span class="p">(</span><span class="n">mock_sheet_2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">some_builder</span><span class="o">.</span><span class="n">mock_calls</span> <span class="o">==</span> <span class="p">[</span><span class="n">call</span><span class="p">(</span><span class="n">sentinel</span><span class="o">.</span><span class="n">ROW</span><span class="p">)]</span>
+    <span class="k">assert</span> <span class="n">counts</span> <span class="o">==</span> <span class="n">Counter</span><span class="p">({(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="n">sentinel</span><span class="o">.</span><span class="n">KEY</span><span class="p">):</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;read&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+</pre></div>
+</div>
+</section>
+<section id="live-file-test-the-sheet-function">
+<h2>Live File Test The Sheet Function<a class="headerlink" href="#live-file-test-the-sheet-function" title="Permalink to this headline">¶</a></h2>
+<p>An integration test can check the overall row counts
+from processing a live file. This confirms
+that the sheet-level processing works as expected.</p>
 <p>In this demo, we’re using <code class="file docutils literal notranslate"><span class="pre">sample/excel97_workbook.xls</span></code>.</p>
 <p>The test opens the workbook. It selects a sheet from the workbook using the class
-that extracts the schema from the row headers. The test then uses the <a class="reference internal" href="#process_some_sheet" title="process_some_sheet"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_some_sheet()</span></code></a>
+that extracts the schema from the row headers. The test then uses the <code class="xref py py-func docutils literal notranslate"><span class="pre">process_some_sheet()</span></code>
 function on the given sheet to extract data. In this case, the extraction is
 a frequency table.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Test_Sheet_Builder_2_Live</span><span class="p">(</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span> <span class="p">):</span>
-    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">workbook</span><span class="o">.</span><span class="n">open_workbook</span><span class="p">(</span> <span class="s2">&quot;sample/excel97_workbook.xls&quot;</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span> <span class="o">=</span> <span class="n">stingray</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">EmbeddedSchemaSheet</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wb</span><span class="p">,</span> <span class="s1">&#39;Sheet1&#39;</span><span class="p">,</span>
-            <span class="n">loader_class</span><span class="o">=</span><span class="n">stingray</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">HeadingRowSchemaLoader</span> <span class="p">)</span>
-    <span class="k">def</span> <span class="nf">test_should_load_schema</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s1">&#39;Col 1 - int&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s1">&#39;Col 2.0 - float&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s1">&#39;Column &quot;3&quot; - string&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s2">&quot;Column &#39;4&#39; - date&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s1">&#39;Column 5 - boolean&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s1">&#39;Column 6 - empty&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="s1">&#39;Column 7 - Error&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="p">)</span>
-    <span class="k">def</span> <span class="nf">test_should_build_sample_row</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
-        <span class="n">counts</span><span class="o">=</span> <span class="n">process_some_sheet</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;read&#39;</span><span class="p">]</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span><span class="s1">&#39;string&#39;</span><span class="p">]</span> <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_should_build_sample_row</span><span class="p">(</span><span class="n">sample_workbook_sheet</span><span class="p">):</span>
+    <span class="n">wb</span><span class="p">,</span> <span class="n">sheet</span> <span class="o">=</span> <span class="n">sample_workbook_sheet</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">process_some_sheet</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;read&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+    <span class="k">assert</span> <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span><span class="s1">&#39;string&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
 </pre></div>
 </div>
-</section>
-<section id="main-program-switch">
-<h2>Main Program Switch<a class="headerlink" href="#main-program-switch" title="Permalink to this headline">¶</a></h2>
-<p>This is a common unittest main program.  Ideally, we’d create an actual
-suite object to allow combining tests.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-<section id="running-the-demo">
-<h2>Running the Demo<a class="headerlink" href="#running-the-demo" title="Permalink to this headline">¶</a></h2>
-<p>We can run this program like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 demo/test.py
-</pre></div>
-</div>
-<p>This produces ordinary unitest output.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">....</span>
-<span class="o">----------------------------------------------------------------------</span>
-<span class="n">Ran</span> <span class="mi">4</span> <span class="n">tests</span> <span class="ow">in</span> <span class="mf">0.016</span><span class="n">s</span>
-
-<span class="n">OK</span>
-</pre></div>
-</div>
+<p>This shows how the process sheet is tested
+with a live file to be sure it will step
+through all of the rows.</p>
+<p>The counter provides some assurance that
+all of the processing was correct.</p>
+<p>Once we have the foundations of our application
+tested in isolation and with live files,
+we can move on to creating an application
+that includes</p>
 </section>
 </section>
 
@@ -290,13 +420,13 @@ suite object to allow combining tests.</p>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../design.html">2. Design Considerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Considerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer.html">Using <strong>Stingray Reader</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Demo Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../developer.html">4. Using <strong>Stingray Reader</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html"><strong>Stingray</strong> Demo Applications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../history.html">6. History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">7. Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">8. Installation via <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">Commercial Use</a></li>
 </ul>
 
@@ -304,9 +434,9 @@ suite object to allow combining tests.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html"><strong>Stingray</strong> Demo Applications</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter"><strong>Stingray</strong> Demo Applications</a></li>
-      <li>Next: <a href="validation.html" title="next chapter"><span class="section-number">5.2. </span>Application Level Data Validation Technique</a></li>
+  <li><a href="index.html">Demo Applications</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Demo Applications</a></li>
+      <li>Next: <a href="validation.html" title="next chapter">Data Validation Mode</a></li>
   </ul></li>
   </ul></li>
 </ul>

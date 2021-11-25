@@ -260,8 +260,21 @@ import logging
 from pathlib import Path
 import re
 from typing import (
-    Iterator, Union, Optional, IO, Type, TextIO, BinaryIO, Any, Iterable, Callable, cast,
-    AnyStr, TypeVar, Generic, Match
+    Iterator,
+    Union,
+    Optional,
+    IO,
+    Type,
+    TextIO,
+    BinaryIO,
+    Any,
+    Iterable,
+    Callable,
+    cast,
+    AnyStr,
+    TypeVar,
+    Generic,
+    Match,
 )
 import warnings
 import weakref
@@ -289,7 +302,7 @@ from stingray.schema_instance import (
     Mode,
     Location,
     LocationMaker,
-    CONVERSION
+    CONVERSION,
 )
 from stingray.cobol_parser import schema_iter
 from types import TracebackType
@@ -322,17 +335,17 @@ class Workbook(Generic[Instance]):
     def __enter__(self) -> "Workbook[Instance]":
         return self
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException], exc_tb: TracebackType) -> None:
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: TracebackType,
+    ) -> None:
         self.close()
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Workbook):
-            return all(
-                [
-                    self.name == other.name,
-                    self.unpacker is other.unpacker,
-                ]
-            )
+            return all([self.name == other.name, self.unpacker is other.unpacker,])
         return NotImplemented  # pragma: no cover
 
     def sheet(self, name: str) -> "Sheet[Instance]":
@@ -342,9 +355,8 @@ class Workbook(Generic[Instance]):
         yield from (Sheet(self, name) for name in self.unpacker.sheet_iter())
 
 
-WB = Union[
-    Workbook[NDInstance], Workbook[WBInstance], Workbook[DInstance]
-]
+WB = Union[Workbook[NDInstance], Workbook[WBInstance], Workbook[DInstance]]
+
 
 class Sheet(Generic[Instance]):
     """
@@ -401,9 +413,9 @@ class Sheet(Generic[Instance]):
         # It's not clear if this is helpful...
         # if self.schema is None:
         #     warnings.warn(f"Reading sheet {self} without a schema")
-        rows = (Row(self, x) for x in self.loader.body(self.raw_instance_iter))
-        # Cache the most recent row in the sheet.
-        for self.row in rows:
+        # Cache the most recent row in `sheet.row`.
+        for instance in self.loader.body(self.raw_instance_iter):
+            self.row = Row(self, instance)
             yield self.row
 
     rows = row_iter
@@ -413,10 +425,17 @@ class Sheet(Generic[Instance]):
             details_match = [
                 self.workbook is other.workbook,
                 self.name == other.name,
-                (self.schema is None and other.schema is None or self.schema == other.schema) if hasattr(self, "schema") and hasattr(other, "schema") else True,
+                (
+                    self.schema is None
+                    and other.schema is None
+                    or self.schema == other.schema
+                )
+                if hasattr(self, "schema") and hasattr(other, "schema")
+                else True,
             ]
             return all(details_match)
         return NotImplemented  # pragma: no cover
+
 
 class Row(Generic[Instance]):
     """Wrapper around a :py:class:`Nav` object bound to an :py:class:`Instance`.
@@ -430,7 +449,9 @@ class Row(Generic[Instance]):
         self.sheet: weakref.ReferenceType[Sheet[Instance]] = weakref.ref(sheet)
         self.instance: Instance = instance
         # Compute these eargerly. They *could* be deferred and cached.
-        self.unpacker: Unpacker[Instance] = cast(Workbook[Instance], sheet.workbook()).unpacker
+        self.unpacker: Unpacker[Instance] = cast(
+            Workbook[Instance], sheet.workbook()
+        ).unpacker
         self.nav = self.unpacker.nav(sheet.schema, self.instance)
 
     @property
@@ -446,11 +467,15 @@ class Row(Generic[Instance]):
     def values(self) -> list[Any]:
         return [
             self.nav.name(name).value()
-            for name in cast(ObjectSchema, cast(Sheet[Instance], self.sheet()).schema).properties
+            for name in cast(
+                ObjectSchema, cast(Sheet[Instance], self.sheet()).schema
+            ).properties
         ]
 
     def dump(self) -> None:
-        self.unpacker.nav(cast(Sheet[Instance], self.sheet()).schema, self.instance).dump()
+        self.unpacker.nav(
+            cast(Sheet[Instance], self.sheet()).schema, self.instance
+        ).dump()
 
     def __repr__(self) -> str:
         return f"Row({self.sheet()}, {self.values()!r})"
@@ -460,10 +485,7 @@ class Row(Generic[Instance]):
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Row):
-            details_match = [
-                self.sheet == other.sheet,
-                self.instance == other.instance
-            ]
+            details_match = [self.sheet == other.sheet, self.instance == other.instance]
             return all(details_match)
         return NotImplemented  # pragma: no cover
 
@@ -473,10 +495,13 @@ def name_cleaner(name: str) -> str:
     JSON Schema names for anchors and properties are validated
     against patterns defined in places like core/$defs/anchorString.
 
-    Names must match the following pattern.
-    We replace illegal characters with "_"
+    Anchor names must match the following pattern.
 
-    r"^[A-Za-z_][-A-Za-z0-9._]*$"
+    ::
+
+        r"^[A-Za-z_][-A-Za-z0-9._]*$"
+
+    This function replaces illegal characters with "_"
 
     >>> name_cleaner("TYPICAL-COBOL")
     'TYPICAL-COBOL'
@@ -484,13 +509,20 @@ def name_cleaner(name: str) -> str:
     'common_python'
     >>> name_cleaner("Not a 'good' name")
     'Not_a_good_name'
+    >>> name_cleaner("!@#$%^")
+    '_'
+    >>> name_cleaner('')
+    ''
     """
     while (
-            groups := cast(Match[str], re.match(r"(^[A-Za-z_][-A-Za-z0-9._]*)(.*)$", name)).groups()
+        groups := cast(
+            Match[str], re.match(r"(^[A-Za-z_][-A-Za-z0-9._]*)?(.*)$", name)
+        ).groups()
     )[1]:
         bad_char = groups[1][0]
         name = name.replace(bad_char, "_").replace("__", "_")
     return name
+
 
 class SchemaLoader(Generic[Instance]):
     """
@@ -512,6 +544,7 @@ class SchemaLoader(Generic[Instance]):
     If, however, changes need to be made, or the schema is used outside this module,
     it's already in a standard format.
     """
+
     def header(self, source: Iterator[Instance]) -> JSON:
         """
         Consume the first row or rows to build a schema.
@@ -537,7 +570,12 @@ class HeadingRowSchemaLoader(SchemaLoader[Instance]):
         json_schema = {
             "type": "object",
             "properties": {
-                str(name): {"title": name, "$anchor": name_cleaner(str(name)), "type": "string", "position": n}
+                str(name): {
+                    "title": name,
+                    "$anchor": name_cleaner(str(name)),
+                    "type": "string",
+                    "position": n,
+                }
                 for n, name in enumerate(first)
             },
         }
@@ -588,18 +626,20 @@ class ExternalSchemaLoader(SchemaLoader[Instance]):
                     "type": "string",
                     "position": n,
                     "description": row.name("description").value(),
-                    "dataType": row.name("dataType").value(),
+                    "conversion": row.name("dataType").value(),
                 }
                 for n, row in enumerate(self.sheet.row_iter())
             },
         }
         return json_schema
 
-class COBOLSchemaLoader():
+
+class COBOLSchemaLoader:
     """
     The most common case is a single COBOL Schema.
     For other, more complex situations, the single schema assumption may not be appropriate.
     """
+
     def __init__(self, source: Path) -> None:
         self.source = source
 
@@ -608,9 +648,11 @@ class COBOLSchemaLoader():
             self.schemas = list(schema_iter(source))
         return self.schemas[0]
 
+
 ### Registry to map file suffix to implementation
 
 WB_Type = Type[WB]
+
 
 class WBFileRegistry:
     """
@@ -624,6 +666,7 @@ class WBFileRegistry:
     >>> file_registry.suffix_map[".xyz"] == XYZ_Workbook
     True
     """
+
     def __init__(self) -> None:
         self.suffix_map: dict[str, WB_Type] = {}
 
@@ -632,6 +675,7 @@ class WBFileRegistry:
             for name in name_list:
                 self.suffix_map[name] = cls
             return cls
+
         return concrete_decorator
 
     def open_workbook(self, source: Path) -> WB:
@@ -641,7 +685,9 @@ class WBFileRegistry:
         try:
             cls = self.suffix_map[source.suffix]
         except KeyError:
-            raise NotImplementedError(f"unsupported {source.suffix!r} suffix; not one of {self.suffix_map.keys()}")
+            raise NotImplementedError(
+                f"unsupported {source.suffix!r} suffix; not one of {self.suffix_map.keys()}"
+            )
         return cls(source)
 
 
@@ -655,8 +701,12 @@ CSV Implementation
 
 class CSVUnpacker(WBUnpacker):
     """Upacker that wraps the :py:mod:`csv` module."""
+
     the_file: IO[str]
-    def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None) -> None:
+
+    def open(
+        self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None
+    ) -> None:
         if file_object:
             self.the_file = cast(IO[str], file_object)
         else:
@@ -675,10 +725,14 @@ class CSVUnpacker(WBUnpacker):
         for instance in self.rdr:
             yield cast(WBInstance, instance)
 
+
 @file_registry.file_suffix(".csv")
 class CSV_Workbook(Workbook[WBInstance]):
     def __init__(
-        self, name: Union[str, Path], file_object: Optional[IO[AnyStr]] = None, **kwargs: Any
+        self,
+        name: Union[str, Path],
+        file_object: Optional[IO[AnyStr]] = None,
+        **kwargs: Any,
     ) -> None:
         super().__init__(name, **kwargs)
         self.unpacker = CSVUnpacker()
@@ -687,14 +741,17 @@ class CSV_Workbook(Workbook[WBInstance]):
     def close(self) -> None:
         self.unpacker.close()
 
+
 """
 NDJSON Implementation
 """
+
 
 class JSONUnpacker(Delimited):
     """
     Unpacker that wraps the :py:mod:`json` module..
     """
+
     the_file: IO[str]
 
     def calcsize(self, schema: Schema) -> int:
@@ -702,13 +759,21 @@ class JSONUnpacker(Delimited):
 
     def value(self, schema: Schema, instance: "DInstance") -> Any:
         type_value = cast(dict[str, Any], schema.attributes).get("type", "object")
-        conversion = CONVERSION.get(cast(dict[str, Any], schema.attributes).get("conversion", type_value), lambda x: x)
+        conversion = CONVERSION.get(
+            cast(dict[str, Any], schema.attributes).get("conversion", type_value),
+            lambda x: x,
+        )
         return conversion(instance)
 
     def nav(self, schema: Schema, instance: "DInstance") -> "Nav":
         return DNav(self, schema, cast(JSON, instance))
 
-    def open(self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None, **kwargs: Any) -> None:
+    def open(
+        self,
+        name: Path,
+        file_object: Optional[Union[IO[str], IO[bytes]]] = None,
+        **kwargs: Any,
+    ) -> None:
         if file_object:
             self.the_file = cast(IO[str], file_object)
         else:
@@ -727,10 +792,14 @@ class JSONUnpacker(Delimited):
             instance = json.loads(line, **kwargs)
             yield instance
 
+
 @file_registry.file_suffix(".json", ".ndjson", ".jsonnl")
 class JSON_Workbook(Workbook[DInstance]):
     def __init__(
-        self, name: Union[str, Path], file_object: Optional[IO[AnyStr]] = None, **kwargs: Any
+        self,
+        name: Union[str, Path],
+        file_object: Optional[IO[AnyStr]] = None,
+        **kwargs: Any,
     ) -> None:
         super().__init__(name)
         self.kwargs = kwargs
@@ -739,6 +808,7 @@ class JSON_Workbook(Workbook[DInstance]):
 
     def close(self) -> None:
         self.unpacker.close()
+
 
 ### COBOL Files
 
@@ -768,7 +838,10 @@ class COBOL_Text_File(Workbook[NDInstance]):
     """Text Files in a fixed format. Newline delimited."""
 
     def __init__(
-        self, name: Union[str, Path], file_object: Optional[IO[AnyStr]] = None, **kwargs: str
+        self,
+        name: Union[str, Path],
+        file_object: Optional[IO[AnyStr]] = None,
+        **kwargs: str,
     ) -> None:
         super().__init__(name)
         self.unpacker = TextUnpacker()
@@ -807,7 +880,9 @@ class COBOL_EBCDIC_File(Workbook[NDInstance]):
         return COBOL_EBCDIC_Sheet(self, "")
 
     def sheet_iter(self) -> Iterator[Sheet[NDInstance]]:
-        yield from (COBOL_EBCDIC_Sheet(self, name) for name in self.unpacker.sheet_iter())
+        yield from (
+            COBOL_EBCDIC_Sheet(self, name) for name in self.unpacker.sheet_iter()
+        )
 
 
 class COBOL_EBCDIC_Sheet(Sheet[NDInstance]):
@@ -815,6 +890,7 @@ class COBOL_EBCDIC_Sheet(Sheet[NDInstance]):
     The single "Sheet" in a file. This is a container for the rows.
     It handles the RECFM and LRECL complexities of variable-length non-delimited records.
     """
+
     def set_schema(self, schema: Schema) -> Sheet[NDInstance]:
         """Done eagerly to make the LRECL more visible."""
         result = super().set_schema(schema)

@@ -16,7 +16,7 @@
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="6. History" href="../history.html" />
+    <link rel="next" title="History" href="../history.html" />
     <link rel="prev" title="Data Conversion – ETL with Validation" href="../demo/conversion.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -36,6 +36,24 @@
             
   <section id="implementation">
 <span id="id1"></span><h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
+<p class="plantuml">
+<img src="../_images/plantuml-ba909cf05c301b989c24d7b44d291727ab06a0ed.png" alt="&#64;startuml
+package stingray-reader {
+    package schema_instance
+    package estruct
+    package cobol_parser
+    package workbook
+    package implementations
+
+    implementations ..&gt; workbook
+    workbook ..&gt; cobol_parser
+    workbook ..&gt; estruct
+    workbook ..&gt; schema_instance
+    schema_instance ..&gt; estruct
+}
+&#64;enduml"/>
+</p>
+<p>We’ll look at each module, separately.</p>
 <section id="module-stingray.schema_instance">
 <span id="schema-and-instance"></span><h2>Schema and Instance<a class="headerlink" href="#module-stingray.schema_instance" title="Permalink to this headline">¶</a></h2>
 <section id="schema-and-navigation-models">
@@ -373,12 +391,6 @@ Unpackers.</p>
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.schema_instance.</span></span><span class="sig-name descname"><span class="pre">CSVNav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unpacker</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.schema_instance.Unpacker" title="stingray.schema_instance.Unpacker"><span class="pre">stingray.schema_instance.Unpacker</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.WBInstance" title="stingray.schema_instance.WBInstance"><span class="pre">stingray.schema_instance.WBInstance</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><span class="pre">stingray.schema_instance.Schema</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.schema_instance.WBInstance" title="stingray.schema_instance.WBInstance"><span class="pre">stingray.schema_instance.WBInstance</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.schema_instance.CSVNav" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="stingray.schema_instance.CSVUnpacker">
-<span class="sig-prename descclassname"><span class="pre">stingray.schema_instance.</span></span><span class="sig-name descname"><span class="pre">CSVUnpacker</span></span><a class="headerlink" href="#stingray.schema_instance.CSVUnpacker" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#stingray.schema_instance.WBUnpacker" title="stingray.schema_instance.WBUnpacker"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.schema_instance.WBUnpacker</span></code></a></p>
-</dd></dl>
-
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.schema_instance.DInstance">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.schema_instance.</span></span><span class="sig-name descname"><span class="pre">DInstance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.schema_instance.DInstance" title="Permalink to this definition">¶</a></dt>
@@ -417,14 +429,17 @@ Consider refactoring to use Unpacker explicitly</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.schema_instance.Delimited">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.schema_instance.</span></span><span class="sig-name descname"><span class="pre">Delimited</span></span><a class="headerlink" href="#stingray.schema_instance.Delimited" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unpacker for Delimited values, i.e. <code class="docutils literal notranslate"><span class="pre">JSON</span></code> documents wrapped as a <code class="docutils literal notranslate"><span class="pre">DInstance</span></code>.</p>
+<dd><p>An Abstract Unpacker for delimited instances, i.e. <code class="docutils literal notranslate"><span class="pre">JSON</span></code> documents.</p>
 <p>An instance will be <code class="docutils literal notranslate"><span class="pre">list[Any]</span> <span class="pre">|</span> <span class="pre">dict[str,</span> <span class="pre">Any]</span> <span class="pre">|</span> <span class="pre">Any</span></code>.
-It will is built by a separate parser.</p>
-<p>For JSON/YAML/TOML, the instance <em>should</em> have same structure as the schema.
-For XML, this should also be true.</p>
-<p>A subclass handles workbooks which are narrowed to be <code class="docutils literal notranslate"><span class="pre">list[Any]</span></code>.</p>
+It will is built by a separate parser, often <code class="xref py py-mod docutils literal notranslate"><span class="pre">json</span></code>, YAML, or TOML.</p>
+<p>For JSON/YAML/TOML, the instance <em>should</em> have the same structure as the schema.
+JSONSchema validation can be applied to confirm this.</p>
+<p>For XML, the source instance should be transformed into native Python objects, following
+a schema definition. A schema structure may ignore XML tags or extract text from a tag
+with a mixed content model.</p>
 <p>The sizes and formats of delimited data don’t matter:
 the <code class="xref py py-func docutils literal notranslate"><span class="pre">calcsize()</span></code> function returns 1 to act as a position in a sequence of values.</p>
+<p>Concrete subclasses include open, close, and instance_iter.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -452,25 +467,28 @@ A “conversion” keyword converts to a more useful Python type.</p>
 COBOL encoded numeric can be <code class="docutils literal notranslate"><span class="pre">&quot;type&quot;:</span> <span class="pre">&quot;string&quot;</span></code> with additional <code class="docutils literal notranslate"><span class="pre">&quot;contentEncoding&quot;</span></code> details.</p>
 <p>This class implements a <code class="docutils literal notranslate"><span class="pre">&quot;contentEncoding&quot;</span></code> using values of “packed-decimal”, and “cp037”,
 to unwind COBOL Packed Decimal and Binary as strings of bytes.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="stingray.schema_instance.EBCDIC.instance_iter">
+<span class="sig-name descname"><span class="pre">instance_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sheet</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recfm_class</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.estruct.RECFM_Reader" title="stingray.estruct.RECFM_Reader"><span class="pre">stingray.estruct.RECFM_Reader</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrecl</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.NDInstance" title="stingray.schema_instance.NDInstance"><span class="pre">stingray.schema_instance.NDInstance</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.schema_instance.EBCDIC.instance_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate instance iteration to a recfm_parser instance.</p>
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="stingray.schema_instance.JSONUnpacker">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.schema_instance.</span></span><span class="sig-name descname"><span class="pre">JSONUnpacker</span></span><a class="headerlink" href="#stingray.schema_instance.JSONUnpacker" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unpacker for delimited values from JSON documents.</p>
-<p>JSON, however, relies on the <code class="xref py py-mod docutils literal notranslate"><span class="pre">json</span></code> module, where the instance can
-be <code class="docutils literal notranslate"><span class="pre">list[Any]</span></code> or <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Any]</span></code>.</p>
-<p>TODO: This should be the same as Delimited.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="stingray.schema_instance.EBCDIC.used">
+<span class="sig-name descname"><span class="pre">used</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#stingray.schema_instance.EBCDIC.used" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delegate number of bytes consumed to the recfm_parser.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.schema_instance.Location">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.schema_instance.</span></span><span class="sig-name descname"><span class="pre">Location</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><span class="pre">stingray.schema_instance.Schema</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.schema_instance.Location" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Location is used to navigate within an <cite>NDInstance</cite> objects.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">Unpacker[NDInstnace]</span></code> strategy is a subclass of NonDelimited,
+<p>The <code class="docutils literal notranslate"><span class="pre">Unpacker[NDInstance]</span></code> strategy is a subclass of NonDelimited,
 one of EBCDIC(), Struct(), or TextUnpacker().</p>
 <p>The value() method delegates the work to the <code class="docutils literal notranslate"><span class="pre">Unpacker</span></code> strategy.</p>
-<p>TODO: Add unpacker and locationMaker to initialization.</p>
+<p>TODO: Add unpacker and locationMaker to __init__() method.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="stingray.schema_instance.Location.referent">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">referent</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#stingray.schema_instance.Location" title="stingray.schema_instance.Location"><span class="pre">stingray.schema_instance.Location</span></a></em><a class="headerlink" href="#stingray.schema_instance.Location.referent" title="Permalink to this definition">¶</a></dt>
@@ -572,13 +590,6 @@ Instance object is. Dictionaries use names, lists use indices.</p></li>
 </ul>
 <p>A <code class="docutils literal notranslate"><span class="pre">Nav</span></code> is built by an <code class="docutils literal notranslate"><span class="pre">Unpacker</span></code>.
 <code class="docutils literal notranslate"><span class="pre">unpacker.nav(schema,</span> <span class="pre">instance)</span></code>.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="stingray.schema_instance.NonDelimited">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.schema_instance.</span></span><span class="sig-name descname"><span class="pre">NonDelimited</span></span><a class="headerlink" href="#stingray.schema_instance.NonDelimited" title="Permalink to this definition">¶</a></dt>
-<dd><p>NDInstance protocol is a Sequence, either bytes or str, the AnyStr type.
-This abstract Unpacker can perform size calculations or value conversions on the underlying data.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -713,7 +724,7 @@ Relies on an <code class="docutils literal notranslate"><span class="pre">maxIte
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.schema_instance.Struct">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.schema_instance.</span></span><span class="sig-name descname"><span class="pre">Struct</span></span><a class="headerlink" href="#stingray.schema_instance.Struct" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unpacker for Non-Delimited bytes.</p>
+<dd><p>Unpacker for Non-Delimited native (i.e., not EBCDIC-encoding) bytes.</p>
 <p>Uses built-in <code class="xref py py-mod docutils literal notranslate"><span class="pre">struct</span></code> module for calcsize and value.
 TODO: Finish this.</p>
 </dd></dl>
@@ -738,7 +749,7 @@ TODO: Finish this.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.schema_instance.TextUnpacker">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.schema_instance.</span></span><span class="sig-name descname"><span class="pre">TextUnpacker</span></span><a class="headerlink" href="#stingray.schema_instance.TextUnpacker" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unpacker for Non-Delimited string values.</p>
+<dd><p>Unpacker for Non-Delimited text values.</p>
 <p>Uses string slicing and built-ins.
 This is for a native Unicode (or ASCII) text-based format.
 If utf-16 is being used, this is effectively a Double-Byte Character Set used by COBOL.</p>
@@ -750,7 +761,7 @@ of the data, not the data itself. We use a “conversion” keyword to do these 
 from external string to internal Python object.</p>
 <p>For various native bytes formats, this is a <cite>{“type”: “string”, “contentEncoding”: “struct-xxx”}</cite>
 where the Python <code class="xref py py-mod docutils literal notranslate"><span class="pre">struct</span></code> module codes are used to define the number of interpretation of the bytes.</p>
-<p>TODO: For COBOL, the “cobol” keyword provides USAGE and PICTURE. This defines size.
+<p>For COBOL, the “cobol” keyword provides USAGE and PICTURE. This defines size.
 In this case, since it’s not in EBCDIC, we can use <code class="xref py py-mod docutils literal notranslate"><span class="pre">struct</span></code> to unpack COMP values.</p>
 <p>This requires the “cobol” and “conversion” keywords, part of the extended vocabulary for COBOL.
 A <cite>“cobol”</cite> keyword gets Usage and Picture values required to decode EBCDIC. 
@@ -767,6 +778,8 @@ Because patterns can be hard to reverse engineer, we don’t use this.)</p>
 For NDInstances, this involves size calculations and value conversions.
 For WBInstances and JSON, this is a pass-through because the sizes don’t matter and
 the values are already Native Python objects.</p>
+<p>An Unpacker is a generic procotol. A class that implements the protocol <strong>should</strong>
+provide all of the methods.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -805,7 +818,8 @@ by name translates to a position within the <code class="docutils literal notran
 CSV, however, relies on the <code class="xref py py-mod docutils literal notranslate"><span class="pre">csv</span></code> module, where the instance is <code class="docutils literal notranslate"><span class="pre">list[str]</span></code>.</p>
 <p>While it’s tempting to use “type”: “number” on CSV data, it’s technically suspicious.
 The file has strings, and only strings. Conversions are part of the application’s use 
-of the data, not the data itself.</p>
+of the data, not the data itself. The schema can use the <code class="docutils literal notranslate"><span class="pre">&quot;conversion&quot;</span></code> keyword
+to specify one of the conversion functions.</p>
 </dd></dl>
 
 </section>
@@ -1493,15 +1507,29 @@ This is narrower than that, and could be bytes only, not NDInstance.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.workbook.COBOL_EBCDIC_Sheet">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">COBOL_EBCDIC_Sheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workbook</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.NDInstance" title="stingray.schema_instance.NDInstance"><span class="pre">stingray.schema_instance.NDInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.WBInstance" title="stingray.schema_instance.WBInstance"><span class="pre">stingray.schema_instance.WBInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.DInstance" title="stingray.schema_instance.DInstance"><span class="pre">stingray.schema_instance.DInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.workbook.COBOL_EBCDIC_Sheet" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">COBOL_EBCDIC_Sheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workbook</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><span class="pre">stingray.schema_instance.Instance</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.workbook.COBOL_EBCDIC_Sheet" title="Permalink to this definition">¶</a></dt>
 <dd><p>The single “Sheet” in a file. This is a container for the rows.
-It also retains the most recent row so we can determine the actual size
-in the presence of complex OCCURS DEPENDING ON clauses.</p>
+It handles the RECFM and LRECL complexities of variable-length non-delimited records.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="stingray.workbook.COBOL_EBCDIC_Sheet.row_iter">
+<span class="sig-name descname"><span class="pre">row_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.workbook.Row" title="stingray.workbook.Row"><span class="pre">stingray.workbook.Row</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.NDInstance" title="stingray.schema_instance.NDInstance"><span class="pre">stingray.schema_instance.NDInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.workbook.COBOL_EBCDIC_Sheet.row_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Passes instances through the schema loader.  (An external schema will have a dummy loader.)
+Extracts a schema from the header.
+Applies the schema to the body to create a <a class="reference internal" href="#stingray.workbook.Row" title="stingray.workbook.Row"><code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code></a> instances.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stingray.workbook.COBOL_EBCDIC_Sheet.rows">
+<span class="sig-name descname"><span class="pre">rows</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.workbook.Row" title="stingray.workbook.Row"><span class="pre">stingray.workbook.Row</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.NDInstance" title="stingray.schema_instance.NDInstance"><span class="pre">stingray.schema_instance.NDInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.workbook.COBOL_EBCDIC_Sheet.rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Passes instances through the schema loader.  (An external schema will have a dummy loader.)
+Extracts a schema from the header.
+Applies the schema to the body to create a <a class="reference internal" href="#stingray.workbook.Row" title="stingray.workbook.Row"><code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code></a> instances.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.workbook.COBOL_EBCDIC_Sheet.set_schema">
 <span class="sig-name descname"><span class="pre">set_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><span class="pre">stingray.schema_instance.Schema</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stingray.workbook.Sheet" title="stingray.workbook.Sheet"><span class="pre">stingray.workbook.Sheet</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.NDInstance" title="stingray.schema_instance.NDInstance"><span class="pre">stingray.schema_instance.NDInstance</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.workbook.COBOL_EBCDIC_Sheet.set_schema" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provides an externally-supplied schema.</p>
-<p>This also sets a “do nothing” schema loader</p>
+<dd><p>Done eagerly to make the LRECL more visible.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1513,15 +1541,10 @@ in the presence of complex OCCURS DEPENDING ON clauses.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="stingray.workbook.COBOL_Text_Sheet">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">COBOL_Text_Sheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workbook</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.NDInstance" title="stingray.schema_instance.NDInstance"><span class="pre">stingray.schema_instance.NDInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.WBInstance" title="stingray.schema_instance.WBInstance"><span class="pre">stingray.schema_instance.WBInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.DInstance" title="stingray.schema_instance.DInstance"><span class="pre">stingray.schema_instance.DInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.workbook.COBOL_Text_Sheet" title="Permalink to this definition">¶</a></dt>
-<dd><p>The single “Sheet” in a file. This is a container for the rows.</p>
+<dt class="sig sig-object py" id="stingray.workbook.CSVUnpacker">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">CSVUnpacker</span></span><a class="headerlink" href="#stingray.workbook.CSVUnpacker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upacker that wraps the <code class="xref py py-mod docutils literal notranslate"><span class="pre">csv</span></code> module.</p>
 </dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="stingray.workbook.CSV_Sheet">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">CSV_Sheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workbook</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.NDInstance" title="stingray.schema_instance.NDInstance"><span class="pre">stingray.schema_instance.NDInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.WBInstance" title="stingray.schema_instance.WBInstance"><span class="pre">stingray.schema_instance.WBInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.DInstance" title="stingray.schema_instance.DInstance"><span class="pre">stingray.schema_instance.DInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.workbook.CSV_Sheet" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.workbook.CSV_Workbook">
@@ -1554,9 +1577,10 @@ parsed by a WBUnpacker.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="stingray.workbook.JSON_Sheet">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">JSON_Sheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workbook</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.NDInstance" title="stingray.schema_instance.NDInstance"><span class="pre">stingray.schema_instance.NDInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.WBInstance" title="stingray.schema_instance.WBInstance"><span class="pre">stingray.schema_instance.WBInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.DInstance" title="stingray.schema_instance.DInstance"><span class="pre">stingray.schema_instance.DInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.workbook.JSON_Sheet" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="stingray.workbook.JSONUnpacker">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">JSONUnpacker</span></span><a class="headerlink" href="#stingray.workbook.JSONUnpacker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpacker that wraps the <code class="xref py py-mod docutils literal notranslate"><span class="pre">json</span></code> module..</p>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.workbook.JSON_Workbook">
@@ -1605,7 +1629,7 @@ it’s already in a standard format.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.workbook.Sheet">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">Sheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workbook</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.NDInstance" title="stingray.schema_instance.NDInstance"><span class="pre">stingray.schema_instance.NDInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.WBInstance" title="stingray.schema_instance.WBInstance"><span class="pre">stingray.schema_instance.WBInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.DInstance" title="stingray.schema_instance.DInstance"><span class="pre">stingray.schema_instance.DInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.workbook.Sheet" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">Sheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workbook</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><span class="pre">stingray.schema_instance.Instance</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.workbook.Sheet" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Sheet of a Workbook. This can also be a table on a page of a Numbers workbook.</p>
 <p>It needs a schema binding to describe the content of each row.</p>
 <p>Either a Schema is loaded from an external source.
@@ -1664,14 +1688,104 @@ It makes an open_workbook() function that can open a wide variety of file types.
 
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.workbook.Workbook">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">Workbook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.workbook.Workbook" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">Workbook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.workbook.Workbook" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stingray.workbook.name_cleaner">
+<span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">name_cleaner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#stingray.workbook.name_cleaner" title="Permalink to this definition">¶</a></dt>
+<dd><p>JSON Schema names for anchors and properties are validated
+against patterns defined in places like core/$defs/anchorString.</p>
+<p>Anchor names must match the following pattern.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sa">r</span><span class="s2">&quot;^[A-Za-z_][-A-Za-z0-9._]*$&quot;</span>
+</pre></div>
+</div>
+<p>This function replaces illegal characters with “_”</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">name_cleaner</span><span class="p">(</span><span class="s2">&quot;TYPICAL-COBOL&quot;</span><span class="p">)</span>
+<span class="go">&#39;TYPICAL-COBOL&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">name_cleaner</span><span class="p">(</span><span class="s2">&quot;common_python&quot;</span><span class="p">)</span>
+<span class="go">&#39;common_python&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">name_cleaner</span><span class="p">(</span><span class="s2">&quot;Not a &#39;good&#39; name&quot;</span><span class="p">)</span>
+<span class="go">&#39;Not_a_good_name&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">name_cleaner</span><span class="p">(</span><span class="s2">&quot;!@#$%^&quot;</span><span class="p">)</span>
+<span class="go">&#39;_&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">name_cleaner</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="go">&#39;&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="stingray.workbook.open_workbook">
 <span class="sig-prename descclassname"><span class="pre">stingray.workbook.</span></span><span class="sig-name descname"><span class="pre">open_workbook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.NDInstance" title="stingray.schema_instance.NDInstance"><span class="pre">stingray.schema_instance.NDInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.WBInstance" title="stingray.schema_instance.WBInstance"><span class="pre">stingray.schema_instance.WBInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#stingray.workbook.Workbook" title="stingray.workbook.Workbook"><span class="pre">stingray.workbook.Workbook</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.schema_instance.DInstance" title="stingray.schema_instance.DInstance"><span class="pre">stingray.schema_instance.DInstance</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.workbook.open_workbook" title="Permalink to this definition">¶</a></dt>
 <dd><p>CSV Implementation</p>
 </dd></dl>
+
+</section>
+</section>
+<section id="module-stingray.implementations">
+<span id="workbook-implementations"></span><h2>Workbook Implementations<a class="headerlink" href="#module-stingray.implementations" title="Permalink to this headline">¶</a></h2>
+<p>Workbook Implementations</p>
+<p>See <a class="reference external" href="http://www.python-excel.org/">http://www.python-excel.org/</a> for a complete list of implementations.
+Of these, we choose a few to handle XLSX, ODS, and Numbers.</p>
+<section id="xls-files-via-xlrd">
+<h3>.XLS files via <code class="docutils literal notranslate"><span class="pre">xlrd</span></code><a class="headerlink" href="#xls-files-via-xlrd" title="Permalink to this headline">¶</a></h3>
+<p>Note that this is <em>only</em> for historical .XLS files.</p>
+<p>See <a class="reference external" href="https://xlrd.readthedocs.io/en/latest/">https://xlrd.readthedocs.io/en/latest/</a></p>
+</section>
+<section id="xlsx-files-via-openpyxl">
+<h3>.XLSX files via <code class="docutils literal notranslate"><span class="pre">Openpyxl</span></code><a class="headerlink" href="#xlsx-files-via-openpyxl" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference external" href="https://openpyxl.readthedocs.io/en/stable/">https://openpyxl.readthedocs.io/en/stable/</a></p>
+</section>
+<section id="ods-files-via-pyexcel">
+<h3>.ODS files via Pyexcel<a class="headerlink" href="#ods-files-via-pyexcel" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference external" href="http://docs.pyexcel.org/en/latest/">http://docs.pyexcel.org/en/latest/</a></p>
+<p>See <a class="reference external" href="https://github.com/pyexcel/pyexcel-ods3">https://github.com/pyexcel/pyexcel-ods3</a></p>
+<p>Generally, Pyexcel seems to cover the widest variety of formats.
+It might be helpful to delegate more of the implementations to PyExcel.</p>
+</section>
+<section id="numbers-13-files-via">
+<h3>.NUMBERS 13 files via ??<a class="headerlink" href="#numbers-13-files-via" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference external" href="https://pypi.org/project/numbers-parser/">https://pypi.org/project/numbers-parser/</a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="stingray.implementations.NumbersUnpacker">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.implementations.</span></span><span class="sig-name descname"><span class="pre">NumbersUnpacker</span></span><a class="headerlink" href="#stingray.implementations.NumbersUnpacker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stingray.implementations.Numbers_Workbook">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.implementations.</span></span><span class="sig-name descname"><span class="pre">Numbers_Workbook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.implementations.Numbers_Workbook" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stingray.implementations.ODSUnpacker">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.implementations.</span></span><span class="sig-name descname"><span class="pre">ODSUnpacker</span></span><a class="headerlink" href="#stingray.implementations.ODSUnpacker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stingray.implementations.ODS_Workbook">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.implementations.</span></span><span class="sig-name descname"><span class="pre">ODS_Workbook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.implementations.ODS_Workbook" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stingray.implementations.XLSUnpacker">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.implementations.</span></span><span class="sig-name descname"><span class="pre">XLSUnpacker</span></span><a class="headerlink" href="#stingray.implementations.XLSUnpacker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stingray.implementations.XLSXUnpacker">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.implementations.</span></span><span class="sig-name descname"><span class="pre">XLSXUnpacker</span></span><a class="headerlink" href="#stingray.implementations.XLSXUnpacker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stingray.implementations.XLSX_Workbook">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.implementations.</span></span><span class="sig-name descname"><span class="pre">XLSX_Workbook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.implementations.XLSX_Workbook" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stingray.implementations.XLS_Workbook">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.implementations.</span></span><span class="sig-name descname"><span class="pre">XLS_Workbook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.implementations.XLS_Workbook" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </section>
 </section>
@@ -1703,8 +1817,8 @@ It makes an open_workbook() function that can open a wide variety of file types.
 <li class="toctree-l1"><a class="reference internal" href="../developer.html">Using <strong>Stingray Reader</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/index.html">Demo Applications</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Implementation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../history.html">6. History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">7. Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">Commercial Use</a></li>
 </ul>
@@ -1714,7 +1828,7 @@ It makes an open_workbook() function that can open a wide variety of file types.
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="../demo/conversion.html" title="previous chapter">Data Conversion – ETL with Validation</a></li>
-      <li>Next: <a href="../history.html" title="next chapter"><span class="section-number">6. </span>History</a></li>
+      <li>Next: <a href="../history.html" title="next chapter">History</a></li>
   </ul></li>
 </ul>
 </div>

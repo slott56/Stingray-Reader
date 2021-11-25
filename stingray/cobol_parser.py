@@ -107,14 +107,19 @@ from typing import (
 )
 import weakref
 
+
 class DesignError(BaseException):
     pass
+
 
 JSON = Union[None, bool, int, float, str, list[Any], dict[str, Any]]
 
 logger = logging.getLogger("stingray.cobol_parser")
 
-def reference_format(source: TextIO, replacing: Optional[list[tuple[str, str]]] = None) -> Iterator[str]:
+
+def reference_format(
+    source: TextIO, replacing: Optional[list[tuple[str, str]]] = None
+) -> Iterator[str]:
     """
     Extract source from files that have sequence numbers in 1-6, indicator in 7, and code in 8-72.
     Zero-based, these slices are [0:6], [6], [7:72]
@@ -126,8 +131,7 @@ def reference_format(source: TextIO, replacing: Optional[list[tuple[str, str]]] 
     """
     non_empty = filter(lambda line: line.rstrip(), source)
     non_directive = filter(
-        lambda line: line.strip() not in {"EJECT", "SKIP1", "SKIP2", "SKIP3"},
-        non_empty
+        lambda line: line.strip() not in {"EJECT", "SKIP1", "SKIP2", "SKIP3"}, non_empty
     )
     indicator_line_iter = (
         (line[6], line[7:72]) for line in non_directive if len(line) >= 7
@@ -331,9 +335,9 @@ class DDE:
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, DDE):
             return (
-                    self.level == other.level
-                    and self.source == other.source
-                    and self.clauses == other.clauses
+                self.level == other.level
+                and self.source == other.source
+                and self.clauses == other.clauses
             )
         return NotImplemented  # pragma: no cover
 
@@ -614,6 +618,7 @@ class JSONSchemaMakerExtendedVocabulary(JSONSchemaMaker):
     VOCABULARY: JSON = {
         # TODO: Provide the JSONSchema Vocabulary definition to add 'decimal' as a type.
     }
+
     def json_type(self, node: DDE) -> JSON:
         """
         If we're using an extended vocabulary including  ``decimal``, the following mappings can be used.
@@ -656,24 +661,22 @@ class JSONSchemaMakerExtendedVocabulary(JSONSchemaMaker):
         elif usage in {
             "COMP-1",
             "COMPUTATIONAL-1",
-            "COMP-2", "COMPUTATIONAL-2",
+            "COMP-2",
+            "COMPUTATIONAL-2",
         }:
             return {"type": "number"}
         else:
             # The regular expression pattern is not reflected in this if-statement.
             raise DesignError(f"usage clause {usage!r} unknown")  # pragma: no cover
 
+
 REPLACING = Optional[list[tuple[str, str]]]
 REFERENCE_FORMAT = Callable[[TextIO, REPLACING], Iterator[str]]
 
-def schema_iter(source: TextIO, deformat: REFERENCE_FORMAT = reference_format) -> Iterator[JSON]:
-    copy_books = structure(
-        dde_sentences(
-            reference_format(
-                source
-            )
-        )
-    )
+
+def schema_iter(
+    source: TextIO, deformat: REFERENCE_FORMAT = reference_format
+) -> Iterator[JSON]:
+    copy_books = structure(dde_sentences(reference_format(source)))
     schemas = (JSONSchemaMaker(record).jsonschema() for record in copy_books)
     return schemas
-
