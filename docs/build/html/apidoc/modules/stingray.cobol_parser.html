@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>stingray.cobol_parser &#8212; Stingray-Reader 5.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="stingray.workbook" href="stingray.workbook.html" />
+    <link rel="prev" title="stingray.schema_instance" href="stingray.schema_instance.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-stingray.cobol_parser">
+<span id="stingray-cobol-parser"></span><h1>stingray.cobol_parser<a class="headerlink" href="#module-stingray.cobol_parser" title="Permalink to this headline">¶</a></h1>
+<p>cobol_parser – COBOL DDE Parser and JSONSchema Builder.</p>
+<p>Translate COBOL to JSON Schema. This involves the following kinds of transformations:</p>
+<ul>
+<li><p>Group level items become “type”: “object”.</p></li>
+<li><p>Elementary items become one of the atomic types, “string”, “integer”, “number”. If an extened vocabulary is used, then “decimal” can be used, also.</p></li>
+<li><p>Occurs items become <code class="docutils literal notranslate"><span class="pre">&quot;type&quot;:</span> <span class="pre">&quot;array&quot;</span></code>. There are additional special cases.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>An item with both OCCURS and a PICTURE becomes an anonymous array that contains the elementary item.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> builds a <code class="docutils literal notranslate"><span class="pre">&quot;$ref&quot;:</span> <span class="pre">&quot;#name&quot;</span></code> to a <code class="docutils literal notranslate"><span class="pre">&quot;$anchor&quot;:</span> <span class="pre">&quot;name&quot;</span></code> item in the schema.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> refers to another item under this parent. While this is similar to a “oneOf” definition, it’s a bit more complex because the alternatives each have separate names. The structure is not simply a <code class="docutils literal notranslate"><span class="pre">{&quot;name&quot;:</span> <span class="pre">{&quot;type&quot;:</span> <span class="pre">{&quot;oneOf&quot;:</span> <span class="pre">[base-A,</span> <span class="pre">redefine-B,</span> <span class="pre">redefine-C,</span> <span class="pre">etc.]}}</span></code>.
+The “redefines” property is effectively anonymous and each of the subtypes has a distinct name. It’s <code class="docutils literal notranslate"><span class="pre">{&quot;redefine-A-B-C&quot;:</span> <span class="pre">{&quot;type&quot;:</span> <span class="pre">{&quot;oneOf&quot;:</span> <span class="pre">[{&quot;type&quot;:</span> <span class="pre">&quot;object&quot;,</span> <span class="pre">&quot;properties&quot;:</span> <span class="pre">{&quot;A&quot;:</span> <span class="pre">base}},</span> <span class="pre">{&quot;type:</span> <span class="pre">&quot;object&quot;,</span> <span class="pre">&quot;properties&quot;:</span> <span class="pre">{&quot;B&quot;:</span> <span class="pre">redefined}},</span> <span class="pre">etc.]}}}</span></code>.
+This is cumbersome, but is required to capture the COBOL semantics accurately in JSONSchema.</p></li>
+</ul>
+<p>We require some extensions or adaptations to cover two COBOL issues:</p>
+<ul class="simple">
+<li><p>COBOL encoded data (Packed-Decimal, Binary, etc.) JSON Schema presumes delimited files with a parser’s conversions of data. For COBOL, the parsing is driven from the JSON Schema, therefore additional details are required. This includes the <code class="docutils literal notranslate"><span class="pre">contentEncoding</span></code> and a conversion function.</p></li>
+<li><p>Occurs Depending On reference. JSON Schema limits the maxItems to an unsigned integer. We have to provide an alternative keyword for this.</p></li>
+</ul>
+<p>It is also handy to have a “cobol” keyword with the original source text.</p>
+<p>Because COBOL flattens the namespace of records, we define an <code class="docutils literal notranslate"><span class="pre">$anchor</span></code> for each individual field to make them easier to search for.</p>
+<section id="approach">
+<h2>Approach<a class="headerlink" href="#approach" title="Permalink to this headline">¶</a></h2>
+<p>We use a (long) regular expression to parse the various clauses.
+This defines the entire DDE syntax.</p>
+<p>Beyond the essential language syntax, there’s a “reference format” for source code.
+For this format, we need to remove positions 1-6 and 72-80. Position 7 may involve a comment indicator, “*”, or a continuation character, “-“.
+See <a class="reference external" href="https://www.ibm.com/docs/en/cobol-zos/4.2?topic=structure-reference-format">https://www.ibm.com/docs/en/cobol-zos/4.2?topic=structure-reference-format</a>.</p>
+</section>
+<section id="cobol-language">
+<h2>COBOL Language<a class="headerlink" href="#cobol-language" title="Permalink to this headline">¶</a></h2>
+<p>A COBOL “Copybook” is a group-level DDE.
+See <a class="reference external" href="https://www.ibm.com/docs/en/cobol-zos/4.2?topic=division-data-data-description-entry">https://www.ibm.com/docs/en/cobol-zos/4.2?topic=division-data-data-description-entry</a></p>
+<p>There are three formats for DDE’s. We only really care about one of them.</p>
+<ul class="simple">
+<li><p>Format 1 is the useful DDE level numbers 01 to 49 and 77.</p></li>
+<li><p>Format 2 is a RENAMES clause, level 66. We don’t support this.</p></li>
+</ul>
+<p>. Format 3 is a CONDITION, level 88. This is a kind of enumeration of values; we tolerate it, but don’t do anything with it.</p>
+<p>Here’s the railroad diagramm for each sentence. Clauses after level-number and data-name-1 can appear in any order.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;-</span><span class="n">level</span><span class="o">-</span><span class="n">number</span><span class="o">--+-------------+--+------------------+----------&gt;</span>
+                 <span class="o">+-</span><span class="n">data</span><span class="o">-</span><span class="n">name</span><span class="o">-</span><span class="mi">1</span><span class="o">-+</span>  <span class="s1">&#39;-redefines-clause-&#39;</span>
+                 <span class="s1">&#39;-FILLER------&#39;</span>
+
+<span class="o">&gt;--+------------------------+--+-----------------+--------------&gt;</span>
+   <span class="s1">&#39;-blank-when-zero-clause-&#39;</span>  <span class="s1">&#39;-external-clause-&#39;</span>
+
+<span class="o">&gt;--+---------------+--+--------------------+--------------------&gt;</span>
+   <span class="s1">&#39;-global-clause-&#39;</span>  <span class="s1">&#39;-group-usage-clause-&#39;</span>
+
+<span class="o">&gt;--+------------------+--+---------------+----------------------&gt;</span>
+   <span class="s1">&#39;-justified-clause-&#39;</span>  <span class="s1">&#39;-occurs-clause-&#39;</span>
+
+<span class="o">&gt;--+----------------+--+-------------+--------------------------&gt;</span>
+   <span class="s1">&#39;-picture-clause-&#39;</span>  <span class="s1">&#39;-sign-clause-&#39;</span>
+
+<span class="o">&gt;--+---------------------+--+--------------+--------------------&gt;</span>
+   <span class="s1">&#39;-synchronized-clause-&#39;</span>  <span class="s1">&#39;-usage-clause-&#39;</span>
+
+<span class="o">&gt;--+--------------+--+--------------------+--------------------&gt;&lt;</span>
+   <span class="s1">&#39;-value-clause-&#39;</span>  <span class="s1">&#39;-date-format-clause-&#39;</span>
+</pre></div>
+</div>
+<p>A separator period occurs at the end of the sentence. (It’s described elsewhere in the COBOL language reference.)</p>
+<p>For simple examples, see <a class="reference external" href="https://github.com/rradclif/mortgagesample/tree/master/MortgageApplication/copybook">https://github.com/rradclif/mortgagesample/tree/master/MortgageApplication/copybook</a></p>
+<p>For comprehensive, complex examples, see
+<a class="reference external" href="https://github.com/royopa/cb2xml/tree/ec83af657b781afd0dad9cc263623faa2549f738/source/cb2xml_tests/src/common/cobolCopybook">https://github.com/royopa/cb2xml/tree/ec83af657b781afd0dad9cc263623faa2549f738/source/cb2xml_tests/src/common/cobolCopybook</a></p>
+<p>These cover a large number of COBOL-to-XML cases.</p>
+</section>
+<section id="reference-format-function">
+<h2>reference_format function<a class="headerlink" href="#reference-format-function" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="stingray.cobol_parser.reference_format">
+<span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">reference_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">TextIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replacing</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.reference_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract source from files that have sequence numbers in 1-6, indicator in 7, and code in 8-72.
+Zero-based, these slices are [0:6], [6], [7:72]</p>
+<p>This can be extended to handle <code class="docutils literal notranslate"><span class="pre">COPY</span></code> statements that include other copybooks into a copybook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> – The source file</p></li>
+<li><p><strong>replacing</strong> – A sequence of two-tuples with (“‘old’”, “new”) strings.
+The apostrophes on the old are required here to replace the apostrophes
+that are present in the COBOL source.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p>strings with the sequence and indicator removed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="parsing">
+<h2>Parsing<a class="headerlink" href="#parsing" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="stingray.cobol_parser.dde_sentences">
+<span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">dde_sentences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.dde_sentences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decompose the source into separate sentences by looking for the trailing period-space.
+The pattern will produce a sequence of (level, source text) 2-tuples.
+Since we simply collect all the matching groups, it’s technically a Sequence[str].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stingray.cobol_parser.expand_repeat">
+<span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">expand_repeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.expand_repeat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace {“repeat”: “x(y)”} with {“digit”: “xxx…x”}</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">expand_repeat</span><span class="p">({</span><span class="s1">&#39;repeat&#39;</span><span class="p">:</span> <span class="s1">&#39;9(5)&#39;</span><span class="p">})</span>
+<span class="go">{&#39;digit&#39;: &#39;99999&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expand_repeat</span><span class="p">({</span><span class="s1">&#39;repeat&#39;</span><span class="p">:</span> <span class="s1">&#39;9(0005)&#39;</span><span class="p">})</span>
+<span class="go">{&#39;digit&#39;: &#39;99999&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stingray.cobol_parser.pass_non_empty">
+<span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">pass_non_empty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.pass_non_empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass dictionary items with non-empty values; reject items with empty values.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pass_non_empty</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;empty&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
+<span class="go">{&#39;a&#39;: &#39;b&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stingray.cobol_parser.normalize_picture">
+<span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">normalize_picture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.normalize_picture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse PICTURE clause into component pieces to make it easier to work with.
+This breaks down a complex mask into individual pieces.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_picture</span><span class="p">(</span><span class="s2">&quot;9(5)&quot;</span><span class="p">)</span>
+<span class="go">[{&#39;digit&#39;: &#39;99999&#39;}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_picture</span><span class="p">(</span><span class="s2">&quot;S9(5)V99&quot;</span><span class="p">)</span>
+<span class="go">[{&#39;sign&#39;: &#39;S&#39;}, {&#39;digit&#39;: &#39;99999&#39;}, {&#39;decimal&#39;: &#39;V&#39;}, {&#39;digit&#39;: &#39;99&#39;}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_picture</span><span class="p">(</span><span class="s2">&quot;S9(0005)V9(0002)&quot;</span><span class="p">)</span>
+<span class="go">[{&#39;sign&#39;: &#39;S&#39;}, {&#39;digit&#39;: &#39;99999&#39;}, {&#39;decimal&#39;: &#39;V&#39;}, {&#39;digit&#39;: &#39;99&#39;}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stingray.cobol_parser.clause_dict">
+<span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">clause_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.clause_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expand a COBOL DDE sentence into a dict of clauses and values.
+This tends to preserve much (but not all) of the source syntax.</p>
+<ol class="arabic simple">
+<li><p>Non-space separators (, or ;) are dropped.</p></li>
+<li><p>Some productions don’t have all the values captured.
+The ASCENDING/DESCENDING KEY options in OCCURS, for example, are stripped away.</p></li>
+</ol>
+</dd></dl>
+
+</section>
+<section id="high-level-parsing">
+<h2>High Level Parsing<a class="headerlink" href="#high-level-parsing" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="stingray.cobol_parser.structure">
+<span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sentences</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#stingray.cobol_parser.DDE" title="stingray.cobol_parser.DDE"><span class="pre">stingray.cobol_parser.DDE</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a list of DDE trees from a sequence of lines.
+Each DDE contains zero or more children.</p>
+<p>We update the start of a REDEFINES union.
+We don’t know X will be redefined until we encounter “Y REDEFINES X”.</p>
+<p>The sentence regular expression produces two-tuples. Since we use
+the simple groups() function, however, it’s technically a Sequence[str].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="stingray.cobol_parser.schema_iter">
+<span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">schema_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">source:</span> <span class="pre">TextIO,</span> <span class="pre">deformat:</span> <span class="pre">Callable[[TextIO,</span> <span class="pre">Optional[list[tuple[str,</span> <span class="pre">str]]]],</span> <span class="pre">Iterator[str]]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">reference_format&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.schema_iter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="dde-class">
+<h2>DDE Class<a class="headerlink" href="#dde-class" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="stingray.cobol_parser.DDE">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">DDE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">sentence</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clauses</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.cobol_parser.DDE" title="Permalink to this definition">¶</a></dt>
+<dd><p>An instance of a COBOL DDE.</p>
+<p>For name == “FILLER”, this assigns a unique internal name.
+A class-level counter is used.</p>
+<p>Note that level of “01” resets the counter.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="stingray.cobol_parser.DDE.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">child</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.cobol_parser.DDE" title="stingray.cobol_parser.DDE"><span class="pre">stingray.cobol_parser.DDE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#stingray.cobol_parser.DDE.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stingray.cobol_parser.DDE.display">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.cobol_parser.DDE" title="stingray.cobol_parser.DDE"><span class="pre">stingray.cobol_parser.DDE</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#stingray.cobol_parser.DDE.display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="stingray.cobol_parser.DDE.filler_count">
+<span class="sig-name descname"><span class="pre">filler_count</span></span><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#stingray.cobol_parser.DDE.filler_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="jsonschemamaker-class">
+<h2>JSONSchemaMaker Class<a class="headerlink" href="#jsonschemamaker-class" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="stingray.cobol_parser.JSONSchemaMaker">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">JSONSchemaMaker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.cobol_parser.DDE" title="stingray.cobol_parser.DDE"><span class="pre">stingray.cobol_parser.DDE</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.cobol_parser.JSONSchemaMaker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate COBOL DDE to JSONSchema.</p>
+<p>This handles REDEFINES and OCCURS DEPENDING ON.</p>
+<ul class="simple">
+<li><p>REDEFINES becomes a <code class="docutils literal notranslate"><span class="pre">oneOf</span></code> with the alternatives.</p></li>
+<li><p>OCCURS DEPENDING On uses a <code class="docutils literal notranslate"><span class="pre">maxItemsDependsOn</span></code> vocabulary extension.</p></li>
+</ul>
+<p>COBOL “flattens” the namespace so an elementary name implies the path 
+to that name. This is done with the “$anchor” keyword to mark the visible names.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="stingray.cobol_parser.JSONSchemaMaker.build_json_schema">
+<span class="sig-name descname"><span class="pre">build_json_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.cobol_parser.DDE" title="stingray.cobol_parser.DDE"><span class="pre">stingray.cobol_parser.DDE</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_redefines</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.JSONSchemaMaker.build_json_schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Emit a JSON schema that reflects a COBOL DDE and all nested DDE’s within it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stingray.cobol_parser.JSONSchemaMaker.json_type">
+<span class="sig-name descname"><span class="pre">json_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.cobol_parser.DDE" title="stingray.cobol_parser.DDE"><span class="pre">stingray.cobol_parser.DDE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.JSONSchemaMaker.json_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>The JSON Schema type for an elementary (or atomic) field.</p>
+<p>If we’re using a standad JSON Schema validator (without <code class="docutils literal notranslate"><span class="pre">decimal</span></code> as part of the vocabulary),
+the following mappings are used:</p>
+<p>COBOL encoded numeric can be <code class="docutils literal notranslate"><span class="pre">&quot;type&quot;:</span> <span class="pre">&quot;string&quot;</span></code> with additional <code class="docutils literal notranslate"><span class="pre">&quot;contentEncoding&quot;</span></code> details.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&quot;contentEncoding&quot;</span></code> describes COBOL Packed Decimal and Binary as strings of bytes.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">&quot;cobol&quot;</span></code> keyword gets Usage and Picture values required to decode EBCDIC.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">&quot;conversion&quot;</span></code> keyword converts to a more useful Python type from raw file strings.</p>
+<p>Here’s an example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;SOME-FIELD&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;$anchor&quot;</span><span class="p">:</span> <span class="s2">&quot;SOME-FIELD&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;cobol&quot;</span><span class="p">:</span> <span class="s2">&quot;05 SOME-FIELD USAGE COMP-3 PIC S999V99&quot;</span><span class="p">,</span>
+
+ <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> 
+ <span class="s2">&quot;contentEncoding&quot;</span><span class="p">:</span> <span class="s2">&quot;packed-decimal&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;conversion&quot;</span><span class="p">:</span> <span class="s2">&quot;decimal&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The title, anchor, and cobol are defined separately. This function provides the 
+type, encoding, and conversion.</p>
+<p>Other <code class="docutils literal notranslate"><span class="pre">&quot;contentEncoding&quot;</span></code> values include “bigendian-int”.  Also, “bigendian-float” and “bigendian-double”. And, of course, “CP037” or “EBCDIC” to decode ordinary strings from EBCDIC to native text.</p>
+<p>If USAGE DISPLAY and PIC has only SVP9: zoned decimal: “type”: “string”, “contentEncoding”: “cp037”, “conversion”: “decimal”,
+If USAGE DISPLAY: “string”, “contentEncoding”: “cp037”
+If USAGE COMP-3, COMPUTATIONAL-3, PACKED-DECIMAL: “type”: “string”, “contentEncoding”: “packed-decimal”, “conversion”: “decimal”
+If USAGE COMP-4, COMPUTATIONAL-4, COMP, COMPUTATIONAL, BINARY: “integer”, “contentEncoding”: “bigendian-int”
+If USAGE COMP-1, COMPUTATIONAL-1, COMP-2, COMPUTATIONAL-2: “number”, “contentEncoding”: “bigendian-float” or “bigendian-double”</p>
+<dl class="simple">
+<dt>TODO: Compute maxLength and minLength from the <code class="docutils literal notranslate"><span class="pre">&quot;contentEncoding&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;cobol&quot;</span></code> fields.</dt><dd><p>Use <code class="xref py py-mod docutils literal notranslate"><span class="pre">estruct</span></code> or <code class="xref py py-mod docutils literal notranslate"><span class="pre">struct</span></code> modules’ <code class="xref py py-mod docutils literal notranslate"><span class="pre">calcsize</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stingray.cobol_parser.JSONSchemaMaker.jsonschema">
+<span class="sig-name descname"><span class="pre">jsonschema</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.JSONSchemaMaker.jsonschema" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="stingray.cobol_parser.JSONSchemaMakerExtendedVocabulary">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">JSONSchemaMakerExtendedVocabulary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.cobol_parser.DDE" title="stingray.cobol_parser.DDE"><span class="pre">stingray.cobol_parser.DDE</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.cobol_parser.JSONSchemaMakerExtendedVocabulary" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="stingray.cobol_parser.JSONSchemaMakerExtendedVocabulary.VOCABULARY">
+<span class="sig-name descname"><span class="pre">VOCABULARY</span></span><em class="property"><span class="pre">:</span> <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">{}</span></em><a class="headerlink" href="#stingray.cobol_parser.JSONSchemaMakerExtendedVocabulary.VOCABULARY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stingray.cobol_parser.JSONSchemaMakerExtendedVocabulary.json_type">
+<span class="sig-name descname"><span class="pre">json_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.cobol_parser.DDE" title="stingray.cobol_parser.DDE"><span class="pre">stingray.cobol_parser.DDE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">typing.Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.JSONSchemaMakerExtendedVocabulary.json_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>If we’re using an extended vocabulary including  <code class="docutils literal notranslate"><span class="pre">decimal</span></code>, the following mappings can be used.</p>
+<p>If USAGE DISPLAY and PIC has only SVP9: zoned “decimal”.
+If USAGE DISPLAY: “string”.
+If USAGE COMP-3, COMPUTATIONAL-3, PACKED-DECIMAL: “decimal”.
+If USAGE COMP-4, COMPUTATIONAL-4, COMP, COMPUTATIONAL, BINARY: “integer”.
+If USAGE COMP-1, COMPUTATIONAL-1, COMP-2, COMPUTATIONAL-2: “number”.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">json_type</span><span class="p">(</span><span class="n">node</span><span class="p">),</span>
+    <span class="s2">&quot;cobol&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">level</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">source</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="stingray.cobol_parser.DesignError">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">DesignError</span></span><a class="headerlink" href="#stingray.cobol_parser.DesignError" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a catastrophic design problem.
+A common root cause is a named REGEX capture clause that’s not properly
+handled by a class, method, or function.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/Stingray_belon1553_small.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../../index.html">Stingray-Reader</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../design.html">Design Considerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer.html">Using <strong>Stingray Reader</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../demo/index.html">Demo Applications</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">stingray API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">Commercial Use</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">stingray API Reference</a><ul>
+      <li>Previous: <a href="stingray.schema_instance.html" title="previous chapter">stingray.schema_instance</a></li>
+      <li>Next: <a href="stingray.workbook.html" title="next chapter">stingray.workbook</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/apidoc/modules/stingray.cobol_parser.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

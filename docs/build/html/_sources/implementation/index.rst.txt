@@ -5,6 +5,9 @@
 Implementation
 ######################################
 
+The overall structure of Stingray Reader is a
+collection of five modules.
+
 ..  uml::
 
     @startuml

@@ -114,25 +114,25 @@ looks at the file suffix and locates an appropriate class.</p>
 physical format bindings.</p>
 <p>We need to bind the logical layout to the file also.
 This means relying on a schema, defined by the
-<a class="reference internal" href="implementation/index.html#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.schema_instance.Schema</span></code></a> class to describe
+<a class="reference internal" href="apidoc/modules/stingray.schema_instance.html#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.schema_instance.Schema</span></code></a> class to describe
 the logical layout of a file.
-The <a class="reference internal" href="implementation/index.html#stingray.workbook.Sheet" title="stingray.workbook.Sheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.Sheet</span></code></a> and <a class="reference internal" href="implementation/index.html#stingray.workbook.Row" title="stingray.workbook.Row"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.Row</span></code></a> classes
-use a <a class="reference internal" href="implementation/index.html#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.schema_instance.Schema</span></code></a> object to describe each row.</p>
+The <a class="reference internal" href="apidoc/modules/stingray.workbook.html#stingray.workbook.Sheet" title="stingray.workbook.Sheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.Sheet</span></code></a> and <a class="reference internal" href="apidoc/modules/stingray.workbook.html#stingray.workbook.Row" title="stingray.workbook.Row"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.Row</span></code></a> classes
+use a <a class="reference internal" href="apidoc/modules/stingray.schema_instance.html#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.schema_instance.Schema</span></code></a> object to describe each row.</p>
 <p>An application must load the schema first. There several sources for schema:</p>
 <ul class="simple">
 <li><p><strong>Embedded</strong>.  This is commonly seen as column titles within the sheet.  Or
 any variation on that theme. The common case of column titles is handled
-by a built-in schema loader, <a class="reference internal" href="implementation/index.html#stingray.workbook.HeadingRowSchemaLoader" title="stingray.workbook.HeadingRowSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.HeadingRowSchemaLoader</span></code></a>.
+by a built-in schema loader, <a class="reference internal" href="apidoc/modules/stingray.workbook.html#stingray.workbook.HeadingRowSchemaLoader" title="stingray.workbook.HeadingRowSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.HeadingRowSchemaLoader</span></code></a>.
 Other variations are managed by building different schema loaders.</p></li>
 <li><p><strong>External</strong>.  This is a separate sheet or separate file. In this case, we
-can start with <a class="reference internal" href="implementation/index.html#stingray.workbook.ExternalSchemaLoader" title="stingray.workbook.ExternalSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.ExternalSchemaLoader</span></code></a> to read
+can start with <a class="reference internal" href="apidoc/modules/stingray.workbook.html#stingray.workbook.ExternalSchemaLoader" title="stingray.workbook.ExternalSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.ExternalSchemaLoader</span></code></a> to read
 an external schema. In the case of COBOL files, there’s a separate
-<a class="reference internal" href="implementation/index.html#stingray.workbook.COBOLSchemaLoader" title="stingray.workbook.COBOLSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.COBOLSchemaLoader</span></code></a> that parses COBOL source to create
+<a class="reference internal" href="apidoc/modules/stingray.workbook.html#stingray.workbook.COBOLSchemaLoader" title="stingray.workbook.COBOLSchemaLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.COBOLSchemaLoader</span></code></a> that parses COBOL source to create
 a usable schema.</p></li>
 </ul>
 <p>All schemae start as JSONSchema documents. These are Python <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Any]</span></code> structures.
 A <code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.workbook.SchemaMaker</span></code> object is used to transform the JSONSchema
-document into a usable <a class="reference internal" href="implementation/index.html#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.schema_instance.Schema</span></code></a> object. This permits
+document into a usable <a class="reference internal" href="apidoc/modules/stingray.schema_instance.html#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.schema_instance.Schema</span></code></a> object. This permits
 pre-processing the schema to add features or correct problems.</p>
 </section>
 <section id="data-attribute-mapping-using-a-schema">
@@ -842,7 +842,7 @@ as early in the processing as possible, currency computations work out nicely.</
 <li class="toctree-l1"><a class="reference internal" href="design.html">Design Considerations</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Using <strong>Stingray Reader</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/index.html">Demo Applications</a></li>
-<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apidoc/index.html">stingray API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>

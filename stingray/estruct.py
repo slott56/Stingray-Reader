@@ -1,46 +1,73 @@
-""" 
+"""
+estruct -- Unpack bytes with EBCDIC encodings
+
 The :py:mod:`estruct` module unpacks EBCDIC-encoded values. It is a big-endian version of the :py:mod:`struct` module. 
-It uses two COBOL clauses, ``USAGE`` and ``PIC``, to describe the format of data represented by a sequence of bytes. 
+It uses two COBOL DDE clauses, ``USAGE`` and ``PIC``, to describe the format of data represented by a sequence of bytes.
 
-The format string can be ``'USAGE DISPLAY PIC S999.99'``, for example. A full DDE line of code is tolerated, making it easier to transform COBOL to :py:mod:`estruct` formats.
+Unpacking and Sizing
+====================
 
-The :py:mod:`struct` module uses a compact format string describe data. 
-This string is used unpack text, int, and float values from a sequence of bytes. See https://docs.python.org/3/library/struct.html#format-characters. 
- 
-An alternative interface for this module could be to use single-letter codes. ``15x`` for display. ``f`` and ``d`` for COMP-1 and COMP-2. ``9.2p`` for ``PIC 9(9)V99`` packed decimal COMP-3. ``9.2n`` for zoned decimal text. Plus ``h``, ``i``, and ``l`` for COMP-4 variants. This seems needless, but it is compact and somewhat more compatible with the :py:mod:`struct` module.
+The format string is a COBOL DDE. The ``USAGE`` and ``PIC`` (also spelled ``PICTURE``) clauses are required,
+the rest of the DDE is quietly ignored.
+For example, ``'USAGE DISPLAY PIC S999.99'``, is the minimum to describe a textual value that occupies
+7 bytes.
+
+The :py:func:`unpack` uses the format string to unpack bytes into useful Python values.
+
+The :py:func:`calcsize` functions uses the format string to compute the size of a value.
+This can be applied to a DDE to compute the offsets and positions of each field.
+
+..  note:: Alternative Format Strings
+
+    The :py:mod:`struct` module uses a compact format string describe data.
+    This string is used unpack text, int, and float values from a sequence of bytes.
+    See https://docs.python.org/3/library/struct.html#format-characters.
+    An alternative interface for this module could be to use single-letter codes.
+    A code like ``15x`` for display. ``f`` and ``d`` for COMP-1 and COMP-2. ``9.2p`` for ``PIC 9(9)V99`` packed decimal COMP-3. ``9.2n`` for zoned decimal text. Plus ``h``, ``i``, and ``l`` for COMP-4 variants. This seems needless, but it is compact and somewhat more compatible with the :py:mod:`struct` module.
+
+Examples::
+
+    >>> import estruct
+    >>> estruct.unpack("USAGE DISPLAY PIC S999V99", ' 12345'.encode("cp037"))
+    Decimal('123.45')
+    >>> estruct.unpack("USAGE DISPLAY PIC X(5)", 'ABCDE'.encode("cp037"))
+    'ABCDE'
+    >>> estruct.calcsize("USAGE COMP-3 PIC S9(11)V9(2)")
+    7
 
 File Reading
 ============
 
-The EBCDIC files can include physical "Record Format" (RECFM) assistance.
-These classes define a number of Z/OS RECFM conversion. We recognize four
+An EBCDIC file can leverage physical "Record Format" (RECFM) assistance.
+These classes define a number of Z/OS RECFM conversion functions. We recognize four
 actual RECFM's plus an additional special case.
 
--   F - Fixed.
+-   ``F`` - Fixed.  :py:class:`RECFM_F`
 
--   FB - Fixed Blocked.
+-   ``FB`` - Fixed Blocked.  :py:class:`RECFM_FB`
 
--   V - Variable, each record is preceded by a 4-byte Record Description Word (RDW).
+-   ``V`` - Variable, each record is preceded by a 4-byte Record Description Word (RDW).
+    :py:class:`RECFM_V`
 
--   VB - Variable Blocked. Blocks have Block Description Word (BDW); each record within a block has a Record Description Word.
+-   ``VB`` - Variable Blocked. Blocks have Block Description Word (BDW); each record within a block has a Record Description Word.
+    :py:class:`RECFM_VB`
 
--   N - Variable, but without BDW or RDW words. This involves some buffer management
+-   ``N`` - Variable, but without BDW or RDW words. This involves some buffer management
     magic to recover the records properly. This is required to handle ``Occurs Depending On`` cases
     where there's no V or VB header. This requires the consumer of bytes to announce how many bytes
     were consumed so the reader can advance an appropriate amount.
+    :py:class:`RECFM_N`
+
+Each of these has a :py:meth:`RECFM_Reader.record_iter` iterator that emits records stripped of header word(s).
+
+::
+
+    with some_path.open('rb') as source:
+        for record in RECFM_FB(source, lrecl=80).record_iter():
+            process(record)
 
 ..  note::  IBM z/Architecture mainframes are all big-endian
 
-Module Contents
-===============
-
--  :py:class:`Representation` extracts details of representation from COBOL DDE.
-
--  :py:func:`unpack` Unpacks EBCDIC data.
-
--  :py:class:`calcsize` Computes the size of an atomic field.
-
--  :py:class:`RECFM_Reader` a family of classes to read data in various physical formats.
 """
 
 import abc
@@ -54,9 +81,15 @@ logger = logging.getLogger("stingray.estruct")
 
 
 class DesignError(BaseException):
+    """
+    This is a catastrophic design problem.
+    A common root cause is a named REGEX capture clause that's not properly
+    handled by a class, method, or function.
+    """
     pass
 
 
+#: Pattern for parsing COBOL ``USAGE`` and ``PICTURE`` clauses.
 clause_pattern = re.compile(
     r"(?:USAGE\s+)?(?:IS\s+)?(?P<usage>BINARY|COMPUTATIONAL-1|COMPUTATIONAL-2|COMPUTATIONAL-3|COMPUTATIONAL-4|COMPUTATIONAL|COMP-1|COMP-2|COMP-3|COMP-4|COMP|DISPLAY|PACKED-DECIMAL)"
     r"|(?:PIC|PICTURE)\s+(?:IS\s+)?(?P<picture>\S+)"
@@ -65,18 +98,40 @@ clause_pattern = re.compile(
 
 class Representation(NamedTuple):
     """COBOL Representation Details: Usage and Picture.
+
+    This is used internally by :py:func:`unpack` and :py:func:`calcsize`.
+
+    There's no reason to use this separately.
     
     >>> Representation.parse("USAGE DISPLAY PICTURE S9(5)V99")
     Representation(usage='DISPLAY', picture_elements=[{'sign': 'S'}, {'digit': '99999'}, {'decimal': 'V'}, {'digit': '99'}], picture_size=8, pattern='[ +-]?\\\\d\\\\d\\\\d\\\\d\\\\d\\\\d\\\\d')
     """
 
+    #: The usage text, words like ``DISPLAY`` or ``COMPUTATIONAL`` or any of the numerous variants.
     usage: str
+
+    #: The decomposed ``PIC`` clause, created by the :py:meth:`normalize_picture` method.
     picture_elements: list[dict[str, str]]
+
+    #: Summary sizing information.
     picture_size: int
+
+    #: A regex pattern used to validate candidate data.
     pattern: str
 
     @staticmethod
     def normalize_picture(source: str) -> list[dict[str, str]]:
+        """
+        Normalizes the ``PIC`` clause into a sequence of component details.
+        This extracts ``sign``, editing characters in ``char``, the decimal place in ``decimal``,
+        any repeated picture characters with ``x(n)``, and any non-repeat-count picture
+        characters.
+
+        The repeat count items are normalized into non-repeat-count. ``9(5)`` becomes ``99999``.
+
+        :param source: The string value of a `PICTURE` clause
+        :returns: a list of dictionaries that decomposes the picture
+        """
         pic_pattern = re.compile(
             r"(?P<sign>\+|-|S|DB|CR)"
             r"|(?P<char>\$|,|/|\*|B)"
@@ -109,7 +164,14 @@ class Representation(NamedTuple):
 
     @classmethod
     def parse(cls: Type["Representation"], format: str) -> "Representation":
-        """Parse the COBOL DDE information."""
+        """
+        Parse the COBOL DDE information. Extract the ``USAGE`` and ``PICTURE`` details
+        to create a ``Representation`` object.
+
+        :param cls: the class being created a subclass of :py:class:`Representation`
+        :param format: the format specification string
+        :returns: An instance of the requested class.
+        """
         usage = "DISPLAY"
         pic_source = ""
         picture: list[dict[str, str]] = []
@@ -167,10 +229,14 @@ def unpack(format: str, buffer: bytes) -> Any:
     
     USAGE DISPLAY special case: "external decimal" sometimes called "zoned decimal".
     The PICTURE character-string of an external decimal item can contain only:
-    One or more of the symbol 9
-    The operational-sign, S
-    The assumed decimal point, V
-    One or more of the symbol P
+
+    - One or more of the symbol 9
+
+    - The operational-sign, S
+
+    - The assumed decimal point, V
+
+    - One or more of the symbol P
         
     External decimal items with USAGE DISPLAY are sometimes referred to as zoned decimal items. 
     Each digit of a number is represented by a single byte. 
@@ -179,6 +245,10 @@ def unpack(format: str, buffer: bytes) -> Any:
     The 4 low-order bits of each byte contain the value of the digit.
 
     TODO: Add support for COMP-1 and COMP-2.
+
+    :param format: A format string; a COBOL DDE.
+    :param buffer: A bytes object with a value to be unpacked.
+    :return: A Python object
     """
     usage, picture, size, pattern = Representation.parse(format)
 
@@ -269,6 +339,9 @@ def unpack(format: str, buffer: bytes) -> Any:
 def calcsize(format: str) -> int:
     """
     Compute the size, in bytes for an elementary (non-group-level) COBOL DDE format specification.
+
+    :param format: The COBOL ``DISPLAY`` and ``PIC`` clauses.
+    :returns: integer size of the item in bytes.
     """
     usage, picture, size, pattern = Representation.parse(format)
     if size == 0:
@@ -292,16 +365,26 @@ def calcsize(format: str) -> int:
 
 
 class RECFM_Reader(abc.ABC):
-    """Read records based on a physical file format."""
+    """
+    Reads records based on a physical file format.
+
+    A subclass can handle details of the various kinds of Block and Record
+    Descriptor Words (BDW, RDW) present a specific format.
+    """
 
     def __init__(self, source: BinaryIO, lrecl: Optional[int] = None) -> None:
+        """
+        Initialize the RECFM reader with a source and a logical record length, ``lrecl``.
+        :param source: A file opened for binary IO
+        :param lrecl: The expected logical record length.
+        """
         self.source = source
         self.lrecl = lrecl
         self._used = 0
 
     @abc.abstractmethod
     def record_iter(self) -> Iterator[bytes]:  # pragma: no cover
-        """Returns each physical record, stripped of headers."""
+        """Yields each physical record, stripped of headers."""
         ...
 
     def used(self, size: int) -> None:
@@ -316,19 +399,40 @@ class RECFM_Reader(abc.ABC):
 class RECFM_N(RECFM_Reader):
     """
     Read variable-length records without RDW (or BDW).
+
     In the case of ``Occurs Depending On``, the schema doesn't have  single, fixed size. 
     The client of this class announces how the bytes were actually used.
+
+    ..  code-block:
+
+        with path.open("rb") as source:
+            reader = RECFM_N(source)
+            for buffer in reader.record_iter():
+                # process the buffer, computing the record length, lrecl
+                reader.used(lrecl)
     """
 
     def __init__(self, source: BinaryIO, lrecl: Optional[int] = None) -> None:
         """
+        Initialize the RECFM helper.
+
         :param source: the file
-        :param lrecl: a maximum, but it's ignored.
+        :param lrecl: in principle this is a maximum, but it's ignored.
         """
         super().__init__(source, 0)
         self.buffer = self.source.read(32768)
 
     def record_iter(self) -> Iterator[bytes]:
+        """
+        Provides the entire buffer. The first bytes
+        are a record.
+
+        The :py:meth:`used` method informs
+        this object how many bytes were used.
+        From this, the next record can be returned.
+
+        :yields: blocks of bytes.
+        """
         while len(self.buffer) != 0:
             self._used = 0
             yield self.buffer
@@ -343,11 +447,15 @@ class RECFM_N(RECFM_Reader):
 
 class RECFM_F(RECFM_Reader):
     """
-    Read RECFM=F. 
+    Read RECFM=F files.
+
     The schema's record size is the lrecl, logical record length.
     """
 
     def record_iter(self) -> Iterator[bytes]:
+        """
+        :yields: physical records, stripped of headers.
+        """
         if not self.lrecl:
             raise TypeError(f"{self.__class__.__name__} requires lrecl > 0")
         data = self.source.read(self.lrecl)
@@ -356,7 +464,9 @@ class RECFM_F(RECFM_Reader):
             data = self.source.read(self.lrecl)
 
     def rdw_iter(self) -> Iterator[bytes]:
-        """Yield rows with RDW injected, these look like RECFM_V format as a standard."""
+        """
+        :yields:  records with RDW injected, these look like RECFM_V format as a standard.
+        """
         for row in self.record_iter():
             yield struct.pack(">H2x", len(row) + 4) + row
 
@@ -366,18 +476,19 @@ RECFM_FB = RECFM_F
 
 class RECFM_V(RECFM_Reader):
     """
-    Read RECFM=V.
+    Read RECFM=V files.
+
     The schema's record size is irrelevant. 
     Each record has a 4-byte Record Descriptor Word (RDW) followed by the data.
     """
 
     def record_iter(self) -> Iterator[bytes]:
-        """Iterate over records, stripped of RDW's."""
+        """:yields: records, stripped of RDW's."""
         for rdw, row in self._data_iter():
             yield row
 
     def rdw_iter(self) -> Iterator[bytes]:
-        """Iterate over records which include the 4-byte RDW."""
+        """:yields: records which include the 4-byte RDW."""
         for rdw, row in self._data_iter():
             yield rdw + row
 
@@ -392,24 +503,25 @@ class RECFM_V(RECFM_Reader):
 
 class RECFM_VB(RECFM_Reader):
     """
-    Read RECFM=VB. 
+    Read RECFM=VB files.
+
     The schema's record size is irrelevant. 
     Each record has a 4-byte Record Descriptor Word (RDW) followed by the data.
     Each block has a 4-byte Block Descriptor Word (BDW) followed by records.
     """
 
     def record_iter(self) -> Iterator[bytes]:
-        """Iterate over records, stripped of RDW's."""
+        """:yields: records, stripped of RDW's."""
         for rdw, row in self._data_iter():
             yield row
 
     def rdw_iter(self) -> Iterator[bytes]:
-        """Iterate over records which include the 4-byte RDW."""
+        """:yields: records which include the 4-byte RDW."""
         for rdw, row in self._data_iter():
             yield rdw + row
 
     def bdw_iter(self) -> Iterator[bytes]:
-        """Iterate over blocks, which include 4-byte BDW and records with 4-byte RDW's."""
+        """:yields: blocks, which include 4-byte BDW and records with 4-byte RDW's."""
         bdw = self.source.read(4)
         while len(bdw) != 0:
             blksize = struct.unpack(">H2x", bdw)[0]

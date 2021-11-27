@@ -1,4 +1,6 @@
-"""Stingray Reader"""
+"""
+Stingray Reader -- schema-based file processing for workbooks, and COBOL files.
+"""
 
 from stingray.workbook import (
     open_workbook,

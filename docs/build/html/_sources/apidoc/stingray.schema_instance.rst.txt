@@ -1,0 +1,7 @@
+stingray.schema\_instance module
+================================
+
+.. automodule:: stingray.schema_instance
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="History" href="../history.html" />
-    <link rel="prev" title="Data Conversion – ETL with Validation" href="../demo/conversion.html" />
+    <link rel="prev" title="Reading COBOL Files" href="../demo/cobol_reader.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,6 +36,8 @@
             
   <section id="implementation">
 <span id="id1"></span><h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
+<p>The overall structure of Stingray Reader is a
+collection of five modules.</p>
 <p class="plantuml">
 <img src="../_images/plantuml-ba909cf05c301b989c24d7b44d291727ab06a0ed.png" alt="&#64;startuml
 package stingray-reader {
@@ -289,37 +291,37 @@ field which is a reference to another field instead of a simple value.</p>
 <p>The COBOL <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> clause is handled created a OneOf suite of alternatives
 and using some JSON Schema “$ref” references to preserve the original, relatively flat
 naming for an elements and the element(s) which redefine it.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@startuml</span>
-    <span class="n">abstract</span> <span class="k">class</span> <span class="nc">Schema</span> <span class="p">{</span>
-        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
-    <span class="p">}</span>
+<p class="plantuml">
+<img src="../_images/plantuml-923be646700b4c7369c8afb5e63549a6890629a8.png" alt="&#64;startuml
+    abstract class Schema {
+        type: string
+    }
 
-    <span class="k">class</span> <span class="nc">AtomicSchema</span>
+    class AtomicSchema
 
-    <span class="k">class</span> <span class="nc">ArraySchema</span>
+    class ArraySchema
 
-    <span class="k">class</span> <span class="nc">DependsOnArraySchema</span>
+    class DependsOnArraySchema
 
-    <span class="k">class</span> <span class="nc">ObjectSchema</span>
+    class ObjectSchema
 
-    <span class="k">class</span> <span class="nc">OneOfSchema</span>
+    class OneOfSchema
 
-    <span class="k">class</span> <span class="nc">RefToSchema</span>
+    class RefToSchema
 
-    <span class="n">Schema</span> <span class="o">&lt;|--</span> <span class="n">AtomicSchema</span>
-    <span class="n">Schema</span> <span class="o">&lt;|--</span> <span class="n">ArraySchema</span>
-    <span class="n">Schema</span> <span class="o">&lt;|--</span> <span class="n">ObjectSchema</span>
-    <span class="n">AtomicSchema</span> <span class="o">&lt;|--</span> <span class="n">OneOfSchema</span>
-    <span class="n">AtomicSchema</span> <span class="o">&lt;|--</span> <span class="n">RefToSchema</span>
-    <span class="n">ArraySchema</span> <span class="o">&lt;|--</span> <span class="n">DependsOnArraySchema</span>
-    <span class="n">RefToSchema</span> <span class="o">--&gt;</span> <span class="n">Schema</span>
-    <span class="s1">&#39;OneOfSchema --&gt; &quot;*&quot; Schema : Redefines</span>
-    <span class="s1">&#39;ObjectSchema --&gt; &quot;*&quot; Schema : Properties</span>
-    <span class="s1">&#39;ArraySchema --&gt; Schema : Items</span>
-    <span class="s1">&#39;DependsOnArraySchema --&gt; Schema : maxItems</span>
-<span class="nd">@enduml</span>
-</pre></div>
-</div>
+    Schema &lt;|-- AtomicSchema
+    Schema &lt;|-- ArraySchema
+    Schema &lt;|-- ObjectSchema
+    AtomicSchema &lt;|-- OneOfSchema
+    AtomicSchema &lt;|-- RefToSchema
+    ArraySchema &lt;|-- DependsOnArraySchema
+    RefToSchema --&gt; Schema
+    'OneOfSchema --&gt; &quot;*&quot; Schema : Redefines
+    'ObjectSchema --&gt; &quot;*&quot; Schema : Properties
+    'ArraySchema --&gt; Schema : Items
+    'DependsOnArraySchema --&gt; Schema : maxItems
+&#64;enduml"/>
+</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.schema_instance.ArrayLocation">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">stingray.schema_instance.</span></span><span class="sig-name descname"><span class="pre">ArrayLocation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.schema_instance.Schema" title="stingray.schema_instance.Schema"><span class="pre">stingray.schema_instance.Schema</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_count</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#stingray.schema_instance.Location" title="stingray.schema_instance.Location"><span class="pre">stingray.schema_instance.Location</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.schema_instance.ArrayLocation" title="Permalink to this definition">¶</a></dt>
@@ -1219,7 +1221,7 @@ The ASCENDING/DESCENDING KEY options in OCCURS, for example, are stripped away.<
 <dl class="py function">
 <dt class="sig sig-object py" id="stingray.cobol_parser.dde_sentences">
 <span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">dde_sentences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.dde_sentences" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decompose source into separate sentences by looking for the trailing period-space.
+<dd><p>Decompose the source into separate sentences by looking for the trailing period-space.
 The pattern will produce a sequence of (level, source text) 2-tuples.
 Since we simply collect all the matching groups, it’s technically a Sequence[str].</p>
 </dd></dl>
@@ -1266,9 +1268,20 @@ This breaks down a complex mask into individual pieces.</p>
 <span class="sig-prename descclassname"><span class="pre">stingray.cobol_parser.</span></span><span class="sig-name descname"><span class="pre">reference_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">TextIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replacing</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.cobol_parser.reference_format" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract source from files that have sequence numbers in 1-6, indicator in 7, and code in 8-72.
 Zero-based, these slices are [0:6], [6], [7:72]</p>
-<p>This can be extended to handle COPY statements that include other copybooks into a copybook.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">replacing</span></code> parameter is a list of (“‘old’”, “new”) strings to replace in the source
-The apostrophes on the old are required here.</p>
+<p>This can be extended to handle <code class="docutils literal notranslate"><span class="pre">COPY</span></code> statements that include other copybooks into a copybook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> – The source file</p></li>
+<li><p><strong>replacing</strong> – A sequence of two-tuples with (“‘old’”, “new”) strings.
+The apostrophes on the old are required here to replace the apostrophes
+that are present in the COBOL source.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p>strings with the sequence and indicator removed.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1310,66 +1323,66 @@ The definitions are mostly protocols to handle non-delimited (i.e., COBOL files)
 </ul>
 <p>A given workbook has two possible sources for a schema: internal and external. An internal schema might be the first row or it might require more sophisticated parsing. An external schema might be hard-coded in the application, or might be a separate document with its own meta-schema.</p>
 <p>Generally, the schema applies to a sheet (or a Table in a Workspace for Numbers.)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@startuml</span>
-    <span class="n">abstract</span> <span class="k">class</span> <span class="nc">Schema</span>
-    <span class="n">abstract</span> <span class="k">class</span> <span class="nc">Unpacker</span>
-    <span class="k">class</span> <span class="nc">Location</span>
-    <span class="n">Location</span> <span class="o">--&gt;</span> <span class="n">Schema</span>
-    <span class="s1">&#39;abstract class NDInstance</span>
-    <span class="s1">&#39;Location -&gt; NDInstance</span>
-    <span class="k">class</span> <span class="nc">LocationMaker</span> <span class="p">{</span>
-        <span class="n">from_instance</span><span class="p">(</span><span class="n">instance</span><span class="p">):</span> <span class="n">Location</span>
-    <span class="p">}</span>
-    <span class="n">Unpacker</span> <span class="o">--&gt;</span> <span class="n">LocationMaker</span>
-    <span class="n">LocationMaker</span> <span class="o">--&gt;</span> <span class="s2">&quot;n&quot;</span> <span class="n">Location</span> <span class="p">:</span> <span class="n">creates</span>
-    <span class="o">/</span><span class="s1">&#39;Details...</span>
-    <span class="n">abstract</span> <span class="k">class</span> <span class="nc">Nav</span>
-    <span class="k">class</span> <span class="nc">NDNav</span>
-    <span class="k">class</span> <span class="nc">DNav</span>
-    <span class="k">class</span> <span class="nc">WBNav</span>
-    <span class="n">Nav</span> <span class="o">&lt;|--</span> <span class="n">NDNav</span>
-    <span class="n">Nav</span> <span class="o">&lt;|--</span> <span class="n">DNav</span>
-    <span class="n">Nav</span> <span class="o">&lt;|--</span> <span class="n">WBNav</span>
+<p class="plantuml">
+<img src="../_images/plantuml-9b12e377a2f8c6c38432d42c62fd44dea6250493.png" alt="&#64;startuml
+    abstract class Schema
+    abstract class Unpacker
+    class Location
+    Location --&gt; Schema
+    'abstract class NDInstance
+    'Location -&gt; NDInstance
+    class LocationMaker {
+        from_instance(instance): Location
+    }
+    Unpacker --&gt; LocationMaker
+    LocationMaker --&gt; &quot;n&quot; Location : creates
+    /'Details...
+    abstract class Nav
+    class NDNav
+    class DNav
+    class WBNav
+    Nav &lt;|-- NDNav
+    Nav &lt;|-- DNav
+    Nav &lt;|-- WBNav
 
-    <span class="n">Unpacker</span> <span class="o">--&gt;</span> <span class="n">NDNav</span> <span class="p">:</span> <span class="n">creates</span>
-    <span class="n">Unpacker</span> <span class="o">--&gt;</span> <span class="n">DNav</span> <span class="p">:</span> <span class="n">creates</span>
+    Unpacker --&gt; NDNav : creates
+    Unpacker --&gt; DNav : creates
 
-    <span class="n">NDNav</span> <span class="o">--&gt;</span> <span class="n">Location</span>
+    NDNav --&gt; Location
 
-    <span class="k">class</span> <span class="nc">JSON</span>
-    <span class="n">DNav</span> <span class="o">--&gt;</span> <span class="n">JSON</span>
-    <span class="s1">&#39;/</span>
+    class JSON
+    DNav --&gt; JSON
+    '/
 
-    <span class="k">class</span> <span class="nc">File</span>
-    <span class="n">abstract</span> <span class="k">class</span> <span class="nc">Workbook</span> <span class="c1">##[bold]blue</span>
+    class File
+    abstract class Workbook ##[bold]blue
 
-    <span class="n">Workbook</span> <span class="o">--&gt;</span> <span class="n">Unpacker</span>
-    <span class="n">Workbook</span> <span class="o">--&gt;</span> <span class="n">File</span> <span class="p">:</span> <span class="n">opens</span>
-    <span class="n">Unpacker</span> <span class="o">--&gt;</span> <span class="n">File</span> <span class="p">:</span> <span class="n">reads</span>
+    Workbook --&gt; Unpacker
+    Workbook --&gt; File : opens
+    Unpacker --&gt; File : reads
 
-    <span class="k">class</span> <span class="nc">Sheet</span> <span class="c1">##[bold]blue {</span>
-        <span class="n">row_iter</span><span class="p">():</span> <span class="n">Row</span>
-    <span class="p">}</span>
-    <span class="n">Workbook</span> <span class="o">*--</span> <span class="s2">&quot;1:n&quot;</span> <span class="n">Sheet</span>
-    <span class="n">Sheet</span> <span class="o">--&gt;</span> <span class="n">Schema</span>
-    <span class="k">class</span> <span class="nc">Row</span>  <span class="c1">##[bold]blue {</span>
-        <span class="n">name</span><span class="p">():</span> <span class="n">Any</span>
-    <span class="p">}</span>
-    <span class="n">Sheet</span> <span class="o">*--</span> <span class="s2">&quot;n&quot;</span> <span class="n">Row</span>
-    <span class="n">Row</span> <span class="o">--&gt;</span> <span class="n">NDNav</span> <span class="p">:</span> <span class="s2">&quot;[non-delimited]&quot;</span>
-    <span class="n">Row</span> <span class="o">--&gt;</span> <span class="n">DNav</span> <span class="p">:</span> <span class="s2">&quot;[delimited]&quot;</span>
-    <span class="n">Row</span> <span class="o">--&gt;</span> <span class="n">WBNav</span> <span class="p">:</span> <span class="s2">&quot;[workbook]&quot;</span>
-    <span class="k">class</span> <span class="nc">EmbeddedSchemaSheet</span>
-    <span class="k">class</span> <span class="nc">ExternalSchemaSheet</span>
-    <span class="n">Sheet</span> <span class="o">&lt;|--</span> <span class="n">EmbeddedSchemaSheet</span>
-    <span class="n">Sheet</span> <span class="o">&lt;|--</span> <span class="n">ExternalSchemaSheet</span>
-    <span class="k">class</span> <span class="nc">SchemaLoader</span>
-    <span class="n">EmbeddedSchemaSheet</span> <span class="o">--&gt;</span> <span class="n">SchemaLoader</span>
-    <span class="n">ExternalSchemaSheet</span> <span class="o">--&gt;</span> <span class="n">SchemaLoader</span>
-    <span class="n">SchemaLoader</span> <span class="o">--&gt;</span> <span class="n">Schema</span> <span class="p">:</span> <span class="n">creates</span>
-<span class="nd">@enduml</span>
-</pre></div>
-</div>
+    class Sheet ##[bold]blue {
+        row_iter(): Row
+    }
+    Workbook *-- &quot;1:n&quot; Sheet
+    Sheet --&gt; Schema
+    class Row  ##[bold]blue {
+        name(): Any
+    }
+    Sheet *-- &quot;n&quot; Row
+    Row --&gt; NDNav : &quot;[non-delimited]&quot;
+    Row --&gt; DNav : &quot;[delimited]&quot;
+    Row --&gt; WBNav : &quot;[workbook]&quot;
+    class EmbeddedSchemaSheet
+    class ExternalSchemaSheet
+    Sheet &lt;|-- EmbeddedSchemaSheet
+    Sheet &lt;|-- ExternalSchemaSheet
+    class SchemaLoader
+    EmbeddedSchemaSheet --&gt; SchemaLoader
+    ExternalSchemaSheet --&gt; SchemaLoader
+    SchemaLoader --&gt; Schema : creates
+&#64;enduml"/>
+</p>
 <section id="legacy-api-concept">
 <h3>Legacy API Concept<a class="headerlink" href="#legacy-api-concept" title="Permalink to this headline">¶</a></h3>
 <p>The original concept for the API looked like this:</p>
@@ -1738,14 +1751,14 @@ Of these, we choose a few to handle XLSX, ODS, and Numbers.</p>
 <p>See <a class="reference external" href="https://openpyxl.readthedocs.io/en/stable/">https://openpyxl.readthedocs.io/en/stable/</a></p>
 </section>
 <section id="ods-files-via-pyexcel">
-<h3>.ODS files via Pyexcel<a class="headerlink" href="#ods-files-via-pyexcel" title="Permalink to this headline">¶</a></h3>
+<h3>.ODS files via <code class="docutils literal notranslate"><span class="pre">Pyexcel</span></code><a class="headerlink" href="#ods-files-via-pyexcel" title="Permalink to this headline">¶</a></h3>
 <p>See <a class="reference external" href="http://docs.pyexcel.org/en/latest/">http://docs.pyexcel.org/en/latest/</a></p>
 <p>See <a class="reference external" href="https://github.com/pyexcel/pyexcel-ods3">https://github.com/pyexcel/pyexcel-ods3</a></p>
-<p>Generally, Pyexcel seems to cover the widest variety of formats.
+<p>Pyexcel seems to cover a wide variety of formats.
 It might be helpful to delegate more of the implementations to PyExcel.</p>
 </section>
-<section id="numbers-13-files-via">
-<h3>.NUMBERS 13 files via ??<a class="headerlink" href="#numbers-13-files-via" title="Permalink to this headline">¶</a></h3>
+<section id="numbers-13-files-via-numbers-parser">
+<h3>.NUMBERS 13 files via <code class="docutils literal notranslate"><span class="pre">numbers-parser</span></code><a class="headerlink" href="#numbers-13-files-via-numbers-parser" title="Permalink to this headline">¶</a></h3>
 <p>See <a class="reference external" href="https://pypi.org/project/numbers-parser/">https://pypi.org/project/numbers-parser/</a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.implementations.NumbersUnpacker">
@@ -1827,7 +1840,7 @@ It might be helpful to delegate more of the implementations to PyExcel.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../demo/conversion.html" title="previous chapter">Data Conversion – ETL with Validation</a></li>
+      <li>Previous: <a href="../demo/cobol_reader.html" title="previous chapter">Reading COBOL Files</a></li>
       <li>Next: <a href="../history.html" title="next chapter">History</a></li>
   </ul></li>
 </ul>

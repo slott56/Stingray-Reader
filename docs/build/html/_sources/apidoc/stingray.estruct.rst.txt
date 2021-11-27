@@ -1,0 +1,7 @@
+stingray.estruct module
+=======================
+
+.. automodule:: stingray.estruct
+   :members:
+   :undoc-members:
+   :show-inheritance:
