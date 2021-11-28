@@ -620,11 +620,11 @@ def test_2(copy_t2_source: str) -> None:
                 "type": "string",
             },
             "REPEAT": {
-                "$anchor": "REPEAT",
                 "cobol": "05 REPEAT OCCURS 4 PIC XXX",
                 "items": {
                     "properties": {
                         "REPEAT": {
+                            "$anchor": "REPEAT",
                             "cobol": "05 " "REPEAT " "OCCURS " "4 PIC " "XXX",
                             "contentEncoding": "cp037",
                             "type": "string",
@@ -679,11 +679,11 @@ def test_3(copy_t3_source: str) -> None:
                 "items": {
                     "properties": {
                         "ITEM": {
-                            "$anchor": "ITEM",
                             "cobol": "10 ITEM " "OCCURS " "4 PIC " "XX",
                             "items": {
                                 "properties": {
                                     "ITEM": {
+                                        "$anchor": "ITEM",
                                         "cobol": "10 "
                                                  "ITEM "
                                                  "OCCURS "
@@ -1695,14 +1695,13 @@ def test_13(copy_10_source: str) -> None:
                 "properties": {
                     "FIELD-1": {
                         "$anchor": "FIELD-1",
-                        "cobol": "05 FIELD-1 PIC " "9",
+                        "cobol": "05 FIELD-1 PIC 9",
                         "contentEncoding": "cp037",
                         "conversion": "decimal",
                         "title": "FIELD-1",
                         "type": "string",
                     },
                     "FIELD-2": {
-                        "$anchor": "FIELD-2",
                         "cobol": "05 FIELD-2 "
                                  "OCCURS 1 TO 5 "
                                  "TIMES DEPENDING "
@@ -1711,6 +1710,7 @@ def test_13(copy_10_source: str) -> None:
                         "items": {
                             "properties": {
                                 "FIELD-2": {
+                                    "$anchor": "FIELD-2",
                                     "cobol": "05 "
                                              "FIELD-2 "
                                              "OCCURS "
@@ -1786,7 +1786,6 @@ def test_14(copy_11_source: str) -> None:
                         "type": "string",
                     },
                     "FIELD-2": {
-                        "$anchor": "FIELD-2",
                         "cobol": "05 FIELD-2 "
                                  "OCCURS 1 TO 5 "
                                  "TIMES DEPENDING "
@@ -1795,6 +1794,7 @@ def test_14(copy_11_source: str) -> None:
                         "items": {
                             "properties": {
                                 "FIELD-2": {
+                                    "$anchor": "FIELD-2",
                                     "cobol": "05 "
                                              "FIELD-2 "
                                              "OCCURS "
@@ -1834,7 +1834,6 @@ def test_14(copy_11_source: str) -> None:
                 "cobol": "03 REC-2",
                 "properties": {
                     "FIELD-4": {
-                        "$anchor": "FIELD-4",
                         "cobol": "05 FIELD-4 "
                                  "OCCURS 1 TO 5 "
                                  "TIMES DEPENDING "
@@ -1843,6 +1842,7 @@ def test_14(copy_11_source: str) -> None:
                         "items": {
                             "properties": {
                                 "FIELD-4": {
+                                    "$anchor": "FIELD-4",
                                     "cobol": "05 "
                                              "FIELD-4 "
                                              "OCCURS "
@@ -2553,3 +2553,48 @@ def test_issue_1(issue_1_source: str) -> None:
         "type": "object",
     }
 
+@pytest.fixture
+def issue_3_source() -> str:
+    """
+    See https://github.com/slott56/Stingray-Reader/issues/3.
+    """
+    return dedent(
+        """
+        123456*
+              * Issue 3 -- Occurs Clause Bug
+               01  TEST-FORMAT.
+                   05  PRODUCT-CODE   OCCURS 6 TIMES PIC XX.
+        """
+    )
+
+def test_issue_3(issue_3_source):
+    copy_book = structure(dde_sentences(reference_format(StringIO(issue_3_source))))
+    for record in copy_book:
+        schema = JSONSchemaMaker(record).jsonschema()
+    # There's only one DDE to examine.
+    assert SchemaValidator.check_schema(schema) == None
+    assert schema == {
+        '$anchor': 'TEST-FORMAT',
+        'cobol': '01 TEST-FORMAT',
+        'properties': {
+            'PRODUCT-CODE': {
+                'cobol': '05 PRODUCT-CODE OCCURS 6 TIMES PIC XX',
+                'items': {
+                    'properties': {
+                        'PRODUCT-CODE': {
+                            '$anchor': 'PRODUCT-CODE',
+                            'cobol': '05 PRODUCT-CODE OCCURS 6 TIMES PIC XX',
+                            'contentEncoding': 'cp037',
+                            'type': 'string'
+                        }
+                    },
+                    'type': 'object'
+                },
+                'maxItems': 6,
+                'title': 'PRODUCT-CODE',
+                'type': 'array'
+            }
+        },
+        'title': 'TEST-FORMAT',
+        'type': 'object'
+    }

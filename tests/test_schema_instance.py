@@ -2393,6 +2393,7 @@ def test_issue_1(issue_1_schema) -> bool:
     # Some kind of bottom-up construction is required.
     assert SchemaMaker.from_json(issue_1_schema) is not None
 
+
 ### Nav Class Hierarchy
 
 @pytest.fixture

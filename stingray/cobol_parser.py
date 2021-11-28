@@ -491,9 +491,11 @@ class JSONSchemaMaker:
             return {"title": node.name, "cobol": cobol, "$ref": f"#{node.unique_name}"}
 
         elif "occurs_maxitems" in node.clauses or "odo_maxitems" in node.clauses:
+            # If no picture, this is a group level, anchor stays here.
+            # If picture, this is repeating elementary item, anchor belongs with items within the group.
             json_schema = {
                 "title": node.name,
-                "$anchor": node.unique_name,
+                # "$anchor": node.unique_name,
                 "cobol": cobol,
                 "type": "array",
                 "items": {},
@@ -519,7 +521,10 @@ class JSONSchemaMaker:
 
             if "picture" in node.clauses:
                 # In principle, PIC and USAGE are stripped from the parent and pushed into the child.
-                base_schema = {"cobol": cobol}
+                base_schema = {
+                    "$anchor": node.unique_name,
+                    "cobol": cobol,
+                }
                 child_schema = {
                     "type": "object",
                     "properties": {
@@ -528,6 +533,7 @@ class JSONSchemaMaker:
                     },
                 }
             else:
+                json_schema["$anchor"] = node.unique_name
                 child_schema = {
                     "type": "object",
                     "properties": {

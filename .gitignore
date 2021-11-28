@@ -18,3 +18,4 @@ tests/__pycache__/*
 stingray.egg-info/*
 
 v4.5/*
+docs/build/doctrees/*.pickle

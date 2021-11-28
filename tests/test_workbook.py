@@ -684,3 +684,69 @@ def test_cobol_case_2_file_5(cobol_schema_2, cobol_schema_2_file_6, capsys) -> b
         # What about low values? Should this raise an exception? Or is it valid Z/OS behavior?
         assert row.name("NUMBER-4").raw() == b"\x00\x00\x00"
         assert row.name("NUMBER-4").value() == Decimal("0")
+
+
+
+@pytest.fixture
+def issue_3_schema():
+    source = """\
+              * Issue 3 -- Occurs Clause Bug
+               01  TEST-FORMAT.
+                   05  PRODUCT-CODE   OCCURS 6 TIMES PIC XX.
+    """
+    issue_3_schema = {
+        '$anchor': 'TEST-FORMAT',
+        'cobol': '01 TEST-FORMAT',
+        'properties': {
+            'PRODUCT-CODE': {
+                'cobol': '05 PRODUCT-CODE OCCURS 6 TIMES PIC XX',
+                'items': {
+                    'properties': {
+                        'PRODUCT-CODE': {
+                            '$anchor': 'PRODUCT-CODE',
+                            'cobol': '05 PRODUCT-CODE OCCURS 6 TIMES PIC XX',
+                            'contentEncoding': 'cp037',
+                            'type': 'string'
+                        }
+                    },
+                    'type': 'object'
+                },
+                'maxItems': 6,
+                'title': 'PRODUCT-CODE',
+                'type': 'array'
+            }
+        },
+        'title': 'TEST-FORMAT',
+        'type': 'object'
+    }
+    assert SchemaValidator.check_schema(issue_3_schema) is None
+    return SchemaMaker.from_json(issue_3_schema)
+
+@pytest.fixture
+def issue_3_file(tmp_path):
+    sample_data = "123456789012".encode("cp037")
+    target = tmp_path / "fixed_test.txt"
+    target.write_bytes(sample_data)
+    return target
+
+def test_issue_3(issue_3_file, issue_3_schema, capsys) -> bool:
+    with COBOL_EBCDIC_File(issue_3_file) as ebcdic_file:
+        sheet = ebcdic_file.sheet("").set_schema(issue_3_schema)
+        for row in sheet.row_iter():
+            row.dump()
+            for i in range(6):
+                print(f"PRODUCT-CODE({i}) = {row.name('PRODUCT-CODE').index(i).value()}")
+    out, err = capsys.readouterr()
+    assert out.splitlines() == [
+        'Field                                         Off Sz  Raw Value',
+        "01 TEST-FORMAT                                  0  12 '' ''",
+        "  05 PRODUCT-CODE OCCURS 6 TIMES PIC XX         0  12 '' ''",
+        "                                                0   2 '' ''",
+        "      05 PRODUCT-CODE OCCURS 6 TIMES PIC XX     0   2 b'\\xf1\\xf2' '12'",
+        "PRODUCT-CODE(0) = {'PRODUCT-CODE': '12'}",
+        "PRODUCT-CODE(1) = {'PRODUCT-CODE': '34'}",
+        "PRODUCT-CODE(2) = {'PRODUCT-CODE': '56'}",
+        "PRODUCT-CODE(3) = {'PRODUCT-CODE': '78'}",
+        "PRODUCT-CODE(4) = {'PRODUCT-CODE': '90'}",
+        "PRODUCT-CODE(5) = {'PRODUCT-CODE': '12'}"
+    ]
