@@ -20,3 +20,5 @@ build/lib/*
 
 v4.5/*
 docs/build/doctrees/*
+*.doctree
+*.doctree

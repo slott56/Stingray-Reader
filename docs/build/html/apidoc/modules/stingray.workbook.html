@@ -175,7 +175,7 @@ Once a sheet has been bound to a schema, the rows can be processed.</p>
 <p>In this case, the <code class="docutils literal notranslate"><span class="pre">rows()</span></code> method of the <code class="docutils literal notranslate"><span class="pre">Sheet</span></code> will exclude the header rows consumed
 by the <code class="docutils literal notranslate"><span class="pre">HeadingRowSchemaLoader</span></code>.</p>
 <p><strong>External Schema</strong>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">stingray</span> <span class="kn">import</span> <span class="n">open_workbook</span><span class="p">,</span> <span class="n">HeadingRowSchemaLoader</span><span class="p">,</span> <span class="n">Row</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">stingray</span> <span class="kn">import</span> <span class="n">open_workbook</span><span class="p">,</span> <span class="n">ExternalSchemaLoader</span><span class="p">,</span> <span class="n">Row</span><span class="p">,</span> <span class="n">SchemaMaker</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
@@ -958,8 +958,8 @@ with the file extensions it handles.</p>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../design.html">Design Considerations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../developer.html">Using <strong>Stingray Reader</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../design.html">Design Considerations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../demo/index.html">Demo Applications</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">stingray API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>

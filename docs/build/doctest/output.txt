@@ -1,0 +1,330 @@
+Results of doctest builder run on 2021-11-29 07:50:05
+=====================================================
+
+Document: apidoc/modules/stingray.workbook
+------------------------------------------
+**********************************************************************
+File "../../stingray/workbook.py", line ?, in default
+Failed example:
+    name_cleaner("TYPICAL-COBOL")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[0]>", line 1, in <module>
+        name_cleaner("TYPICAL-COBOL")
+    NameError: name 'name_cleaner' is not defined
+**********************************************************************
+File "../../stingray/workbook.py", line ?, in default
+Failed example:
+    name_cleaner("common_python")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[1]>", line 1, in <module>
+        name_cleaner("common_python")
+    NameError: name 'name_cleaner' is not defined
+**********************************************************************
+File "../../stingray/workbook.py", line ?, in default
+Failed example:
+    name_cleaner("Not a 'good' name")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[2]>", line 1, in <module>
+        name_cleaner("Not a 'good' name")
+    NameError: name 'name_cleaner' is not defined
+**********************************************************************
+File "../../stingray/workbook.py", line ?, in default
+Failed example:
+    name_cleaner("!@#$%^")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[3]>", line 1, in <module>
+        name_cleaner("!@#$%^")
+    NameError: name 'name_cleaner' is not defined
+**********************************************************************
+File "../../stingray/workbook.py", line ?, in default
+Failed example:
+    name_cleaner('')
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[4]>", line 1, in <module>
+        name_cleaner('')
+    NameError: name 'name_cleaner' is not defined
+**********************************************************************
+File "../../stingray/workbook.py", line ?, in default
+Failed example:
+    file_registry = WBFileRegistry()
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[0]>", line 1, in <module>
+        file_registry = WBFileRegistry()
+    NameError: name 'WBFileRegistry' is not defined
+**********************************************************************
+File "../../stingray/workbook.py", line ?, in default
+Failed example:
+    @file_registry.file_suffix(".xyz")
+    class XYZ_Workbook(Workbook):
+        pass
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[1]>", line 1, in <module>
+        @file_registry.file_suffix(".xyz")
+    NameError: name 'file_registry' is not defined
+**********************************************************************
+File "../../stingray/workbook.py", line ?, in default
+Failed example:
+    file_registry.suffix_map[".xyz"] == XYZ_Workbook
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[2]>", line 1, in <module>
+        file_registry.suffix_map[".xyz"] == XYZ_Workbook
+    NameError: name 'file_registry' is not defined
+**********************************************************************
+1 items had failures:
+   8 of   8 in default
+8 tests in 1 items.
+0 passed and 8 failed.
+***Test Failed*** 8 failures.
+
+Document: apidoc/modules/stingray.estruct
+-----------------------------------------
+**********************************************************************
+File "../../stingray/estruct.py", line ?, in default
+Failed example:
+    Representation.parse("USAGE DISPLAY PICTURE S9(5)V99")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[0]>", line 1, in <module>
+        Representation.parse("USAGE DISPLAY PICTURE S9(5)V99")
+    NameError: name 'Representation' is not defined
+**********************************************************************
+1 items had failures:
+   1 of   1 in default
+1 tests in 1 items.
+0 passed and 1 failed.
+***Test Failed*** 1 failures.
+
+Document: apidoc/modules/stingray.schema_instance
+-------------------------------------------------
+**********************************************************************
+File "../../stingray/schema_instance.py", line ?, in default
+Failed example:
+    decimal_places(2, 3.99)
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[0]>", line 1, in <module>
+        decimal_places(2, 3.99)
+    NameError: name 'decimal_places' is not defined
+**********************************************************************
+File "../../stingray/schema_instance.py", line ?, in default
+Failed example:
+    digit_string(5, 1020)
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[0]>", line 1, in <module>
+        digit_string(5, 1020)
+    NameError: name 'digit_string' is not defined
+**********************************************************************
+File "../../stingray/schema_instance.py", line ?, in default
+Failed example:
+    schema = SchemaMaker.from_json({"type": "object", "properties": {"field-1": {"type": "string", "cobol": "PIC X(12)"}}})
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[0]>", line 1, in <module>
+        schema = SchemaMaker.from_json({"type": "object", "properties": {"field-1": {"type": "string", "cobol": "PIC X(12)"}}})
+    NameError: name 'SchemaMaker' is not defined
+**********************************************************************
+File "../../stingray/schema_instance.py", line ?, in default
+Failed example:
+    unpacker = EBCDIC()
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[1]>", line 1, in <module>
+        unpacker = EBCDIC()
+    NameError: name 'EBCDIC' is not defined
+**********************************************************************
+File "../../stingray/schema_instance.py", line ?, in default
+Failed example:
+    data = BytesInstance('blahblahblah'.encode("CP037"))
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[2]>", line 1, in <module>
+        data = BytesInstance('blahblahblah'.encode("CP037"))
+    NameError: name 'BytesInstance' is not defined
+**********************************************************************
+File "../../stingray/schema_instance.py", line ?, in default
+Failed example:
+    unpacker.nav(schema, data).name("field-1").value()
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[3]>", line 1, in <module>
+        unpacker.nav(schema, data).name("field-1").value()
+    NameError: name 'unpacker' is not defined
+**********************************************************************
+File "../../stingray/schema_instance.py", line ?, in default
+Failed example:
+    schema = SchemaMaker.from_json({"type": "object", "properties": {"field-1": {"type": "string", "cobol": "PIC X(12)"}}})
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[0]>", line 1, in <module>
+        schema = SchemaMaker.from_json({"type": "object", "properties": {"field-1": {"type": "string", "cobol": "PIC X(12)"}}})
+    NameError: name 'SchemaMaker' is not defined
+**********************************************************************
+File "../../stingray/schema_instance.py", line ?, in default
+Failed example:
+    unpacker = TextUnpacker()
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[1]>", line 1, in <module>
+        unpacker = TextUnpacker()
+    NameError: name 'TextUnpacker' is not defined
+**********************************************************************
+File "../../stingray/schema_instance.py", line ?, in default
+Failed example:
+    data = TextInstance('blahblahblah')
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[2]>", line 1, in <module>
+        data = TextInstance('blahblahblah')
+    NameError: name 'TextInstance' is not defined
+**********************************************************************
+File "../../stingray/schema_instance.py", line ?, in default
+Failed example:
+    unpacker.nav(schema, data).name("field-1").value()
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[3]>", line 1, in <module>
+        unpacker.nav(schema, data).name("field-1").value()
+    NameError: name 'unpacker' is not defined
+**********************************************************************
+1 items had failures:
+  10 of  10 in default
+10 tests in 1 items.
+0 passed and 10 failed.
+***Test Failed*** 10 failures.
+
+Document: developer
+-------------------
+1 items passed all tests:
+   7 tests in default
+7 tests in 1 items.
+7 passed and 0 failed.
+Test passed.
+
+Document: apidoc/modules/stingray.cobol_parser
+----------------------------------------------
+**********************************************************************
+File "../../stingray/cobol_parser.py", line ?, in default
+Failed example:
+    expand_repeat({'repeat': '9(5)'})
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[0]>", line 1, in <module>
+        expand_repeat({'repeat': '9(5)'})
+    NameError: name 'expand_repeat' is not defined
+**********************************************************************
+File "../../stingray/cobol_parser.py", line ?, in default
+Failed example:
+    expand_repeat({'repeat': '9(0005)'})
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[1]>", line 1, in <module>
+        expand_repeat({'repeat': '9(0005)'})
+    NameError: name 'expand_repeat' is not defined
+**********************************************************************
+File "../../stingray/cobol_parser.py", line ?, in default
+Failed example:
+    pass_non_empty({"a": "b", "empty": None})
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[0]>", line 1, in <module>
+        pass_non_empty({"a": "b", "empty": None})
+    NameError: name 'pass_non_empty' is not defined
+**********************************************************************
+File "../../stingray/cobol_parser.py", line ?, in default
+Failed example:
+    normalize_picture("9(5)")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[0]>", line 1, in <module>
+        normalize_picture("9(5)")
+    NameError: name 'normalize_picture' is not defined
+**********************************************************************
+File "../../stingray/cobol_parser.py", line ?, in default
+Failed example:
+    normalize_picture("S9(5)V99")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[1]>", line 1, in <module>
+        normalize_picture("S9(5)V99")
+    NameError: name 'normalize_picture' is not defined
+**********************************************************************
+File "../../stingray/cobol_parser.py", line ?, in default
+Failed example:
+    normalize_picture("S9(0005)V9(0002)")
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/stingray/lib/python3.9/doctest.py", line 1336, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[2]>", line 1, in <module>
+        normalize_picture("S9(0005)V9(0002)")
+    NameError: name 'normalize_picture' is not defined
+**********************************************************************
+1 items had failures:
+   6 of   6 in default
+6 tests in 1 items.
+0 passed and 6 failed.
+***Test Failed*** 6 failures.
+
+Doctest summary
+===============
+   32 tests
+   25 failures in tests
+    0 failures in setup code
+    0 failures in cleanup code

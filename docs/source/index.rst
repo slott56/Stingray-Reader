@@ -52,8 +52,8 @@ Contents
    :maxdepth: 1
    
    introduction
-   design
    developer
+   design
    demo/index
    apidoc/index
    history

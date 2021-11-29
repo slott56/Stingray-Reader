@@ -1748,9 +1748,12 @@ class LocationMaker:
             # Size is self.anchors[schema.ref].size
             offset = 0  # Only a reference, no actual size allocated here.
             loc = RefToLocation(schema, self.anchors, start, offset)
-        else:
+        else:  # pragma: no cover
             # The subclasses of Schema aren't reflected in this IF-statement
-            raise DesignError(f"Invalid Schema construct: {schema}")  # pragma: no cover
+            # OR... This isn't a Schema object in the first place.
+            if isinstance(schema, dict):
+                raise RuntimeError(f"raw dict {schema}; SchemaMaker().from_json() required")
+            raise DesignError(f"Invalid Schema construct: {schema}")
         loc.unpacker = self.unpacker
         loc.locationMaker = weakref.ref(self)
         if anchor_name := loc.schema._attributes.get("$anchor"):

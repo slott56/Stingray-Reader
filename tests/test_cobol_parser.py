@@ -551,8 +551,8 @@ def copy_t1_source() -> str:
 
 
 def test_1(copy_t1_source: str, capsys) -> None:
-    copy_book = structure(dde_sentences(reference_format(StringIO(copy_t1_source))))
-    for record in copy_book:
+    copy_books = structure(dde_sentences(reference_format(StringIO(copy_t1_source))))
+    for record in copy_books:
         DDE.display(record)
         maker = JSONSchemaMaker(record)
         schema = maker.jsonschema()
@@ -603,8 +603,8 @@ def copy_t2_source() -> str:
 
 
 def test_2(copy_t2_source: str) -> None:
-    copy_book = structure(dde_sentences(reference_format(StringIO(copy_t2_source))))
-    for record in copy_book:
+    copy_books = structure(dde_sentences(reference_format(StringIO(copy_t2_source))))
+    for record in copy_books:
         schema = JSONSchemaMaker(record).jsonschema()
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None

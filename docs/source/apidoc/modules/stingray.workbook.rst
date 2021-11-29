@@ -133,7 +133,7 @@ by the ``HeadingRowSchemaLoader``.
 
 ::
 
-    >>> from stingray import open_workbook, HeadingRowSchemaLoader, Row
+    >>> from stingray import open_workbook, ExternalSchemaLoader, Row, SchemaMaker
     >>> from pathlib import Path
     >>> import os
     >>> from typing import Iterable

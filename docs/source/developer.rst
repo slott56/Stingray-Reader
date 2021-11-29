@@ -20,10 +20,19 @@ Specifically, we can tackle this question:
 
     **How do we ensure that a file and an application use the same schema?**
 
-We do need to note the following.
+There are two sides to this "using the same schema?" question:
+
+-   Data Quality. Does the file match the required schema?
+
+-   Software Quality. Will this application process a file with the required schema?
+
+THe underlying assumption is that the schema is right. Files or Applications
+may not match the schema, but the schema is what's used to measure quality.
+
+We also need to note the following.
 
     **If it was simple, we wouldn't need this package, would we?**
-    
+
 Concepts
 ========
 
@@ -40,8 +49,8 @@ As noted in :ref:`intro`, there are three levels of schema that need to be bound
     a metadata sheet in a workbook.
 
 -   **Conceptual Content**.  
-    A single conceptual schema may be implemented by a number of physical
-    formats and logical layouts.  
+    A single conceptual schema is often implemented by a number of logical layouts.
+    Sometimes across multiple physical formats.
     An application should be able to tolerate variability in the logical
     layout as long is it matches the expected **conceptual content**.
 
@@ -51,80 +60,318 @@ A change to one application's production or consumption must lead to a change to
 The column names in the metadata, at a bare minimum, must be agreed to.
 The order or position of the columns, however, need not be fixed.
 
-Since we're working in Python, the conceptual schema is often a class
-definition. The idea is to provide many ways to build a class instance
+Since we're working in Python, the conceptual schema is often
+an application's collection of class
+definitions. The idea is to provide many ways to build a class instance
 based on variations in the logical layout.
 
-There are two sides to schema use:
+We use a schema to do a number of things with application processing
+and the related data.
 
--   **Within the Application**. To process a data file, we need to bind schema information to the file.
-    For a workbook, the schema may be in the column headings of the sheet.
-    Or it may be in a separate sheet, or a separate workbook.
-    For a COBOL file, the schema is always in a separate COBOL-language
-    data definition.
+Schema-Based Processing
+=======================
 
--   **Data Quality**. Given a data file, how do we confirm that some schema matches the file?
+All **Stingray Reader** applications involve a source of data, a :py:class:`Workbook` object,
+and a schema, an instance of the :py:class:`Schema` class.
 
-We'll tackle the schema binding in several pieces.
+Here are the essential relationships among the concepts:
 
--   **File Schema**.  `Binding a Schema to a File`_ describes some preliminary
-    operational steps that make Stingray work more simply and reliably.
+..  uml::
 
--   **Processing**. There are two concepts: **Capture** and **Conversion**.
-    The `Data Attribute Mapping -- Using a Schema`_ section discusses design patterns for capture.
-    The `Data Transformation`_ section focuses on conversion.
+    @startuml
 
--   **Application Design Patterns**. These are more complex issues.
-    We can then dig into **Stingray** application programming in `stingray Application Design`_,
-    `Variant Records and COBOL REDEFINES`_, and `Big Data Performance`_.
+    class Workbook {
+        sheet(name): Sheet
+    }
+    class Sheet {
+        name: str
+        rows()
+    }
+    class Row
 
--   **Data Management**. `File Naming and External Schema`_,  
-    `Binding a Schema to an Application`_, and `Schema Version Numbering`_.
+    Workbook --* Sheet
+    Sheet --* Row
 
--   **FAQ**. Some other design questions. `Frequently Asked Questions`_.
-        
-We'll look at some demonstration software in :ref:`demo`.
+    class Schema
 
-Binding a Schema to a File 
-=================================
+    Sheet ..> Schema
+    Row ..> Schema
 
-The file suffix, e.g., ``.xlsx``, binds a file's collection of bytes to a physical format.
-This pattern is relatively universal. A single :py:func:`stingray.open_workbook` function
-looks at the file suffix and locates an appropriate class.
+    class MyApp
 
-A decorator is available to extend Stingray's file suffix mapping to introduce new
-physical format bindings.
+    MyApp -> Schema : "loads"
+    MyApp -> Workbook
+    @enduml
 
-We need to bind the logical layout to the file also.
-This means relying on a schema, defined by the
-:py:class:`stingray.schema_instance.Schema` class to describe
-the logical layout of a file.
-The :py:class:`stingray.workbook.Sheet` and :py:class:`stingray.workbook.Row` classes
-use a :py:class:`stingray.schema_instance.Schema` object to describe each row.
+The Schema can originate in a variety of places.
 
-An application must load the schema first. There several sources for schema:
+-   A Schema can be the first row of a spreadsheet. Think of the :py:class:`csv.DictReader` that
+    examines the given file for a header row, creates a schema from this row,
+    and uses the schema to unpack the remaining rows.
 
--   **Embedded**.  This is commonly seen as column titles within the sheet.  Or
-    any variation on that theme. The common case of column titles is handled
-    by a built-in schema loader, :py:class:`stingray.workbook.HeadingRowSchemaLoader`.
-    Other variations are managed by building different schema loaders.
-    
--   **External**.  This is a separate sheet or separate file. In this case, we
-    can start with :py:class:`stingray.workbook.ExternalSchemaLoader` to read
-    an external schema. In the case of COBOL files, there's a separate 
-    :py:class:`stingray.workbook.COBOLSchemaLoader` that parses COBOL source to create
-    a usable schema.
+-   A Schema can be in a separate document. There are a number of choices.
+
+    -   For COBOL files, the schema is a "Copybook" with the COBOL Data Definition Entry (DDE)
+        For the file.
+
+    -   A sheet of a workbook may have "metadata" -- column definitions. This is a schema
+        in a workbook. The columns of this metadata sheet has it's own metaschema.
+
+-   A JSON Schema can be embedded in the code. Ideally, it's in a separate module
+    that can be shared by many applications.
+
+
+There are, in effect, four use cases for gathering schema that can be used
+to process data.
+
+..  uml::
+
+    @startuml
+    class Schema
+
+    abstract class SchemaLoader
+    class HeadingRowSchemaLoader {
+        header()
+        body()
+    }
+    class ExternalSchemaLoader {
+        load() : Schema
+    }
+    class COBOLSchemaLoader {
+        load() : Schema
+    }
+
+    SchemaLoader <|-- HeadingRowSchemaLoader
+    SchemaLoader <|-- ExternalSchemaLoader
+    ExternalSchemaLoader <|-- COBOLSchemaLoader
+
+    HeadingRowSchemaLoader --> Schema : "extracts"
+    ExternalSchemaLoader --> Schema : "loads"
+    COBOLSchemaLoader --> Schema : "loads"
+
+    class Sheet
+    Sheet ..> Schema : "uses"
+
+    @enduml
+
+This leads us to four patterns for working with Schema.
+We'll look at each of them in the next section.
+
+Essential Patterns
+==================
+
+There are four essential patterns to working with schema.
+
+-   The schema is in one (or more) header rows of a sheet in a workbook.
+
+-   The schema is from an external file.
+
+-   The schema is defined by a COBOL DDE in a "copybook".
+
+-   A schema is embedded in the app
+
+When the header row has a schema, the processing is vaguely similar to
+working with the :py:mod:`csv` module. There are two additional steps
+required to select the one-and-only sheet in the file, and to set
+the schema loader for the sheet.
+
+For CSV, COBOL, and similar single-file structures, the sheet is named ``""``.
+Rather than assume a default sheet with this name, stingray requires an explicit reference
+to the sheet named ``""``.
+
+The header row processing looks like this::
+
+::
+
+    >>> from stingray import open_workbook, HeadingRowSchemaLoader, Row
+    >>> from pathlib import Path
+    >>> import os
+    >>> from typing import Iterable
+
+    >>> def process_sheet(rows: Iterable[Row]) -> None:
+    ...     for row in rows:
+    ...         print(row.name("x123").value(), row.name("y1").value())
+
+    >>> data_path = Path(os.environ.get("SAMPLES", "sample")) / "Anscombe_quartet_data.csv"
+    >>> with open_workbook(data_path) as workbook:
+    ...    sheet = workbook.sheet('')
+    ...    _ = sheet.set_schema_loader(HeadingRowSchemaLoader())
+    ...    process_sheet(sheet.rows())
+    10.0 8.04
+    8.0 6.95
+    13.0 7.58
+    9.0 8.81
+    11.0 8.33
+    14.0 9.96
+    6.0 7.24
+    4.0 4.26
+    12.0 10.84
+    7.0 4.82
+    5.0 5.68
+
+For an external schema, there are two steps.
+
+1.  Load the schema. This involves opening a workbook that has the schema,
+    A schema is built from this workbook.
+
+2.  Process data using the loaded schema.
+
+External file processing look like this::
+
+    >>> from stingray import open_workbook, ExternalSchemaLoader, Row, SchemaMaker
+    >>> from pathlib import Path
+    >>> import os
+    >>> from typing import Iterable
+
+    >>> def process_sheet(rows: Iterable[Row]) -> None:
+    ...     for row in rows:
+    ...         print(row.name("x123").value(), row.name("y1").value())
+
+    >>> schema_path = Path(os.environ.get("SAMPLES", "sample")) / "Anscombe_schema.csv"
+    >>> with open_workbook(schema_path) as metaschema_workbook:
+    ...     schema_sheet = metaschema_workbook.sheet('Sheet1')
+    ...     _ = schema_sheet.set_schema(SchemaMaker().from_json(ExternalSchemaLoader.META_SCHEMA))
+    ...     json_schema = ExternalSchemaLoader(schema_sheet).load()
+    >>> schema = SchemaMaker().from_json(json_schema)
+
+    >>> data_path = Path(os.environ.get("SAMPLES", "sample")) / "Anscombe_quartet_data.csv"
+    >>> with open_workbook(data_path) as workbook:
+    ...     sheet = workbook.sheet('').set_schema(schema)
+    ...     process_sheet(sheet.rows())
+    x123 y1
+    10.0 8.04
+    8.0 6.95
+    13.0 7.58
+    9.0 8.81
+    11.0 8.33
+    14.0 9.96
+    6.0 7.24
+    4.0 4.26
+    12.0 10.84
+    7.0 4.82
+    5.0 5.68
+
+COBOL Processing is similar to external schema loading.
+First, the application loads the schema from the COBOL copybook file.
+Then, the application can process data using the schema.
+
+COBOL processing looks like this::
+
+    >>> from stingray import schema_iter, COBOL_Text_File
+    >>> from pathlib import Path
+    >>> import os
+
+    >>> def process_sheet(rows: Iterable[Row]) -> None:
+    ...     for row in rows:
+    ...         print(row.name("X123").value(), row.name("Y1").value())
+
+    >>> copybook_path = Path(os.environ.get("SAMPLES", "sample")) / "anscombe.cpy"
+    >>> with copybook_path.open() as source:
+    ...     schema_list = list(schema_iter(source))
+    >>> json_schema, = schema_list  # Take the first; ignore any other 01-level records
+    >>> schema = SchemaMaker().from_json(json_schema)
+
+    >>> data_path = Path(os.environ.get("SAMPLES", "sample")) / "anscombe.data"
+    >>> with COBOL_Text_File(data_path) as workbook:
+    ...     sheet = workbook.sheet('').set_schema(schema)
+    ...     process_sheet(sheet.rows())
+     010.00  008.04
+     008.00  006.95
+     013.00  007.58
+     009.00  008.81
+     011.00  008.33
+     014.00  009.96
+     006.00  007.24
+     004.00  004.26
+     012.00  010.84
+     007.00  004.82
+     005.00  005.68
+
+Note that the ``process_sheet()`` function is nearly identical in all three cases.
+The column names ``x123`` and ``y1`` are switched to upper case, which is a little
+more typical of COBOL.
+
+Rows and Navigation
+====================
+
+A :py:class:`Row` is a binding between an instance of raw data from the underlying
+COBOL file or workbook structure, and a schema.
+
+Most workbook rows are a flat list of named columns. The JSONSchema definition
+is an "object"; each column is a property. For COBOL, this isn't appropriate.
+For delimited files (i.e., NDJSON, YAML, or TOML) this isn't appropriate, either.
+
+To unify all of these, a :py:class:`Row` uses a navigation aid. These
+are :py:class:`Nav` instances that are used to locate named properties.
+
+Ordinarily, the :py:class:`Nav` objects are invisible.
+When an application uses ``row.name("name").value()``
+to navigate into the schema, this will extract a Python object that is the value.
+
+A :py:class:`Nav` object will be visible when we omit the :py:class:`Nav.value` method
+which extracts the final Python object. It may be useful to cache :py:class:`Nav`
+objects to improve performance.
+
+Here's the relationship:
+
+..  uml::
+
+    @startuml
+
+    class Row
+
+    abstract class Nav {
+        name(): Nav
+        index(): Nav
+        value(): Any
+    }
+
+    abstract class Instance
+    class Schema
+
+    Row ..> Instance
+    Row ..> Schema
+    Row --> Nav : "creates"
+    Nav --> Nav : "creates"
+
+    class PythonObject
+
+    Nav::value --> PythonObject
+
+    @enduml
+
+The fluent interface of a :py:class:`Nav` creates additional
+:py:class:`Nav` navigation helpers to work down into a complex structure.
+
+Generally, COBOL programs assume all field names are unique. (They don't have to be, but this is rare.)
+To make this work out well, Stringray leverages JSONSchema "$anchor" keywords to
+avoid complex path-based navigation into an object. Using anchor names allows
+a :py:meth:`Nav.name` method to locate a field deeply nested inside a complex COBOL record.
+
+
+Application Design Considerations
+==================================
+
+We'll cover several mode examples of schema-based processing.
+It's important to design an application around data quality and software quality considerations.
+
+We'll also look closely at some demonstration software in :ref:`demo`.
 
 All schemae start as JSONSchema documents. These are Python ``dict[str, Any]`` structures.
 A :py:class:`stingray.workbook.SchemaMaker` object is used to transform the JSONSchema
 document into a usable :py:class:`stingray.schema_instance.Schema` object. This permits
 pre-processing the schema to add features or correct problems.
 
-Data Attribute Mapping -- Using a Schema
-==========================================
+This use of JSONSchema assures that schema can be loaded from a wide variety
+of sources and are compatible with a wide variety of other software tools.
 
+Data Capture and Builder Functions
+-----------------------------------------
+
+There are two parts to data handling: **Capture** and **Conversion**.
 Data processing starts with **Capture**.
 Using a schema is the heart of solving the semantic problem of capturing data in spreadsheet and COBOL files.
+We'll look at **Capture** in this section, and then **Conversion** in the next section.
 
 We want to have just one application that is adaptable to a number
 of variant logical layouts that reflect alternative implementations of a single conceptual content.
@@ -145,10 +392,13 @@ A simple description is the following:
 
 ..  parsed-literal::
 
-    *target* = *target_type*\ (row.['\ *source*\ '].value())
+    *target* = *target_type*\ (row['\ *source*\ '].value())
 
 There is a tiny bit of boilerplate in this assignment statement. The overhead of the boilerplate
 is offset by the flexibility of using Python directly.
+
+We can use either `name('source')` or `['source']` as a way to locate a named attribute
+within a schema.
 
 There are some common cases that will extend or modify the boilerplate.
 In particular, COBOL structures that are not in first normal form will include
@@ -223,8 +473,8 @@ while unable to simply edit the Python can use the following:
 The :py:func:`make_builder` function selects one of the available
 builders based on a command-line option in the ``args`` structure.
 
-Data Transformation
-=================================
+Data Conversions
+-------------------
 
 There are two parts to data handling: **Capture** and **Conversion**.
 Conversion is part of the final application, once the source data has been captured.
@@ -261,10 +511,12 @@ more problems than simply using Python for this.
 **Stingray** Application Design
 =================================
 
-We need to consider two tiers of testing.  Conventional unit testing
-makes sure our application's processing is valid.
-Beyond that, we also need to do data quality testing to
-ensure that the data itself is valid.
+A application need to consider two tiers of testing.
+Conventional unit testing makes sure the application's processing is valid.
+Beyond that, data quality testing ensures that the data itself is valid.
+
+Data quality testing is facilitated by some specific design patterns for the application
+as a while.
 
 For application unit testing, our programs should be decomposed into three tiers of
 processing.
@@ -913,11 +1165,13 @@ of the data profiling results to allow a human to determine the schema.
 Then, once the schema has been identified, command-line options
 can be used to bind the schema to file for correct processing.
 
-Frequently Asked Questions
-==========================
+Data Handling Special Cases
+============================
 
-Junk Data
-----------
+We'll look at a number of special cases for handling bad or unusual data.
+
+Handling Bad Data
+------------------
 
 For inexplicable reasons, we can wind up with files that are damaged in some way.
 
@@ -936,21 +1190,34 @@ arguments for opening a workbook.
         
 This skips past the junk.
 
-US ZIP Codes
-------------
+Leading Zeroes Digit Strings -- US ZIP Codes, Social Security Numbers, etc.
+----------------------------------------------------------------------------
 
 Spreadsheets turn US Zip codes into numbers, and the leading zeroes
-get lost.
+get lost. This happens with social security numbers, also. It's rare
+with telephone numbers. Some part numbers and UUID's may have leading
+zeroes that can be lost when a spreadsheet touches the values.
 
-For this, we have conversion functions like ``stingray.digits_5()`` to
+In all cases, these are "digit strings". A code that's essentially a string
+but the domain of characters for that string is limited to digits.
+
+This also happens with JSON, YAML, and TOML files. The solution in those
+cases is to add quotes to force interpretation as a string. This can't be done
+to workbook data.
+
+To handle digit strings, Stingray has conversion functions like ``stingray.digits_5()`` to
 turn an integer into a 5-position string with leading zeroes.
 
 Currency
---------
+========
 
 Spreadsheets turn currency into floating-point numbers.
 Any computation can lead to horrible '3.9999999997' numbers instead of '4.00'.
 
-For this se have a ``stingray.decimal_2()`` conversion function to
+This is masked by spreadsheet applications through extremely clever formatting
+rules that will obscure the underlying complexity of representing currency
+with floating-point values.
+
+To handle currency politely, Stingway has a ``stingray.decimal_2()`` conversion function to
 provide a decimal value rounded to two decimal places. When this is done
 as early in the processing as possible, currency computations work out nicely.
