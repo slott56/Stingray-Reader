@@ -44,7 +44,7 @@ This depends on additional projects to read .XLS, .XLSX, .ODS, and .NUMBERS file
 
 -   ODS and XLSX can be read via these two projects. https://openpyxl.readthedocs.io/en/stable/ and http://docs.pyexcel.org/en/v0.0.6-rc2/.
 
--   Numbers (v13 and higher) usees protobuf and and snappy compression. See https://pypi.org/project/numbers-parser/. Older n
+-   Numbers (v13 and higher) usees protobuf and and snappy compression. See https://pypi.org/project/numbers-parser/.
 
 -   YAML files can be a sequence of documents, permitting a direct mapping to a Workbook with a single Sheet.
 
