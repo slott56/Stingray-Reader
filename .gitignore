@@ -16,6 +16,7 @@ stingray/__pycache__/*
 demo/__pycache__/*
 tests/__pycache__/*
 stingray.egg-info/*
+build/lib/*
 
 v4.5/*
-docs/build/doctrees/*.pickle
+docs/build/doctrees/*
