@@ -2,7 +2,7 @@
 .PHONY: test docs
 
 test:
-	tox
+	tox --skip-missing-interpreters
 
 docs:
 	cd docs && PYTHONPATH=$(pwd).. $(MAKE) html

@@ -92,6 +92,7 @@ def reference_format(
     non_comment = filter(
         lambda indic_ln: indic_ln[0] not in {"*", "D"}, indicator_line_iter
     )
+    non_comment_iter: Iterator[tuple[str, str]]
     if replacing:
         replaced = (
             (indic, line.replace(old, new))
@@ -568,7 +569,7 @@ class JSONSchemaMaker:
             self.names[node.unique_name] = json_schema
 
             properties_schema = {
-                c.unique_name: self.build_json_schema(c, path + (node.name,))
+                c.unique_name: self.build_json_schema(c, path + (cast(str, node.name),))
                 for c in node.children
             }
             # NOTE! Side effect of ``self.build_json_schema()`` is to add properties.

@@ -83,7 +83,7 @@ except ImportError:  # pragma: no cover
 
 
 try:
-    from openpyxl import load_workbook  # type: ignore [import]
+    from openpyxl import load_workbook
     import openpyxl.cell.cell  # type: ignore [import]
 
     class XLSXUnpacker(WBUnpacker):

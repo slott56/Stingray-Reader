@@ -80,9 +80,9 @@ Here are some additional side-bar considerations for other formats that depend o
 
 - Numbers_13 is protobuf. The legacy version of Stingray Reader had  protobuf definitions which appear to work and a snappy decoder. See https://pypi.org/project/numbers-parser/ for a better solution.
 
-- TOML requires an external library.  An `Unpacker` subclass can decompose a "one big list" TOML document into individual rows.
+- TOML requires an external library.  An :py:class:`Unpacker` subclass can decompose a "one big list" TOML document into individual rows.
 
-- YAML requires an external library. We'll use the iterative parser as a default. An `Unpacker` subclass can decompose a "one big list" YAML document into individual rows.
+- YAML requires an external library. We'll use the iterative parser as a default. An :py:class:`Unpacker` subclass can decompose a "one big list" YAML document into individual rows.
 
 - XML is built-in. A schema can drive navgiation through the XML document, name the various tags of interest. Other tags which may be present would be ignored.
 
@@ -126,8 +126,8 @@ Once a sheet has been bound to a schema, the rows can be processed.
       y4                                                  '6.58'
 
 
-In this case, the ``rows()`` method of the ``Sheet`` will exclude the header rows consumed
-by the ``HeadingRowSchemaLoader``.
+In this case, the :py:meth:`rows` method of the :py:class:`Sheet` instance will exclude the header rows consumed
+by the :py:class:`HeadingRowSchemaLoader`.
 
 **External Schema**:
 
@@ -158,7 +158,7 @@ by the ``HeadingRowSchemaLoader``.
       x4                                                  'x4'
       y4                                                  'y4'
 
-In this case, the ``rows()`` method of the ``Sheet`` will include all rows.
+In this case, the :py:meth:`rows` method of the :py:class:`Sheet` instance will include all rows.
 This means the header row is treated like data when an external schema is applied.
 
 The **process_sheet()** method:
@@ -169,7 +169,7 @@ The **process_sheet()** method:
         for row in rows:
             print(f'{row.name("field").value()=}')
 
-The ``name()`` method returns a ``Nav`` object. This has a ``value()`` method that will extract the value
+The :py:meth:`name` method returns a :py:class:`Nav` object. This has a :py:meth:`value` method that will extract the value
 for a given attribute.
 
 
@@ -185,7 +185,7 @@ It's generally used like this:
         for row in sheet.rows():
             process_row(row)
 
-A :py:class:`Row` contains an instance that's bound to the :py:class:`Unpacker` and the :py:class:`Schema`.
+A :py:class:`Row` contains an instance that's bound to the :py:class::py:class:`Unpacker` and the :py:class:`Schema`.
 This will build :py:class:`Nav` objects for navigation. Where necessary, this may involve creating
 :py:class:`Location` objects as part of :py:class:`NDNav` navigation.
 
@@ -325,4 +325,3 @@ The version 4.0 concept for the API looked like this:
         process_sheet(sheet)
 
 If necessary, the external schema can have a meta-schema. It may be necessary to define a conversion function to create a useful JSON Schema from a schema workbook.
-

@@ -1,14 +1,14 @@
 # Build/Test
-tox>=3.24
-pytest>=5.2
+tox==3.25
+pytest==7.1.2
 pytest-cov>=3.0
-mypy>=0.910
-sphinx>=4.2
-sphinxcontrib-plantuml==0.22
+mypy==0.960
+sphinx==4.5.0
+sphinxcontrib-plantuml==0.23
 # Dependencies
-jsonschema>=4.2
-xlrd>=2.0
-openpyxl>=3.0
-pyexcel>=0.6
-pyexcel-ods3>=0.6
-numbers-parser>=2.1
+jsonschema==4.5.1
+xlrd==2.0.1
+openpyxl==3.0.10
+pyexcel==0.7.0
+pyexcel-ods3==0.6.0
+numbers-parser==2.3.10

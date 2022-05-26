@@ -17,12 +17,12 @@ A JSON Schema -- with some extensions -- can be used to unpack COBOL files, in U
 Most of the features of a COBOL DDE definition parallel JSON Schema constructs.
 
 - COBOL has Atomic fields of type text (with vaious format details), and a variety of "Computational" variants. The
-  most important is `COMP-3`, which is a decimal representation with digits packed two per byte. The JSON Schema
+  most important is ``COMP-3``, which is a decimal representation with digits packed two per byte. The JSON Schema
   presumes types "null", "boolean", "number", or "string" types have text representations that fit well with COBOL.
 
 - The hierarchy of COBOL DDE's is the JSON Schema "object" type.
 
-- The COBOL ``OCCURS`` clause is the JSON Schema "array" type. The simple case, with a single, literal `TIMES` option
+- The COBOL ``OCCURS`` clause is the JSON Schema "array" type. The simple case, with a single, literal ``TIMES`` option
   is expressed with ``maxItems`` and ``minItems``.
 
 While COBOL is more sophisticated than CSV, it's generally comprarable to JSON/YAML/TOML/XML.
@@ -269,22 +269,22 @@ Unpacker
 ---------
 
 
-An `Unpacker` is a strategy class that handles details of physical unpacking of bytes or text. We call it an `Unpacker`, because it's similar to `struct.unpack`.
+An :py:class:`Unpacker` is a strategy class that handles details of physical unpacking of bytes or text. We call it an :py:class:`Unpacker`, because it's similar to `struct.unpack`.
 
 The JSON Schema's intent is to depend on delimited files, using a separate parser. For this application, however, the schema is used to provide information to the parser.
 
-To work with the variety of instance data, we have several subclasses of `Instance` and related `Unpacker` classes:
+To work with the variety of instance data, we have several subclasses of :py:class:`Instance` and related :py:class:`Unpacker` classes:
 
-- **Non-Delimited**. These cases use `Location` objects. We define an ``NDInstance`` as a common protocol
+- **Non-Delimited**. These cases use :py:class:`Location` objects. We define an :py:class:`NDInstance` as a common protocol
   wrapped around ``AnyStr`` types. There are three sub-cases depending on the underlying object.
 
-    - **COBOL Bytes**. An `NDInstance` type union includes `bytes`. The `estruct` module is a COBOL replacement for the `struct` module. The JSON Schema requires extensions to handle COBOL complexities.
+    - **COBOL Bytes**. An :py:class:`NDInstance` type union includes ``bytes``. The :py:mod:`estruct` module is a COBOL replacement for the :py:mod:`struct` module. The JSON Schema requires extensions to handle COBOL complexities.
 
-    - **STRUCT Bytes**. An `NDInstance` type union includes `bytes`. The `struct` module `unpack` and `calcsize` are used directly. This means the field codes must match the `struct` module's definitions. This can leverage some of the same extensions as COBOL requires.
+    - **STRUCT Bytes**. An :py:class:`NDInstance` type union includes ``bytes``. The :py:mod:`struct` module :py:func:`unpack` and :py:func:`calcsize` functions are used directly. This means the field codes must match the :py:mod:`struct` module's definitions. This can leverage some of the same extensions as COBOL requires.
 
-    - **Text**. An `NDInstance` type union includes `str`. This is the case with non-delimited text that has plain text encodings for data. The DISPLAY data will be ASCII or UTF-8, and any COMP/BINARY numbers are represented as text.
+    - **Text**. An :py:class:`NDInstance` type union includes ``str``. This is the case with non-delimited text that has plain text encodings for data. The DISPLAY data will be ASCII or UTF-8, and any COMP/BINARY numbers are represented as text.
 
-- **Delimited**. These cases do not use `Location` objects. There are two sub-cases:
+- **Delimited**. These cases do not use :py:class:`Location` objects. There are two sub-cases:
 
     - **JSON Objects**. This is a Union of ``dict[str, Any] | Any | list[Any]``.
       The instance is created by some external unpacker, and is already in a Python native structure.
@@ -298,7 +298,7 @@ To work with the variety of instance data, we have several subclasses of `Instan
       These all use ``list[Any]`` for objects this unpacker works with.
 
 Unpacking is a plug-in strategy.
-For non-delimited data, it combines some essential location information with a `value()` method that's unique to the instance source data.
+For non-delimited data, it combines some essential location information with a :py:meth:`value` method that's unique to the instance source data.
 For delimited data, it provides a uniforma interface for the various kinds of spreadsheets.
 
 The JSON Schema extensions to drive unpacking include the `"cobol"` keyword. The value for this has the original COBOL DDE. This definition can have  USAGE and  PICTURE clauses that define how bytes will encode the value.
@@ -348,19 +348,19 @@ The JSON Schema extensions to drive unpacking include the `"cobol"` keyword. The
 Implementation Notes
 ~~~~~~~~~~~~~~~~~~~~
 
-We need three separate kinds of ``Unpacker`` subclasses to manage the kinds of ``Instance`` subclasses:
+We need three separate kinds of :py:class:`Unpacker` subclasses to manage the kinds of :py:class:`Instance` subclasses:
 
-- The `NonDelimited` subclass of `Unpacker` handles an `NDInstance`
+- The :py:class:`NonDelimited` subclass of :py:class:`Unpacker` handles an :py:class:`NDInstance`
   which is either a string or bytes with non-delimited data.
-  The `Location` reflects an offset into the `NDInstance`.
+  The :py:class:`Location` reflects an offset into the :py:class:`NDInstance`.
 
-- The `Delimited` subclass of `Unpacker` handles delimited data, generally using ``JSON``
+- The ``Delimited`` subclass of :py:class:`Unpacker` handles delimited data, generally using ``JSON``
   as a type hint. This will have a `dict[str, Any] | list[Any] | Any` structure.
 
-- A `Workbook` subclass of `Unpacker` wraps a workbook parser creating a ``WBInstance``.
+- A ``Workbook`` subclass of :py:class:`Unpacker` wraps a workbook parser creating a :py:class:`WBInstance`.
   Generally workbook rows are `list[Any]` structures.
 
-An ``Unpacker`` instance is a factory for ``Nav`` objects. When we need to navigate around
+An :py:class:`Unpacker` instance is a factory for :py:class:`Nav` objects. When we need to navigate around
 an instance, we'll leverage ``unpacker.nav(schema, instance)``. Since the
 schema binding doesn't change very often, ``nav = partial(unpacker.nav, (schema,))`` is
 a helpful simplification. With this partial, ``nav(instance).name(n)`` or ``nav(instance).index(n)`` are all that's needed
@@ -370,25 +370,25 @@ to locate a named field or apply array indices.
 Unpacker Size Computations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The sizes are *highly* dependent on format information that comes from COBOL DDE (or other schema details.) A `cobol` extension to JSON Schema provides the COBOL-syntax `USAGE` and `PICTURE` clauses required to parse bytes. There are four overall cases, only two of which require careful size computations.
+The sizes are *highly* dependent on format information that comes from COBOL DDE (or other schema details.) A ``cobol`` extension to JSON Schema provides the COBOL-syntax ``USAGE`` and ``PICTURE`` clauses required to parse bytes. There are four overall cases, only two of which require careful size computations.
 
 **Non-Delimited COBOL**.  See https://www.ibm.com/docs/en/cobol-zos/4.2?topic=clause-computational-items and https://www.ibm.com/docs/en/cobol-zos/4.2?topic=entry-usage-clause and https://www.ibm.com/docs/en/cobol-zos/4.2?topic=entry-picture-clause.
 
--  `USAGE DISPLAY`. `PIC X...` or `PIC A...`. Data is text. Size given by the picture. Value is `str`.
+-  ``USAGE DISPLAY``. ``PIC X...`` or ``PIC A...``. Data is text. Size given by the picture. Value is ``str``.
 
--  `USAGE DISPLAY`. `PIC 9...`. Data is "Zoned Decimal" text. Size given by the picture. Value is `decimal`.
+-  ``USAGE DISPLAY``. ``PIC 9...``. Data is "Zoned Decimal" text. Size given by the picture. Value is ``decimal``.
 
--  `USAGE COMP` or `USAGE BINARY` or `USAGE COMP-4`. `PIC 9...`. Data is bytes. Size based on the picture: 1-4 digits is two bytes. 5-9 digits is 4 bytes. 10-18 is 8 bytes. Value is a `int`.
-
-
--  `USAGE COMP-1`. `PIC 9...`. Data is 32-bit float. Size is 4. Value is `float`.
-
--  `USAGE COMP-2`. `PIC 9...`. Data is 64-bit float. Size is 8. Value is `float`.
-
--  `USAGE COMP-3` or `USAGE PACKED-DECIMAL`. `PIC 9...`. Data is two-digits-per-byte packed decimal. Value is a `decimal`.
+-  ``USAGE COMP`` or ``USAGE BINARY`` or ``USAGE COMP-4``. ``PIC 9...``. Data is bytes. Size based on the picture: 1-4 digits is two bytes. 5-9 digits is 4 bytes. 10-18 is 8 bytes. Value is a ``int``.
 
 
-**Non-Delimited Native**. Follows the Python `struct` module definitions. The `struct.calcsize()` function computes the structure's size. `struct.unpack()` unpacks the values using the format specification. Or `maxLength` can be used to define sizes.
+-  ``USAGE COMP-1``. ``PIC 9...``. Data is 32-bit float. Size is 4. Value is ``float``.
+
+-  ``USAGE COMP-2``. ``PIC 9...``. Data is 64-bit float. Size is 8. Value is ``float``.
+
+-  ``USAGE COMP-3`` or ``USAGE PACKED-DECIMAL``. ``PIC 9...``. Data is two-digits-per-byte packed decimal. Value is a ``decimal``.
+
+
+**Non-Delimited Native**. Follows the Python :py:mod:`struct` module definitions. The :py:func:`struct.calcsize` function computes the structure's size. The :py:func:`struct.unpack` function unpacks the values using the format specification. Or ``maxLength`` can be used to define sizes.
 
 **Delimited**. The underlying parser (JSON, YAML, TOML, XML) decomposed the data and performed conversions. The schema conversions *should* match the data that's present
 
@@ -439,23 +439,23 @@ Schema and Instance Navigation
 ------------------------------
 
 
-This is the core abstraction for a `Row` of a `Sheet`. Or a document in an JSON-Newline file. Or a row in a CSV file or other workbook. It's one document in an interable YAML file. (While there's no trivial mapping to TOML files, a subclass can locate sections or objects within a section that are treated as rows.)
+This is the core abstraction for a :py:class:`Row` of a :py:class:`Sheet`. Or a document in an JSON-Newline file. Or a row in a CSV file or other workbook. It's one document in an interable YAML file. (While there's no trivial mapping to TOML files, a subclass can locate sections or objects within a section that are treated as rows.)
 
-A `Row` is a collection of named values. A `Schema` provides name and type information for unpacking the values. In the case of non-delimited file formats, navigation becomes a complex problem and `Location` objects are created. With COBOL `REDEFINES` and `OCCURS DEPENDING ON` clauses, fields are found in positions unique to each `NDInstance`.
+A :py:class:`Row` is a collection of named values. A :py:class:`Schema` provides name and type information for unpacking the values. In the case of non-delimited file formats, navigation becomes a complex problem and :py:class:`Location` objects are created. With COBOL ``REDEFINES`` and `OCCURS DEPENDING ON` clauses, fields are found in positions unique to each :py:class:`NDInstance`.
 
-The names for attributes should be provided as `"$anchor"` values to make them visible. In the case of simple workbook files, the rows are flat and property names are a useful surrogate for anchors.
+The names for attributes should be provided as ``"$anchor"`` values to make them visible. In the case of simple workbook files, the rows are flat and property names are a useful surrogate for anchors.
 
-A `Row` has a plug-in strategy for navigation among cells in the workbook or fields in a JSON object, or the more complex structures present in a Non-Delimited File.
+A :py:class:`Row` has a plug-in strategy for navigation among cells in the workbook or fields in a JSON object, or the more complex structures present in a Non-Delimited File.
 
-The abstract `Nav` class provides unifieid navigation for delimited as well as non-delimited rows. The `NDNav` subclass handles non-delimited files where `Location` objects are required. The `DNav` handles JSON and other delimited structures. The `WBNav` subclass wraps workbook modules.
+The abstract :py:class:`Nav` class provides unifieid navigation for delimited as well as non-delimited rows. The :py:class:`NDNav` subclass handles non-delimited files where :py:class:`Location` objects are required. The :py:class:`DNav` handles JSON and other delimited structures. The :py:class:`WBNav` subclass wraps workbook modules.
 
-An `NDNav` instance provides a context that can help to move through an `NDInstance` of non-delimited data using a `Schema`.  These are created by a `LocationMaker` instance because this navigation so intimately involved in creating `Location` objects to find structures.
+An :py:class:`NDNav` instance provides a context that can help to move through an :py:class:`NDInstance` of non-delimited data using a :py:class:`Schema`.  These are created by a :py:class:`LocationMaker` instance because this navigation so intimately involved in creating :py:class:`Location` objects to find structures.
 
-A separate `DNav` subclass is a context that navigates through delimited objects where the object structure matches the schema structure. In the case of JSON/YAML/TOML, the operations are trivially delegated to the underlying native Python object; it's already been unpacked.
+A separate :py:class:`DNav` subclass is a context that navigates through delimited objects where the object structure matches the schema structure. In the case of JSON/YAML/TOML, the operations are trivially delegated to the underlying native Python object; it's already been unpacked.
 
-A third `WBNav` subclass handles CSV, XML and Workbook files. These rely on an underlying unpacker to handle the details of navigation, which are specific to a parser. The `WBNav` is a **Facade** over these various kinds of parsers.
+A third :py:class:`WBNav` subclass handles CSV, XML and Workbook files. These rely on an underlying unpacker to handle the details of navigation, which are specific to a parser. The :py:class:`WBNav` is a **Facade** over these various kinds of parsers.
 
-All of these are plug-in strategies used by a `Row` that provides a uniform wrapper.
+All of these are plug-in strategies used by a :py:class:`Row` that provides a uniform wrapper.
 
 
 ..  uml::
@@ -509,7 +509,7 @@ All of these are plug-in strategies used by a `Row` that provides a uniform wrap
         Nav <|-- WBNav
     @enduml
 
-We could try to create a subclass of ``dict`` that added methods to support ``Nav`` and ``DNav`` behaviors.
+We could try to create a subclass of ``dict`` that added methods to support :py:class:`Nav` and :py:class:`DNav` behaviors.
 This seems a bit complicated, since we're generally dealing with a :py:class:`Row`.
 This class creates an appropriate :py:class:`NDInstance` or :py:class:`WBInstance` based in the
 Workbook's :py:class:`Unpacker` subclass.
@@ -536,15 +536,15 @@ Locations
 ----------
 
 
-A `Location` is required to unpack bytes from non-delimited instances. This is a feature of the `NonDelimited` subclass of `Unpacker` and the associated `NDNav` class.
+A :py:class:`Location` is required to unpack bytes from non-delimited instances. This is a feature of the :py:class:`NonDelimited` subclass of :py:class:`Unpacker` and the associated :py:class:`NDNav` class.
 
-It's common to consider the `Location` details as "decoration" applied to a `Schema`. An implementation that decorates the schema requires a stateful schema and cant process more than one `Instance` at a time.
+It's common to consider the :py:class:`Location` details as "decoration" applied to a :py:class:`Schema`. An implementation that decorates the schema requires a stateful schema and cant process more than one :py:class:`Instance` at a time.
 
-We prefer to have `Location` objects as "wrappers" on `Schema` objects; the `Schema` remains stateless and we process multiple `NDInstance` objects with distinct `Location` objects.
+We prefer to have :py:class:`Location` objects as "wrappers" on :py:class:`Schema` objects; the :py:class:`Schema` remains stateless and we process multiple :py:class:`NDInstance` objects with distinct :py:class:`Location` objects.
 
-Each `Location` object contains a `Schema` object and additional start and end offsets. This may be based on the values of dependencies like `OCCURS DEPENDING ON` and `REDEFINES`.
+Each :py:class:`Location` object contains a :py:class:`Schema` object and additional start and end offsets. This may be based on the values of dependencies like `OCCURS DEPENDING ON` and ``REDEFINES``.
 
-The abstract `Location` class is built by a `LocationMaker` to provide specific offsets and sizes for non-delimited files with `OCCURS DEPENDING ON`. The `LocationMaker` seems to be part of the `Unpacker` class definition.
+The abstract :py:class:`Location` class is built by a :py:class:`LocationMaker` object to provide specific offsets and sizes for non-delimited files with `OCCURS DEPENDING ON`. The :py:class:`LocationMaker` seems to be part of the :py:class:`Unpacker` class definition.
 
 ..  uml::
 
@@ -612,8 +612,3 @@ Exceptions
 
 .. autoclass:: DesignError
    :members:
-
-   
-
-
-
