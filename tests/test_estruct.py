@@ -18,48 +18,75 @@ def test_display_text_1():
             {"digit": "99"},
         ],
         picture_size=9,
-        pattern=r"[ +-]?\d\d\d\d\d\.\d\d",
     )
+    assert rep.pattern == r"[ +-]?\d\d\d\d\d\.\d\d"
+    assert rep.digit_groups == ["S", "99999", ".", "99"]
 
 def test_display_text_2():
     rep = Representation.parse("USAGE DISPLAY PICTURE X(7)")
-    assert rep == Representation(usage='DISPLAY', picture_elements=[{'digit': 'XXXXXXX'}], picture_size=7, pattern='.......')
+    assert rep == Representation(usage='DISPLAY', picture_elements=[{'digit': 'XXXXXXX'}], picture_size=7)
+    assert rep.pattern == '.......'
+    assert rep.digit_groups == ["", "XXXXXXX", "", ""]
 
 def test_display_text_3():
     rep = Representation.parse("USAGE DISPLAY PICTURE ZZ")
-    assert rep == Representation(usage='DISPLAY', picture_elements=[{'digit': 'ZZ'}], picture_size=2, pattern='\\d\\d')
+    assert rep == Representation(usage='DISPLAY', picture_elements=[{'digit': 'ZZ'}], picture_size=2)
+    assert rep.pattern == '\\d\\d'
+    assert rep.digit_groups == ["", "ZZ", "", ""]
 
 def test_display_text_4():
     rep = Representation.parse("USAGE DISPLAY PICTURE 999")
-    assert rep == Representation(usage='DISPLAY', picture_elements=[{'digit': '999'}], picture_size=3, pattern='\\d\\d\\d')
+    assert rep == Representation(usage='DISPLAY', picture_elements=[{'digit': '999'}], picture_size=3)
+    assert rep.pattern == '\\d\\d\\d'
+    assert rep.digit_groups == ["", "999", "", ""]
 
 def test_display_text_5():
     rep = Representation.parse("USAGE DISPLAY PICTURE 9(5)V99")
-    assert rep == Representation(usage='DISPLAY', picture_elements=[{'digit': '99999'}, {'decimal': 'V'}, {'digit': '99'}], picture_size=7, pattern='\\d\\d\\d\\d\\d\\d\\d')
+    assert rep == Representation(usage='DISPLAY', picture_elements=[{'digit': '99999'}, {'decimal': 'V'}, {'digit': '99'}], picture_size=7)
+    assert rep.pattern == '\\d\\d\\d\\d\\d\\d\\d'
+    assert rep.digit_groups == ["", "99999", "V", "99"]
 
 def test_display_text_6():
     rep = Representation.parse("USAGE DISPLAY PICTURE S9(7)V99")
-    assert rep == Representation(usage='DISPLAY', picture_elements=[{'sign': 'S'}, {'digit': '9999999'}, {'decimal': 'V'}, {'digit': '99'}], picture_size=10, pattern='[ +-]?\\d\\d\\d\\d\\d\\d\\d\\d\\d')
+    assert rep == Representation(usage='DISPLAY', picture_elements=[{'sign': 'S'}, {'digit': '9999999'}, {'decimal': 'V'}, {'digit': '99'}], picture_size=10)
+    assert rep.pattern == '[ +-]?\\d\\d\\d\\d\\d\\d\\d\\d\\d'
+    assert rep.digit_groups == ["S", "9999999", "V", "99"]
 
 def test_display_text_7():
     rep = Representation.parse("USAGE DISPLAY PICTURE DB9(5).99")
-    assert rep == Representation(usage='DISPLAY', picture_elements=[{'sign': 'DB'}, {'digit': '99999'}, {'decimal': '.'}, {'digit': '99'}], picture_size=10, pattern='DB\\d\\d\\d\\d\\d\\.\\d\\d')
+    assert rep == Representation(usage='DISPLAY', picture_elements=[{'sign': 'DB'}, {'digit': '99999'}, {'decimal': '.'}, {'digit': '99'}], picture_size=10)
+    assert rep.pattern == 'DB\\d\\d\\d\\d\\d\\.\\d\\d'
+    assert rep.digit_groups == ["DB", "99999", ".", "99"]
 
 def test_display_text_8():
     rep = Representation.parse("USAGE DISPLAY PICTURE S9(4)V")
-    assert rep == Representation(usage='DISPLAY', picture_elements=[{'sign': 'S'}, {'digit': '9999'}, {'decimal': 'V'}], picture_size=5, pattern='[ +-]?\\d\\d\\d\\d')
-
+    assert rep == Representation(usage='DISPLAY', picture_elements=[{'sign': 'S'}, {'digit': '9999'}, {'decimal': 'V'}], picture_size=5)
+    assert rep.pattern == '[ +-]?\\d\\d\\d\\d'
+    assert rep.digit_groups == ["S", "9999", "V", ""]
+    
 def test_display_text_9():
     rep = Representation.parse("USAGE DISPLAY PICTURE 9(6).9(3)")
-    assert rep == Representation(usage='DISPLAY', picture_elements=[{'digit': '999999'}, {'decimal': '.'}, {'digit': '999'}], picture_size=10, pattern='\\d\\d\\d\\d\\d\\d\\.\\d\\d\\d')
+    assert rep == Representation(usage='DISPLAY', picture_elements=[{'digit': '999999'}, {'decimal': '.'}, {'digit': '999'}], picture_size=10)
+    assert rep.pattern == '\\d\\d\\d\\d\\d\\d\\.\\d\\d\\d'
+    assert rep.digit_groups == ["", "999999", ".", "999"]
 
 def test_display_text_10():
     rep = Representation.parse("USAGE DISPLAY PICTURE SV9(5)")
-    assert rep == Representation(usage='DISPLAY', picture_elements=[{'sign': 'S'}, {'decimal': 'V'}, {'digit': '99999'}], picture_size=6, pattern='[ +-]?\\d\\d\\d\\d\\d')
+    assert rep == Representation(usage='DISPLAY', picture_elements=[{'sign': 'S'}, {'decimal': 'V'}, {'digit': '99999'}], picture_size=6)
+    assert rep.pattern == '[ +-]?\\d\\d\\d\\d\\d'
+    assert rep.digit_groups == ["S", "", "V", "99999"]
 
 def test_display_text_11():
     rep = Representation.parse("USAGE DISPLAY PICTURE SV9(05)")
-    assert rep == Representation(usage='DISPLAY', picture_elements=[{'sign': 'S'}, {'decimal': 'V'}, {'digit': '99999'}], picture_size=6, pattern='[ +-]?\\d\\d\\d\\d\\d')
+    assert rep == Representation(usage='DISPLAY', picture_elements=[{'sign': 'S'}, {'decimal': 'V'}, {'digit': '99999'}], picture_size=6)
+    assert rep.pattern == '[ +-]?\\d\\d\\d\\d\\d'
+    assert rep.digit_groups == ["S", "", "V", "99999"]
+
+def test_display_text_12():
+    rep = Representation.parse("USAGE DISPLAY PICTURE $***9.99")
+    assert rep == Representation(usage='DISPLAY', picture_elements=[{'char': '$'}, {'char': '*'}, {'char': '*'}, {'char': '*'}, {'digit': '9'}, {'decimal': '.'}, {'digit': '99'}], picture_size=8)
+    assert rep.pattern == '\$\*\*\*\d\.\d\d'
+    assert rep.digit_groups == ["", "9999", ".", "99"]
 
 def test_display_zoned_decimal():
     rep = Representation.parse("05 FIELD-1 USAGE IS DISPLAY PIC S9(5)V99")
@@ -72,8 +99,9 @@ def test_display_zoned_decimal():
             {"digit": "99"},
         ],
         picture_size=8,
-        pattern=r"[ +-]?\d\d\d\d\d\d\d",
     )
+    assert rep.pattern == r"[ +-]?\d\d\d\d\d\d\d"
+    assert rep.digit_groups == ["S", "99999", "V", "99"]
 
 
 def test_calcsize_display():
@@ -83,7 +111,7 @@ def test_calcsize_display():
 def test_unpack_display():
     assert unpack(
         "USAGE DISPLAY PICTURE S9(5)V99", "1234567".encode("CP037")
-    ) == Decimal("12345.67")
+    ) == (Decimal("12345.67"),)
 
 
 def test_calcsize_comp():
@@ -109,40 +137,41 @@ def test_calcsize_comp3():
 def test_unpack_comp3():
     assert unpack(
         "USAGE COMP-3 PIC S9(7)V99", bytes([0x12, 0x34, 0x56, 0x79, 0x9C])
-    ) == Decimal("1234567.99")
-    assert unpack("USAGE COMP-3 PIC SV9(5)", bytes([0x12, 0x34, 0x5C])) == Decimal(
-        "0.12345"
-    )
-    assert unpack("USAGE COMP-3 PIC SV9(5)", bytes([0x98, 0x76, 0x5D])) == Decimal(
-        "-0.98765"
-    )
+    ) == (Decimal("1234567.99"),)
+    assert unpack(
+        "USAGE COMP-3 PIC SV9(5)", bytes([0x12, 0x34, 0x5C])
+    ) == (Decimal("0.12345"),)
+    assert unpack(
+        "USAGE COMP-3 PIC SV9(5)", bytes([0x98, 0x76, 0x5D])
+    ) == (Decimal("-0.98765"),)
     assert unpack(
         "USAGE COMPUTATIONAL PIC S99", bytes([0x12, 0x34])
-    ) == 0x1234
+    ) == (0x1234,)
     assert unpack(
         "USAGE COMPUTATIONAL PIC S99999999999", bytes([0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0])
-    ) == 0x123456789abcdef0
+    ) == (0x123456789abcdef0,)
 
 
 
 def test_should_convert_display():
-    assert unpack("PIC 999V99", b"\xf1\xf2\xf3\xf4\xf5") == Decimal("123.45")
-    assert unpack("PIC 99999V", b"\xf1\xf2\xf3\xf4\xf5") == Decimal("12345")
-    assert unpack("PIC 999.99", b"\xf1\xf2\xf3K\xf4\xf5") == "123.45"
+    assert unpack("PIC 999V99", b"\xf1\xf2\xf3\xf4\xf5") == (Decimal("123.45"),)
+    assert unpack("PIC 99999V", b"\xf1\xf2\xf3\xf4\xf5") == (Decimal("12345"),)
+    assert unpack("PIC 999.99", b"\xf1\xf2\xf3K\xf4\xf5") == ("123.45",)
 
 
 def test_should_convert_zoned_decimal():
-    assert unpack("USAGE DISPLAY PIC 9", b"\xc4") == Decimal("4")
-    assert unpack("USAGE DISPLAY PIC 9", b"\xd4") == Decimal("-4")
+    assert unpack("USAGE DISPLAY PIC 9", b"\xc4") == (Decimal("4"),)
+    assert unpack("USAGE DISPLAY PIC 9", b"\xd4") == (Decimal("-4"),)
+    assert unpack("USAGE DISPLAY PIC 99999V", b"\xf1\xf2\xf3\xf4\xf5") == (Decimal("12345"),)
 
 
 def test_should_convert_comp3():
-    assert unpack("USAGE COMP-3 PIC S999V99", b"\x12\x34\x98\x76\x5d") == Decimal(
-        "-1234987.65"
-    )
-    assert unpack("USAGE COMP-3 PIC S99999V", b"\x12\x34\x98\x76\x5d") == Decimal(
-        "-123498765"
-    )
+    assert unpack(
+        "USAGE COMP-3 PIC S999V99", b"\x12\x34\x98\x76\x5d"
+    ) == (Decimal("-1234987.65"),)
+    assert unpack(
+        "USAGE COMP-3 PIC S99999V", b"\x12\x34\x98\x76\x5d"
+    ) == (Decimal("-123498765"),)
 
 def test_bad_pictures():
     with pytest.raises(ValueError) as exc_info:
@@ -214,11 +243,13 @@ def test_rdw_recfm_f(recfm_f_reader):
         b'\x00\x08\x00\x00\x11\x12\x13\x14'
     ]
 
+
 def test_faulty_recfm_f_(recfm_f_file):
     with pytest.raises(TypeError) as exception_info:
         reader = RECFM_F(recfm_f_file, 0)
         records = list(reader.record_iter())
     assert exception_info.value.args[0] == "RECFM_F requires lrecl > 0"
+    
 
 @pytest.fixture
 def recfm_v_file():
@@ -227,9 +258,11 @@ def recfm_v_file():
         b'\x00\x08\x00\x00\x11\x12\x13\x14'  # RDW + 4 bytes
     )
 
+
 @pytest.fixture
 def recfm_v_reader(recfm_v_file):
     return RECFM_V(recfm_v_file)
+
 
 def test_recfm_v(recfm_v_reader):
     records = list(recfm_v_reader.record_iter())
@@ -238,12 +271,14 @@ def test_recfm_v(recfm_v_reader):
         b'\x11\x12\x13\x14',
     ]
 
+
 def test_rdw_recfm_v(recfm_v_reader):
     records_rdw = list(recfm_v_reader.rdw_iter())
     assert records_rdw == [
         b'\x00\x08\x00\x00\x01\x02\x03\x04',
         b'\x00\x08\x00\x00\x11\x12\x13\x14'
     ]
+
 
 @pytest.fixture
 def recfm_vb_file():

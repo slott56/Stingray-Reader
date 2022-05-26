@@ -533,7 +533,7 @@ def cobol_schema_2_path_3(tmp_path) -> COBOL_EBCDIC_File:
     return file_path_3
 
 def test_cobol_case_2_file_3(cobol_schema_2, cobol_schema_2_path_3, capsys) -> bool:
-    with COBOL_EBCDIC_File(cobol_schema_2_path_3, recfm_class=estruct.RECFM_V) as ebcdic_cobol_file:
+    with COBOL_EBCDIC_File(cobol_schema_2_path_3, recfm_class=stingray.estruct.RECFM_V) as ebcdic_cobol_file:
         sheet = ebcdic_cobol_file.sheet("").set_schema(cobol_schema_2)
 
         lrecl = (
@@ -593,7 +593,7 @@ def cobol_schema_2_path_4(tmp_path) -> COBOL_EBCDIC_File:
 
 
 def test_cobol_case_2_file_4(cobol_schema_2, cobol_schema_2_path_4, capsys) -> bool:
-    cobol_ebcdic_file = COBOL_EBCDIC_File(cobol_schema_2_path_4, recfm_class=estruct.RECFM_VB, lrecl=21)
+    cobol_ebcdic_file = COBOL_EBCDIC_File(cobol_schema_2_path_4, recfm_class=stingray.estruct.RECFM_VB, lrecl=21)
     sheet = cobol_ebcdic_file.sheet("").set_schema(cobol_schema_2)
 
     for row in sheet.row_iter():

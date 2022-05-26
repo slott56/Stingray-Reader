@@ -2,7 +2,7 @@
 Stingray Reader -- schema-based file processing for workbooks, and COBOL files.
 """
 
-from stingray.workbook import (
+from .workbook import (
     open_workbook,
     HeadingRowSchemaLoader,
     COBOLSchemaLoader,
@@ -17,6 +17,6 @@ from stingray.workbook import (
     COBOL_Text_File,
     COBOL_EBCDIC_File,
 )
-from stingray.cobol_parser import schema_iter
-from stingray.schema_instance import SchemaMaker, CONVERSION, JSON, digits_5, decimal_2
-from stingray.implementations import *
+from .cobol_parser import schema_iter
+from .schema_instance import SchemaMaker, CONVERSION, JSON, digits_5, decimal_2
+from .implementations import *

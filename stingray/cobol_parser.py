@@ -39,21 +39,18 @@ See https://www.ibm.com/docs/en/cobol-zos/4.2?topic=structure-reference-format.
 
 """
 
+from collections.abc import Callable, Sequence, Iterator, Iterable
 import logging
 import re
 from typing import (
-    Iterator,
-    Iterable,
     TextIO,
     Optional,
     Any,
-    Callable,
     Union,
-    NamedTuple,
-    Sequence,
     cast,
 )
 import weakref
+from stingray.schema_instance import Unpacker, EBCDIC, SchemaMaker, NDInstance
 
 
 class DesignError(BaseException):
@@ -133,7 +130,7 @@ def dde_sentences(source: Iterable[str]) -> Iterator[Sequence[str]]:
     Since we simply collect all the matching groups, it's technically a Sequence[str].
     """
     dde_sentence_pattern = re.compile(
-        "\s*(?P<level>\d\d)\s*(?P<clauses>.*?)\.\s", re.M | re.S
+        "\s*(?P<level>\d\d)\s*(?P<clauses>.*?)\.\s", re.MULTILINE | re.DOTALL
     )
 
     text = "".join(source)
@@ -141,7 +138,8 @@ def dde_sentences(source: Iterable[str]) -> Iterator[Sequence[str]]:
         yield s.groups()
 
 
-# TODO: is COBOL case independent?
+# The COBOL language is **Not** case sensitive.
+# COBOL literal string values, however, are case sensitive.
 
 SPACE = r"[\s|,|;]+"
 NAME = r"[\w-]+"
@@ -165,7 +163,7 @@ CLAUSES = (
     fr"|(?P<name>{NAME})"
 )
 
-clause_pattern = re.compile(CLAUSES)
+clause_pattern = re.compile(CLAUSES, re.IGNORECASE)
 
 
 def expand_repeat(group_dict: dict[str, str]) -> dict[str, str]:
@@ -215,7 +213,8 @@ def normalize_picture(source: str) -> list[dict[str, str]]:
         r"|(?P<char>\$|,|/|\*|B)"
         r"|(?P<decimal>V|\.)"
         r"|(?P<repeat>[AX9Z0]\(\d+\))"
-        r"|(?P<digit>[AX9Z0]+)"
+        r"|(?P<digit>[AX9Z0]+)",
+        re.IGNORECASE
     )
 
     matches = list(pic_pattern.finditer(source))
@@ -361,23 +360,29 @@ class JSONSchemaMaker:
 
     COBOL "flattens" the namespace so an elementary name implies the path 
     to that name. This is done with the "$anchor" keyword to mark the visible names.
+
+    The default is EBCDIC encodings.
     """
 
-    def __init__(self, source: DDE) -> None:
-        self.source = source
-        self.names: dict[str, JSON] = {}
+    def __init__(self, unpacker: type[Unpacker[NDInstance]] = EBCDIC) -> None:
+        self.unpacker = unpacker()
+        self.source: DDE
+        self.names: dict[str, JSON]
+        self.atomic_maker = SchemaMaker()
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.source}): {self.names=!r}"
 
-    def jsonschema(self) -> JSON:
+    def jsonschema(self, source: DDE) -> JSON:
+        self.source = source
+        self.names = {}
         return self.build_json_schema(self.source)
 
     def json_type(self, node: DDE) -> JSON:
         """
         The JSON Schema type for an elementary (or atomic) field.
         
-        If we're using a standad JSON Schema validator (without ``decimal`` as part of the vocabulary),
+        If we're using a standard JSON Schema validator (without ``decimal`` as part of the vocabulary),
         the following mappings are used:
 
         COBOL encoded numeric can be ``"type": "string"`` with additional ``"contentEncoding"`` details. 
@@ -409,26 +414,24 @@ class JSONSchemaMaker:
         If USAGE COMP-3, COMPUTATIONAL-3, PACKED-DECIMAL: "type": "string", "contentEncoding": "packed-decimal", "conversion": "decimal"
         If USAGE COMP-4, COMPUTATIONAL-4, COMP, COMPUTATIONAL, BINARY: "integer", "contentEncoding": "bigendian-int"
         If USAGE COMP-1, COMPUTATIONAL-1, COMP-2, COMPUTATIONAL-2: "number", "contentEncoding": "bigendian-float" or "bigendian-double"
-
-        TODO: Compute maxLength and minLength from the ``"contentEncoding"`` and ``"cobol"`` fields.
-            Use :py:mod:`estruct` or :py:mod:`struct` modules' :py:mod:`calcsize`.
         """
         usage = node.clauses.get("usage", "DISPLAY")
         if usage == "DISPLAY":
             picture = node.clauses.get("picture")
-            if picture and all(c in {"S", "V", "P", "9"} for c in picture):
-                return {
+            if picture and all(cast(str, c).upper() in {"S", "V", "P", "9"} for c in picture):
+                schema = {
                     "type": "string",
                     "contentEncoding": "cp037",
                     "conversion": "decimal",
                 }
-            return {"type": "string", "contentEncoding": "cp037"}
+            else:
+                schema = {"type": "string", "contentEncoding": "cp037"}
         elif usage in {
             "COMP-3",
             "COMPUTATIONAL-3",
             "PACKED-DECIMAL",
         }:
-            return {
+            schema = {
                 "type": "string",
                 "contentEncoding": "packed-decimal",
                 "conversion": "decimal",
@@ -440,23 +443,31 @@ class JSONSchemaMaker:
             "COMPUTATIONAL",
             "BINARY",
         }:
-            return {"type": "integer", "contentEncoding": "bigendian-int"}
+            schema = {"type": "integer", "contentEncoding": "bigendian-int"}
         elif usage in {
             "COMP-1",
             "COMPUTATIONAL-1",
         }:
-            return {"type": "number", "contentEncoding": "bigendian-float"}
+            schema = {"type": "number", "contentEncoding": "bigendian-float"}
         elif usage in {"COMP-2", "COMPUTATIONAL-2"}:
-            return {"type": "number", "contentEncoding": "bigendian-double"}
+            schema = {"type": "number", "contentEncoding": "bigendian-double"}
         else:
             # The regular expression pattern is not reflected in this if-statement.
             raise DesignError(f"usage clause {usage!r} unknown")  # pragma: no cover
+        return schema
 
     def build_json_schema(
         self, node: DDE, path: tuple[str, ...] = (), ignore_redefines: bool = False
     ) -> JSON:
         """
         Emit a JSON schema that reflects a COBOL DDE and all nested DDE's within it.
+        
+        Computes maxLength and minLength from the ``"contentEncoding"`` and ``"cobol"`` fields.
+        Uses the supplied :py:mod:`schema_instance.Unpacker`.
+        
+        - For contentEncoding reflecting EBCDIC, this will use :py:func:`estruct.calcsize`.
+        
+        - For contentEncoding reflecting ASCII or Unicode, this will use :py:func:`struct.calcsize`.
         """
         json_schema: JSON
         cobol = f"{node.level} {node.compact_source}"
@@ -563,7 +574,7 @@ class JSONSchemaMaker:
             # NOTE! Side effect of ``self.build_json_schema()`` is to add properties.
             # Our new properties must preserve those via an update.
             json_schema["properties"].update(properties_schema)
-
+            
         else:
             # Elementary
             json_schema = {
@@ -572,16 +583,29 @@ class JSONSchemaMaker:
                 "cobol": cobol,
             }
             json_schema |= cast(dict[str, Any], self.json_type(node))
+            json_schema['maxLength'] = json_schema['minLength'] = self.unpacker.calcsize(self.atomic_maker.from_json(json_schema))
 
         self.names[node.unique_name] = json_schema
         return json_schema
 
 
 class JSONSchemaMakerExtendedVocabulary(JSONSchemaMaker):
+    """
+    A JSONSchemaMaker with an extended, non-standard vocabulary.
+    
+    .. todo:: Provide the JSONSchema Vocabulary definition to add 'decimal' as a type.
+
+    """
     VOCABULARY: JSON = {
-        # TODO: Provide the JSONSchema Vocabulary definition to add 'decimal' as a type.
+        # JSONSchema Vocabulary definition to add 'decimal' as a type.
     }
 
+    def __init__(self, unpacker: type[Unpacker[NDInstance]] = EBCDIC) -> None:
+        super().__init__(unpacker)
+        self.atomic_maker = SchemaMaker()
+        # Extended vocabulary hack.
+        self.atomic_maker.ATOMIC.add("decimal")
+        
     def json_type(self, node: DDE) -> JSON:
         """
         If we're using an extended vocabulary including  ``decimal``, the following mappings can be used.
@@ -602,7 +626,7 @@ class JSONSchemaMakerExtendedVocabulary(JSONSchemaMaker):
         usage = node.clauses.get("usage", "DISPLAY")
         if usage == "DISPLAY":
             picture = node.clauses.get("picture")
-            if picture and all(c in {"S", "V", "P", "9"} for c in picture):
+            if picture and all(cast(str, c).upper() in {"S", "V", "P", "9"} for c in picture):
                 return {"type": "decimal"}
             return {
                 "type": "string",
@@ -641,5 +665,6 @@ def schema_iter(
     source: TextIO, deformat: REFERENCE_FORMAT = reference_format
 ) -> Iterator[JSON]:
     copy_books = structure(dde_sentences(reference_format(source)))
-    schemas = (JSONSchemaMaker(record).jsonschema() for record in copy_books)
+    maker = JSONSchemaMaker()
+    schemas = (maker.jsonschema(record) for record in copy_books)
     return schemas

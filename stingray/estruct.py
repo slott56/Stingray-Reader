@@ -13,6 +13,8 @@ For example, ``'USAGE DISPLAY PIC S999.99'``, is the minimum to describe a textu
 7 bytes.
 
 The :py:func:`unpack` uses the format string to unpack bytes into useful Python values.
+As with the built-in :py:func:`struct.unpack`, the result is **always** a tuple even if
+it has a single value.
 
 The :py:func:`calcsize` functions uses the format string to compute the size of a value.
 This can be applied to a DDE to compute the offsets and positions of each field.
@@ -23,16 +25,25 @@ This can be applied to a DDE to compute the offsets and positions of each field.
     This string is used unpack text, int, and float values from a sequence of bytes.
     See https://docs.python.org/3/library/struct.html#format-characters.
     An alternative interface for this module could be to use single-letter codes.
-    A code like ``15x`` for display. ``f`` and ``d`` for COMP-1 and COMP-2. ``9.2p`` for ``PIC 9(9)V99`` packed decimal COMP-3. ``9.2n`` for zoned decimal text. Plus ``h``, ``i``, and ``l`` for COMP-4 variants. This seems needless, but it is compact and somewhat more compatible with the :py:mod:`struct` module.
+    
+    For example:
+    
+    -   ``15x`` for display. 
+    -   ``f`` and ``d`` for COMP-1 and COMP-2. 
+    -   ``9.2p`` for ``PIC 9(9)V99`` packed decimal COMP-3. 
+    -   ``9.2n`` for zoned decimal text, DISPLAY instead of computational.
+    -   ``h``, ``i``, and ``l`` for COMP-4 variants.
+     
+     This seems needless, but it is compact and somewhat more compatible with the :py:mod:`struct` module.
 
 Examples::
 
-    >>> import estruct
-    >>> estruct.unpack("USAGE DISPLAY PIC S999V99", ' 12345'.encode("cp037"))
-    Decimal('123.45')
-    >>> estruct.unpack("USAGE DISPLAY PIC X(5)", 'ABCDE'.encode("cp037"))
-    'ABCDE'
-    >>> estruct.calcsize("USAGE COMP-3 PIC S9(11)V9(2)")
+    >>> import stingray.estruct
+    >>> stingray.estruct.unpack("USAGE DISPLAY PIC S999V99", ' 12345'.encode("cp037"))
+    (Decimal('123.45'),)
+    >>> stingray.estruct.unpack("USAGE DISPLAY PIC X(5)", 'ABCDE'.encode("cp037"))
+    ('ABCDE',)
+    >>> stingray.estruct.calcsize("USAGE COMP-3 PIC S9(11)V9(2)")
     7
 
 File Reading
@@ -68,11 +79,21 @@ Each of these has a :py:meth:`RECFM_Reader.record_iter` iterator that emits reco
 
 ..  note::  IBM z/Architecture mainframes are all big-endian
 
+COBOL Picture Parsing
+=====================
+
+The :py:class:`Representation` object provides representation details
+based on COBOL syntax. This is used by the Struct Unpacker (:py:class:`schema_instance.Struct`) as well as the
+EBCDIC Unpacker (:py:class:`schema_instance.EBCDIC`).
+
+In principle, this might be a separate thing, or might be part of the :py:mod:`cobol_parser` module.
+For now, it's here and is reused by :py:mod:`schema_instance`.
 """
 
 import abc
+from collections.abc import Iterator
 import logging
-from typing import Any, NamedTuple, Type, Optional, Dict, TextIO, BinaryIO, Iterator
+from typing import Any, NamedTuple, Type, Optional, TextIO, BinaryIO
 import re
 from decimal import Decimal
 import struct
@@ -91,7 +112,9 @@ class DesignError(BaseException):
 
 #: Pattern for parsing COBOL ``USAGE`` and ``PICTURE`` clauses.
 clause_pattern = re.compile(
-    r"(?:USAGE\s+)?(?:IS\s+)?(?P<usage>BINARY|COMPUTATIONAL-1|COMPUTATIONAL-2|COMPUTATIONAL-3|COMPUTATIONAL-4|COMPUTATIONAL|COMP-1|COMP-2|COMP-3|COMP-4|COMP|DISPLAY|PACKED-DECIMAL)"
+    r"(?:USAGE\s+)?(?:IS\s+)?"
+        r"(?P<usage>BINARY|COMPUTATIONAL-1|COMPUTATIONAL-2|COMPUTATIONAL-3|COMPUTATIONAL-4|"
+        r"COMPUTATIONAL|COMP-1|COMP-2|COMP-3|COMP-4|COMP|DISPLAY|PACKED-DECIMAL)"
     r"|(?:PIC|PICTURE)\s+(?:IS\s+)?(?P<picture>\S+)"
 )
 
@@ -100,11 +123,14 @@ class Representation(NamedTuple):
     """COBOL Representation Details: Usage and Picture.
 
     This is used internally by :py:func:`unpack` and :py:func:`calcsize`.
-
-    There's no reason to use this separately.
     
-    >>> Representation.parse("USAGE DISPLAY PICTURE S9(5)V99")
-    Representation(usage='DISPLAY', picture_elements=[{'sign': 'S'}, {'digit': '99999'}, {'decimal': 'V'}, {'digit': '99'}], picture_size=8, pattern='[ +-]?\\\\d\\\\d\\\\d\\\\d\\\\d\\\\d\\\\d')
+    >>> r = Representation.parse("USAGE DISPLAY PICTURE S9(5)V99")
+    >>> r
+    Representation(usage='DISPLAY', picture_elements=[{'sign': 'S'}, {'digit': '99999'}, {'decimal': 'V'}, {'digit': '99'}], picture_size=8)
+    >>> r.pattern
+    '[ +-]?\\\\d\\\\d\\\\d\\\\d\\\\d\\\\d\\\\d'
+    >>> r.digit_groups
+    ['S', '99999', 'V', '99']
     """
 
     #: The usage text, words like ``DISPLAY`` or ``COMPUTATIONAL`` or any of the numerous variants.
@@ -115,9 +141,6 @@ class Representation(NamedTuple):
 
     #: Summary sizing information.
     picture_size: int
-
-    #: A regex pattern used to validate candidate data.
-    pattern: str
 
     @staticmethod
     def normalize_picture(source: str) -> list[dict[str, str]]:
@@ -145,7 +168,7 @@ class Representation(NamedTuple):
         for pic in picture_elements:
             ending = pic.end()
             if pic.groupdict()["repeat"]:
-                # Normalize Picture: expand 9(5) to 99999.
+                # Normalize Picture: expand 9(5) to {"digit": "99999"}
                 # Mypy doesn't like the assignment below.
                 # It's not clear the value of pic.groupdict()["repeat"] will be
                 # large enough to support 4 or more substrings.
@@ -154,6 +177,7 @@ class Representation(NamedTuple):
                 char, left, *count, right = pic.groupdict()["repeat"]  # type: ignore [misc]
                 picture.append({"digit": int("".join(count)) * char})
             else:
+                # No need to normalize, use {"digit": "99999"} or whatever we found 
                 non_empty = {n: v for n, v in pic.groupdict().items() if v}
                 picture.append(non_empty)
         if ending != len(source):
@@ -171,13 +195,15 @@ class Representation(NamedTuple):
         :param cls: the class being created a subclass of :py:class:`Representation`
         :param format: the format specification string
         :returns: An instance of the requested class.
+        
+        ..  todo:: Add constraints in picture rules.
         """
         usage = "DISPLAY"
         pic_source = ""
         picture: list[dict[str, str]] = []
         size = 0
 
-        # Find USAGE and PICTURE clauses
+        # Extract the USAGE and PICTURE clauses from the COBOL
         clause_iter = clause_pattern.finditer(format)
         for c in clause_iter:
             if c.groupdict()["usage"]:
@@ -185,26 +211,47 @@ class Representation(NamedTuple):
             elif c.groupdict()["picture"]:
                 pic_source = c.groupdict()["picture"]
                 picture = cls.normalize_picture(pic_source)
-
-        # Summarize Picture Clause
-        # TODO: This is a little too flexible: sign is allowed to repeat, for example.
-        regexp: list[str] = []
+    
+        # Compute the size of the PICTURE
         for elt in picture:
             if sign := elt.get("sign", ""):
                 size += len(sign)
-                regexp += sign.replace("S", "[ +-]?")
             elif char := elt.get("char", ""):
                 size += len(char)
-                regexp += (
-                    char.replace("$", "\\$").replace("*", "\\*").replace("B", "\\s")
-                )
             elif decimal := elt.get("decimal", ""):
                 size += 1 if decimal == "." else 0
-                regexp += "\\." if decimal == "." else ""
             elif digits := elt.get("digit", ""):
                 # A, X, Z, 9, 0 count.
                 # P doesn't count.
                 size += len(digits)
+            elif elt.get("repeat"):  # pragma: no cover
+                # The PICTURE clause was not normalized.
+                raise DesignError(f"failure to normalize picture {picture!r}")
+            else:  # pragma: no cover
+                # The regex pattern and the if statement don't match.
+                raise DesignError(f"unexpected {elt} in picture {picture!r}")
+        return cls(usage, picture, size)
+
+    @property
+    def pattern(self) -> str:
+        """
+        Summarize Picture Clause as a regexp to validate data.
+        
+        .. todo:: This is too flexible: sign and decimal should not be allowed to repeat.
+        """
+        regexp: list[str] = []
+        for elt in self.picture_elements:
+            if sign := elt.get("sign", ""):
+                regexp += sign.replace("S", "[ +-]?").replace("s", "[ +-]?")
+            elif char := elt.get("char", ""):
+                regexp += (
+                    char.replace("$", "\\$").replace("*", "\\*").replace("B", "\\s")
+                )
+            elif decimal := elt.get("decimal", ""):
+                regexp += "\\." if decimal == "." else ""
+            elif digits := elt.get("digit", ""):
+                # A, X, Z, 9, 0 count.
+                # P doesn't count.
                 regexp += (
                     digits.replace("A", "\\w")
                     .replace("X", ".")
@@ -213,17 +260,49 @@ class Representation(NamedTuple):
                     .replace("0", "\\d")
                     .replace("P", "")
                 )
-            elif repeat := elt.get("repeat"):  # pragma: no cover
+            elif elt.get("repeat"):  # pragma: no cover
                 # The PICTURE clause was not normalized.
-                raise DesignError(f"failure to normalize picture {picture!r}")
+                raise DesignError(f"failure to normalize picture {self.picture_elements!r}")
             else:  # pragma: no cover
                 # The regex pattern and the if statement don't match.
-                raise DesignError(f"unexpected {elt} in picture {picture!r}")
+                raise DesignError(f"unexpected {elt} in picture {self.picture_elements!r}")
+        return "".join(regexp)
+    
+    @property
+    def digit_groups(self) -> list[str]:
+        """Parse the Picture into details: [sign, whole, separator, fraction] groups."""
+        group = 1  # whole number part
+        groups = ["", "", "", ""]
+        for d in self.picture_elements:
+            if decimal := d.get("decimal"):
+                groups[2] = decimal
+                group = 3  # decimal fraction part
+            elif digit_chars := d.get("digit"):
+                groups[group] += digit_chars
+            elif edit_chars := d.get("char"):
+                groups[group] += edit_chars.count("*")*"9"  # The "*"'s count as digits
+            elif sign_char := d.get("sign"):
+                groups[0] = sign_char
+        return groups
 
-        return cls(usage, picture, size, "".join(regexp))
+    @property
+    def zoned_decimal(self) -> bool:
+        """Examine the digit groups to see if this is purely numeric."""
+        edit_options: list[str] = list(filter(None, (x.get("char") for x in self.picture_elements)))
+        numeric_options = (
+            self.picture_size != 0,  # If PIC omitted, size will be zero, and it's a GROUP element.
+            self.digit_groups[0] in {"", "S", "s", None},
+            all(d == "9" for d in self.digit_groups[1]),
+            self.digit_groups[2] in {"V", "v", "", None},
+            all(d == "9" for d in self.digit_groups[3]),
+        )
+        zoned_decimal = all(numeric_options) and not edit_options
+        logger.debug(
+            f"PIC {self.digit_groups}: all({numeric_options=}) and not {edit_options=} = {zoned_decimal=}"
+        )
+        return zoned_decimal
 
-
-def unpack(format: str, buffer: bytes) -> Any:
+def unpack(format: str, buffer: bytes) -> tuple[Any, ...]:
     """
     Unpack EBCDIC bytes given a COBOL DDE format specification and a buffer of bytes.
     
@@ -244,60 +323,35 @@ def unpack(format: str, buffer: bytes) -> Any:
     the 4 high-order bits of the low-order byte represent the sign of the item. 
     The 4 low-order bits of each byte contain the value of the digit.
 
-    TODO: Add support for COMP-1 and COMP-2.
+    .. todo:: Add support for COMP-1 and COMP-2.
 
     :param format: A format string; a COBOL DDE.
     :param buffer: A bytes object with a value to be unpacked.
     :return: A Python object
     """
-    usage, picture, size, pattern = Representation.parse(format)
-
-    # Decompose PIC into 4 groups: sign, digits, decimal, digits.
-    # The group switches from 1 to 3 when the decimal is seen.
-    # TODO: Refactor into Representation class
-    group = 1  # pre-decimal
-    digit_groups = ["", "", "", ""]
-    for d in picture:
-        if decimal := d.get("decimal"):
-            digit_groups[2] = decimal
-            group = 3  # post-decimal
-        elif digit_chars := d.get("digit"):
-            digit_groups[group] += digit_chars
-        elif sign_char := d.get("sign"):
-            digit_groups[0] = sign_char
+    representation = Representation.parse(format)
 
     # Usage Display can be text or zoned decimal
-    if usage in ("DISPLAY",):
-        # Depends on PIC. If PIC has only S9VP, then it's "ZONED DECIMAL"
-        edit_options: list[str] = list(filter(None, (x.get("char") for x in picture)))
-        numeric_options = (
-            size != 0,  # If PIC omitted, size will be zero, and it's a GROUP element.
-            digit_groups[0] in {"", "S", None},
-            all(d == "9" for d in digit_groups[1]),
-            digit_groups[2] in {"V", "", None},
-            all(d == "9" for d in digit_groups[3]),
-        )
-        zoned_decimal = all(numeric_options) and not edit_options
-        logger.debug(
-            f"PIC {digit_groups}: all({numeric_options}) and not {edit_options} = {zoned_decimal}"
-        )
-        if zoned_decimal:
+    if representation.usage in ("DISPLAY",):
+        # Depends on PIC. If PIC has only S9VP, then it's "ZONED DECIMAL": a number.
+        # Otherwise, it's actually text
+        if representation.zoned_decimal:
             text = "".join(str(b & 0x0F) for b in buffer)
             sign_half = (buffer[-1] & 0xF0) >> 4
             sign = -1 if (sign_half == 0x0B or sign_half == 0x0D) else +1
             base = Decimal(text)
-            scale = Decimal(10) ** (-len(digit_groups[3]))
-            return base * scale * sign
+            scale = Decimal(10) ** (-len(representation.digit_groups[3]))
+            return base * scale * sign,
         # Match text with a regular expression derived from the picture to see if it's valid.
         text = buffer.decode("CP037")
         logger.debug(f"estruct.unpack: {buffer!r} == {text=}")
-        if not re.match(pattern, text):
-            raise ValueError(f"{text!r} doesn't match pattern {pattern!r}")
+        if not re.match(representation.pattern, text):
+            raise ValueError(f"{text!r} doesn't match pattern {representation.pattern!r}")
         # It's display text.
-        return text
+        return text,
 
     # Usage COMP-3
-    elif usage in ("COMP-3", "COMPUTATIONAL-3", "PACKED-DECIMAL",):
+    elif representation.usage in ("COMP-3", "COMPUTATIONAL-3", "PACKED-DECIMAL",):
         # unpack buffer bytes into pairs of digits
         half_bytes = []
         for b in buffer:
@@ -307,33 +361,33 @@ def unpack(format: str, buffer: bytes) -> Any:
         # get sign and base numeric value
         sign = -1 if (sign_half == 0x0B or sign_half == 0x0D) else +1
         base = Decimal("".join(str(d) for d in digits))
-        scale = Decimal(10) ** (-len(digit_groups[3]))
-        return base * scale * sign
+        scale = Decimal(10) ** (-len(representation.digit_groups[3]))
+        return base * scale * sign,
 
-    # elif usage in ("COMPUTATIONAL-1", "COMP-1")
+    # elif representation.usage in ("COMPUTATIONAL-1", "COMP-1")
     #   Unpack 4 byte float
-    #   f, = struct.unpack(">f", buffer)
-    #   return f
+    #   return struct.unpack(">f", buffer)
 
-    # elif usage in ("COMPUTATIONAL-2", "COMP-2")
+    # elif representation.usage in ("COMPUTATIONAL-2", "COMP-2")
     #   Unpack 8 byte float
-    #   f, = struct.unpack(">d", buffer)
-    #   return f
+    #   return struct.unpack(">d", buffer)
 
-    elif usage in ("COMP-4", "COMPUTATIONAL-4", "BINARY", "COMP", "COMPUTATIONAL",):
+    elif representation.usage in ("COMP-4", "COMPUTATIONAL-4", "BINARY", "COMP", "COMPUTATIONAL",):
         # Unpack 2-, 4-, or 8-byte int. Size depends on the length of digit_groups[1]
         # 1-4 digits is two bytes. 5-9 digits is 4 bytes. 10-18 is 8 bytes.
-        if len(digit_groups[1]) < 5:
+        if len(representation.digit_groups[1]) < 5:
             format = ">h"
-        elif 5 <= len(digit_groups[1]) < 10:
+        elif 5 <= len(representation.digit_groups[1]) < 10:
             format = ">i"
-        elif 10 <= len(digit_groups[1]) < 18:
+        elif 10 <= len(representation.digit_groups[1]) < 18:
             format = ">q"
-        (n,) = struct.unpack(format, buffer)
+        else:  # pragma: no cover
+            raise ValueError(f"Usage {representation!r} too large")
+        n = struct.unpack(format, buffer)
         return n
 
     else:  # pragma: no cover
-        raise RuntimeError(f"Usage {usage!r} not supported")
+        raise RuntimeError(f"Usage {representation.usage!r} not supported")
 
 
 def calcsize(format: str) -> int:
@@ -343,24 +397,25 @@ def calcsize(format: str) -> int:
     :param format: The COBOL ``DISPLAY`` and ``PIC`` clauses.
     :returns: integer size of the item in bytes.
     """
-    usage, picture, size, pattern = Representation.parse(format)
-    if size == 0:
+    representation = Representation.parse(format)
+
+    if representation.picture_size == 0:
         raise ValueError(f"Problem parsing {format!r}")
 
-    if usage in ("DISPLAY",):
-        return size
-    elif usage in ("COMP-3", "COMPUTATIONAL-3", "PACKED-DECIMAL",):
-        return (size + 1) // 2
-    elif usage in ("COMP-1", "COMPUTATIONAL-1",):
+    if representation.usage in ("DISPLAY",):
+        return representation.picture_size
+    elif representation.usage in ("COMP-3", "COMPUTATIONAL-3", "PACKED-DECIMAL",):
+        return (representation.picture_size + 1) // 2
+    elif representation.usage in ("COMP-1", "COMPUTATIONAL-1",):
         return 4
-    elif usage in ("COMP-2", "COMPUTATIONAL-2",):
+    elif representation.usage in ("COMP-2", "COMPUTATIONAL-2",):
         return 8
-    elif usage in ("COMP-4", "COMPUTATIONAL-4", "BINARY", "COMP", "COMPUTATIONAL",):
-        return 2 if size < 5 else (4 if 5 <= size < 10 else 8)
+    elif representation.usage in ("COMP-4", "COMPUTATIONAL-4", "BINARY", "COMP", "COMPUTATIONAL",):
+        return 2 if representation.picture_size < 5 else (4 if 5 <= representation.picture_size < 10 else 8)
     else:
         # This is a design error: regular expression doesn't match this if statement
         raise RuntimeError(
-            f"Unparsable {usage} in picture: {format!r}"
+            f"Unparsable {representation.usage} in picture: {format!r}"
         )  # pragma: no cover
 
 

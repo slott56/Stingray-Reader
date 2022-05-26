@@ -32,39 +32,40 @@ class hierarchies:
     to work with Non-Delimited objects represented
     as ``bytes`` or ``str`` instances.
 
+.. todo:: Refactor ``schema_instance`` module into two pieces:
+    - Schema, Unpacker, and Nav superclasses -> stingray.schema
+    - Location and Nav subclasses -> stingray.navigation
+
 """
 
 import abc
-import csv
+from collections.abc import Callable, Iterator
 from decimal import Decimal
 from functools import partial
 import logging
 from pathlib import Path
 from pprint import pprint
+import struct
 import sys
 from typing import (
     Union,
     Any,
-    NamedTuple,
     Protocol,
     TextIO,
     BinaryIO,
     Optional,
     overload,
-    Iterator,
     cast,
     Type,
-    Callable,
     TypeVar,
     Generic,
     AnyStr,
-    Sequence,
     SupportsInt,
     IO,
 )
 import weakref
 
-from stingray import estruct
+import stingray.estruct
 
 logger = logging.getLogger("stingray.schema_instance")
 
@@ -83,15 +84,10 @@ JSON = Union[None, bool, int, float, str, list[Any], dict[str, Any]]
 
 class Reference(Protocol):
     """
-    # TODO: Formalize a ref_to protocol, used by ``RefToSchema`` and ``DependsOnArraySchema``.
+    .. todo:: Formalize a ref_to protocol, used by ``RefToSchema`` and ``DependsOnArraySchema``.
     """
 
     pass
-
-
-# TODO: Refactor schema_instance module into two pieces:
-#  - Schema, Unpacker, and Nav superclasses -> stingray.schema
-#  - Location and Nav subclasses -> stingray.navigation
 
 
 class Schema:
@@ -670,7 +666,7 @@ class DInstance(Protocol):
     Pragmatically, we want o supplement these classes with methods
     that emit ``DNav`` objects to manage navigating an object and a schema in parallel.
 
-    ..  todo:: Not sure this is useful, it's a kind of alias for Any/object
+    ..  todo:: Not sure the DInstance protocol is useful, it's a kind of alias for Any/object
     """
 
     def __init__(self, source: JSON) -> None:  ...
@@ -683,7 +679,7 @@ class WBInstance(Protocol):
 
     We'll tolerate any sequence type.
 
-    ..  todo:: Not sure this is useful, it's a kind of alias for ``list[Any]``
+    ..  todo:: Not sure if the WBInstance protocol is useful, it's a kind of alias for ``list[Any]``
     """
 
     @overload
@@ -826,7 +822,7 @@ class EBCDIC(Unpacker[NDInstance]):
         """
         # assert schema.attributes.get("contentEncoding") in {"packed-decimal", "cp037"}
         format = cast(dict[str, Any], schema.attributes).get("cobol", "USAGE DISPLAY")
-        return estruct.calcsize(format)
+        return stingray.estruct.calcsize(format)
 
     def value(self, schema: Schema, instance: NDInstance) -> Any:
         """
@@ -841,7 +837,8 @@ class EBCDIC(Unpacker[NDInstance]):
         conversion_func = CONVERSION[
             cast(dict[str, Any], schema.attributes).get("conversion")
         ]
-        return conversion_func(estruct.unpack(format, cast(bytes, instance)))
+        v, = stingray.estruct.unpack(format, cast(bytes, instance))
+        return conversion_func(v)
 
     def nav(self, schema: Schema, instance: NDInstance) -> "NDNav":
         """
@@ -860,7 +857,7 @@ class EBCDIC(Unpacker[NDInstance]):
         self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None
     ) -> None:
         """
-        A file open suitable for unpacking an EBCDiC COBOL file.
+        A file open suitable for unpacking an EBCDIC-encoded file.
 
         :param name: The :py:class:`Path`
         :param file_object: An open
@@ -887,7 +884,7 @@ class EBCDIC(Unpacker[NDInstance]):
     def instance_iter(
         self,
         sheet: str,
-        recfm_class: Type["estruct.RECFM_Reader"],
+        recfm_class: Type["stingray.estruct.RECFM_Reader"],
         lrecl: int,
         **kwargs: Any,
     ) -> Iterator[NDInstance]:
@@ -922,10 +919,133 @@ class Struct(Unpacker[NDInstance]):
     Unpacker for Non-Delimited native (i.e., not EBCDIC-encoding) bytes.
 
     Uses built-in :py:mod:`struct` module for calcsize and value.
-    TODO: Finish this.
     """
+    
+    def struct_format(self, schema: Schema) -> str:
+        """
+        Computes the :py:mod:`struct` format string for an atomic Schema object.
+        
+        :param schema: Schema 
+        :return: str format for :py:mod:`struct`
+        """
+        format = cast(dict[str, Any], schema.attributes).get("cobol", "USAGE DISPLAY")
+        representation = stingray.estruct.Representation.parse(format)
+        if representation.usage in ("DISPLAY",):
+            struct_code = f"{representation.picture_size}s"
+        elif representation.usage in ("COMP-3", "COMPUTATIONAL-3", "PACKED-DECIMAL",):
+            raise ValueError(f"Unsupported USAGE: {format}")
+        elif representation.usage in ("COMPUTATIONAL-1", "COMP-1"):
+            struct_code = "f"
+        elif representation.usage in ("COMPUTATIONAL-2", "COMP-2"):
+            struct_code = "d"
+        elif representation.usage in ("COMP-4", "COMPUTATIONAL-4", "BINARY", "COMP", "COMPUTATIONAL",):
+            if len(representation.digit_groups[1]) < 5:
+                struct_code = "h"
+            elif 5 <= len(representation.digit_groups[1]) < 10:
+                struct_code = "i"
+            elif 10 <= len(representation.digit_groups[1]) < 18:
+                struct_code = "q"
+            else:  # pragma: no cover
+                raise ValueError(f"Usage {representation!r} too large")
+        else:  # pragma: no cover
+            raise RuntimeError(f"Usage {representation.usage!r} not supported")
+        return struct_code
+        
+    def calcsize(self, schema: Schema) -> int:
+        """
+        Computes the size of a field.
+        
+        :param schema: The field definition.
+        :return: The size.
+        """
+        format = self.struct_format(schema)
+        return struct.calcsize(format)
 
-    pass
+    def value(self, schema: Schema, instance: NDInstance) -> Any:
+        """
+        Computes the value of a field in a given :py:class:`NDInstance`.
+
+        :param schema: The field definition.
+        :param instance: The instance to unpack.
+        :return: The value.
+        """
+        format = self.struct_format(schema)
+        conversion_func = CONVERSION[
+            cast(dict[str, Any], schema.attributes).get("conversion")
+        ]
+        v, = struct.unpack(format, cast(bytes, instance))
+        return conversion_func(v)
+
+    def nav(self, schema: Schema, instance: NDInstance) -> "NDNav":
+        """
+        Create a :py:class:`NDNav` helper to navigate through an :py:class:`NDInstance`.
+
+        :param schema: The schema for this instance
+        :param instance: The instance
+        :return: an :py:class:`NDNav` helper.
+        """
+        location = LocationMaker(
+            cast(Unpacker[NDInstance], self), schema
+        ).from_instance(instance)
+        return NDNav(self, location, instance)
+
+    def open(
+        self, name: Path, file_object: Optional[Union[IO[str], IO[bytes]]] = None
+    ) -> None:
+        """
+        A file open suitable for unpacking a bytes file.
+
+        :param name: The :py:class:`Path`
+        :param file_object: An open
+        """
+        if file_object:
+            self.the_file = file_object
+        else:
+            self.the_file = name.open(mode=Mode.BINARY)
+        self._used = 0
+
+    def close(self) -> None:
+        """A file close suitable for most COBOL files."""
+        if hasattr(self, "the_file") and self.the_file:
+            self.the_file.close()
+            del self.the_file
+
+    def sheet_iter(self) -> Iterator[str]:
+        """
+        Yields one name for the 'sheet' in this file.
+
+        :yields: Literal[""]
+        """
+        yield ""
+
+    def instance_iter(self, sheet: str, lrecl: int = 0, **kwargs: Any) -> Iterator[NDInstance]:
+        """
+        Yields all the record instances in this file.
+
+        Delegates the details of instance iteration to a :py:class:`estruct.RECFM_Reader` instance.
+
+        :param sheet: The name of the sheet to process; for COBOL files, this is ignored.
+        :param lrecl: The expected logical record length of this file. Since there are no delimiters, this is the only way to know how long each record is.
+        :yields: :py:class:`NDInstance` for each record in the file.
+        """
+        if not lrecl:
+            raise TypeError(f"{self.__class__.__name__} requires lrecl > 0")
+        data = self.the_file.read(lrecl)
+        while len(data) != 0:
+            yield data
+            data = self.the_file.read(lrecl)
+
+    def used(self, length: int) -> None:  # pragma: no cover
+        """
+        This is used by a client application to
+        provide the number of bytes actually used.
+        
+        ..  todo:: To implement variable length records, see the RECFM=N implementation.
+
+        :param length: number of bytes used.
+        """
+        raise NotImplementedError("variable length records not supported by Struct Unpacker")
+        # self._used = length
 
 
 class TextUnpacker(Unpacker[NDInstance]):
@@ -969,7 +1089,7 @@ class TextUnpacker(Unpacker[NDInstance]):
         if "maxLength" in cast(dict[str, Any], schema.attributes):
             return int(cast(dict[str, Any], schema.attributes)["maxLength"])
         elif "cobol" in cast(dict[str, Any], schema.attributes):
-            representation = estruct.Representation.parse(
+            representation = stingray.estruct.Representation.parse(
                 cast(dict[str, Any], schema.attributes)["cobol"]
             )
             return representation.picture_size
@@ -1036,7 +1156,7 @@ class TextUnpacker(Unpacker[NDInstance]):
 
     def instance_iter(self, sheet: str, **kwargs: Any) -> Iterator[NDInstance]:
         """
-        Yields all of the record instances in this file.
+        Yields all the record instances in this file.
 
         :param sheet: The name of the sheet to process; for COBOL files, this is ignored.
         :param kwargs: Not used.
@@ -1177,7 +1297,7 @@ class Location(abc.ABC):
 
     The value() method delegates the work to the :py:class:`Unpacker` strategy.
 
-    TODO: Add unpacker and locationMaker to __init__() method.
+    .. todo:: Add unpacker and locationMaker to __init__() method.
     """
 
     def __init__(self, schema: Schema, start: int, end: int = 0) -> None:
@@ -1362,7 +1482,7 @@ class ArrayLocation(Location):
         :param indent: The indentation level
         :yields: tuples of (indent, Location, array indices, raw bytes, value)
 
-        ..  todo: Step through array index combinations.
+        ..  todo: Step through array index combinations from 0 to maxitems
 
             For now, provide the index=0 value only.
         """
@@ -1428,7 +1548,7 @@ class ObjectLocation(Location):
         self, nav: "NDNav", indent: int = 0
     ) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
         """
-        Dump this object location and all of the properties within it.
+        Dump this object location and all the properties within it.
 
         :param nav: The parent :py:class:`NDNav` instance with schema details.
         :param indent: The indentation level
@@ -1496,7 +1616,7 @@ class OneOfLocation(Location):
         self, nav: "NDNav", indent: int = 0
     ) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
         """
-        Dump this object location and all of the alternative definitions.
+        Dump this object location and all the alternative definitions.
         Since some of these may raise exceptions, displays may be incomplete.
 
         :param nav: The parent :py:class:`NDNav` instance with schema details.
@@ -1753,7 +1873,9 @@ class LocationMaker:
             # OR... This isn't a Schema object in the first place.
             if isinstance(schema, dict):
                 raise RuntimeError(f"raw dict {schema}; SchemaMaker().from_json() required")
-            raise DesignError(f"Invalid Schema construct: {schema}")
+            logger.error(f"{type(schema)=}")
+            logger.error(f"{Schema.__subclasses__()=}")
+            raise DesignError(f"Invalid Schema construct: {type(schema)=} not in {Schema.__subclasses__()=}")
         loc.unpacker = self.unpacker
         loc.locationMaker = weakref.ref(self)
         if anchor_name := loc.schema._attributes.get("$anchor"):
@@ -2064,7 +2186,7 @@ class DNav(Nav):
 
     def dump(self) -> None:
         """
-        Prints this instance and all of its children.
+        Prints this instance and all its children.
         """
         layout = "{:53s} {!r}"
         print("{:53s} {!s}".format("Field", "Value"))
@@ -2159,7 +2281,7 @@ class WBNav(Nav):
 
     def dump(self) -> None:
         """
-        Prints this instance and all of its children.
+        Prints this instance and all its children.
         """
         layout = "{:53s} {}"
         print("{:53s} {!s}".format("Field", "Value"))

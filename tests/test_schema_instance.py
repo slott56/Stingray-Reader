@@ -416,9 +416,11 @@ def test_cobol_ebcdic_unpacker(tmp_path, mock_estruct_recfm_class):
     assert eu.value(schema, expected.encode("CP037")) == expected
     nav = eu.nav(schema, expected.encode("CP037"))
     assert nav.schema == schema
+    # File Object 
     eu.open(tmp_path, sentinel.FILE_OBJECT)
     assert eu.the_file == sentinel.FILE_OBJECT
     del eu.the_file
+    # Path
     target = tmp_path/"some_file.data"
     target.write_bytes(b"hello world")
     eu.open(target)
@@ -438,6 +440,78 @@ def test_bad_ebcdic_unpacker():
     with pytest.raises(ValueError):
         assert eu.calcsize(schema) == 42
     assert eu.value(schema, expected.encode("CP037")) == expected
+
+
+def test_cobol_struct_unpacker_1(tmp_path):
+    json_schema = {"type": "string", "cobol": "USAGE DISPLAY PICTURE X(42)"}
+    expected = b"12345678 0 2345678 0 2345678 0 2345678 0 2"
+    schema = SchemaMaker.from_json(json_schema)
+    su = Struct()
+    assert su.calcsize(schema) == 42
+    assert su.struct_format(schema) == "42s"
+    assert su.value(schema, expected) == expected
+    nav = su.nav(schema, expected)
+    assert nav.schema == schema
+    assert list(su.sheet_iter()) == [""] 
+    # File Object
+    su.open(tmp_path, sentinel.FILE_OBJECT)
+    assert su.the_file == sentinel.FILE_OBJECT
+    del su.the_file
+    # Path
+    target = tmp_path/"some_file.data"
+    target.write_bytes(expected)
+    su.open(target)
+    assert su.the_file.name == str(target)
+    instances = su.instance_iter("sheet", 42)
+    assert list(instances) == [expected]
+    with pytest.raises(TypeError):
+        instances = list(su.instance_iter("sheet"))
+    su.close()
+    assert not hasattr(su, "the_file")
+
+def test_cobol_struct_unpacker_2(tmp_path):
+    su = Struct()
+    jsd = {"type": "string", "cobol": "USAGE DISPLAY PICTURE X(42)"}
+    sd = SchemaMaker.from_json(jsd)
+    assert su.calcsize(sd) == 42
+    assert su.struct_format(sd) == "42s"
+    
+    jszd = {"type": "number", "cobol": "USAGE DISPLAY PICTURE 9(5)"}
+    szd = SchemaMaker.from_json(jszd)
+    assert su.calcsize(szd) == 5
+    assert su.struct_format(szd) == "5s"
+
+    jsc1 = {"type": "number", "cobol": "USAGE COMP-1 PICTURE 9(5)"}
+    sc1 = SchemaMaker.from_json(jsc1)
+    assert su.calcsize(sc1) == 4
+    assert su.struct_format(sc1) == "f"
+
+    jsc2 = {"type": "number", "cobol": "USAGE COMP-2 PICTURE 9(5)"}
+    sc2 = SchemaMaker.from_json(jsc2)
+    assert su.calcsize(sc2) == 8
+    assert su.struct_format(sc2) == "d"
+
+    jsc3 = {"type": "number", "cobol": "USAGE COMP-3 PICTURE 9(5)"}
+    sc3 = SchemaMaker.from_json(jsc3)
+    with pytest.raises(ValueError):
+        su.calcsize(sc3)
+    with pytest.raises(ValueError):
+        su.struct_format(sc3)
+
+    jsc4_h = {"type": "number", "cobol": "USAGE COMP-4 PICTURE 9(4)"}
+    sc4_h = SchemaMaker.from_json(jsc4_h)
+    assert su.calcsize(sc4_h) == 2
+    assert su.struct_format(sc4_h) == "h"
+    
+    jsc4_i = {"type": "number", "cobol": "USAGE COMP-4 PICTURE 9(5)"}
+    sc4_i = SchemaMaker.from_json(jsc4_i)
+    assert su.calcsize(sc4_i) == 4
+    assert su.struct_format(sc4_i) == "i"
+
+    jsc4_q = {"type": "number", "cobol": "USAGE COMP-4 PICTURE 9(10)"}
+    sc4_q = SchemaMaker.from_json(jsc4_q)
+    assert su.calcsize(sc4_q) == 8
+    assert su.struct_format(sc4_q) == "q"
 
 
 def test_cobol_text_unpacker(tmp_path):
@@ -2383,15 +2457,17 @@ def issue_1_schema() -> JSON:
         }
       }
     }
-
-    assert SchemaValidator.check_schema(issue_1_schema) is None
     return issue_1_schema
 
 def test_issue_1(issue_1_schema) -> bool:
-    # TODO: Check the resulting object model.
-    # This is awkward to set up because each group level item contains EVERYTHING below it.
-    # Some kind of bottom-up construction is required.
-    assert SchemaMaker.from_json(issue_1_schema) is not None
+    """
+    This is a kind of side-bar check to validate schema used in the 
+    :py:func:`test_cobol_parser.test_issue_1` test case is actually valid
+    """
+    assert SchemaValidator.check_schema(issue_1_schema) is None
+    s = SchemaMaker.from_json(issue_1_schema)
+    assert isinstance(s, Schema)
+    # We don't check the entire structure; we have separate tests for the various features.
 
 
 ### Nav Class Hierarchy

@@ -378,9 +378,11 @@ Ideally, there’s one layout and one schema, but as a practical matter, there a
 <p>This tripl is essentially a Python assignment statement
 with <em>target</em>, <em>to_type</em> and <em>source</em>. A DSL or other encoding is unhelpful.</p>
 <p>A simple description is the following:</p>
-<pre class="literal-block"><em>target</em> = <em>target_type</em>(row.['<em>source</em>'].value())</pre>
+<pre class="literal-block"><em>target</em> = <em>target_type</em>(row['<em>source</em>'].value())</pre>
 <p>There is a tiny bit of boilerplate in this assignment statement. The overhead of the boilerplate
 is offset by the flexibility of using Python directly.</p>
+<p>We can use either <cite>name(‘source’)</cite> or <cite>[‘source’]</cite> as a way to locate a named attribute
+within a schema.</p>
 <p>There are some common cases that will extend or modify the boilerplate.
 In particular, COBOL structures that are not in first normal form will include
 array indexing. COBOL can have ambiguous names, requiring a navigation path to

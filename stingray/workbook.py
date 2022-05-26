@@ -46,14 +46,15 @@ The :py:mod:`estruct` module has classes for four actual RECFM's plus an additio
 """
 
 import abc
+from collections.abc import Iterator, Iterable, Callable
 import csv
 from decimal import Decimal
 import json
 import logging
 from pathlib import Path
 import re
+from types import TracebackType
 from typing import (
-    Iterator,
     Union,
     Optional,
     IO,
@@ -61,8 +62,6 @@ from typing import (
     TextIO,
     BinaryIO,
     Any,
-    Iterable,
-    Callable,
     cast,
     AnyStr,
     TypeVar,
@@ -72,7 +71,7 @@ from typing import (
 import warnings
 import weakref
 
-from stingray import estruct
+import stingray.estruct
 from stingray.schema_instance import (
     Instance,
     DInstance,
@@ -98,7 +97,6 @@ from stingray.schema_instance import (
     CONVERSION,
 )
 from stingray.cobol_parser import schema_iter
-from types import TracebackType
 
 try:  # pragma: no cover
     from jsonschema import Draft202012Validator as SchemaValidator
@@ -259,13 +257,16 @@ class Sheet(Generic[Instance]):
         wb = cast("Workbook[Instance]", self.workbook())
         self.raw_instance_iter = wb.unpacker.instance_iter(self.name, **wb.kwargs)  # type: ignore [attr-defined]
         json_schema = self.loader.header(self.raw_instance_iter)
+        # Not all loaders build a schema. If no schema was created, do nothing.
         if json_schema:
-            # Not all loaders build a schema. If no schema was created, do nothing.
-            # TODO: Optionally, validate the JSONSchema before proceeding.
             self.schema = SchemaMaker().from_json(json_schema)
+            # TODO: Optionally, validate the JSONSchema before proceeding.
+            # if self.validator: ...
+
         # It's not clear if this is helpful...
         # if self.schema is None:
         #     warnings.warn(f"Reading sheet {self} without a schema")
+
         # Cache the most recent row in `sheet.row`.
         for instance in self.loader.body(self.raw_instance_iter):
             self.row = Row(self, instance)
@@ -854,7 +855,7 @@ class COBOL_EBCDIC_File(Workbook[NDInstance]):
         self,
         name: Union[str, Path],
         file_object: Optional[IO[AnyStr]] = None,
-        recfm_class: Optional[Type["estruct.RECFM_Reader"]] = None,
+        recfm_class: Optional[Type["stingray.estruct.RECFM_Reader"]] = None,
         lrecl: Optional[int] = None,
         **kwargs: str,
     ) -> None:
@@ -870,7 +871,7 @@ class COBOL_EBCDIC_File(Workbook[NDInstance]):
         :param kwargs: Additional KW args (not used.)
         """
         super().__init__(name)
-        self.recfm_class = recfm_class or estruct.RECFM_N
+        self.recfm_class = recfm_class or stingray.estruct.RECFM_N
         self.lrecl: Optional[int] = lrecl
         self.unpacker = EBCDIC()
         self.unpacker.open(self.name, file_object)

@@ -164,16 +164,15 @@ This transforms the source row object into the target object or collection.</p>
 <p>Here’s the essential function we want to test in isolation.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">stingray</span> <span class="kn">import</span> <span class="n">Row</span>
-<span class="k">def</span> <span class="nf">some_builder</span><span class="p">(</span><span class="n">aRow</span><span class="p">:</span> <span class="n">Row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span> 
         <span class="n">key</span> <span class="o">=</span> <span class="n">aRow</span><span class="p">[</span><span class="s1">&#39;Column &quot;3&quot; - string&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">aRow</span><span class="p">[</span><span class="s1">&#39;Col 2.0 - float&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
     <span class="p">)</span>
+
 </pre></div>
 </div>
 <p>To test this, we need a mock of a <code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.Row</span></code> object.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">mock_row</span><span class="p">():</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">mock_row</span><span class="p">():</span>
     <span class="n">attr_2</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span>
         <span class="n">value</span><span class="o">=</span><span class="n">Mock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="mf">3.1415926</span><span class="p">)</span>
     <span class="p">)</span>
@@ -185,6 +184,7 @@ This transforms the source row object into the target object or collection.</p>
         <span class="s1">&#39;Column &quot;3&quot; - string&#39;</span><span class="p">:</span> <span class="n">attr_3</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">row</span>
+
 </pre></div>
 </div>
 <p>This mock object uses a simple dictionary as a mock
@@ -198,9 +198,9 @@ cases, this is a valid assumption.</p>
 </pre></div>
 </div>
 <p>Here’s the test case.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_builder</span><span class="p">(</span><span class="n">mock_row</span><span class="p">):</span>
-    <span class="n">document</span> <span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span><span class="n">mock_row</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">document</span> <span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span><span class="n">mock_row</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">document</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">3.1415926</span><span class="p">}</span>
+
 </pre></div>
 </div>
 <p>This is the essential unit test for a builder.</p>
@@ -229,8 +229,7 @@ and workbooks.</p>
 <p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> object requires a <code class="xref py py-class docutils literal notranslate"><span class="pre">Sheet</span></code> instance. The <code class="xref py py-class docutils literal notranslate"><span class="pre">Sheet</span></code> instance
 requires a schema. Here’s how we can build up the required fixture from pieces.</p>
 <p>First, the schema.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">mock_schema</span><span class="p">():</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">mock_schema</span><span class="p">():</span>
     <span class="n">json_schema</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Unit test workbook&quot;</span><span class="p">,</span>
         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
@@ -247,11 +246,11 @@ requires a schema. Here’s how we can build up the required fixture from pieces
     <span class="n">Draft202012Validator</span><span class="o">.</span><span class="n">check_schema</span><span class="p">(</span><span class="n">json_schema</span><span class="p">)</span>
     <span class="n">schema</span> <span class="o">=</span> <span class="n">SchemaMaker</span><span class="p">()</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">json_schema</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">schema</span>
+
 </pre></div>
 </div>
 <p>This is used by the mocked <code class="xref py py-class docutils literal notranslate"><span class="pre">Sheet</span></code> instance.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">mock_sheet</span><span class="p">(</span><span class="n">mock_schema</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">mock_sheet</span><span class="p">(</span><span class="n">mock_schema</span><span class="p">):</span>
     <span class="n">workbook</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span>
         <span class="n">unpacker</span><span class="o">=</span><span class="n">WBUnpacker</span><span class="p">()</span>
     <span class="p">)</span>
@@ -260,11 +259,11 @@ requires a schema. Here’s how we can build up the required fixture from pieces
         <span class="n">schema</span><span class="o">=</span><span class="n">mock_schema</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">sheet</span>
+
 </pre></div>
 </div>
 <p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Sheet</span></code> instance becomes part of the mock <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> instance.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">row_instance</span><span class="p">(</span><span class="n">mock_sheet</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">row_instance</span><span class="p">(</span><span class="n">mock_sheet</span><span class="p">):</span>
     <span class="n">row</span> <span class="o">=</span> <span class="n">Row</span><span class="p">(</span>
         <span class="n">mock_sheet</span><span class="p">,</span>
         <span class="p">[</span>
@@ -272,12 +271,13 @@ requires a schema. Here’s how we can build up the required fixture from pieces
         <span class="p">]</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">row</span>
+
 </pre></div>
 </div>
 <p>This can then be used in the test case.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_builder_1</span><span class="p">(</span><span class="n">row_instance</span><span class="p">):</span>
-    <span class="n">document</span> <span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span><span class="n">row_instance</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">document</span> <span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span><span class="n">row_instance</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">document</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">3.1415926</span><span class="p">}</span>
+
 </pre></div>
 </div>
 <p>This kind of integration test assures us that
@@ -291,8 +291,7 @@ In this demo, we’re using <code class="file docutils literal notranslate"><spa
 some aggregate (like a checksum) of various data items to be sure we’ve read and
 converted them properly.</p>
 <p>Here’s a fixture based on a file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">sample_workbook_sheet</span><span class="p">():</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sample_workbook_sheet</span><span class="p">():</span>
     <span class="n">workbook_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SAMPLES&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;excel97_workbook.xls&quot;</span>
     <span class="n">wb</span> <span class="o">=</span> <span class="n">open_workbook</span><span class="p">(</span><span class="n">workbook_path</span><span class="p">)</span>
     <span class="n">sheet</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span><span class="s2">&quot;Sheet1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">set_schema_loader</span><span class="p">(</span><span class="n">HeadingRowSchemaLoader</span><span class="p">())</span>
@@ -300,6 +299,7 @@ converted them properly.</p>
     <span class="c1"># Once the `wb` variable goes out of scope, the workbook is closed.</span>
     <span class="k">yield</span> <span class="n">wb</span><span class="p">,</span> <span class="n">sheet</span>
 
+<span class="k">def</span> <span class="nf">test_should_build_all_rows</span><span class="p">(</span><span class="n">sample_workbook_sheet</span><span class="p">):</span>
 </pre></div>
 </div>
 <p>The fixture creates both a workbook and a sheet.
@@ -309,12 +309,12 @@ create both for us.</p>
 <p>Here’s the test case to assure all rows
 get built from the sheet. In this case, the
 example data has two rows.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>        <span class="n">result</span> <span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
         <span class="n">summary</span><span class="p">[</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">assert</span> <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;string&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
     <span class="k">assert</span> <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
 
+<span class="c1"># Unit Test the Sheet Function</span>
 </pre></div>
 </div>
 <p>This tells us that our Builder works properly
@@ -330,20 +330,19 @@ We’re going to need a “sheet process function.”
 This transforms the source sheet into the target collection.
 It applies the row_builder function and whatever
 processing goes with that to all of the rows of a sheet.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_some_sheet</span><span class="p">(</span><span class="n">sheet</span><span class="p">:</span> <span class="n">Sheet</span><span class="p">):</span>
-    <span class="n">counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
         <span class="n">row_dict</span> <span class="o">=</span> <span class="n">some_builder</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
         <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span><span class="n">row_dict</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;read&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">counts</span>
+
 </pre></div>
 </div>
 <p>For complete isolation, we can provide
 a mock sheet to supply mock rows
 to a mock builder. Yes, that’s a lot of mocking.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<span class="k">def</span> <span class="nf">mock_sheet_2</span><span class="p">():</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">mock_sheet_2</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">Mock</span><span class="p">(</span>
         <span class="n">rows</span><span class="o">=</span><span class="n">Mock</span><span class="p">(</span><span class="n">return_value</span><span class="o">=</span><span class="p">[</span><span class="n">sentinel</span><span class="o">.</span><span class="n">ROW</span><span class="p">])</span>
     <span class="p">)</span>
@@ -354,17 +353,18 @@ to a mock builder. Yes, that’s a lot of mocking.</p>
         <span class="n">return_value</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">sentinel</span><span class="o">.</span><span class="n">KEY</span><span class="p">}</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">mock_builder</span>
+
 </pre></div>
 </div>
 <p>We can then assure ourselves that the
 overall sheet processing takes rows
 from the sheet and provides them to
 the builder.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_process_some_sheet</span><span class="p">(</span><span class="n">mock_sheet_2</span><span class="p">,</span> <span class="n">mock_builder</span><span class="p">,</span> <span class="n">monkeypatch</span><span class="p">):</span>
-    <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setitem</span><span class="p">(</span><span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;some_builder&#39;</span><span class="p">,</span> <span class="n">mock_builder</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setitem</span><span class="p">(</span><span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;some_builder&#39;</span><span class="p">,</span> <span class="n">mock_builder</span><span class="p">)</span>
     <span class="n">counts</span> <span class="o">=</span> <span class="n">process_some_sheet</span><span class="p">(</span><span class="n">mock_sheet_2</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">some_builder</span><span class="o">.</span><span class="n">mock_calls</span> <span class="o">==</span> <span class="p">[</span><span class="n">call</span><span class="p">(</span><span class="n">sentinel</span><span class="o">.</span><span class="n">ROW</span><span class="p">)]</span>
     <span class="k">assert</span> <span class="n">counts</span> <span class="o">==</span> <span class="n">Counter</span><span class="p">({(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="n">sentinel</span><span class="o">.</span><span class="n">KEY</span><span class="p">):</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;read&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+
 </pre></div>
 </div>
 </section>
@@ -378,12 +378,12 @@ that the sheet-level processing works as expected.</p>
 that extracts the schema from the row headers. The test then uses the <code class="xref py py-func docutils literal notranslate"><span class="pre">process_some_sheet()</span></code>
 function on the given sheet to extract data. In this case, the extraction is
 a frequency table.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_should_build_sample_row</span><span class="p">(</span><span class="n">sample_workbook_sheet</span><span class="p">):</span>
-    <span class="n">wb</span><span class="p">,</span> <span class="n">sheet</span> <span class="o">=</span> <span class="n">sample_workbook_sheet</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">wb</span><span class="p">,</span> <span class="n">sheet</span> <span class="o">=</span> <span class="n">sample_workbook_sheet</span>
     <span class="n">counts</span> <span class="o">=</span> <span class="n">process_some_sheet</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;read&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
     <span class="k">assert</span> <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span><span class="s1">&#39;string&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
     <span class="k">assert</span> <span class="n">counts</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+
 </pre></div>
 </div>
 <p>This shows how the process sheet is tested
@@ -420,8 +420,8 @@ that includes</p>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Considerations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../developer.html">Using <strong>Stingray Reader</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Considerations</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Demo Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apidoc/index.html">stingray API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>

@@ -232,7 +232,7 @@ def test_sentences(sample_cobol):
                 "name": "EPSPDATA-QUOTED-INTEREST-RATE",
                 "picture": "S9(2)v9(3)",
                 "usage": "COMP",
-                "_picture_parsed": [{"sign": "S"}, {"digit": "99"}, {"digit": "999"}],
+                "_picture_parsed": [{"sign": "S"}, {"digit": "99"}, {"decimal": "v"}, {"digit": "999"}],
             },
         ),
         (
@@ -286,7 +286,7 @@ def test_dde_structure(sample_cobol, capsys):
         "    DDE('03', 'EPSPDATA-PRINCIPLE-DATA   PIC S9(9)V99 COMP', clauses={'name': 'EPSPDATA-PRINCIPLE-DATA', 'picture': 'S9(9)V99', 'usage': 'COMP', '_picture_parsed': [{'sign': 'S'}, {'digit': '999999999'}, {'decimal': 'V'}, {'digit': '99'}]}): USAGE COMP PIC [{'sign': 'S'}, {'digit': '999999999'}, {'decimal': 'V'}, {'digit': '99'}] None",
         "    DDE('03', 'EPSPDATA-NUMBER-OF-YEARS  PIC S9(4)    COMP', clauses={'name': 'EPSPDATA-NUMBER-OF-YEARS', 'picture': 'S9(4)', 'usage': 'COMP', '_picture_parsed': [{'sign': 'S'}, {'digit': '9999'}]}): USAGE COMP PIC [{'sign': 'S'}, {'digit': '9999'}] None",
         "    DDE('03', 'EPSPDATA-NUMBER-OF-MONTHS PIC S9(4)    COMP', clauses={'name': 'EPSPDATA-NUMBER-OF-MONTHS', 'picture': 'S9(4)', 'usage': 'COMP', '_picture_parsed': [{'sign': 'S'}, {'digit': '9999'}]}): USAGE COMP PIC [{'sign': 'S'}, {'digit': '9999'}] None",
-        "    DDE('03', 'EPSPDATA-QUOTED-INTEREST-RATE\\n                                 PIC S9(2)v9(3) COMP', clauses={'name': 'EPSPDATA-QUOTED-INTEREST-RATE', 'picture': 'S9(2)v9(3)', 'usage': 'COMP', '_picture_parsed': [{'sign': 'S'}, {'digit': '99'}, {'digit': '999'}]}): USAGE COMP PIC [{'sign': 'S'}, {'digit': '99'}, {'digit': '999'}] None",
+        "    DDE('03', 'EPSPDATA-QUOTED-INTEREST-RATE\\n                                 PIC S9(2)v9(3) COMP', clauses={'name': 'EPSPDATA-QUOTED-INTEREST-RATE', 'picture': 'S9(2)v9(3)', 'usage': 'COMP', '_picture_parsed': [{'sign': 'S'}, {'digit': '99'}, {'decimal': 'v'}, {'digit': '999'}]}): USAGE COMP PIC [{'sign': 'S'}, {'digit': '99'}, {'decimal': 'v'}, {'digit': '999'}] None",
         "    DDE('03', 'EPSPDATA-YEAR-MONTH-IND   PIC X', clauses={'name': 'EPSPDATA-YEAR-MONTH-IND', 'picture': 'X', '_picture_parsed': [{'digit': 'X'}]}): USAGE DISPLAY PIC [{'digit': 'X'}] None",
         "    DDE('03', 'EPSPDATA-RETURN-MONTH-PAYMENT\\n                                 PIC S9(7)V99 COMP', clauses={'name': 'EPSPDATA-RETURN-MONTH-PAYMENT', 'picture': 'S9(7)V99', 'usage': 'COMP', '_picture_parsed': [{'sign': 'S'}, {'digit': '9999999'}, {'decimal': 'V'}, {'digit': '99'}]}): USAGE COMP PIC [{'sign': 'S'}, {'digit': '9999999'}, {'decimal': 'V'}, {'digit': '99'}] None",
         "    DDE('03', 'EPSPDATA-RETURN-ERROR     PIC X(80)', clauses={'name': 'EPSPDATA-RETURN-ERROR', 'picture': 'X(80)', '_picture_parsed': [{'digit': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'}]}): USAGE DISPLAY PIC [{'digit': 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'}] None",
@@ -410,8 +410,8 @@ def test_dde_warning_syntax_cases():
 def test_schemamaker_sample(sample_cobol):
     with sample_cobol.open() as source:
         copy_book_list = structure(dde_sentences(reference_format(source)))
-    maker = JSONSchemaMaker(copy_book_list[0])
-    s = maker.jsonschema()
+    maker = JSONSchemaMaker()
+    s = maker.jsonschema(copy_book_list[0])
     assert s == {
         "title": "EPSPDATA",
         "$anchor": "EPSPDATA",
@@ -424,6 +424,8 @@ def test_schemamaker_sample(sample_cobol):
                 "cobol": "03 EPSPDATA-PRINCIPLE-DATA PIC S9(9)V99 COMP",
                 "type": "integer",
                 "contentEncoding": "bigendian-int",
+                'maxLength': 8,
+                'minLength': 8,
             },
             "EPSPDATA-NUMBER-OF-YEARS": {
                 "title": "EPSPDATA-NUMBER-OF-YEARS",
@@ -431,6 +433,8 @@ def test_schemamaker_sample(sample_cobol):
                 "cobol": "03 EPSPDATA-NUMBER-OF-YEARS PIC S9(4) COMP",
                 "type": "integer",
                 "contentEncoding": "bigendian-int",
+                'maxLength': 4,
+                'minLength': 4,
             },
             "EPSPDATA-NUMBER-OF-MONTHS": {
                 "title": "EPSPDATA-NUMBER-OF-MONTHS",
@@ -438,6 +442,8 @@ def test_schemamaker_sample(sample_cobol):
                 "cobol": "03 EPSPDATA-NUMBER-OF-MONTHS PIC S9(4) COMP",
                 "type": "integer",
                 "contentEncoding": "bigendian-int",
+                'maxLength': 4,
+                'minLength': 4,
             },
             "EPSPDATA-QUOTED-INTEREST-RATE": {
                 "title": "EPSPDATA-QUOTED-INTEREST-RATE",
@@ -445,6 +451,8 @@ def test_schemamaker_sample(sample_cobol):
                 "cobol": "03 EPSPDATA-QUOTED-INTEREST-RATE PIC S9(2)v9(3) COMP",
                 "type": "integer",
                 "contentEncoding": "bigendian-int",
+                'maxLength': 4,
+                'minLength': 4,
             },
             "EPSPDATA-YEAR-MONTH-IND": {
                 "title": "EPSPDATA-YEAR-MONTH-IND",
@@ -452,6 +460,8 @@ def test_schemamaker_sample(sample_cobol):
                 "cobol": "03 EPSPDATA-YEAR-MONTH-IND PIC X",
                 "type": "string",
                 "contentEncoding": "cp037",
+                'maxLength': 1,
+                'minLength': 1,
             },
             "EPSPDATA-RETURN-MONTH-PAYMENT": {
                 "title": "EPSPDATA-RETURN-MONTH-PAYMENT",
@@ -459,6 +469,8 @@ def test_schemamaker_sample(sample_cobol):
                 "cobol": "03 EPSPDATA-RETURN-MONTH-PAYMENT PIC S9(7)V99 COMP",
                 "type": "integer",
                 "contentEncoding": "bigendian-int",
+                'maxLength': 8,
+                'minLength': 8,
             },
             "EPSPDATA-RETURN-ERROR": {
                 "title": "EPSPDATA-RETURN-ERROR",
@@ -466,6 +478,8 @@ def test_schemamaker_sample(sample_cobol):
                 "cobol": "03 EPSPDATA-RETURN-ERROR PIC X(80)",
                 "type": "string",
                 "contentEncoding": "cp037",
+                'maxLength': 80,
+                'minLength': 80,
             },
         },
     }
@@ -480,63 +494,83 @@ def test_schemamaker_sample(sample_cobol):
         "EPSPDATA-RETURN-ERROR",
     ]
 
+
 def test_extended_schemamaker_sample(sample_cobol):
     with sample_cobol.open() as source:
         schema_list = list(schema_iter(source))
     assert schema_list[0] == {
-         '$anchor': 'EPSPDATA',
-         'cobol': '01 EPSPDATA',
-         'properties': {'EPSPDATA-NUMBER-OF-MONTHS': {'$anchor': 'EPSPDATA-NUMBER-OF-MONTHS',
-                                                      'cobol': '03 '
-                                                               'EPSPDATA-NUMBER-OF-MONTHS '
-                                                               'PIC S9(4) COMP',
-                                                      'contentEncoding': 'bigendian-int',
-                                                      'title': 'EPSPDATA-NUMBER-OF-MONTHS',
-                                                      'type': 'integer'},
-                        'EPSPDATA-NUMBER-OF-YEARS': {'$anchor': 'EPSPDATA-NUMBER-OF-YEARS',
+        '$anchor': 'EPSPDATA',
+        'cobol': '01 EPSPDATA',
+        'properties': {'EPSPDATA-NUMBER-OF-MONTHS': {'$anchor': 'EPSPDATA-NUMBER-OF-MONTHS',
                                                      'cobol': '03 '
-                                                              'EPSPDATA-NUMBER-OF-YEARS '
+                                                              'EPSPDATA-NUMBER-OF-MONTHS '
                                                               'PIC S9(4) COMP',
                                                      'contentEncoding': 'bigendian-int',
-                                                     'title': 'EPSPDATA-NUMBER-OF-YEARS',
-                                                     'type': 'integer'},
-                        'EPSPDATA-PRINCIPLE-DATA': {'$anchor': 'EPSPDATA-PRINCIPLE-DATA',
+                                                     'title': 'EPSPDATA-NUMBER-OF-MONTHS',
+                                                     'type': 'integer',
+                                                     'maxLength': 4,
+                                                     'minLength': 4,
+                                                     },
+                       'EPSPDATA-NUMBER-OF-YEARS': {'$anchor': 'EPSPDATA-NUMBER-OF-YEARS',
                                                     'cobol': '03 '
-                                                             'EPSPDATA-PRINCIPLE-DATA '
-                                                             'PIC S9(9)V99 COMP',
+                                                             'EPSPDATA-NUMBER-OF-YEARS '
+                                                             'PIC S9(4) COMP',
                                                     'contentEncoding': 'bigendian-int',
-                                                    'title': 'EPSPDATA-PRINCIPLE-DATA',
-                                                    'type': 'integer'},
-                        'EPSPDATA-QUOTED-INTEREST-RATE': {'$anchor': 'EPSPDATA-QUOTED-INTEREST-RATE',
-                                                          'cobol': '03 '
-                                                                   'EPSPDATA-QUOTED-INTEREST-RATE '
-                                                                   'PIC S9(2)v9(3) '
-                                                                   'COMP',
-                                                          'contentEncoding': 'bigendian-int',
-                                                          'title': 'EPSPDATA-QUOTED-INTEREST-RATE',
-                                                          'type': 'integer'},
-                        'EPSPDATA-RETURN-ERROR': {'$anchor': 'EPSPDATA-RETURN-ERROR',
-                                                  'cobol': '03 EPSPDATA-RETURN-ERROR '
-                                                           'PIC X(80)',
-                                                  'contentEncoding': 'cp037',
-                                                  'title': 'EPSPDATA-RETURN-ERROR',
-                                                  'type': 'string'},
-                        'EPSPDATA-RETURN-MONTH-PAYMENT': {'$anchor': 'EPSPDATA-RETURN-MONTH-PAYMENT',
-                                                          'cobol': '03 '
-                                                                   'EPSPDATA-RETURN-MONTH-PAYMENT '
-                                                                   'PIC S9(7)V99 COMP',
-                                                          'contentEncoding': 'bigendian-int',
-                                                          'title': 'EPSPDATA-RETURN-MONTH-PAYMENT',
-                                                          'type': 'integer'},
-                        'EPSPDATA-YEAR-MONTH-IND': {'$anchor': 'EPSPDATA-YEAR-MONTH-IND',
-                                                    'cobol': '03 '
-                                                             'EPSPDATA-YEAR-MONTH-IND '
-                                                             'PIC X',
-                                                    'contentEncoding': 'cp037',
-                                                    'title': 'EPSPDATA-YEAR-MONTH-IND',
-                                                    'type': 'string'}},
-         'title': 'EPSPDATA',
-         'type': 'object'}
+                                                    'title': 'EPSPDATA-NUMBER-OF-YEARS',
+                                                    'type': 'integer',
+                                                     'maxLength': 4,
+                                                     'minLength': 4,
+                                                    },
+                       'EPSPDATA-PRINCIPLE-DATA': {'$anchor': 'EPSPDATA-PRINCIPLE-DATA',
+                                                   'cobol': '03 '
+                                                            'EPSPDATA-PRINCIPLE-DATA '
+                                                            'PIC S9(9)V99 COMP',
+                                                   'contentEncoding': 'bigendian-int',
+                                                   'title': 'EPSPDATA-PRINCIPLE-DATA',
+                                                   'type': 'integer',
+                                                     'maxLength': 8,
+                                                     'minLength': 8,
+                                                   },
+                       'EPSPDATA-QUOTED-INTEREST-RATE': {'$anchor': 'EPSPDATA-QUOTED-INTEREST-RATE',
+                                                         'cobol': '03 '
+                                                                  'EPSPDATA-QUOTED-INTEREST-RATE '
+                                                                  'PIC S9(2)v9(3) '
+                                                                  'COMP',
+                                                         'contentEncoding': 'bigendian-int',
+                                                         'title': 'EPSPDATA-QUOTED-INTEREST-RATE',
+                                                         'type': 'integer',
+                                                         'maxLength': 4,
+                                                         'minLength': 4,
+                                                         },
+                       'EPSPDATA-RETURN-ERROR': {'$anchor': 'EPSPDATA-RETURN-ERROR',
+                                                 'cobol': '03 EPSPDATA-RETURN-ERROR '
+                                                          'PIC X(80)',
+                                                 'contentEncoding': 'cp037',
+                                                 'title': 'EPSPDATA-RETURN-ERROR',
+                                                 'type': 'string',
+                                                     'maxLength': 80,
+                                                     'minLength': 80,},
+                       'EPSPDATA-RETURN-MONTH-PAYMENT': {'$anchor': 'EPSPDATA-RETURN-MONTH-PAYMENT',
+                                                         'cobol': '03 '
+                                                                  'EPSPDATA-RETURN-MONTH-PAYMENT '
+                                                                  'PIC S9(7)V99 COMP',
+                                                         'contentEncoding': 'bigendian-int',
+                                                         'title': 'EPSPDATA-RETURN-MONTH-PAYMENT',
+                                                         'type': 'integer',
+                                                     'maxLength': 8,
+                                                     'minLength': 8,},
+                       'EPSPDATA-YEAR-MONTH-IND': {'$anchor': 'EPSPDATA-YEAR-MONTH-IND',
+                                                   'cobol': '03 '
+                                                            'EPSPDATA-YEAR-MONTH-IND '
+                                                            'PIC X',
+                                                   'contentEncoding': 'cp037',
+                                                   'title': 'EPSPDATA-YEAR-MONTH-IND',
+                                                   'type': 'string',
+                                                     'maxLength': 1,
+                                                     'minLength': 1,}
+                   },
+        'title': 'EPSPDATA',
+        'type': 'object'}
 
 @pytest.fixture
 def copy_t1_source() -> str:
@@ -554,8 +588,8 @@ def test_1(copy_t1_source: str, capsys) -> None:
     copy_books = structure(dde_sentences(reference_format(StringIO(copy_t1_source))))
     for record in copy_books:
         DDE.display(record)
-        maker = JSONSchemaMaker(record)
-        schema = maker.jsonschema()
+        maker = JSONSchemaMaker()
+        schema = maker.jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -566,6 +600,8 @@ def test_1(copy_t1_source: str, capsys) -> None:
                 "$anchor": "SOME-COLUMN",
                 "cobol": "05 SOME-COLUMN PIC X(5)",
                 "contentEncoding": "cp037",
+                'maxLength': 5,
+                'minLength': 5,
                 "title": "SOME-COLUMN",
                 "type": "string",
             }
@@ -584,9 +620,9 @@ def test_1(copy_t1_source: str, capsys) -> None:
         "'$anchor': 'SOME-RECORD-1', 'cobol': '01 SOME-RECORD-1', 'type': 'object', "
         "'properties': {'SOME-COLUMN': {'title': 'SOME-COLUMN', '$anchor': "
         "'SOME-COLUMN', 'cobol': '05 SOME-COLUMN PIC X(5)', 'type': 'string', "
-        "'contentEncoding': 'cp037'}}}, 'SOME-COLUMN': {'title': 'SOME-COLUMN', "
+        "'contentEncoding': 'cp037', 'maxLength': 5, 'minLength': 5}}}, 'SOME-COLUMN': {'title': 'SOME-COLUMN', "
         "'$anchor': 'SOME-COLUMN', 'cobol': '05 SOME-COLUMN PIC X(5)', 'type': "
-        "'string', 'contentEncoding': 'cp037'}}"
+        "'string', 'contentEncoding': 'cp037', 'maxLength': 5, 'minLength': 5}}"
     )
 
 @pytest.fixture
@@ -605,7 +641,7 @@ def copy_t2_source() -> str:
 def test_2(copy_t2_source: str) -> None:
     copy_books = structure(dde_sentences(reference_format(StringIO(copy_t2_source))))
     for record in copy_books:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -616,6 +652,8 @@ def test_2(copy_t2_source: str) -> None:
                 "$anchor": "FILLER-1",
                 "cobol": "05 FILLER PIC X(5)",
                 "contentEncoding": "cp037",
+                'maxLength': 5, 
+                'minLength': 5,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -659,7 +697,7 @@ def copy_t3_source() -> str:
 def test_3(copy_t3_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_t3_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -670,6 +708,8 @@ def test_3(copy_t3_source: str) -> None:
                 "$anchor": "FILLER-1",
                 "cobol": "05 FILLER PIC X(5)",
                 "contentEncoding": "cp037",
+                'maxLength': 5, 
+                'minLength': 5,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -737,7 +777,7 @@ def copy_1_source() -> str:
 def test_4(copy_1_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_1_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -748,6 +788,8 @@ def test_4(copy_1_source: str) -> None:
                 "$anchor": "FILLER-1",
                 "cobol": "05 PIC X(7)",
                 "contentEncoding": "cp037",
+                'maxLength': 7,
+                'minLength': 7,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -755,6 +797,8 @@ def test_4(copy_1_source: str) -> None:
                 "$anchor": "FILLER-2",
                 "cobol": "05 PIC X(6)",
                 "contentEncoding": "cp037",
+                'maxLength': 6,
+                'minLength': 6,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -762,6 +806,8 @@ def test_4(copy_1_source: str) -> None:
                 "$anchor": "FILLER-3",
                 "cobol": "05 PIC X(3)",
                 "contentEncoding": "cp037",
+                'maxLength': 3,
+                'minLength': 3,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -769,6 +815,8 @@ def test_4(copy_1_source: str) -> None:
                 "$anchor": "FILLER-4",
                 "cobol": "05 PIC X(6)",
                 "contentEncoding": "cp037",
+                'maxLength': 6,
+                'minLength': 6,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -776,6 +824,8 @@ def test_4(copy_1_source: str) -> None:
                 "$anchor": "FILLER-5",
                 "cobol": "05 PIC X(7)",
                 "contentEncoding": "cp037",
+                'maxLength': 7,
+                'minLength': 7,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -783,6 +833,8 @@ def test_4(copy_1_source: str) -> None:
                 "$anchor": "NOT-SURE",
                 "cobol": "05 NOT-SURE PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "NOT-SURE",
                 "type": "string",
             },
@@ -790,6 +842,8 @@ def test_4(copy_1_source: str) -> None:
                 "$anchor": "PRINT-NO",
                 "cobol": "05 PRINT-NO PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "PRINT-NO",
                 "type": "string",
             },
@@ -797,6 +851,8 @@ def test_4(copy_1_source: str) -> None:
                 "$anchor": "PRINT-YES",
                 "cobol": "05 PRINT-YES PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "PRINT-YES",
                 "type": "string",
             },
@@ -804,6 +860,8 @@ def test_4(copy_1_source: str) -> None:
                 "$anchor": "QUESTION",
                 "cobol": "05 QUESTION PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "QUESTION",
                 "type": "string",
             },
@@ -831,7 +889,7 @@ def copy_2_source() -> str:
 def test_5(copy_2_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_2_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -842,6 +900,8 @@ def test_5(copy_2_source: str) -> None:
                 "$anchor": "ANSWER-SUB",
                 "cobol": "05 ANSWER-SUB PIC 99",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "conversion": "decimal",
                 "title": "ANSWER-SUB",
                 "type": "string",
@@ -850,6 +910,8 @@ def test_5(copy_2_source: str) -> None:
                 "$anchor": "ARE-THERE-MORE-RECORDS",
                 "cobol": "05 ARE-THERE-MORE-RECORDS " "PIC X(3) VALUE 'YES'",
                 "contentEncoding": "cp037",
+                'maxLength': 3,
+                'minLength': 3,
                 "title": "ARE-THERE-MORE-RECORDS",
                 "type": "string",
             },
@@ -857,6 +919,8 @@ def test_5(copy_2_source: str) -> None:
                 "$anchor": "QUESTION-SUB",
                 "cobol": "05 QUESTION-SUB PIC 99",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "conversion": "decimal",
                 "title": "QUESTION-SUB",
                 "type": "string",
@@ -884,7 +948,7 @@ def copy_3_source() -> str:
 def test_6(copy_3_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_3_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -905,6 +969,8 @@ def test_6(copy_3_source: str) -> None:
                                         "$anchor": "ANSWER",
                                         "cobol": "15 " "ANSWER " "PIC " "99",
                                         "contentEncoding": "cp037",
+                                        'maxLength': 2,
+                                        'minLength': 2,
                                         "conversion": "decimal",
                                         "title": "ANSWER",
                                         "type": "string",
@@ -960,7 +1026,7 @@ def copy_4_source() -> str:
 def test_7(copy_4_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_4_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -977,6 +1043,8 @@ def test_7(copy_4_source: str) -> None:
                             "$anchor": "EMPLOYEE-NAME",
                             "cobol": "10 " "EMPLOYEE-NAME " "PIC " "X(20)",
                             "contentEncoding": "cp037",
+                            'maxLength': 20,
+                            'minLength': 20,
                             "title": "EMPLOYEE-NAME",
                             "type": "string",
                         },
@@ -984,6 +1052,8 @@ def test_7(copy_4_source: str) -> None:
                             "$anchor": "EMPLOYEE-NO",
                             "cobol": "10 " "EMPLOYEE-NO " "PIC " "9(6)",
                             "contentEncoding": "cp037",
+                            'maxLength': 6,
+                            'minLength': 6,
                             "title": "EMPLOYEE-NO",
                             "type": "string",
                         },
@@ -991,6 +1061,8 @@ def test_7(copy_4_source: str) -> None:
                             "$anchor": "WAGE-RATE",
                             "cobol": "10 " "WAGE-RATE " "PIC " "9999V99",
                             "contentEncoding": "cp037",
+                            'maxLength': 6,
+                            'minLength': 6,
                             "conversion": "decimal",
                             "title": "WAGE-RATE",
                             "type": "string",
@@ -1017,6 +1089,8 @@ def test_7(copy_4_source: str) -> None:
                                                  "PIC "
                                                  "9",
                                         "contentEncoding": "cp037",
+                                        'maxLength': 1,
+                                        'minLength': 1,
                                         "conversion": "decimal",
                                         "title": "AUTHORIZED-ABSENCES",
                                         "type": "string",
@@ -1025,6 +1099,8 @@ def test_7(copy_4_source: str) -> None:
                                         "$anchor": "LATE-ARRIVALS",
                                         "cobol": "15 " "LATE-ARRIVALS " "PIC " "9",
                                         "contentEncoding": "cp037",
+                                        'maxLength': 1,
+                                        'minLength': 1,
                                         "conversion": "decimal",
                                         "title": "LATE-ARRIVALS",
                                         "type": "string",
@@ -1036,6 +1112,8 @@ def test_7(copy_4_source: str) -> None:
                                                  "PIC "
                                                  "9",
                                         "contentEncoding": "cp037",
+                                        'maxLength': 1,
+                                        'minLength': 1,
                                         "conversion": "decimal",
                                         "title": "UNAUTHORIZED-ABSENCES",
                                         "type": "string",
@@ -1044,6 +1122,8 @@ def test_7(copy_4_source: str) -> None:
                                         "$anchor": "WEEK-NO",
                                         "cobol": "15 " "WEEK-NO " "PIC " "99",
                                         "contentEncoding": "cp037",
+                                        'maxLength': 2,
+                                        'minLength': 2,
                                         "conversion": "decimal",
                                         "title": "WEEK-NO",
                                         "type": "string",
@@ -1090,7 +1170,7 @@ def copy_5_source() -> str:
 def test_8(copy_5_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_5_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -1103,6 +1183,8 @@ def test_8(copy_5_source: str) -> None:
                 "$anchor": "C",
                 "cobol": "05 C PICTURE 99V99",
                 "contentEncoding": "cp037",
+                'maxLength': 4,
+                'minLength': 4,
                 "conversion": "decimal",
                 "title": "C",
                 "type": "string",
@@ -1114,6 +1196,8 @@ def test_8(copy_5_source: str) -> None:
                         "$anchor": "A",
                         "cobol": "05 A PICTURE X(6)",
                         "contentEncoding": "cp037",
+                        'maxLength': 6,
+                        'minLength': 6,
                         "title": "A",
                         "type": "string",
                     },
@@ -1125,6 +1209,8 @@ def test_8(copy_5_source: str) -> None:
                                 "$anchor": "B-1",
                                 "cobol": "10 " "B-1 " "PICTURE " "X(2)",
                                 "contentEncoding": "cp037",
+                                'maxLength': 2,
+                                'minLength': 2,
                                 "title": "B-1",
                                 "type": "string",
                             },
@@ -1132,6 +1218,8 @@ def test_8(copy_5_source: str) -> None:
                                 "$anchor": "B-2",
                                 "cobol": "10 " "B-2 " "PICTURE " "9(4)",
                                 "contentEncoding": "cp037",
+                                'maxLength': 4,
+                                'minLength': 4,
                                 "title": "B-2",
                                 "type": "string",
                             },
@@ -1173,7 +1261,7 @@ def copy_6_source() -> str:
 def test_9(copy_6_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_6_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -1197,6 +1285,8 @@ def test_9(copy_6_source: str) -> None:
                                 "$anchor": "MONTH",
                                 "cobol": "10 " "MONTH " "PICTURE " "XX",
                                 "contentEncoding": "cp037",
+                                'maxLength': 2,
+                                'minLength': 2,
                                 "title": "MONTH",
                                 "type": "string",
                             },
@@ -1204,6 +1294,8 @@ def test_9(copy_6_source: str) -> None:
                                 "$anchor": "SALARY",
                                 "cobol": "10 " "SALARY " "PICTURE " "XXX",
                                 "contentEncoding": "cp037",
+                                'maxLength': 3,
+                                'minLength': 3,
                                 "title": "SALARY",
                                 "type": "string",
                             },
@@ -1211,6 +1303,8 @@ def test_9(copy_6_source: str) -> None:
                                 "$anchor": "SO-SEC-NO",
                                 "cobol": "10 " "SO-SEC-NO " "PICTURE " "X(9)",
                                 "contentEncoding": "cp037",
+                                'maxLength': 9,
+                                'minLength': 9,
                                 "title": "SO-SEC-NO",
                                 "type": "string",
                             },
@@ -1226,6 +1320,8 @@ def test_9(copy_6_source: str) -> None:
                                 "$anchor": "EMP-NO",
                                 "cobol": "10 " "EMP-NO " "PICTURE " "X(6)",
                                 "contentEncoding": "cp037",
+                                'maxLength': 6,
+                                'minLength': 6,
                                 "title": "EMP-NO",
                                 "type": "string",
                             },
@@ -1233,6 +1329,8 @@ def test_9(copy_6_source: str) -> None:
                                 "$anchor": "WAGE",
                                 "cobol": "10 " "WAGE " "PICTURE " "999V999",
                                 "contentEncoding": "cp037",
+                                'maxLength': 6,
+                                'minLength': 6,
                                 "conversion": "decimal",
                                 "title": "WAGE",
                                 "type": "string",
@@ -1241,6 +1339,8 @@ def test_9(copy_6_source: str) -> None:
                                 "$anchor": "YEAR",
                                 "cobol": "10 " "YEAR " "PICTURE " "XX",
                                 "contentEncoding": "cp037",
+                                'maxLength': 2,
+                                'minLength': 2,
                                 "title": "YEAR",
                                 "type": "string",
                             },
@@ -1283,7 +1383,7 @@ def copy_7_source() -> str:
 def test_10(copy_7_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_7_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -1301,6 +1401,8 @@ def test_10(copy_7_source: str) -> None:
                                 "$anchor": "GRADE",
                                 "cobol": "10 " "GRADE " "PICTURE " "X(4)",
                                 "contentEncoding": "cp037",
+                                'maxLength': 4,
+                                'minLength': 4,
                                 "title": "GRADE",
                                 "type": "string",
                             },
@@ -1308,6 +1410,8 @@ def test_10(copy_7_source: str) -> None:
                                 "$anchor": "LOCATION",
                                 "cobol": "10 " "LOCATION " "PICTURE " "A(8)",
                                 "contentEncoding": "cp037",
+                                'maxLength': 8,
+                                'minLength': 8,
                                 "title": "LOCATION",
                                 "type": "string",
                             },
@@ -1321,6 +1425,8 @@ def test_10(copy_7_source: str) -> None:
                                                  "PICTURE "
                                                  "9999V99",
                                         "contentEncoding": "cp037",
+                                        'maxLength': 6,
+                                        'minLength': 6,
                                         "conversion": "decimal",
                                         "title": "SEMI-MONTHLY-PAY",
                                         "type": "string",
@@ -1334,6 +1440,8 @@ def test_10(copy_7_source: str) -> None:
                                                  "PICTURE "
                                                  "999V999",
                                         "contentEncoding": "cp037",
+                                        'maxLength': 6,
+                                        'minLength': 6,
                                         "conversion": "decimal",
                                         "title": "WEEKLY-PAY",
                                         "type": "string",
@@ -1370,6 +1478,8 @@ def test_10(copy_7_source: str) -> None:
                                 "$anchor": "FILLER-1",
                                 "cobol": "10 " "FILLER " "PICTURE " "X(6)",
                                 "contentEncoding": "cp037",
+                                'maxLength': 6,
+                                'minLength': 6,
                                 "title": "FILLER",
                                 "type": "string",
                             },
@@ -1377,6 +1487,8 @@ def test_10(copy_7_source: str) -> None:
                                 "$anchor": "HOURLY-PAY",
                                 "cobol": "10 " "HOURLY-PAY " "PICTURE " "99V99",
                                 "contentEncoding": "cp037",
+                                'maxLength': 4,
+                                'minLength': 4,
                                 "conversion": "decimal",
                                 "title": "HOURLY-PAY",
                                 "type": "string",
@@ -1385,6 +1497,8 @@ def test_10(copy_7_source: str) -> None:
                                 "$anchor": "LOCATION",
                                 "cobol": "10 " "LOCATION " "PICTURE " "A(8)",
                                 "contentEncoding": "cp037",
+                                'maxLength': 8,
+                                'minLength': 8,
                                 "title": "LOCATION",
                                 "type": "string",
                             },
@@ -1436,7 +1550,7 @@ def copy_8_source() -> str:
 def test_11(copy_8_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_8_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -1454,6 +1568,8 @@ def test_11(copy_8_source: str) -> None:
                                 "$anchor": "GRADE",
                                 "cobol": "10 " "GRADE " "PICTURE " "X(4)",
                                 "contentEncoding": "cp037",
+                                'maxLength': 4,
+                                'minLength': 4,
                                 "title": "GRADE",
                                 "type": "string",
                             },
@@ -1461,6 +1577,8 @@ def test_11(copy_8_source: str) -> None:
                                 "$anchor": "LOCATION",
                                 "cobol": "10 " "LOCATION " "PICTURE " "A(8)",
                                 "contentEncoding": "cp037",
+                                'maxLength': 8,
+                                'minLength': 8,
                                 "title": "LOCATION",
                                 "type": "string",
                             },
@@ -1468,6 +1586,8 @@ def test_11(copy_8_source: str) -> None:
                                 "$anchor": "SEMI-MONTHLY-PAY",
                                 "cobol": "10 " "SEMI-MONTHLY-PAY " "PICTURE " "999V999",
                                 "contentEncoding": "cp037",
+                                'maxLength': 6,
+                                'minLength': 6,
                                 "conversion": "decimal",
                                 "title": "SEMI-MONTHLY-PAY",
                                 "type": "string",
@@ -1497,6 +1617,8 @@ def test_11(copy_8_source: str) -> None:
                                 "$anchor": "FILLER-1",
                                 "cobol": "10 " "FILLER " "PICTURE " "X(6)",
                                 "contentEncoding": "cp037",
+                                'maxLength': 6,
+                                'minLength': 6,
                                 "title": "FILLER",
                                 "type": "string",
                             },
@@ -1509,6 +1631,8 @@ def test_11(copy_8_source: str) -> None:
                                 "$anchor": "LOCATION",
                                 "cobol": "10 " "LOCATION " "PICTURE " "A(8)",
                                 "contentEncoding": "cp037",
+                                'maxLength': 8,
+                                'minLength': 8,
                                 "title": "LOCATION",
                                 "type": "string",
                             },
@@ -1519,6 +1643,8 @@ def test_11(copy_8_source: str) -> None:
                                         "$anchor": "HOURLY-PAY",
                                         "cobol": "10 " "HOURLY-PAY " "PICTURE " "99V99",
                                         "contentEncoding": "cp037",
+                                        'maxLength': 4,
+                                        'minLength': 4,
                                         "conversion": "decimal",
                                         "title": "HOURLY-PAY",
                                         "type": "string",
@@ -1532,6 +1658,8 @@ def test_11(copy_8_source: str) -> None:
                                                  "PICTURE "
                                                  "9999",
                                         "contentEncoding": "cp037",
+                                        'maxLength': 4,
+                                        'minLength': 4,
                                         "conversion": "decimal",
                                         "title": "CODE-H",
                                         "type": "string",
@@ -1587,7 +1715,8 @@ def copy_9_source() -> str:
 
 def test_12(copy_9_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_9_source))))
-    schema_list = list(JSONSchemaMaker(record).jsonschema() for record in copy_book)
+    maker = JSONSchemaMaker()
+    schema_list = list(maker.jsonschema(record) for record in copy_book)
     for schema in schema_list:
         assert SchemaValidator.check_schema(schema) == None
     assert schema_list[0] == {
@@ -1598,6 +1727,8 @@ def test_12(copy_9_source: str) -> None:
                 "$anchor": "NOT-SURE",
                 "cobol": "05 NOT-SURE PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "NOT-SURE",
                 "type": "string",
             },
@@ -1605,6 +1736,8 @@ def test_12(copy_9_source: str) -> None:
                 "$anchor": "PRINT-NO",
                 "cobol": "05 PRINT-NO PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "PRINT-NO",
                 "type": "string",
             },
@@ -1612,6 +1745,8 @@ def test_12(copy_9_source: str) -> None:
                 "$anchor": "PRINT-YES",
                 "cobol": "05 PRINT-YES PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "PRINT-YES",
                 "type": "string",
             },
@@ -1619,6 +1754,8 @@ def test_12(copy_9_source: str) -> None:
                 "$anchor": "QUESTION",
                 "cobol": "05 QUESTION PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "QUESTION",
                 "type": "string",
             },
@@ -1634,6 +1771,8 @@ def test_12(copy_9_source: str) -> None:
                 "$anchor": "COUNT",
                 "cobol": "05 COUNT PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "COUNT",
                 "type": "string",
             },
@@ -1641,6 +1780,8 @@ def test_12(copy_9_source: str) -> None:
                 "$anchor": "FILLER-1",
                 "cobol": "05 FILLER PIC XX",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -1648,6 +1789,8 @@ def test_12(copy_9_source: str) -> None:
                 "$anchor": "FILLER-2",
                 "cobol": "05 FILLER PIC XX",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -1655,6 +1798,8 @@ def test_12(copy_9_source: str) -> None:
                 "$anchor": "FILLER-3",
                 "cobol": "05 FILLER PIC XX",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -1682,7 +1827,7 @@ def copy_10_source() -> str:
 def test_13(copy_10_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_10_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -1697,6 +1842,8 @@ def test_13(copy_10_source: str) -> None:
                         "$anchor": "FIELD-1",
                         "cobol": "05 FIELD-1 PIC 9",
                         "contentEncoding": "cp037",
+                        'maxLength': 1,
+                        'minLength': 1,
                         "conversion": "decimal",
                         "title": "FIELD-1",
                         "type": "string",
@@ -1766,7 +1913,7 @@ def copy_11_source() -> str:
 def test_14(copy_11_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_11_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -1781,6 +1928,8 @@ def test_14(copy_11_source: str) -> None:
                         "$anchor": "FIELD-1",
                         "cobol": "05 FIELD-1 PIC " "9",
                         "contentEncoding": "cp037",
+                        'maxLength': 1,
+                        'minLength': 1,
                         "conversion": "decimal",
                         "title": "FIELD-1",
                         "type": "string",
@@ -1821,6 +1970,8 @@ def test_14(copy_11_source: str) -> None:
                         "$anchor": "FIELD-3",
                         "cobol": "05 FIELD-3 PIC " "9",
                         "contentEncoding": "cp037",
+                        'maxLength': 1,
+                        'minLength': 1,
                         "conversion": "decimal",
                         "title": "FIELD-3",
                         "type": "string",
@@ -1898,7 +2049,8 @@ def copy_12_source() -> str:
 
 def test_15(copy_12_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_12_source))))
-    schema_list = list(JSONSchemaMaker(record).jsonschema() for record in copy_book)
+    maker = JSONSchemaMaker()
+    schema_list = list(maker.jsonschema(record) for record in copy_book)
     for schema in schema_list:
         assert SchemaValidator.check_schema(schema) == None
     assert schema_list[0] == {
@@ -1909,6 +2061,8 @@ def test_15(copy_12_source: str) -> None:
                 "$anchor": "NOT-SURE",
                 "cobol": "05 NOT-SURE PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "NOT-SURE",
                 "type": "string",
             },
@@ -1916,6 +2070,8 @@ def test_15(copy_12_source: str) -> None:
                 "$anchor": "PRINT-NO",
                 "cobol": "05 PRINT-NO PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "PRINT-NO",
                 "type": "string",
             },
@@ -1923,6 +2079,8 @@ def test_15(copy_12_source: str) -> None:
                 "$anchor": "PRINT-YES",
                 "cobol": "05 PRINT-YES PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "PRINT-YES",
                 "type": "string",
             },
@@ -1930,6 +2088,8 @@ def test_15(copy_12_source: str) -> None:
                 "$anchor": "QUESTION",
                 "cobol": "05 QUESTION PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "QUESTION",
                 "type": "string",
             },
@@ -1945,6 +2105,8 @@ def test_15(copy_12_source: str) -> None:
                 "$anchor": "COUNT",
                 "cobol": "05 COUNT PIC ZZ",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "COUNT",
                 "type": "string",
             },
@@ -1952,6 +2114,8 @@ def test_15(copy_12_source: str) -> None:
                 "$anchor": "FILLER-1",
                 "cobol": "05 FILLER PIC XX",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -1959,6 +2123,8 @@ def test_15(copy_12_source: str) -> None:
                 "$anchor": "FILLER-2",
                 "cobol": "05 FILLER PIC XX",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -1966,6 +2132,8 @@ def test_15(copy_12_source: str) -> None:
                 "$anchor": "FILLER-3",
                 "cobol": "05 FILLER PIC XX",
                 "contentEncoding": "cp037",
+                'maxLength': 2,
+                'minLength': 2,
                 "title": "FILLER",
                 "type": "string",
             },
@@ -1999,7 +2167,8 @@ def copy_13_source() -> str:
 
 def test_16(copy_13_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_13_source))))
-    schema_list = list(JSONSchemaMaker(record).jsonschema() for record in copy_book)
+    maker = JSONSchemaMaker()
+    schema_list = list(maker.jsonschema(record) for record in copy_book)
     for schema in schema_list:
         assert SchemaValidator.check_schema(schema) == None
     assert schema_list[0] == {
@@ -2010,6 +2179,8 @@ def test_16(copy_13_source: str) -> None:
                 "$anchor": "GENERIC-FIELD",
                 "cobol": "05 GENERIC-FIELD PIC X(17)",
                 "contentEncoding": "cp037",
+                'maxLength': 17,
+                'minLength': 17,
                 "title": "GENERIC-FIELD",
                 "type": "string",
             },
@@ -2017,6 +2188,8 @@ def test_16(copy_13_source: str) -> None:
                 "$anchor": "HEADER",
                 "cobol": "05 HEADER PIC X(3)",
                 "contentEncoding": "cp037",
+                'maxLength': 3,
+                'minLength': 3,
                 "title": "HEADER",
                 "type": "string",
             },
@@ -2032,6 +2205,8 @@ def test_16(copy_13_source: str) -> None:
                 "$anchor": "ITEM-1",
                 "cobol": "05 ITEM-1 PIC X(10)",
                 "contentEncoding": "cp037",
+                'maxLength': 10,
+                'minLength': 10,
                 "title": "ITEM-1",
                 "type": "string",
             },
@@ -2039,6 +2214,8 @@ def test_16(copy_13_source: str) -> None:
                 "$anchor": "ITEM-2",
                 "cobol": "05 ITEM-2 PIC X(7)",
                 "contentEncoding": "cp037",
+                'maxLength': 7,
+                'minLength': 7,
                 "title": "ITEM-2",
                 "type": "string",
             },
@@ -2054,6 +2231,8 @@ def test_16(copy_13_source: str) -> None:
                 "$anchor": "ITEM-3",
                 "cobol": "05 ITEM-3 PIC X(7)",
                 "contentEncoding": "cp037",
+                'maxLength': 7,
+                'minLength': 7,
                 "title": "ITEM-3",
                 "type": "string",
             },
@@ -2061,6 +2240,8 @@ def test_16(copy_13_source: str) -> None:
                 "$anchor": "ITEM-4",
                 "cobol": "05 ITEM-4 PIC X(10)",
                 "contentEncoding": "cp037",
+                'maxLength': 10,
+                'minLength': 10,
                 "title": "ITEM-4",
                 "type": "string",
             },
@@ -2093,7 +2274,7 @@ def copy_14_source() -> str:
 def test_17(copy_14_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_14_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -2105,6 +2286,8 @@ def test_17(copy_14_source: str) -> None:
                 "cobol": "04 NUMBER-1 PIC SV9(5) COMP-3",
                 "contentEncoding": "packed-decimal",
                 "conversion": "decimal",
+                'maxLength': 3,
+                'minLength': 3,
                 "title": "NUMBER-1",
                 "type": "string",
             },
@@ -2113,6 +2296,8 @@ def test_17(copy_14_source: str) -> None:
                 "cobol": "04 NUMBER-2 PIC SV9(5) COMP-3",
                 "contentEncoding": "packed-decimal",
                 "conversion": "decimal",
+                'maxLength': 3,
+                'minLength': 3,
                 "title": "NUMBER-2",
                 "type": "string",
             },
@@ -2121,6 +2306,8 @@ def test_17(copy_14_source: str) -> None:
                 "cobol": "04 NUMBER-3 PIC SV9(05) COMP-3",
                 "contentEncoding": "packed-decimal",
                 "conversion": "decimal",
+                'maxLength': 3,
+                'minLength': 3,
                 "title": "NUMBER-3",
                 "type": "string",
             },
@@ -2129,6 +2316,8 @@ def test_17(copy_14_source: str) -> None:
                 "cobol": "04 NUMBER-4 PIC SV9(5) COMP-3",
                 "contentEncoding": "packed-decimal",
                 "conversion": "decimal",
+                'maxLength': 3,
+                'minLength': 3,
                 "title": "NUMBER-4",
                 "type": "string",
             },
@@ -2154,7 +2343,7 @@ def copy_l2_source() -> str:
 def test_18(copy_l2_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_l2_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -2163,11 +2352,15 @@ def test_18(copy_l2_source: str) -> None:
         'properties': {'FANCY-FORMAT': {'$anchor': 'FANCY-FORMAT',
                                         'cobol': '05 FANCY-FORMAT PIC 9(7).99',
                                         'contentEncoding': 'cp037',
+                                        'maxLength': 10,
+                                        'minLength': 10,
                                         'title': 'FANCY-FORMAT',
                                         'type': 'string'},
                        'SSN-FORMAT': {'$anchor': 'SSN-FORMAT',
                                       'cobol': '05 SSN-FORMAT PIC 999-99-9999',
                                       'contentEncoding': 'cp037',
+                                      'maxLength': 11,
+                                      'minLength': 11,
                                       'title': 'SSN-FORMAT',
                                       'type': 'string'}},
         'title': 'DETAIL-LINE',
@@ -2190,7 +2383,7 @@ def copy_l3_source() -> str:
 def test_19(copy_l3_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(copy_l3_source))))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {'$anchor': 'SIMPLE-LINE',
@@ -2198,11 +2391,15 @@ def test_19(copy_l3_source: str) -> None:
                       'properties': {'VALUE-1': {'$anchor': 'VALUE-1',
                                                  'cobol': "05 VALUE-1 PIC X(10) VALUE 'STRING '",
                                                  'contentEncoding': 'cp037',
+                                                 'maxLength': 10,
+                                                 'minLength': 10,
                                                  'title': 'VALUE-1',
                                                  'type': 'string'},
                                      'VALUE-2': {'$anchor': 'VALUE-2',
                                                  'cobol': '05 VALUE-2 PIC X(10) VALUE "STRING "',
                                                  'contentEncoding': 'cp037',
+                                                 'maxLength': 10,
+                                                 'minLength': 10,
                                                  'title': 'VALUE-2',
                                                  'type': 'string'}},
                       'title': 'SIMPLE-LINE',
@@ -2226,7 +2423,7 @@ def test_20(copy_l4_source: str) -> None:
     source = StringIO(copy_l4_source)
     copy_book = structure(dde_sentences(reference_format(source, replacing=[("'XY'", 'AB')])))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {'$anchor': 'AB-SIMPLE-LINE',
@@ -2235,6 +2432,8 @@ def test_20(copy_l4_source: str) -> None:
                                                     'cobol': "05 AB-VALUE-1 PIC X(10) VALUE 'STRING "
                                                              "'",
                                                     'contentEncoding': 'cp037',
+                                                    'maxLength': 10,
+                                                    'minLength': 10,
                                                     'title': 'AB-VALUE-1',
                                                     'type': 'string'}},
                       'title': 'AB-SIMPLE-LINE',
@@ -2268,7 +2467,7 @@ def test_schemamaker_all_types(all_types_source: str) -> None:
     source = StringIO(all_types_source)
     copy_book = structure(dde_sentences(reference_format(source)))
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = JSONSchemaMaker().jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -2277,76 +2476,104 @@ def test_schemamaker_all_types(all_types_source: str) -> None:
          'properties': {'BINARY-A': {'$anchor': 'BINARY-A',
                                      'cobol': '05 BINARY-A PIC S9999 COMPUTATIONAL',
                                      'contentEncoding': 'bigendian-int',
+                                     'maxLength': 4,
+                                     'minLength': 4,
                                      'title': 'BINARY-A',
                                      'type': 'integer'},
                         'BINARY-B': {'$anchor': 'BINARY-B',
                                      'cobol': '05 BINARY-B PIC S9999 COMPUTATIONAL-4',
                                      'contentEncoding': 'bigendian-int',
+                                     'maxLength': 4,
+                                     'minLength': 4,
                                      'title': 'BINARY-B',
                                      'type': 'integer'},
                         'BINARY-C': {'$anchor': 'BINARY-C',
                                      'cobol': '05 BINARY-C PIC S9999 COMP-4',
                                      'contentEncoding': 'bigendian-int',
+                                     'maxLength': 4,
+                                     'minLength': 4,
                                      'title': 'BINARY-C',
                                      'type': 'integer'},
                         'BINARY-D': {'$anchor': 'BINARY-D',
                                      'cobol': '05 BINARY-D PIC S9999 BINARY',
                                      'contentEncoding': 'bigendian-int',
+                                     'maxLength': 4,
+                                     'minLength': 4,
                                      'title': 'BINARY-D',
                                      'type': 'integer'},
                         'DECIMAL-A': {'$anchor': 'DECIMAL-A',
                                       'cobol': '05 DECIMAL-A PIC S9999 COMPUTATIONAL-3',
                                       'contentEncoding': 'packed-decimal',
+                                      'maxLength': 3,
+                                      'minLength': 3,
                                       'conversion': 'decimal',
                                       'title': 'DECIMAL-A',
                                       'type': 'string'},
                         'DECIMAL-B': {'$anchor': 'DECIMAL-B',
                                       'cobol': '05 DECIMAL-B PIC S9999 COMP-3',
                                       'contentEncoding': 'packed-decimal',
+                                      'maxLength': 3,
+                                      'minLength': 3,
                                       'conversion': 'decimal',
                                       'title': 'DECIMAL-B',
                                       'type': 'string'},
                         'DECIMAL-C': {'$anchor': 'DECIMAL-C',
                                       'cobol': '05 DECIMAL-C PIC S9999 PACKED-DECIMAL',
                                       'contentEncoding': 'packed-decimal',
+                                      'maxLength': 3,
+                                      'minLength': 3,
                                       'conversion': 'decimal',
                                       'title': 'DECIMAL-C',
                                       'type': 'string'},
                         'DOUBLE-A': {'$anchor': 'DOUBLE-A',
                                      'cobol': '05 DOUBLE-A PIC S9999 COMPUTATIONAL-2',
                                      'contentEncoding': 'bigendian-double',
+                                     'maxLength': 8,
+                                     'minLength': 8,
                                      'title': 'DOUBLE-A',
                                      'type': 'number'},
                         'DOUBLE-B': {'$anchor': 'DOUBLE-B',
                                      'cobol': '05 DOUBLE-B PIC S9999 COMP-2',
                                      'contentEncoding': 'bigendian-double',
+                                     'maxLength': 8,
+                                     'minLength': 8,
                                      'title': 'DOUBLE-B',
                                      'type': 'number'},
                         'FLOAT-A': {'$anchor': 'FLOAT-A',
                                     'cobol': '05 FLOAT-A PIC S9999 COMPUTATIONAL-1',
                                     'contentEncoding': 'bigendian-float',
+                                    'maxLength': 4,
+                                    'minLength': 4,
                                     'title': 'FLOAT-A',
                                     'type': 'number'},
                         'FLOAT-B': {'$anchor': 'FLOAT-B',
                                     'cobol': '05 FLOAT-B PIC S9999 COMP-1',
                                     'contentEncoding': 'bigendian-float',
+                                    'maxLength': 4,
+                                    'minLength': 4,
                                     'title': 'FLOAT-B',
                                     'type': 'number'},
                         'TEXT-A': {'$anchor': 'TEXT-A',
                                    'cobol': '05 TEXT-A PIC 9999 DISPLAY',
                                    'contentEncoding': 'cp037',
+                                   'maxLength': 4,
+                                   'minLength': 4,
                                    'conversion': 'decimal',
                                    'title': 'TEXT-A',
                                    'type': 'string'},
                         'TEXT-B': {'$anchor': 'TEXT-B',
                                    'cobol': '05 TEXT-B PIC 9999',
                                    'contentEncoding': 'cp037',
+                                   'maxLength': 4,
+                                   'minLength': 4,
                                    'conversion': 'decimal',
                                    'title': 'TEXT-B',
                                    'type': 'string'},
                         'TEXT-C': {'$anchor': 'TEXT-C',
                                    'cobol': '05 TEXT-C PIC XXXX',
                                    'contentEncoding': 'cp037',
+                                   'maxLength': 4,
+                                   'minLength': 4,
                                    'title': 'TEXT-C',
                                    'type': 'string'}
 
@@ -2357,8 +2584,9 @@ def test_schemamaker_all_types(all_types_source: str) -> None:
 def test_extended_schemamaker_all_types(all_types_source: str) -> None:
     source = StringIO(all_types_source)
     copy_book = structure(dde_sentences(reference_format(source)))
+    maker = JSONSchemaMakerExtendedVocabulary()
     for record in copy_book:
-        schema = JSONSchemaMakerExtendedVocabulary(record).jsonschema()
+        schema = maker.jsonschema(record)
     # There's only one DDE to examine.
     # TODO: Test with an extended vocabulary in JSONSchema Validator
     # assert SchemaValidator.check_schema(schema) == None
@@ -2367,58 +2595,86 @@ def test_extended_schemamaker_all_types(all_types_source: str) -> None:
          'cobol': '01 ALL-TYPES',
          'properties': {'BINARY-A': {'$anchor': 'BINARY-A',
                                      'cobol': '05 BINARY-A PIC S9999 COMPUTATIONAL',
+                                     'maxLength': 4,
+                                     'minLength': 4,
                                      'title': 'BINARY-A',
                                      'type': 'integer'},
                         'BINARY-B': {'$anchor': 'BINARY-B',
                                      'cobol': '05 BINARY-B PIC S9999 COMPUTATIONAL-4',
+                                     'maxLength': 4,
+                                     'minLength': 4,
                                      'title': 'BINARY-B',
                                      'type': 'integer'},
                         'BINARY-C': {'$anchor': 'BINARY-C',
                                      'cobol': '05 BINARY-C PIC S9999 COMP-4',
+                                     'maxLength': 4,
+                                     'minLength': 4,
                                      'title': 'BINARY-C',
                                      'type': 'integer'},
                         'BINARY-D': {'$anchor': 'BINARY-D',
                                      'cobol': '05 BINARY-D PIC S9999 BINARY',
+                                     'maxLength': 4,
+                                     'minLength': 4,
                                      'title': 'BINARY-D',
                                      'type': 'integer'},
                         'DECIMAL-A': {'$anchor': 'DECIMAL-A',
                                       'cobol': '05 DECIMAL-A PIC S9999 COMPUTATIONAL-3',
+                                      'maxLength': 3,
+                                      'minLength': 3,
                                       'title': 'DECIMAL-A',
                                       'type': 'decimal'},
                         'DECIMAL-B': {'$anchor': 'DECIMAL-B',
                                       'cobol': '05 DECIMAL-B PIC S9999 COMP-3',
+                                      'maxLength': 3,
+                                      'minLength': 3,
                                       'title': 'DECIMAL-B',
                                       'type': 'decimal'},
                         'DECIMAL-C': {'$anchor': 'DECIMAL-C',
                                       'cobol': '05 DECIMAL-C PIC S9999 PACKED-DECIMAL',
+                                      'maxLength': 3,
+                                      'minLength': 3,
                                       'title': 'DECIMAL-C',
                                       'type': 'decimal'},
                         'DOUBLE-A': {'$anchor': 'DOUBLE-A',
                                      'cobol': '05 DOUBLE-A PIC S9999 COMPUTATIONAL-2',
+                                     'maxLength': 8,
+                                     'minLength': 8,
                                      'title': 'DOUBLE-A',
                                      'type': 'number'},
                         'DOUBLE-B': {'$anchor': 'DOUBLE-B',
                                      'cobol': '05 DOUBLE-B PIC S9999 COMP-2',
+                                     'maxLength': 8,
+                                     'minLength': 8,
                                      'title': 'DOUBLE-B',
                                      'type': 'number'},
                         'FLOAT-A': {'$anchor': 'FLOAT-A',
                                     'cobol': '05 FLOAT-A PIC S9999 COMPUTATIONAL-1',
+                                    'maxLength': 4,
+                                    'minLength': 4,
                                     'title': 'FLOAT-A',
                                     'type': 'number'},
                         'FLOAT-B': {'$anchor': 'FLOAT-B',
                                     'cobol': '05 FLOAT-B PIC S9999 COMP-1',
+                                    'maxLength': 4,
+                                    'minLength': 4,
                                     'title': 'FLOAT-B',
                                     'type': 'number'},
                         'TEXT-A': {'$anchor': 'TEXT-A',
                                    'cobol': '05 TEXT-A PIC 9999 DISPLAY',
+                                   'maxLength': 4,
+                                   'minLength': 4,
                                    'title': 'TEXT-A',
                                    'type': 'decimal'},
                         'TEXT-B': {'$anchor': 'TEXT-B',
                                    'cobol': '05 TEXT-B PIC 9999',
+                                   'maxLength': 4,
+                                   'minLength': 4,
                                    'title': 'TEXT-B',
                                    'type': 'decimal'},
                         'TEXT-C': {'$anchor': 'TEXT-C',
                                    'cobol': '05 TEXT-C PIC XXXX',
+                                   'maxLength': 4,
+                                   'minLength': 4,
                                    'title': 'TEXT-C',
                                    'type': 'string'}
                         },
@@ -2456,8 +2712,9 @@ def issue_1_source() -> str:
 
 def test_issue_1(issue_1_source: str) -> None:
     copy_book = structure(dde_sentences(reference_format(StringIO(issue_1_source))))
+    maker = JSONSchemaMaker()
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = maker.jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {
@@ -2475,6 +2732,8 @@ def test_issue_1(issue_1_source: str) -> None:
                             "$anchor": "LABL-GNPR-ID",
                             "cobol": "05 " "LABL-GNPR-ID " "PIC " "9(00009)",
                             "contentEncoding": "cp037",
+                            'maxLength': 9,
+                            'minLength': 9,
                             "title": "LABL-GNPR-ID",
                             "type": "string",
                         },
@@ -2482,6 +2741,8 @@ def test_issue_1(issue_1_source: str) -> None:
                             "$anchor": "LABL-GNRC-AT",
                             "cobol": "05 " "LABL-GNRC-AT " "PIC " "-9(00012).9(6)",
                             "contentEncoding": "cp037",
+                            'maxLength': 20,
+                            'minLength': 20,
                             "title": "LABL-GNRC-AT",
                             "type": "string",
                         },
@@ -2489,6 +2750,8 @@ def test_issue_1(issue_1_source: str) -> None:
                             "$anchor": "LABL-GNRC-CD",
                             "cobol": "05 " "LABL-GNRC-CD " "PIC " "X(00006)",
                             "contentEncoding": "cp037",
+                            'maxLength': 6,
+                            'minLength': 6,
                             "title": "LABL-GNRC-CD",
                             "type": "string",
                         },
@@ -2496,6 +2759,8 @@ def test_issue_1(issue_1_source: str) -> None:
                             "$anchor": "LABL-GNRC-ID",
                             "cobol": "05 " "LABL-GNRC-ID " "PIC " "9(00009)",
                             "contentEncoding": "cp037",
+                            'maxLength': 9,
+                            'minLength': 9,
                             "title": "LABL-GNRC-ID",
                             "type": "string",
                         },
@@ -2503,6 +2768,8 @@ def test_issue_1(issue_1_source: str) -> None:
                             "$anchor": "LABL-GNRC-PT",
                             "cobol": "05 " "LABL-GNRC-PT " "PIC " "-9(00003).9(4)",
                             "contentEncoding": "cp037",
+                            'maxLength': 9,
+                            'minLength': 9,
                             "title": "LABL-GNRC-PT",
                             "type": "string",
                         },
@@ -2510,6 +2777,8 @@ def test_issue_1(issue_1_source: str) -> None:
                             "$anchor": "LABL-GNRC-QY",
                             "cobol": "05 " "LABL-GNRC-QY " "PIC " "-9(00015)",
                             "contentEncoding": "cp037",
+                            'maxLength': 16,
+                            'minLength': 16,
                             "title": "LABL-GNRC-QY",
                             "type": "string",
                         },
@@ -2517,6 +2786,8 @@ def test_issue_1(issue_1_source: str) -> None:
                             "$anchor": "LABL-GNRC-TX",
                             "cobol": "05 " "LABL-GNRC-TX " "PIC " "X(00030)",
                             "contentEncoding": "cp037",
+                            'maxLength': 30,
+                            'minLength': 30,
                             "title": "LABL-GNRC-TX",
                             "type": "string",
                         },
@@ -2524,6 +2795,8 @@ def test_issue_1(issue_1_source: str) -> None:
                             "$anchor": "LABL-PRSN-ID",
                             "cobol": "05 " "LABL-PRSN-ID " "PIC " "9(00009)",
                             "contentEncoding": "cp037",
+                            'maxLength': 9,
+                            'minLength': 9,
                             "title": "LABL-PRSN-ID",
                             "type": "string",
                         },
@@ -2531,6 +2804,8 @@ def test_issue_1(issue_1_source: str) -> None:
                             "$anchor": "LABL-QRY-FILL-50-TX",
                             "cobol": "05 " "LABL-QRY-FILL-50-TX " "PIC " "X(00050)",
                             "contentEncoding": "cp037",
+                            'maxLength': 50,
+                            'minLength': 50,
                             "title": "LABL-QRY-FILL-50-TX",
                             "type": "string",
                         },
@@ -2545,7 +2820,9 @@ def test_issue_1(issue_1_source: str) -> None:
                 "$anchor": "LABL-STDY-GP-AR-CT",
                 "cobol": "03 LABL-STDY-GP-AR-CT PIC " "9(00004)",
                 "contentEncoding": "cp037",
-                "title": "LABL-STDY-GP-AR-CT",
+                'maxLength': 4,
+                'minLength': 4,
+                "title": "LABL-STDY-GP-AR-CT", 
                 "type": "string",
             },
         },
@@ -2569,8 +2846,9 @@ def issue_3_source() -> str:
 
 def test_issue_3(issue_3_source):
     copy_book = structure(dde_sentences(reference_format(StringIO(issue_3_source))))
+    maker = JSONSchemaMaker()
     for record in copy_book:
-        schema = JSONSchemaMaker(record).jsonschema()
+        schema = maker.jsonschema(record)
     # There's only one DDE to examine.
     assert SchemaValidator.check_schema(schema) == None
     assert schema == {

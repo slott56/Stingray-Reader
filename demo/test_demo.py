@@ -15,7 +15,6 @@ from stingray import (
     open_workbook, HeadingRowSchemaLoader, Workbook, Sheet,
     WBUnpacker, JSON, SchemaMaker, name_cleaner
 )
-from stingray.schema_instance import JSON
 from jsonschema import Draft202012Validator  # type: ignore [import]
 
 

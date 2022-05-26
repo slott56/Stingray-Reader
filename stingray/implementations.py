@@ -5,10 +5,11 @@ See http://www.python-excel.org/ for a list of implementations.
 Of these, we choose a few to handle XLSX, ODS, and Numbers.
 
 """
+from collections.abc import Iterator
 from pathlib import Path
 from stingray.workbook import file_registry, Workbook, Sheet
 from stingray.schema_instance import WBInstance, WBUnpacker
-from typing import Optional, Iterator, cast, Union, Any, IO, AnyStr
+from typing import Optional, cast, Union, Any, IO, AnyStr
 from types import TracebackType
 
 try:

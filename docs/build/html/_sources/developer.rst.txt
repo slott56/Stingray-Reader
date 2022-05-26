@@ -392,10 +392,13 @@ A simple description is the following:
 
 ..  parsed-literal::
 
-    *target* = *target_type*\ (row.['\ *source*\ '].value())
+    *target* = *target_type*\ (row['\ *source*\ '].value())
 
 There is a tiny bit of boilerplate in this assignment statement. The overhead of the boilerplate
 is offset by the flexibility of using Python directly.
+
+We can use either `name('source')` or `['source']` as a way to locate a named attribute
+within a schema.
 
 There are some common cases that will extend or modify the boilerplate.
 In particular, COBOL structures that are not in first normal form will include
