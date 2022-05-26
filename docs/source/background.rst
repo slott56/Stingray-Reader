@@ -2,7 +2,7 @@
 ..  _`intro`:
 
 #################
-Introduction
+Background
 #################
 
 Given a workbook -- or any other "flat" file -- how is it organized?  What does it *mean*?
@@ -11,7 +11,9 @@ How can we ignore details that are merely physical?
 When is a change a logical layout variant with no semantic impact?
 How do we isolate ourselves from logical and physical variations?
 
-There are two user stories that provide a useful context.
+In this section, we'll dive -- deeply -- into the backgound of Stingray Reader.
+
+Here are two user stories we'll use provide a useful context:
 
 -   **Extract Transform and Load (ETL)**.   We've got a file of data
     in the form of a workbook file or perhaps a flat (delimiter-free) COBOL file.
@@ -22,6 +24,15 @@ There are two user stories that provide a useful context.
     exploratory data profiling, as well as data validation. For the profiling
     case, there's no prior expectation. For the validation case, there's a set of
     criteria which must be met for the data to be valid.
+
+These two stories describe similar processing. In one case, the processing
+prepares data for subsequent consumption. The other case consumes data as a
+final analytical step.
+
+We'll begin with some foundational ideas.
+
+Foundations
+===========
 
 We don't want application software to depend on the physical file format.
 We want to work equally well with CSV or XLSX versions of a file.
@@ -519,4 +530,3 @@ The ``-l layout_2`` provides logical layout information. This defines the "appli
 
 The ``some_file.xyz`` could be ``some_file.xls`` or ``some_file.ods``,
 allowing transparent changes to physical format.
-

@@ -16,7 +16,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Design Considerations" href="design.html" />
-    <link rel="prev" title="Introduction" href="introduction.html" />
+    <link rel="prev" title="The Stingray Schema-Based File Reader" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -55,7 +55,7 @@ Specifically, we can tackle this question:</p>
 <li><p>Data Quality. Does the file match the required schema?</p></li>
 <li><p>Software Quality. Will this application process a file with the required schema?</p></li>
 </ul>
-<p>THe underlying assumption is that the schema is right. Files or Applications
+<p>The underlying assumption is that the schema is right. Files or Applications
 may not match the schema, but the schema is what’s used to measure quality.</p>
 <p>We also need to note the following.</p>
 <blockquote>
@@ -63,16 +63,17 @@ may not match the schema, but the schema is what’s used to measure quality.</p
 </div></blockquote>
 <section id="concepts">
 <h2>Concepts<a class="headerlink" href="#concepts" title="Permalink to this headline">¶</a></h2>
-<p>As noted in <a class="reference internal" href="introduction.html#intro"><span class="std std-ref">Introduction</span></a>, there are three levels of schema that need to be bound to a file.</p>
+<p>Here are the three levels of schema that need to be bound to a file:</p>
 <ul class="simple">
-<li><p><strong>Physical Format</strong>.  We can make this transparent to our applications.
+<li><p><strong>Physical Format</strong>.  This defines how to unpack bytes into Python objects (e.g., decode a string to lines of text to atomic fields).
+We want to make this transparent to our applications.
 When using Stingray Reader, everything is a workbook with a consistent API.</p></li>
-<li><p><strong>Logical Layout</strong>.  This is how an application program will make use
-of the data found in a file.
+<li><p><strong>Logical Layout</strong>.  This defines how to locate the values within structures that may not have perfectly consistent ordering.
 Sometimes the Logical Layout is described by a schema embedded in a file:
 it might be the top row of a sheet in a workbook, for example.
 Sometimes the logical layout can be separate: a COBOL data definition, or perhaps
-a metadata sheet in a workbook.</p></li>
+a metadata sheet in a workbook.
+This is how an application program will make use of the data found in a file.</p></li>
 <li><p><strong>Conceptual Content</strong>.
 A single conceptual schema is often implemented by a number of logical layouts.
 Sometimes across multiple physical formats.
@@ -86,8 +87,8 @@ The column names in the metadata, at a bare minimum, must be agreed to.
 The order or position of the columns, however, need not be fixed.</p>
 <p>Since we’re working in Python, the conceptual schema is often
 an application’s collection of class
-definitions. The idea is to provide many ways to build a class instance
-based on variations in the logical layout.</p>
+definitions. The idea is to provide many ways to build class instances
+based on variations in the logical layout. This should be independent of physical format.</p>
 <p>We use a schema to do a number of things with application processing
 and the related data.</p>
 </section>
@@ -124,19 +125,19 @@ MyApp -&gt; Workbook
 </p>
 <p>The Schema can originate in a variety of places.</p>
 <ul class="simple">
-<li><p>A Schema can be the first row of a spreadsheet. Think of the <code class="xref py py-class docutils literal notranslate"><span class="pre">csv.DictReader</span></code> that
-examines the given file for a header row, creates a schema from this row,
+<li><p>A Schema can be the first row of a spreadsheet. Think of the <code class="xref py py-class docutils literal notranslate"><span class="pre">csv.DictReader</span></code> class, which
+examines the given file for a header row, creates a minimal schema from this row,
 and uses the schema to unpack the remaining rows.</p></li>
 <li><p>A Schema can be in a separate document. There are a number of choices.</p>
 <ul>
 <li><p>For COBOL files, the schema is a “Copybook” with the COBOL Data Definition Entry (DDE)
 For the file.</p></li>
-<li><p>A sheet of a workbook may have “metadata” – column definitions. This is a schema
-in a workbook. The columns of this metadata sheet has it’s own metaschema.</p></li>
+<li><p>A sheet of a workbook may have “metadata” with column definitions. This is a schema
+in a workbook. The columns of this metadata sheet have their own metaschema.</p></li>
 </ul>
 </li>
 <li><p>A JSON Schema can be embedded in the code. Ideally, it’s in a separate module
-that can be shared by many applications.</p></li>
+that can be shared by many applications. The sharing assures consistent Conceptual Content among applications.</p></li>
 </ul>
 <p>There are, in effect, four use cases for gathering schema that can be used
 to process data.</p>
@@ -169,41 +170,39 @@ Sheet ..&gt; Schema : &quot;uses&quot;
 
 &#64;enduml"/>
 </p>
-<p>This leads us to four patterns for working with Schema.
+<p>This leads us to four patterns for working with Schema to access data.
 We’ll look at each of them in the next section.</p>
 </section>
-<section id="essential-patterns">
-<h2>Essential Patterns<a class="headerlink" href="#essential-patterns" title="Permalink to this headline">¶</a></h2>
+<section id="essential-patterns-of-schema-use">
+<h2>Essential Patterns of Schema Use<a class="headerlink" href="#essential-patterns-of-schema-use" title="Permalink to this headline">¶</a></h2>
 <p>There are four essential patterns to working with schema.</p>
 <ul class="simple">
 <li><p>The schema is in one (or more) header rows of a sheet in a workbook.</p></li>
-<li><p>The schema is from an external file.</p></li>
-<li><p>The schema is defined by a COBOL DDE in a “copybook”.</p></li>
-<li><p>A schema is embedded in the app</p></li>
+<li><p>The schema is in an external file.</p></li>
+<li><p>The schema is defined by a COBOL DDE in a “copybook”, also an external file, but with more complex syntax.</p></li>
+<li><p>A schema is embedded in the app.</p></li>
 </ul>
+<p>We’ll look at each in some detail.</p>
+<section id="schema-in-header-rows">
+<h3>Schema in Header Rows<a class="headerlink" href="#schema-in-header-rows" title="Permalink to this headline">¶</a></h3>
 <p>When the header row has a schema, the processing is vaguely similar to
 working with the <code class="xref py py-mod docutils literal notranslate"><span class="pre">csv</span></code> module. There are two additional steps
 required to select the one-and-only sheet in the file, and to set
 the schema loader for the sheet.</p>
-<p>For CSV, COBOL, and similar single-file structures, the sheet is named <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>.
-Rather than assume a default sheet with this name, stingray requires an explicit reference
+<p>For CSV, COBOL, and similar single-file structures, the one-and-only sheet is named <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>.
+Rather than assume a default sheet with this name, Stingray requires an explicit reference
 to the sheet named <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>.</p>
 <p>The header row processing looks like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">::</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">stingray</span> <span class="kn">import</span> <span class="n">open_workbook</span><span class="p">,</span> <span class="n">HeadingRowSchemaLoader</span><span class="p">,</span> <span class="n">Row</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">stingray</span> <span class="kn">import</span> <span class="n">open_workbook</span><span class="p">,</span> <span class="n">HeadingRowSchemaLoader</span><span class="p">,</span> <span class="n">Row</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">process_sheet</span><span class="p">(</span><span class="n">rows</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Row</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">process_sheet</span><span class="p">(</span><span class="n">rows</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Row</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">&quot;x123&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span> <span class="n">row</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">&quot;y1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SAMPLES&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;Anscombe_quartet_data.csv&quot;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SAMPLES&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;Anscombe_quartet_data.csv&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">open_workbook</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">workbook</span><span class="p">:</span>
 <span class="gp">... </span>   <span class="n">sheet</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 <span class="gp">... </span>   <span class="n">_</span> <span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="n">set_schema_loader</span><span class="p">(</span><span class="n">HeadingRowSchemaLoader</span><span class="p">())</span>
@@ -221,13 +220,24 @@ to the sheet named <code class="docutils literal notranslate"><span class="pre">
 <span class="go">5.0 5.68</span>
 </pre></div>
 </div>
-<p>For an external schema, there are two steps.</p>
+<p>The essential processing, in the <code class="docutils literal notranslate"><span class="pre">process_sheet()</span></code> function, is based on a
+common <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> class definition. Each <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> instance
+has columns. The schema can provide conversion information. A CSV header – by itself –
+can’t provide anything more than column names, making the values all strings.</p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">HeadingRowSchemaLoader</span></code> builds a schema from the header row.
+This is a stripped-down-to-almost-nothing schema with column names and default data types
+of string.</p>
+</section>
+<section id="schema-in-an-external-file">
+<h3>Schema in an External File<a class="headerlink" href="#schema-in-an-external-file" title="Permalink to this headline">¶</a></h3>
+<p>For an external schema, here are the two steps to processing the data:</p>
 <ol class="arabic simple">
 <li><p>Load the schema. This involves opening a workbook that has the schema,
-A schema is built from this workbook.</p></li>
+A schema is built from this workbook. The external schema has its
+own metaschema, ideally as header rows.</p></li>
 <li><p>Process data using the loaded schema.</p></li>
 </ol>
-<p>External file processing look like this:</p>
+<p>External schema processing look like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">stingray</span> <span class="kn">import</span> <span class="n">open_workbook</span><span class="p">,</span> <span class="n">ExternalSchemaLoader</span><span class="p">,</span> <span class="n">Row</span><span class="p">,</span> <span class="n">SchemaMaker</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
@@ -237,6 +247,7 @@ A schema is built from this workbook.</p></li>
 <span class="gp">... </span>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">&quot;x123&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span> <span class="n">row</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">&quot;y1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
 
+<span class="go">1. Load the Schema by reading a CSV file</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">schema_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SAMPLES&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;Anscombe_schema.csv&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">open_workbook</span><span class="p">(</span><span class="n">schema_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">metaschema_workbook</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">schema_sheet</span> <span class="o">=</span> <span class="n">metaschema_workbook</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span><span class="s1">&#39;Sheet1&#39;</span><span class="p">)</span>
@@ -244,6 +255,7 @@ A schema is built from this workbook.</p></li>
 <span class="gp">... </span>    <span class="n">json_schema</span> <span class="o">=</span> <span class="n">ExternalSchemaLoader</span><span class="p">(</span><span class="n">schema_sheet</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">schema</span> <span class="o">=</span> <span class="n">SchemaMaker</span><span class="p">()</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">json_schema</span><span class="p">)</span>
 
+<span class="go">2. Process the rows using the schema</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SAMPLES&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;Anscombe_quartet_data.csv&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">open_workbook</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">workbook</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">sheet</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">set_schema</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
@@ -262,6 +274,38 @@ A schema is built from this workbook.</p></li>
 <span class="go">5.0 5.68</span>
 </pre></div>
 </div>
+<p>The first step – reading the external schema – involves opening a schema workbook,
+and loading a schema sheet. The default schema loader is a <code class="xref py py-class docutils literal notranslate"><span class="pre">HeadingRowSchemaLoader</span></code>.
+This will use column names in the first row of the metadata.</p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">ExternalSchemaLoader</span></code> builds a schema from a sheet with column names,
+column data conversions, and a column description. The metaschema must match the
+following JSONSchema definition:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;generic meta schema for external schema documents&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;field name&quot;</span><span class="p">,</span> <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;field description&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;dataType&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;field data type&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Once the document’s schema has been built from the metadata, it is used to process the target data.
+The <code class="docutils literal notranslate"><span class="pre">process_sheet()</span></code> function can consume rows with the attribute names and types that
+are defined in the external <code class="docutils literal notranslate"><span class="pre">Anscombe_schema.csv</span></code> file.
+Because of the schema, automated conversions from strings to float can be done by Stingray.</p>
+</section>
+<section id="schema-in-a-cobol-copybook">
+<h3>Schema in a COBOL Copybook<a class="headerlink" href="#schema-in-a-cobol-copybook" title="Permalink to this headline">¶</a></h3>
 <p>COBOL Processing is similar to external schema loading.
 First, the application loads the schema from the COBOL copybook file.
 Then, the application can process data using the schema.</p>
@@ -274,12 +318,14 @@ Then, the application can process data using the schema.</p>
 <span class="gp">... </span>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
 <span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">&quot;X123&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span> <span class="n">row</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">&quot;Y1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
 
+<span class="go">1. Load the Schema by reading a COBOL CPY file</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">copybook_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SAMPLES&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;anscombe.cpy&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">copybook_path</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">schema_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">schema_iter</span><span class="p">(</span><span class="n">source</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">json_schema</span><span class="p">,</span> <span class="o">=</span> <span class="n">schema_list</span>  <span class="c1"># Take the first; ignore any other 01-level records</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">schema</span> <span class="o">=</span> <span class="n">SchemaMaker</span><span class="p">()</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">json_schema</span><span class="p">)</span>
 
+<span class="go">2. Process the rows using the schema</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SAMPLES&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;anscombe.data&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">COBOL_Text_File</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">workbook</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">sheet</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">set_schema</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
@@ -297,23 +343,107 @@ Then, the application can process data using the schema.</p>
 <span class="go"> 005.00  005.68</span>
 </pre></div>
 </div>
-<p>Note that the <code class="docutils literal notranslate"><span class="pre">process_sheet()</span></code> function is nearly identical in all three cases.
+<p>The <code class="xref py py-func docutils literal notranslate"><span class="pre">schema_iter()</span></code> function reads all of the COBOL record definitions
+in the given file. While it’s common to have a single “01-level” layout in a file,
+this isn’t universally true. The parser will examine all of the records.
+In the cases where there’s a single definition, the result will be a list with
+only one item. We can use <code class="docutils literal notranslate"><span class="pre">json_schema</span> <span class="pre">=</span> <span class="pre">schema_list[0]</span></code> as an alternative for
+taking one item from the list.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">process_sheet()</span></code> function for working with COBOL is nearly identical to the previous two examples.
 The column names <code class="docutils literal notranslate"><span class="pre">x123</span></code> and <code class="docutils literal notranslate"><span class="pre">y1</span></code> are switched to upper case, which is a little
 more typical of COBOL.</p>
+<p>The COBOL definition for this file is the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">01</span>  <span class="n">ANSCOMBE</span><span class="o">.</span>
+    <span class="mi">05</span>  <span class="n">X123</span>   <span class="n">PIC</span> <span class="n">S999</span><span class="mf">.99</span><span class="o">.</span>
+    <span class="mi">05</span>  <span class="n">FILLER</span> <span class="n">PIC</span> <span class="n">X</span><span class="o">.</span>
+    <span class="mi">05</span>  <span class="n">Y1</span>     <span class="n">PIC</span> <span class="n">S999</span><span class="mf">.99</span><span class="o">.</span>
+    <span class="mi">05</span>  <span class="n">FILLER</span> <span class="n">PIC</span> <span class="n">X</span><span class="o">.</span>
+    <span class="mi">05</span>  <span class="n">Y2</span>     <span class="n">PIC</span> <span class="n">S999</span><span class="mf">.99</span><span class="o">.</span>
+    <span class="mi">05</span>  <span class="n">FILLER</span> <span class="n">PIC</span> <span class="n">X</span><span class="o">.</span>
+    <span class="mi">05</span>  <span class="n">Y3</span>     <span class="n">PIC</span> <span class="n">S999</span><span class="mf">.99</span><span class="o">.</span>
+    <span class="mi">05</span>  <span class="n">FILLER</span> <span class="n">PIC</span> <span class="n">X</span><span class="o">.</span>
+    <span class="mi">05</span>  <span class="n">X4</span>     <span class="n">PIC</span> <span class="n">S999</span><span class="mf">.99</span><span class="o">.</span>
+    <span class="mi">05</span>  <span class="n">FILLER</span> <span class="n">PIC</span> <span class="n">X</span><span class="o">.</span>
+    <span class="mi">05</span>  <span class="n">Y4</span>     <span class="n">PIC</span> <span class="n">S999</span><span class="mf">.99</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>The attributes all use a “USAGE DISPLAY” format, which makes them string values.
+Any conversion to a number becomes part of the application processing.
+This is a consequence of sticking closely to COBOL semantics for the the data definitions.</p>
+</section>
+<section id="schema-in-the-application">
+<h3>Schema In the Application<a class="headerlink" href="#schema-in-the-application" title="Permalink to this headline">¶</a></h3>
+<p>A Schema can be built within the application, also. This can be done using Stingray’s internal
+data structures. However, it seems simpler to use JSON Schema as a starting point,
+and build the internal structure from the JSONSchema document.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">stingray</span> <span class="kn">import</span> <span class="n">open_workbook</span><span class="p">,</span> <span class="n">ExternalSchemaLoader</span><span class="p">,</span> <span class="n">Row</span><span class="p">,</span> <span class="n">SchemaMaker</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">process_sheet</span><span class="p">(</span><span class="n">rows</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Row</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">&quot;x123&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span> <span class="n">row</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s2">&quot;y1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
+
+<span class="go">1. Load a literal schema</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">json_schema</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;spike/Anscombe_quartet_data.csv&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Four series, use (x123, y1), (x123, y2), (x123, y3) or (x4, y4)&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;x123&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;x123&quot;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;X values for series 1, 2, and 3.&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>        <span class="s2">&quot;y1&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;y1&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Y value for series 1.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>        <span class="s2">&quot;y2&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;y2&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Y value for series 2.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>        <span class="s2">&quot;y3&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;y3&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Y value for series 3.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>        <span class="s2">&quot;x4&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;x4&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;X value for series 4.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>        <span class="s2">&quot;y4&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;y4&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Y value for series 4.&quot;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">schema</span> <span class="o">=</span> <span class="n">SchemaMaker</span><span class="p">()</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">json_schema</span><span class="p">)</span>
+
+<span class="go">2. Process the rows using the schema</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SAMPLES&quot;</span><span class="p">,</span> <span class="s2">&quot;sample&quot;</span><span class="p">))</span> <span class="o">/</span> <span class="s2">&quot;Anscombe_quartet_data.csv&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">open_workbook</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">workbook</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">sheet</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">sheet</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">set_schema</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">process_sheet</span><span class="p">(</span><span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">())</span>
+<span class="go">x123 y1</span>
+<span class="go">10.0 8.04</span>
+<span class="go">8.0 6.95</span>
+<span class="go">13.0 7.58</span>
+<span class="go">9.0 8.81</span>
+<span class="go">11.0 8.33</span>
+<span class="go">14.0 9.96</span>
+<span class="go">6.0 7.24</span>
+<span class="go">4.0 4.26</span>
+<span class="go">12.0 10.84</span>
+<span class="go">7.0 4.82</span>
+<span class="go">5.0 5.68</span>
+</pre></div>
+</div>
+<p>The JSONSchema description is realitively clear, and easy to write as a Python dictionary
+literal. This representation can be shared widely among multiple applications.
+This could be part of an OpenAPI specification, for example, shared by a RESTful web
+server with the client applications.</p>
+</section>
 </section>
 <section id="rows-and-navigation">
 <h2>Rows and Navigation<a class="headerlink" href="#rows-and-navigation" title="Permalink to this headline">¶</a></h2>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> is a binding between an instance of raw data from the underlying
 COBOL file or workbook structure, and a schema.</p>
-<p>Most workbook rows are a flat list of named columns. The JSONSchema definition
-is an “object”; each column is a property. For COBOL, this isn’t appropriate.
+<p>Most workbook rows are a flat sequence of named columns. The JSONSchema definition
+is an “object”; each column is a property. For COBOL, a simple list of columns isn’t appropriate.
 For delimited files (i.e., NDJSON, YAML, or TOML) this isn’t appropriate, either.</p>
 <p>To unify all of these, a <code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code> uses a navigation aid. These
 are <code class="xref py py-class docutils literal notranslate"><span class="pre">Nav</span></code> instances that are used to locate named properties.</p>
 <p>Ordinarily, the <code class="xref py py-class docutils literal notranslate"><span class="pre">Nav</span></code> objects are invisible.
 When an application uses <code class="docutils literal notranslate"><span class="pre">row.name(&quot;name&quot;).value()</span></code>
-to navigate into the schema, this will extract a Python object that is the value.</p>
-<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Nav</span></code> object will be visible when we omit the <code class="xref py py-class docutils literal notranslate"><span class="pre">Nav.value</span></code> method
+to navigate into the schema, this will extract a Python object that is the value.
+An intermediate <code class="xref py py-class docutils literal notranslate"><span class="pre">Nav</span></code> object will be created, but is not visible.</p>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Nav</span></code> object can be visible when we omit the <code class="xref py py-class docutils literal notranslate"><span class="pre">Nav.value</span></code> method
 which extracts the final Python object. It may be useful to cache <code class="xref py py-class docutils literal notranslate"><span class="pre">Nav</span></code>
 objects to improve performance.</p>
 <p>Here’s the relationship:</p>
@@ -345,7 +475,7 @@ Nav::value --&gt; PythonObject
 <p>The fluent interface of a <code class="xref py py-class docutils literal notranslate"><span class="pre">Nav</span></code> creates additional
 <code class="xref py py-class docutils literal notranslate"><span class="pre">Nav</span></code> navigation helpers to work down into a complex structure.</p>
 <p>Generally, COBOL programs assume all field names are unique. (They don’t have to be, but this is rare.)
-To make this work out well, Stringray leverages JSONSchema “$anchor” keywords to
+To make this work out well, Stringray leverages JSONSchema <code class="docutils literal notranslate"><span class="pre">$anchor</span></code> keywords to
 avoid complex path-based navigation into an object. Using anchor names allows
 a <code class="xref py py-meth docutils literal notranslate"><span class="pre">Nav.name()</span></code> method to locate a field deeply nested inside a complex COBOL record.</p>
 </section>
@@ -381,7 +511,7 @@ with <em>target</em>, <em>to_type</em> and <em>source</em>. A DSL or other encod
 <pre class="literal-block"><em>target</em> = <em>target_type</em>(row['<em>source</em>'].value())</pre>
 <p>There is a tiny bit of boilerplate in this assignment statement. The overhead of the boilerplate
 is offset by the flexibility of using Python directly.</p>
-<p>We can use either <cite>name(‘source’)</cite> or <cite>[‘source’]</cite> as a way to locate a named attribute
+<p>We can use either <code class="docutils literal notranslate"><span class="pre">schema.name('source')</span></code> or <code class="docutils literal notranslate"><span class="pre">schema['source']</span></code> as a way to locate a named attribute
 within a schema.</p>
 <p>There are some common cases that will extend or modify the boilerplate.
 In particular, COBOL structures that are not in first normal form will include
@@ -1080,9 +1210,9 @@ as early in the processing as possible, currency computations work out nicely.</
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Using <strong>Stingray Reader</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="design.html">Design Considerations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/index.html">Demo Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="apidoc/index.html">stingray API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
@@ -1095,7 +1225,7 @@ as early in the processing as possible, currency computations work out nicely.</
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="introduction.html" title="previous chapter">Introduction</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">The Stingray Schema-Based File Reader</a></li>
       <li>Next: <a href="design.html" title="next chapter">Design Considerations</a></li>
   </ul></li>
 </ul>

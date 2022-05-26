@@ -11,7 +11,13 @@ Version 5
 =========
 
 This is a complete rewrite, completed in 2021. It introduces type annotations,
-and -- consequently -- rethinks everything from the ground up.
+and -- consequently -- rethinks everything from the ground up. 
+
+Old API interfaces will be broken. Python 3.9 is the target language.
+
+The only new feature added is support for "bytes" COBOL files.
+This uses the :py:mod:`stingray.schema_instance.Struct` Unpacker subclass
+to unpack bytes.
 
 
 Versions 0-4
@@ -237,4 +243,3 @@ not-system-utility copying steps.  It reduced the processing to this.
 
 This was written in C, but showed the absolute importance of using the schema
 in it's original source form.
-

@@ -26,7 +26,7 @@ There are two sides to this "using the same schema?" question:
 
 -   Software Quality. Will this application process a file with the required schema?
 
-THe underlying assumption is that the schema is right. Files or Applications
+The underlying assumption is that the schema is right. Files or Applications
 may not match the schema, but the schema is what's used to measure quality.
 
 We also need to note the following.
@@ -36,17 +36,18 @@ We also need to note the following.
 Concepts
 ========
 
-As noted in :ref:`intro`, there are three levels of schema that need to be bound to a file.
+Here are the three levels of schema that need to be bound to a file:
 
--   **Physical Format**.  We can make this transparent to our applications.
+-   **Physical Format**.  This defines how to unpack bytes into Python objects (e.g., decode a string to lines of text to atomic fields).
+    We want to make this transparent to our applications.
     When using Stingray Reader, everything is a workbook with a consistent API.
     
--   **Logical Layout**.  This is how an application program will make use
-    of the data found in a file. 
+-   **Logical Layout**.  This defines how to locate the values within structures that may not have perfectly consistent ordering.
     Sometimes the Logical Layout is described by a schema embedded in a file:
     it might be the top row of a sheet in a workbook, for example.
     Sometimes the logical layout can be separate: a COBOL data definition, or perhaps
     a metadata sheet in a workbook.
+    This is how an application program will make use of the data found in a file.
 
 -   **Conceptual Content**.  
     A single conceptual schema is often implemented by a number of logical layouts.
@@ -62,8 +63,8 @@ The order or position of the columns, however, need not be fixed.
 
 Since we're working in Python, the conceptual schema is often
 an application's collection of class
-definitions. The idea is to provide many ways to build a class instance
-based on variations in the logical layout.
+definitions. The idea is to provide many ways to build class instances
+based on variations in the logical layout. This should be independent of physical format.
 
 We use a schema to do a number of things with application processing
 and the related data.
@@ -105,8 +106,8 @@ Here are the essential relationships among the concepts:
 
 The Schema can originate in a variety of places.
 
--   A Schema can be the first row of a spreadsheet. Think of the :py:class:`csv.DictReader` that
-    examines the given file for a header row, creates a schema from this row,
+-   A Schema can be the first row of a spreadsheet. Think of the :py:class:`csv.DictReader` class, which
+    examines the given file for a header row, creates a minimal schema from this row,
     and uses the schema to unpack the remaining rows.
 
 -   A Schema can be in a separate document. There are a number of choices.
@@ -114,11 +115,11 @@ The Schema can originate in a variety of places.
     -   For COBOL files, the schema is a "Copybook" with the COBOL Data Definition Entry (DDE)
         For the file.
 
-    -   A sheet of a workbook may have "metadata" -- column definitions. This is a schema
-        in a workbook. The columns of this metadata sheet has it's own metaschema.
+    -   A sheet of a workbook may have "metadata" with column definitions. This is a schema
+        in a workbook. The columns of this metadata sheet have their own metaschema.
 
 -   A JSON Schema can be embedded in the code. Ideally, it's in a separate module
-    that can be shared by many applications.
+    that can be shared by many applications. The sharing assures consistent Conceptual Content among applications. 
 
 
 There are, in effect, four use cases for gathering schema that can be used
@@ -154,34 +155,37 @@ to process data.
 
     @enduml
 
-This leads us to four patterns for working with Schema.
+This leads us to four patterns for working with Schema to access data.
 We'll look at each of them in the next section.
 
-Essential Patterns
-==================
+Essential Patterns of Schema Use
+================================
 
 There are four essential patterns to working with schema.
 
 -   The schema is in one (or more) header rows of a sheet in a workbook.
 
--   The schema is from an external file.
+-   The schema is in an external file.
 
--   The schema is defined by a COBOL DDE in a "copybook".
+-   The schema is defined by a COBOL DDE in a "copybook", also an external file, but with more complex syntax.
 
--   A schema is embedded in the app
+-   A schema is embedded in the app.
+
+We'll look at each in some detail.
+
+Schema in Header Rows
+---------------------
 
 When the header row has a schema, the processing is vaguely similar to
 working with the :py:mod:`csv` module. There are two additional steps
 required to select the one-and-only sheet in the file, and to set
 the schema loader for the sheet.
 
-For CSV, COBOL, and similar single-file structures, the sheet is named ``""``.
-Rather than assume a default sheet with this name, stingray requires an explicit reference
+For CSV, COBOL, and similar single-file structures, the one-and-only sheet is named ``""``.
+Rather than assume a default sheet with this name, Stingray requires an explicit reference
 to the sheet named ``""``.
 
 The header row processing looks like this::
-
-::
 
     >>> from stingray import open_workbook, HeadingRowSchemaLoader, Row
     >>> from pathlib import Path
@@ -209,14 +213,27 @@ The header row processing looks like this::
     7.0 4.82
     5.0 5.68
 
-For an external schema, there are two steps.
+The essential processing, in the ``process_sheet()`` function, is based on a
+common :py:class:`Row` class definition. Each :py:class:`Row` instance
+has columns. The schema can provide conversion information. A CSV header -- by itself --
+can't provide anything more than column names, making the values all strings.
+
+The :py:class:`HeadingRowSchemaLoader` builds a schema from the header row.
+This is a stripped-down-to-almost-nothing schema with column names and default data types
+of string. 
+
+Schema in an External File
+--------------------------
+
+For an external schema, here are the two steps to processing the data:
 
 1.  Load the schema. This involves opening a workbook that has the schema,
-    A schema is built from this workbook.
+    A schema is built from this workbook. The external schema has its 
+    own metaschema, ideally as header rows. 
 
 2.  Process data using the loaded schema.
 
-External file processing look like this::
+External schema processing look like this::
 
     >>> from stingray import open_workbook, ExternalSchemaLoader, Row, SchemaMaker
     >>> from pathlib import Path
@@ -227,6 +244,7 @@ External file processing look like this::
     ...     for row in rows:
     ...         print(row.name("x123").value(), row.name("y1").value())
 
+    1. Load the Schema by reading a CSV file
     >>> schema_path = Path(os.environ.get("SAMPLES", "sample")) / "Anscombe_schema.csv"
     >>> with open_workbook(schema_path) as metaschema_workbook:
     ...     schema_sheet = metaschema_workbook.sheet('Sheet1')
@@ -234,6 +252,168 @@ External file processing look like this::
     ...     json_schema = ExternalSchemaLoader(schema_sheet).load()
     >>> schema = SchemaMaker().from_json(json_schema)
 
+    2. Process the rows using the schema
+    >>> data_path = Path(os.environ.get("SAMPLES", "sample")) / "Anscombe_quartet_data.csv"
+    >>> with open_workbook(data_path) as workbook:
+    ...     sheet = workbook.sheet('').set_schema(schema)
+    ...     process_sheet(sheet.rows())
+    x123 y1
+    10.0 8.04
+    8.0 6.95
+    13.0 7.58
+    9.0 8.81
+    11.0 8.33
+    14.0 9.96
+    6.0 7.24
+    4.0 4.26
+    12.0 10.84
+    7.0 4.82
+    5.0 5.68
+    
+The first step -- reading the external schema -- involves opening a schema workbook,
+and loading a schema sheet. The default schema loader is a :py:class:`HeadingRowSchemaLoader`.
+This will use column names in the first row of the metadata.
+
+The :py:class:`ExternalSchemaLoader` builds a schema from a sheet with column names,
+column data conversions, and a column description. The metaschema must match the 
+following JSONSchema definition:
+
+::
+
+    {
+        "title": "generic meta schema for external schema documents",
+        "type": "object",
+        "properties": {
+            "name": {"type": "string", "description": "field name", "position": 0},
+            "description": {
+                "type": "string",
+                "description": "field description",
+                "position": 1,
+            },
+            "dataType": {
+                "type": "string",
+                "description": "field data type",
+                "position": 2,
+            },
+        },
+    }
+
+Once the document's schema has been built from the metadata, it is used to process the target data.
+The ``process_sheet()`` function can consume rows with the attribute names and types that
+are defined in the external ``Anscombe_schema.csv`` file.
+Because of the schema, automated conversions from strings to float can be done by Stingray.
+
+Schema in a COBOL Copybook
+--------------------------
+
+COBOL Processing is similar to external schema loading.
+First, the application loads the schema from the COBOL copybook file.
+Then, the application can process data using the schema.
+
+COBOL processing looks like this::
+
+    >>> from stingray import schema_iter, COBOL_Text_File
+    >>> from pathlib import Path
+    >>> import os
+
+    >>> def process_sheet(rows: Iterable[Row]) -> None:
+    ...     for row in rows:
+    ...         print(row.name("X123").value(), row.name("Y1").value())
+
+    1. Load the Schema by reading a COBOL CPY file
+    >>> copybook_path = Path(os.environ.get("SAMPLES", "sample")) / "anscombe.cpy"
+    >>> with copybook_path.open() as source:
+    ...     schema_list = list(schema_iter(source))
+    >>> json_schema, = schema_list  # Take the first; ignore any other 01-level records
+    >>> schema = SchemaMaker().from_json(json_schema)
+
+    2. Process the rows using the schema
+    >>> data_path = Path(os.environ.get("SAMPLES", "sample")) / "anscombe.data"
+    >>> with COBOL_Text_File(data_path) as workbook:
+    ...     sheet = workbook.sheet('').set_schema(schema)
+    ...     process_sheet(sheet.rows())
+     010.00  008.04
+     008.00  006.95
+     013.00  007.58
+     009.00  008.81
+     011.00  008.33
+     014.00  009.96
+     006.00  007.24
+     004.00  004.26
+     012.00  010.84
+     007.00  004.82
+     005.00  005.68
+
+The :py:func:`schema_iter` function reads all of the COBOL record definitions
+in the given file. While it's common to have a single "01-level" layout in a file,
+this isn't universally true. The parser will examine all of the records.
+In the cases where there's a single definition, the result will be a list with
+only one item. We can use ``json_schema = schema_list[0]`` as an alternative for 
+taking one item from the list.
+
+The ``process_sheet()`` function for working with COBOL is nearly identical to the previous two examples.
+The column names ``x123`` and ``y1`` are switched to upper case, which is a little
+more typical of COBOL.
+
+The COBOL definition for this file is the following::
+
+       01  ANSCOMBE.
+           05  X123   PIC S999.99.
+           05  FILLER PIC X.
+           05  Y1     PIC S999.99.
+           05  FILLER PIC X.
+           05  Y2     PIC S999.99.
+           05  FILLER PIC X.
+           05  Y3     PIC S999.99.
+           05  FILLER PIC X.
+           05  X4     PIC S999.99.
+           05  FILLER PIC X.
+           05  Y4     PIC S999.99.
+
+The attributes all use a "USAGE DISPLAY" format, which makes them string values. 
+Any conversion to a number becomes part of the application processing.
+This is a consequence of sticking closely to COBOL semantics for the the data definitions.
+
+Schema In the Application
+-------------------------
+
+A Schema can be built within the application, also. This can be done using Stingray's internal
+data structures. However, it seems simpler to use JSON Schema as a starting point,
+and build the internal structure from the JSONSchema document.
+
+
+::
+
+    >>> from stingray import open_workbook, ExternalSchemaLoader, Row, SchemaMaker
+    >>> from pathlib import Path
+    >>> import os
+    >>> from typing import Iterable
+
+    >>> def process_sheet(rows: Iterable[Row]) -> None:
+    ...     for row in rows:
+    ...         print(row.name("x123").value(), row.name("y1").value())
+
+    1. Load a literal schema 
+    >>> json_schema = {
+    ...     "title": "spike/Anscombe_quartet_data.csv",
+    ...     "description": "Four series, use (x123, y1), (x123, y2), (x123, y3) or (x4, y4)",
+    ...     "type": "object",
+    ...     "properties": {
+    ...         "x123": {
+    ...             "title": "x123",
+    ...             "type": "number",
+    ...             "description": "X values for series 1, 2, and 3.",
+    ...         },
+    ...         "y1": {"title": "y1", "type": "number", "description": "Y value for series 1."},
+    ...         "y2": {"title": "y2", "type": "number", "description": "Y value for series 2."},
+    ...         "y3": {"title": "y3", "type": "number", "description": "Y value for series 3."},
+    ...         "x4": {"title": "x4", "type": "number", "description": "X value for series 4."},
+    ...         "y4": {"title": "y4", "type": "number", "description": "Y value for series 4."},
+    ...     },
+    ... }
+    >>> schema = SchemaMaker().from_json(json_schema)
+
+    2. Process the rows using the schema
     >>> data_path = Path(os.environ.get("SAMPLES", "sample")) / "Anscombe_quartet_data.csv"
     >>> with open_workbook(data_path) as workbook:
     ...     sheet = workbook.sheet('').set_schema(schema)
@@ -251,45 +431,11 @@ External file processing look like this::
     7.0 4.82
     5.0 5.68
 
-COBOL Processing is similar to external schema loading.
-First, the application loads the schema from the COBOL copybook file.
-Then, the application can process data using the schema.
+The JSONSchema description is realitively clear, and easy to write as a Python dictionary
+literal. This representation can be shared widely among multiple applications. 
+This could be part of an OpenAPI specification, for example, shared by a RESTful web 
+server with the client applications.
 
-COBOL processing looks like this::
-
-    >>> from stingray import schema_iter, COBOL_Text_File
-    >>> from pathlib import Path
-    >>> import os
-
-    >>> def process_sheet(rows: Iterable[Row]) -> None:
-    ...     for row in rows:
-    ...         print(row.name("X123").value(), row.name("Y1").value())
-
-    >>> copybook_path = Path(os.environ.get("SAMPLES", "sample")) / "anscombe.cpy"
-    >>> with copybook_path.open() as source:
-    ...     schema_list = list(schema_iter(source))
-    >>> json_schema, = schema_list  # Take the first; ignore any other 01-level records
-    >>> schema = SchemaMaker().from_json(json_schema)
-
-    >>> data_path = Path(os.environ.get("SAMPLES", "sample")) / "anscombe.data"
-    >>> with COBOL_Text_File(data_path) as workbook:
-    ...     sheet = workbook.sheet('').set_schema(schema)
-    ...     process_sheet(sheet.rows())
-     010.00  008.04
-     008.00  006.95
-     013.00  007.58
-     009.00  008.81
-     011.00  008.33
-     014.00  009.96
-     006.00  007.24
-     004.00  004.26
-     012.00  010.84
-     007.00  004.82
-     005.00  005.68
-
-Note that the ``process_sheet()`` function is nearly identical in all three cases.
-The column names ``x123`` and ``y1`` are switched to upper case, which is a little
-more typical of COBOL.
 
 Rows and Navigation
 ====================
@@ -297,8 +443,8 @@ Rows and Navigation
 A :py:class:`Row` is a binding between an instance of raw data from the underlying
 COBOL file or workbook structure, and a schema.
 
-Most workbook rows are a flat list of named columns. The JSONSchema definition
-is an "object"; each column is a property. For COBOL, this isn't appropriate.
+Most workbook rows are a flat sequence of named columns. The JSONSchema definition
+is an "object"; each column is a property. For COBOL, a simple list of columns isn't appropriate.
 For delimited files (i.e., NDJSON, YAML, or TOML) this isn't appropriate, either.
 
 To unify all of these, a :py:class:`Row` uses a navigation aid. These
@@ -307,8 +453,9 @@ are :py:class:`Nav` instances that are used to locate named properties.
 Ordinarily, the :py:class:`Nav` objects are invisible.
 When an application uses ``row.name("name").value()``
 to navigate into the schema, this will extract a Python object that is the value.
+An intermediate :py:class:`Nav` object will be created, but is not visible.
 
-A :py:class:`Nav` object will be visible when we omit the :py:class:`Nav.value` method
+A :py:class:`Nav` object can be visible when we omit the :py:class:`Nav.value` method
 which extracts the final Python object. It may be useful to cache :py:class:`Nav`
 objects to improve performance.
 
@@ -344,7 +491,7 @@ The fluent interface of a :py:class:`Nav` creates additional
 :py:class:`Nav` navigation helpers to work down into a complex structure.
 
 Generally, COBOL programs assume all field names are unique. (They don't have to be, but this is rare.)
-To make this work out well, Stringray leverages JSONSchema "$anchor" keywords to
+To make this work out well, Stringray leverages JSONSchema ``$anchor`` keywords to
 avoid complex path-based navigation into an object. Using anchor names allows
 a :py:meth:`Nav.name` method to locate a field deeply nested inside a complex COBOL record.
 
@@ -397,7 +544,7 @@ A simple description is the following:
 There is a tiny bit of boilerplate in this assignment statement. The overhead of the boilerplate
 is offset by the flexibility of using Python directly.
 
-We can use either `name('source')` or `['source']` as a way to locate a named attribute
+We can use either ``schema.name('source')`` or ``schema['source']`` as a way to locate a named attribute
 within a schema.
 
 There are some common cases that will extend or modify the boilerplate.

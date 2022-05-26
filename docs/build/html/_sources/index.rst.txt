@@ -50,10 +50,10 @@ Contents
 
 .. toctree::
    :maxdepth: 1
-   
-   introduction
+
    developer
    design
+   background
    demo/index
    apidoc/index
    history
@@ -79,4 +79,3 @@ Indices and Tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
