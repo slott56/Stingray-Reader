@@ -1,0 +1,7 @@
+stingray.cobol\_parser module
+=============================
+
+.. automodule:: stingray.cobol_parser
+   :members:
+   :undoc-members:
+   :show-inheritance:

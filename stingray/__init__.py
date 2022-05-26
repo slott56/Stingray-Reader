@@ -1,20 +1,22 @@
-#!/usr/bin/env python3
-
-# ..  _`stingray_init`:
-#
-# #########################
-# stingray ``__init__.py``
-# #########################
-#
-# This is approximately pure overhead required to make a Python package.
-#
-# ..  py:module:: __init__
-#
-# ::
-
-"""stingray --  Schema-based File Reader helps handle physical format and logical 
-layout of workbooks and flat files.
-
-Requires Python 3.5, xlrd 1.1.0
 """
-__version__ = "4.5"
+Stingray Reader -- schema-based file processing for workbooks, and COBOL files.
+"""
+
+from .workbook import (
+    open_workbook,
+    HeadingRowSchemaLoader,
+    COBOLSchemaLoader,
+    ExternalSchemaLoader,
+    COBOLSchemaLoader,
+    name_cleaner,
+    Workbook,
+    Sheet,
+    Row,
+    CSV_Workbook,
+    JSON_Workbook,
+    COBOL_Text_File,
+    COBOL_EBCDIC_File,
+)
+from .cobol_parser import schema_iter
+from .schema_instance import SchemaMaker, CONVERSION, JSON, digits_5, decimal_2
+from .implementations import *

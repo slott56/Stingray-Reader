@@ -1,12 +1,11 @@
-Metadata-Version: 1.1
+Metadata-Version: 2.1
 Name: stingray
-Version: 4.5
+Version: 5.0
 Summary: Schema-Based File Reader, COBOL, EBCDIC Conversion, ETL, Data Profiling
 Home-page: https://github.com/slott56/Stingray-Reader
 Author: S.Lott
-Author-email: s_lott@yahoo.com
+Author-email: slott56@gmail.com
 License: UNKNOWN
-Description: UNKNOWN
 Platform: UNKNOWN
 Classifier: Development Status :: 6 - Mature
 Classifier: Environment :: Console
@@ -17,3 +16,7 @@ Classifier: Programming Language :: COBOL
 Classifier: Topic :: Database
 Classifier: Topic :: Software Development :: Libraries
 Classifier: Topic :: Software Development :: Quality Assurance
+License-File: LICENSE
+
+UNKNOWN
+

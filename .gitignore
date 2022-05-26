@@ -7,7 +7,17 @@
 
 .idea/*
 .tox/*
-docs/html/.doctrees/
 .notes
 .ipynb_checkpoints/*
 .mypy_cache/*
+.coverage
+stingray/__pycache__/*
+demo/__pycache__/*
+tests/__pycache__/*
+stingray.egg-info/*
+build/lib/*
+
+v4.5/*
+docs/build/doctrees/*
+*.doctree
+*.doctree
