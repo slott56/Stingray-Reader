@@ -1,7 +1,0 @@
-stingray.implementations module
-===============================
-
-.. automodule:: stingray.implementations
-   :members:
-   :undoc-members:
-   :show-inheritance:

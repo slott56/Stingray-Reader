@@ -1,27 +1,27 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Data Conversion – ETL with Validation &#8212; Stingray-Reader 5.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <title>Data Conversion – ETL with Validation &#8212; Stingray-Reader 5.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=4af8989d"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Reading COBOL Files" href="cobol_reader.html" />
-    <link rel="prev" title="Data Profiling Demonstration" href="profile.html" />
+    <link rel="prev" title="Data Profiling" href="profile.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -34,11 +34,19 @@
           <div class="body" role="main">
             
   <section id="data-conversion-etl-with-validation">
-<span id="demo-conversion"></span><h1>Data Conversion – ETL with Validation<a class="headerlink" href="#data-conversion-etl-with-validation" title="Permalink to this headline">¶</a></h1>
-<p>This follows the design patterns shown earlier.</p>
-<p>See <code class="docutils literal notranslate"><span class="pre">demo/conversion.py</span></code>.</p>
+<span id="demo-conversion"></span><h1>Data Conversion – ETL with Validation<a class="headerlink" href="#data-conversion-etl-with-validation" title="Link to this heading">¶</a></h1>
+<p>Data conversions – from one file format (or database) to another – involve an Extract from the source, a possible transformation, and an load into the target.
+ETL is an apt generalization of a great many data movement operations.</p>
+<p>The Extract and Load ends of the process are clearly schema-driven and need to be independent of file format.
+The Transformation in the middle might be nothing more than changing representation from source schema type to target schema type.
+The Transformation may be more complex, and involve multiple source joins, or normalizations, or computation of derived fields.
+In general, the transformation portion is pure Python, and doesn’t need to be explored in any detail.</p>
+<p>The Extract and Load steps, however, do benefit from having a schema.
+This follows the design patterns shown earlier.
+See the <code class="file docutils literal notranslate"><span class="pre">demo/conversion.py</span></code> file in the Git repository for the complete source.</p>
 <section id="builder">
-<h2>Builder<a class="headerlink" href="#builder" title="Permalink to this headline">¶</a></h2>
+<h2>Builder<a class="headerlink" href="#builder" title="Link to this heading">¶</a></h2>
+<p>Here’s the builder function to create an intermediate document from the data source.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">builder</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="n">Row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">doc</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">col</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">())</span>
@@ -47,9 +55,14 @@
     <span class="k">return</span> <span class="n">doc</span>
 </pre></div>
 </div>
+<p>This is used as the Extract part of ETL.</p>
 </section>
 <section id="persistence">
-<h2>Persistence<a class="headerlink" href="#persistence" title="Permalink to this headline">¶</a></h2>
+<h2>Persistence<a class="headerlink" href="#persistence" title="Link to this heading">¶</a></h2>
+<p>Here’s context manager that handles persistence.
+This provides a <code class="xref py py-meth docutils literal notranslate"><span class="pre">save_json()</span></code> method.
+A subclass can remove this to implement a “dry-run” data validation operating mode.</p>
+<p>This is one version of the Load part of ETL.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Persistent_Processing</span><span class="p">:</span>
     <span class="n">stop_on_exception</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -71,7 +84,9 @@
 </div>
 </section>
 <section id="validation">
-<h2>Validation<a class="headerlink" href="#validation" title="Permalink to this headline">¶</a></h2>
+<h2>Validation<a class="headerlink" href="#validation" title="Link to this heading">¶</a></h2>
+<p>This can be viewed as part of Extract or part of Transform.
+It seems to make sense to think of data validation as the first stage of any Transformation processing.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Validation_Processing</span><span class="p">(</span><span class="n">Persistent_Processing</span><span class="p">):</span>
     <span class="n">stop_on_exception</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -87,7 +102,10 @@
 </div>
 </section>
 <section id="target-schema-for-output">
-<h2>Target Schema for Output<a class="headerlink" href="#target-schema-for-output" title="Permalink to this headline">¶</a></h2>
+<h2>Target Schema for Output<a class="headerlink" href="#target-schema-for-output" title="Link to this heading">¶</a></h2>
+<p>This schema is used to define the Load operation.
+It – in conjunction with the <code class="xref py py-class docutils literal notranslate"><span class="pre">Persistent_Processing</span></code> class – implements the “load” part.
+In this case, the load writes a file.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TARGET_SCHEMA</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Anscombe&#39;s Quartet&quot;</span><span class="p">,</span>
     <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
@@ -104,7 +122,9 @@
 </div>
 </section>
 <section id="process-sheet">
-<h2>Process Sheet<a class="headerlink" href="#process-sheet" title="Permalink to this headline">¶</a></h2>
+<h2>Process Sheet<a class="headerlink" href="#process-sheet" title="Link to this heading">¶</a></h2>
+<p>The source has one (or more) sheets of data.
+This will extract, transform, and load all of them.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_sheet</span><span class="p">(</span><span class="n">sheet</span><span class="p">:</span> <span class="n">Sheet</span><span class="p">,</span> <span class="n">persistence</span><span class="p">:</span> <span class="n">Persistent_Processing</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Counter</span><span class="p">:</span>
     <span class="n">counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
@@ -127,7 +147,8 @@
 </div>
 </section>
 <section id="main-program">
-<h2>Main Program<a class="headerlink" href="#main-program" title="Permalink to this headline">¶</a></h2>
+<h2>Main Program<a class="headerlink" href="#main-program" title="Link to this heading">¶</a></h2>
+<p>Argument parsing looks like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">:</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>
@@ -144,6 +165,7 @@
     <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>The overall <code class="xref py py-func docutils literal notranslate"><span class="pre">main()</span></code> function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
     <span class="n">mode_class</span> <span class="o">=</span> <span class="n">Validation_Processing</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">dry_run</span> <span class="k">else</span> <span class="n">Persistent_Processing</span>
@@ -164,10 +186,10 @@
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo"/>
+              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo of Stingray-Reader"/>
             </a></p>
 <h1 class="logo"><a href="../index.html">Stingray-Reader</a></h1>
 
@@ -178,16 +200,26 @@
 
 
 
-<h3>Navigation</h3>
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../developer.html">Using <strong>Stingray Reader</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Additional Background</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Demo Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apidoc/index.html">stingray API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo.html">The TODO List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">Commercial Use</a></li>
 </ul>
 
@@ -196,22 +228,12 @@
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">Demo Applications</a><ul>
-      <li>Previous: <a href="profile.html" title="previous chapter">Data Profiling Demonstration</a></li>
+      <li>Previous: <a href="profile.html" title="previous chapter">Data Profiling</a></li>
       <li>Next: <a href="cobol_reader.html" title="next chapter">Reading COBOL Files</a></li>
   </ul></li>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
 
 
 
@@ -225,11 +247,11 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2021, S.Lott.
+      &#169;2021, S.Lott.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/demo/conversion.rst.txt"

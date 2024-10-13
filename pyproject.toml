@@ -1,0 +1,45 @@
+[project]
+name = "stingray-reader"
+version = "5.1"
+description = "The Stingray Schema-Based File Reader"
+readme = "README.rst"
+authors = [
+  {name = "S.Lott", email = "slott56@gmail.com"},
+]
+license = {file = "LICENSE"}
+requires-python = ">=3.12"
+dependencies = [
+    "jsonschema>=4.23.0",
+    "numbers-parser>=4.13.2",
+    "openpyxl>=3.1.5",
+    "pyexcel[ods]>=0.7.0",
+    "xlrd>=2.0.1",
+]
+classifiers = [
+        "Development Status :: 6 - Mature",
+        "Environment :: Console",
+        "Intended Audience :: Developers",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: COBOL",
+]
+
+[project.urls]
+Homepage = "https://github.com/slott56/Stingray-Reader"
+
+[tool.uv]
+dev-dependencies = [
+    "tox>=4.21.2",
+    "tox-uv>=1.13.0",
+    "pytest>=8.3.3",
+    "pytest-cov>=5.0.0",
+    "sphinx>=8.1.0",
+    "sphinxcontrib-plantuml>=0.30",
+    "pyright>=1.1.384",
+    "ruff>=0.6.9",
+    "pygments>=2.18.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

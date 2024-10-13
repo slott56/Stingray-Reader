@@ -21,7 +21,7 @@ import logging
 from pathlib import Path
 import pprint
 import sys
-from typing import TextIO, Any, Optional, Callable
+from typing import Any, Optional
 from types import TracebackType
 
 from stingray.workbook import (
@@ -29,7 +29,6 @@ from stingray.workbook import (
     HeadingRowSchemaLoader,
     Workbook,
     Sheet,
-    Row,
 )
 
 

@@ -78,7 +78,7 @@ Here are some additional side-bar considerations for other formats that depend o
 
 - ODS and XLSX are XML files. Incremental parsing is helpful here because they can be large. See https://openpyxl.readthedocs.io/en/stable/ and http://docs.pyexcel.org/en/v0.0.6-rc2/.
 
-- Numbers_13 is protobuf. The legacy version of Stingray Reader had  protobuf definitions which appear to work and a snappy decoder. See https://pypi.org/project/numbers-parser/ for a better solution.
+- Numbers uses protobuf. The legacy version of Stingray Reader had  protobuf definitions which appear to work and a snappy decoder. See https://pypi.org/project/numbers-parser/ for the better solution currently in use.
 
 - TOML requires an external library.  An :py:class:`Unpacker` subclass can decompose a "one big list" TOML document into individual rows.
 
@@ -102,6 +102,31 @@ Once a sheet has been bound to a schema, the rows can be processed.
 ::
 
     >>> from stingray import open_workbook, HeadingRowSchemaLoader, Row
+        >>> from pathlib import Path
+        >>> import os
+        >>> from typing import Iterable
+        >>> source_path = Path(os.environ.get("SAMPLES", "sample")) / "Anscombe_quartet_data.csv"
+
+        >>> def process_sheet(rows: Iterable[Row]) -> None:
+        ...     for row in rows:
+        ...         row.dump()
+        ...         break  # Stop after 1 row.
+
+        >>> with open_workbook(source_path) as workbook:
+        ...    sheet = workbook.sheet('Sheet1')
+        ...    _ = sheet.set_schema_loader(HeadingRowSchemaLoader())
+        ...    process_sheet(sheet.rows())
+        Field                                                 Value
+        object
+          x123                                                '10.0'
+          y1                                                  '8.04'
+          y2                                                  '9.14'
+          y3                                                  '7.46'
+          x4                                                  '8.0'
+          y4                                                  '6.58'
+
+
+    In this case, the :py
     >>> from pathlib import Path
     >>> import os
     >>> from typing import Iterable
@@ -134,6 +159,31 @@ by the :py:class:`HeadingRowSchemaLoader`.
 ::
 
     >>> from stingray import open_workbook, ExternalSchemaLoader, Row, SchemaMaker
+    >>> from pathlib import Path
+    >>> import os
+    >>> from typing import Iterable
+    >>> source_path = Path(os.environ.get("SAMPLES", "sample")) / "Anscombe_quartet_data.csv"
+    >>> schema_path = Path(os.environ.get("SAMPLES", "sample")) / "Anscombe_schema.csv"
+
+    >>> with open_workbook(schema_path) as metaschema_workbook:
+    ...     schema_sheet = metaschema_workbook.sheet('Sheet1')
+    ...     _ = schema_sheet.set_schema(SchemaMaker().from_json(ExternalSchemaLoader.META_SCHEMA))
+    ...     json_schema = ExternalSchemaLoader(schema_sheet).load()
+    ...     schema = SchemaMaker().from_json(json_schema)
+
+    >>> with open_workbook(source_path) as workbook:
+    ...     sheet = workbook.sheet('Sheet1').set_schema(schema)
+    ...     process_sheet(sheet.rows())
+    Field                                                 Value
+    object
+      x123                                                'x123'
+      y1                                                  'y1'
+      y2                                                  'y2'
+      y3                                                  'y3'
+      x4                                                  'x4'
+      y4                                                  'y4'
+
+    In this case, the :py
     >>> from pathlib import Path
     >>> import os
     >>> from typing import Iterable

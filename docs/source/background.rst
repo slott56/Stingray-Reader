@@ -1,17 +1,17 @@
 
 ..  _`intro`:
 
-#################
-Background
-#################
+#####################
+Additional Background
+#####################
 
 Given a workbook -- or any other "flat" file -- how is it organized?  What does it *mean*?
 
-How can we ignore details that are merely physical?
+How can we work with the meaningful data, while ignoring details that are merely physical?
 When is a change a logical layout variant with no semantic impact?
 How do we isolate ourselves from logical and physical variations?
 
-In this section, we'll dive -- deeply -- into the backgound of Stingray Reader.
+In this section, we'll dive -- deeply -- into the backgound of **Stingray**.
 
 Here are two user stories we'll use provide a useful context:
 
@@ -25,9 +25,8 @@ Here are two user stories we'll use provide a useful context:
     case, there's no prior expectation. For the validation case, there's a set of
     criteria which must be met for the data to be valid.
 
-These two stories describe similar processing. In one case, the processing
-prepares data for subsequent consumption. The other case consumes data as a
-final analytical step.
+These two stories describe similar processing. In one case, the processing prepares data for subsequent consumption.
+The other case consumes data as a final analytical step.
 
 We'll begin with some foundational ideas.
 
@@ -48,18 +47,19 @@ We'd like something like this to transparently handle workbook files in a variet
             *process row*
         return counts
 
-The idea here is to properly isolate processing centered on a single sheet of w workbook.
-It's often the case that a single sheet can be created in First Normal Form (1NF). This
-means each field is atomic, and there are no repeating arrays within the row.
+The idea here is to properly isolate processing centered on a single sheet of a workbook.
+It's often the case that a single sheet can be created in First Normal Form (1NF).
+This means each field is atomic, and there are no repeating arrays within the row.
 
-Actual data can, of course, be much more complex. The conceptual model, however, seems
-to be useful for structuing data-intensive applications.
+Actual data can, of course, be much more complex.
+The conceptual model, however, seems to be useful for structuing data-intensive applications.
 
 This sheet-level function is used by a main application function.
 
 ..  parsed-literal::
 
-    def main(args: argparse.Namespace) -> None:
+    def main(argv: list[str] = sys.argv[1:]) -> None:
+        args = get_options(argv)
         for input in args.file:
             with stingray.open_workbook(input) as source:
                 for sheet in source.sheets():
@@ -67,46 +67,38 @@ This sheet-level function is used by a main application function.
                     counts = process_sheet(sheet)
                     pprint(counts)
 
-This describes a process for handling all sheets of all of the files provided
-on the command line. Some applications may be focused on a single sheet of a
-single file, reducing the nested file and sheet processing.
+This describes a process for handling all sheets of all of the files provided on the command line.
+Some applications may be focused on a single sheet of a single file, reducing the nested file and sheet processing.
 
-The ``HeadingRowSchemaLoader`` class extracts the first row of each sheet
-as the defacto schema for that sheet. Given only column names, the data types must
-be assumed or conversion functions provided as part of the application to
-assure that the column contents are -- indeed -- objects of useful Python clsses.
+The ``HeadingRowSchemaLoader`` class extracts the first row of each sheet as the defacto schema for that sheet.
+Given only column names, the data types must be assumed or conversion functions provided as part of the application to assure that the column contents are -- indeed -- objects of useful Python clsses.
 
-This schema loader parallels the way ``csv.DictReader`` extracts the first row as the keys
-for each row's dictionary. It's explicit, however, permitting change for exceptional cases.
-For example, a spreadsheet with complex, multi-row titles. These require a more sophisticated parser
-that consumes multiple rows of heading.
+This schema loader parallels the way ``csv.DictReader`` extracts the first row as the keys for each row's dictionary.
+It's explicit, however, permitting change for exceptional cases.
+For example, a spreadsheet with complex, multi-row titles.
+These require a more sophisticated parser that consumes multiple rows of heading.
 
-In the most complex cases, multiple independent "sections" of data are present in a
-single spreadsheet. This kind of data requires a "heading parser" that can decompose the sheet into sections
-by locating headings and bodies.
+In the most complex cases, multiple independent "sections" of data are present in a single spreadsheet.
+This kind of data requires a "heading parser" that can decompose the sheet into sections by locating headings and bodies.
 
-While heading rows are common, it's also possible to have a
-a separate sheet or a separate workbook with column definitions.
+While heading rows are common, it's also possible to have a separate sheet or a separate workbook with column definitions.
 External schema for a spreadsheet or file may be another simple spreadsheet.
 
-For some kinds of documents, the schema may be written as a JSONSchema document.
+For some kinds of documents, the schema may be written as a JSON Schema document.
 For COBOL files, the schema is often DDE (Data Definition Entry) in a "Copybook".
-Stingray Reader can parse COBOL and create the needed JSONSchema document.
+**Stingray** can parse COBOL and create the needed JSONS chema document.
 
 These issues are the source of numerous complications in otherwise simple applications.
-The application processing doesn't vary, but dealing with various file and workbook layouts
-adds a distracting (and irrelevant) layer of processing to an application.
+The application processing doesn't vary, but dealing with various file and workbook layouts adds a distracting (and irrelevant) layer of processing to an application.
 
 Design Patterns
 ===============
 
-We want to build applications that are flexible with respect to the
-the logical layout of columns.  We'd like to be adaptable to changes to the names, number,
-order and type of columns without any revision to the application software.
+We want to build applications that are flexible with respect to the the logical layout of columns.
+We'd like to be adaptable to changes to the names, number, order and type of columns without any revision to the application software.
 
 The core design pattern is the **Builder Function**.
-These functions isolate the
-logical layout from the rest of the application and do nothing more.
+These functions isolate the logical layout from the rest of the application and do nothing more.
 
 Here's an example.
 
@@ -120,14 +112,13 @@ Here's an example.
             phone=aRow['phone'].value(),
         )
 
-The column names and data conversions are isolated to this
-function only.  As the source schemata evolve, we can update an
-application to add variations on this function.
+The column names and data conversions are isolated to this function only.
+As the source schemata evolve, we can update an application to add variations on this function.
 
 The ``digits_5()`` function is necessary to cope with US ZIP codes.
-These are digit strings. Spreadsheet software often transforms them into
-integers. The ZIP codes in the northeast which begin with zero become
-four-digit numbers. For example, ``01020`` would become 1020 in the spreadsheet.
+These are digit strings. Spreadsheet software often transforms them into integers.
+The ZIP codes in the northeast which begin with zero become four-digit numbers.
+For example, ``01020`` would become 1020 in the spreadsheet.
 The ``digits_5`` function recovers the original ZIP code.
 
 
@@ -146,18 +137,18 @@ We can transform a generic ``dict[str, Any]`` into something more useful like th
         def from_dict(cls: type[SomeObject], record_dict: dict[str, Any]) -> SomeObject:
             return SomeObject(\*\*record_dict)
 
-We've explicitly divorced the application object from the source file format using
-a Python intermediary. The row dictionary is a necessary overhead to assure that
-changes in the source or the application processing are isolated from each other.
+We've explicitly divorced the application object from the source file format using a Python intermediary.
+The row dictionary is a necessary overhead to assure that changes in the source or the application processing are isolated from each other.
 
-A useful class is the composite of the generic builder and the specific
-class conversion. We can combine the two steps like this:
+A useful class is the composite of the generic builder and the specific class conversion.
+We can combine the two steps like this:
 
 ..  parsed-literal::
 
     class SomeObjectSource:
         @staticmethod
-        def build_record_dict(aRow: Row) -> dict[str, Any]: ...
+        def build_record_dict(aRow: Row) -> dict[str, Any]:
+            ...
 
         @staticmethod
         def object_iter(source: Iterable[Row]) -> Iterator[SomeObject]:
@@ -165,15 +156,14 @@ class conversion. We can combine the two steps like this:
                 rd = SomeObjectSource.build_record_dict(row)
                 yield SomeObject.from_dict(rd)
 
-This design breaks processing into two parts. The logical layout mapping
-from workbook rows to Python objects is never trivial.
-The implmentaton of ``build_record_dict()`` is subject to change
-with minimal notice. Transforming this to the useful ``SomeObject`` class
-is often trivial. It helps to keep it separate.
+This design breaks processing into two parts.
+The logical layout mapping from workbook rows to Python objects is never trivial.
+The implmentaton of ``build_record_dict()`` is subject to change with minimal notice.
+Transforming this to the useful ``SomeObject`` class is often trivial.
+It helps to keep the two aspects separate.
 
 This can be restated as a sequence of generator expressions.
-This form is sometimes helpful for visualizing the stages in
-the processing,
+This form is sometimes helpful for visualizing the stages in the processing.
 
 It looks like this:
 
@@ -195,11 +185,10 @@ It looks like this:
             )
             return object_gen
 
-Experience indicates that it's best to factor the input processing into at least two discrete
-steps so that transformations are easier to manage and extend.
+Experience indicates that it's best to factor the input processing into at least two discrete steps so that transformations are easier to manage and extend.
 
-Additional steps often accrue as the application evolves. Alternatives steps accrus to support
-new or modified data sources.
+Additional steps often accrue as the application evolves.
+Alternative steps accrue to support new or modified data sources.
 
 We can then use this iterator to process rows of a sheet.
 
@@ -219,22 +208,26 @@ Deeper Issues
 
 Processing a workbook (or other flat file) means solving three closely-related schema problems.
 
--   Unpacking the *Physical Format*. We need to unpack bytes into Python objects (e.g., decode a string to lines
-    of text to atomic fields). We need a **Facade** over the various workbook libraries
-    to make Physical Format transparent to our applications.
+-   Unpacking the *Physical Format*.
+    We need to build Python objects from bytes (e.g., decode a string to lines
+    of text to atomic fields).
+    We need a **Facade** over the various workbook libraries to make Physical Format transparent to our applications.
 
--   Mapping to the *Logical Layout*. Locate the values within structures that may not
-    have perfectly consistent ordering. A CSV file with column headers, for example,
-    can be treated as a dictionary, making the column order irrelevant. If a schema is
-    **always** used, then the Logical Layout becomes transparent to our application.
+-   Mapping to the *Logical Layout*.
+    We need to locate the values within structures that may not have perfectly consistent ordering.
+    A CSV file with column headers, for example, can be treated as a dictionary, making the column order irrelevant.
+    If a schema is **always** used, then the Logical Layout becomes transparent to our application.
 
--   Understanging the *Conceptual Content*.  That is, the semantic mapping from Python
+-   Understanging the *Conceptual Content*.
+    That is, the semantic mapping from Python
     items (e.g., strings) to meaningful data elements in our problem domain (e.g., customer zip codes.)
 
-The physical format issue is addressed by a **Facade** that uses the well-known (or even standardized) file formats:
-CSV, XLSX, XML, JSON, YAML, TOML, etc., can all be parsed readily. Numbers files can be parsed, but this
-format requires some extra work because it's not standardized. Traditional .XLS files, also, are highly proprietary.
-We need to include COBOL files. In many cases, they will parallel workbooks. COBOL files introduce some unique complexities.
+The physical format issue is addressed by a **Facade** that parses the well-known (or even standardized) file formats: CSV, XLSX, XML, JSON, YAML, TOML, etc.
+Numbers files can be parsed, but this format requires some extra work because it's not standardized.
+Traditional .XLS files, also, are highly proprietary.
+We need to include COBOL files.
+In many cases, they will parallel workbooks.
+COBOL files introduce some unique complexities.
 
 The logical layout issue is not as easy to address as the physical format issue.
 Here are some root causes for Logical Layout problems:
@@ -255,18 +248,16 @@ Here are some root causes for Logical Layout problems:
     Time Interval Delta"?  Or is it something entirely unrelated that merely
     happens to be shoved into that field?
 
-    Yes, this is evidence of "code rot."
-    Even with careful format definitions, this kind of thing happens as software matures.
-    No, there's no technical solution short of firing all the managers who make short-sighted decisions.
+    This often happens because old technology constraints must be perpetuated for fear of breaking something.
+    No, there's no technical solution short of firing all the managers who make the decision to preserve antiquated conventions.
     
     We'll need a design that has the flexibility to cope with variant abbreviations for column names.
 
 -   **Bad Stewardship**.  At some point in the past, the "Employees Here" and "Total Employees"
     were misused by an application.  The problem was found--and fixed--but
     there is some "legacy" data that has incorrect values.  What now?
-    
-    Yes, this is a data stewardship problem. No, you can't restate data you don't have.
 
+    This is a data stewardship problem.
     This leads to rather complex designs where the mapping from source to target
     is dependent on some external context to understand the source data.
 
@@ -276,7 +267,7 @@ Here are some root causes for Logical Layout problems:
     seem to have any meaning.  Really.
     
     Is this "technical debt"? Or is it "code rot"? Does it matter?
-    
+
     We need flexibility to handle bugs that lead to data problems.
 
 The point here is that there is an underlying *Conceptual Schema*.  It often has numerous
@@ -289,7 +280,8 @@ We have an additional consideration when it comes to data conversions.
 We have to avoid the attractive nuisance of a Domain Specific Language (DSL) 
 for mappings and conversions.
 
-There's no value in creating a new mapping language. This is bad:
+There's no value in creating a new mapping language.
+The following example is bad:
 
 ..  parsed-literal::
 
@@ -306,22 +298,16 @@ When we  work with COBOL or Fixed Format files, we find these files are not in F
 COBOL files have repeating groups which require numeric indexes in addition to column names.
 
 For semi-structured data (JSON, YAML, TOML, XML, etc.) there are fewer
-constraints on the data, leading to an even more complex data normalization step and possible
-row validation rules. We'd like to retain a relatively simple schema 
-in spite of the potential complexity of these files.  A DSL would devolve to Python-like
-functionality to work with these formats.
+constraints on the data, leading to an even more complex data normalization step and possible row validation rules.
+We'd like to retain a relatively simple schema in spite of the potential complexity of these files.
+A DSL would devolve to Python-like functionality to work with these formats.
 
-The :py:mod:`csv` approach of **eagerly** building a row from the raw bytes doesn't work
-for COBOL files because of the ``REDEFINES`` clause.  We can't reliably
-build the various "cells" available in a COBOL schema, since some of
-those values may turn out to be invalid. COBOL requires lazily building a row
-based on which REDEFINES alias is relevant.
+The :py:mod:`csv` approach of **eagerly** building a row from the raw bytes doesn't work for COBOL files because of the ``REDEFINES`` clause.
+We can't reliably build the various "cells" available in a COBOL schema, since some of those values may turn out to be invalid.
+COBOL requires lazily building a row based on which ``REDEFINES`` alias is relevant.
 
 Historical Solutions
 =======================
-
-    "Those who cannot remember the past are condemned to repeat it."
-    --George Santayana
 
 We'll look at four solutions in their approximate historical order.
 
@@ -337,8 +323,8 @@ There is an `XML Non-Solution`_.  While XML is relevant, it is not a *universal*
 that some folks seem to hope for.  At best, it offers us XSD, which may be too sophisticated 
 for the problem we're trying to solve.
 
-The `JSONSchema Approach`_. The JSONSchema standard is, perhaps, more useful than XSD
-as a schema definition. Mostly because JSONSchema surfaces in OpenAPI specifications and
+The `JSON Schema Approach`_. The JSON Schema standard is, perhaps, more useful than XSD
+as a schema definition. Mostly because JSON Schema surfaces in OpenAPI specifications and
 document data stores.
 
 For semi-structured data (JSON, YAML and outlines), we need more than a simple
@@ -477,50 +463,41 @@ some of what we're going to use.
 XSD seems a bit too complex for this problem domain. It seems awkward
 to extract XSD from the XML context and apply it to workbooks and COBOL files.
 
-JSONSchema Approach
--------------------
+JSON Schema Approach
+--------------------
 
-The JSONSchema standard provides a schema definition. See https://json-schema.org.
+The JSON Schema standard provides a schema definition. See https://json-schema.org.
 
 This is leveraged by OpenAPI specifications. See https://swagger.io/specification/.
 
-Our objective is to leverage JSON Schema schema definitions to cover Spreadsheet Workkbooks
-as well as COBOL files. This requires a few extensions to cover the details of non-delimited
-physical formats.
+Our objective is to leverage JSON Schema schema definitions to cover Spreadsheet Workkbooks as well as COBOL files.
+This requires a few extensions to cover the details of non-delimited physical formats.
 
 We can convert XSD to JSON Schema. https://github.com/benscott/xsdtojson.
 
-We can convert SQL DDL statements to JSONSchema. https://github.com/shinichi-takii/ddlparse
+We can convert SQL DDL statements to JSON Schema. https://github.com/shinichi-takii/ddlparse
 
-The Stingray Reader converts COBOL to JSONSchema.
+**Stingray** converts COBOL to JSON Schema.
 
-This lets us use JSONSchema as a common schema definition. We can import the schema into our applications,
-and we can -- with some discipline -- make sure the schema definitions are bound to our data files.
+This lets us use JSON Schema as a common schema definition.
+We can import the schema into our applications, and we can -- with some discipline -- make sure the schema definitions are bound to our data files.
 
 Summary
 -------------------------
 
 Physical format independence is available with some file formats.
-Sadly, others -- which are still in active use -- require a great deal
-of schema information merely to decode the physical format.
+Sadly, others -- which are still in active use -- require a great deal of schema information merely to decode the physical format.
 
-Logical layout is generally a feature of the application program
-as well as the data.  In a SQL-based data access, the column
-names in a ``SELECT`` statement amount to a binding between application and schema.
+Logical layout is generally a feature of the application program as well as the data.
+In a SQL-based data access, the column names in a ``SELECT`` statement amount to a binding between application and schema.
 
-While we can make some kinds of simple
-applications which are completely driven by metadata, we can't easily
-escape the need to customize and deal with variations.
-Therefore, we need to have application programs which can
-tolerate changes without requiring a rewrite.
+While we can make some kinds of simple applications which are completely driven by metadata, we can't easily escape the need to customize and deal with variations.
+Therefore, we need to have application programs which can tolerate changes without requiring a rewrite.
 
-We would like an application program that can work with
-"minor" variations on a logical layout.  That is, the order
-of columns, or minor spelling changes to a column name can be
-handled gracefully.
+We would like an application program that can work with "minor" variations on a logical layout.
+That is, the order of columns, or minor spelling changes to a column name can be handled gracefully.
 
-We'd like our batch processing applications to have a command-line
-interface something like this.
+We'd like our batch processing applications to have a command-line interface something like this.
 
 ..  code-block:: bash
 

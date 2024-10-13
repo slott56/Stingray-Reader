@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reading COBOL Files &#8212; Stingray-Reader 5.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <title>Reading COBOL Files &#8212; Stingray-Reader 5.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=4af8989d"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="stingray API Reference" href="../apidoc/index.html" />
@@ -20,8 +19,9 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -34,15 +34,15 @@
           <div class="body" role="main">
             
   <section id="reading-cobol-files">
-<span id="demo-cobol"></span><h1>Reading COBOL Files<a class="headerlink" href="#reading-cobol-files" title="Permalink to this headline">¶</a></h1>
+<span id="demo-cobol"></span><h1>Reading COBOL Files<a class="headerlink" href="#reading-cobol-files" title="Link to this heading">¶</a></h1>
 <p>For sample data, we’re using data found here:
 <a class="reference external" href="http://wonder.cdc.gov/wonder/sci_data/codes/fips/type_txt/cntyxref.asp">http://wonder.cdc.gov/wonder/sci_data/codes/fips/type_txt/cntyxref.asp</a></p>
 <p>The data files are in two zip archives: <a class="reference external" href="http://wonder.cdc.gov/wonder/sci_data/datasets/zipctyA.zip">http://wonder.cdc.gov/wonder/sci_data/datasets/zipctyA.zip</a>
 and <a class="reference external" href="http://wonder.cdc.gov/wonder/sci_data/datasets/zipctyB.zip">http://wonder.cdc.gov/wonder/sci_data/datasets/zipctyB.zip</a></p>
 <p>Each of these archives contains five large files, with 2,310,000 rows of data, plus a header.
 The 10th file has 2,037,944 rows of data plus a header.</p>
-<p>The member names of the ZIP archive are zipcty1 to zipcty5
-and zipcty6 to zipcty10.</p>
+<p>The member names of the ZIP archive are <code class="docutils literal notranslate"><span class="pre">zipcty1</span></code> to <code class="docutils literal notranslate"><span class="pre">zipcty5</span></code>
+and <code class="docutils literal notranslate"><span class="pre">zipcty6</span></code> to <code class="docutils literal notranslate"><span class="pre">zipcty10</span></code>.</p>
 <p>We’ll work with two small subsets in the sample directory.</p>
 <p>Here are the two record layouts.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">COUNTY</span> <span class="n">CROSS</span><span class="o">-</span><span class="n">REFERENCE</span> <span class="n">FILE</span> <span class="o">-</span> <span class="n">COBOL</span> <span class="n">EXAMPLE</span>
@@ -87,9 +87,9 @@ and zipcty6 to zipcty10.</p>
           <span class="mi">05</span>  <span class="n">FILLER</span>                                     <span class="n">PIC</span>  <span class="n">X</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span>
 </pre></div>
 </div>
-<section id="implementation">
-<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
-<p>The actual COBOL code is in <code class="file docutils literal notranslate"><span class="pre">sample/zipcty.cob</span></code>.
+<section id="first-steps">
+<h2>First Steps<a class="headerlink" href="#first-steps" title="Link to this heading">¶</a></h2>
+<p>The actual COBOL code for the schema is in <code class="file docutils literal notranslate"><span class="pre">sample/zipcty.cob</span></code>.
 This file has both record layouts.
 These are two <code class="docutils literal notranslate"><span class="pre">01</span></code> level items in a single file.</p>
 <p>When working with unknown files, we sometimes need to preview a raw dump of the
@@ -100,8 +100,11 @@ records.</p>
 </pre></div>
 </div>
 <p>This is a handy expedient for debugging.</p>
-<p>As suggested in <a class="reference internal" href="../developer.html#developer"><span class="std std-ref">Using Stingray Reader</span></a>, here are two builder functions.
-The <code class="docutils literal notranslate"><span class="pre">header_builder()</span></code> function creates a header object from the
+</section>
+<section id="builder-functions">
+<h2>Builder Functions<a class="headerlink" href="#builder-functions" title="Link to this heading">¶</a></h2>
+<p>As suggested in <a class="reference internal" href="../developer.html#using"><span class="std std-ref">Using Stingray Reader</span></a>, here are two builder functions.
+The <code class="xref py py-func docutils literal notranslate"><span class="pre">header_builder()</span></code> function creates a header object from the
 first row of each <code class="file docutils literal notranslate"><span class="pre">zipcty*</span></code> file.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">header_builder</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="n">Row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">{</span>
@@ -112,11 +115,11 @@ first row of each <code class="file docutils literal notranslate"><span class="p
     <span class="p">}</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">detail_builder()</span></code> function creates a detail object from the subsequent
+<p>The <code class="xref py py-func docutils literal notranslate"><span class="pre">detail_builder()</span></code> function creates a detail object from the subsequent
 rows of each <code class="file docutils literal notranslate"><span class="pre">zipcty*</span></code> file.</p>
-<p>Because the names within the COBOL layout are not unique at the bottom-most
-element level, we must use path names. The default path names include all
-levels of the DDE. More clever path name components might be useful here.</p>
+<p>Because the names within the COBOL layout are not unique at the bottom-most element level, we must use path names.
+The default path names include all levels of the DDE.
+More clever path name components might be useful here.</p>
 <p>COBOL uses an “of” to work up the hierarchy looking for a unique name.</p>
 <p>Maybe we could build a fluent interface <code class="docutils literal notranslate"><span class="pre">schema['ZIP-SECTOR-NO'].of('ZIP-ADD-ON-LOW-NO')</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">detail_builder</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="n">Row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -141,19 +144,20 @@ levels of the DDE. More clever path name components might be useful here.</p>
     <span class="p">}</span>
 </pre></div>
 </div>
-<p>Here’s the <code class="docutils literal notranslate"><span class="pre">process_sheet()</span></code> function which applies the builders to the various
-rows in each sheet. Currently, all that happens is a print of the object that
-was built.</p>
-<p>Note that we’ve transformed the schema from a simple, flat list into
-a dictionary keyed by field name. For COBOL processing, this is essential, since
-the numeric order of fields isn’t often sensible.</p>
+</section>
+<section id="sheet-processing">
+<h2>Sheet Processing<a class="headerlink" href="#sheet-processing" title="Link to this heading">¶</a></h2>
+<p>Here’s the <code class="xref py py-func docutils literal notranslate"><span class="pre">process_sheet()</span></code> function which applies the builders to the various
+rows in each sheet.
+Currently, all that happens is a print of the object that was built.</p>
+<p>Note that we’ve transformed the schema from a simple, flat list into a dictionary keyed by field name.
+For COBOL processing, this is essential, since the numeric order of fields isn’t often sensible.</p>
 <p>Also note that we’ve put two versions of each name into the schema dictionary.</p>
 <ul class="simple">
 <li><p>The lowest level name.</p></li>
 <li><p>The entire path down to the lowest level name.</p></li>
 </ul>
-<p>[For spreadsheets, where columns are numbered, the positional information may be
-useful.]</p>
+<p>[For spreadsheets, where columns are numbered, the positional information may be useful.]</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_sheet</span><span class="p">(</span><span class="n">sheet</span><span class="p">:</span> <span class="n">Sheet</span><span class="p">,</span> <span class="n">schema_1</span><span class="p">:</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">schema_2</span><span class="p">:</span> <span class="n">Schema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Counter</span><span class="p">:</span>
     <span class="n">counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
     <span class="n">row_iter</span> <span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">()</span>
@@ -175,12 +179,15 @@ useful.]</p>
     <span class="k">return</span> <span class="n">counts</span>
 </pre></div>
 </div>
+</section>
+<section id="top-level-script">
+<h2>Top-Level Script<a class="headerlink" href="#top-level-script" title="Link to this heading">¶</a></h2>
 <p>The top-level script must do two things:</p>
 <ol class="arabic">
 <li><p>Parse the <code class="file docutils literal notranslate"><span class="pre">&quot;zipcty.cob&quot;</span></code> data definition to create a schema.</p></li>
-<li><p>Open a data file as a <code class="xref py py-class docutils literal notranslate"><span class="pre">cobol.Character_File</span></code>. This presumes
-the file is all character (no COMP-3) and already translated into ASCII.</p>
-<p>The <a class="reference internal" href="../developer.html#process_sheet" title="process_sheet"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_sheet()</span></code></a> is applied to each file.</p>
+<li><p>Open a data file as a <code class="xref py py-class docutils literal notranslate"><span class="pre">cobol.Character_File</span></code>.
+This presumes the file is all character (no COMP-3) and already translated into ASCII.</p>
+<p>The <code class="xref py py-func docutils literal notranslate"><span class="pre">process_sheet()</span></code> is applied to each file.</p>
 </li>
 </ol>
 <p>Here’s a function to parse arguments.</p>
@@ -228,9 +235,9 @@ like this:</p>
 </div>
 </section>
 <section id="running-the-demo">
-<h2>Running the demo<a class="headerlink" href="#running-the-demo" title="Permalink to this headline">¶</a></h2>
+<h2>Running the demo<a class="headerlink" href="#running-the-demo" title="Link to this heading">¶</a></h2>
 <p>We can run this program like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python demo/cobol_reader.py --schema sample/zipcty.cob sample/zipcty<span class="o">[</span><span class="m">1</span>-2<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>demo/cobol_reader.py<span class="w"> </span>--schema<span class="w"> </span>sample/zipcty.cob<span class="w"> </span>sample/zipcty<span class="o">[</span><span class="m">1</span>-2<span class="o">]</span>
 </pre></div>
 </div>
 <p>The output looks like this.</p>
@@ -251,12 +258,11 @@ like this:</p>
 </div>
 </section>
 <section id="working-with-archives">
-<h2>Working with Archives<a class="headerlink" href="#working-with-archives" title="Permalink to this headline">¶</a></h2>
-<p>We don’t need to unpack the archives to work with
-files inside them.
-We can open a ZipFile member and process that.
+<h2>Working with Archives<a class="headerlink" href="#working-with-archives" title="Link to this heading">¶</a></h2>
+<p>We don’t need to unpack the archives to work with files inside them.
+We can open a <code class="docutils literal notranslate"><span class="pre">ZipFile</span></code> member and process that.
 This can be a helpful optimization when small extracts are pulled from ZIP archives.</p>
-<p>The trick is this.</p>
+<p>The trick is this:</p>
 <p>When we open the file with <code class="docutils literal notranslate"><span class="pre">COBOL_Text_File(filename)</span></code>
 we can pass the file object created by <code class="docutils literal notranslate"><span class="pre">ZipFile.open()</span></code> as the second argument.</p>
 <p>It looks like this:</p>
@@ -274,10 +280,10 @@ than opening the given file name.</p>
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo"/>
+              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo of Stingray-Reader"/>
             </a></p>
 <h1 class="logo"><a href="../index.html">Stingray-Reader</a></h1>
 
@@ -288,16 +294,26 @@ than opening the given file name.</p>
 
 
 
-<h3>Navigation</h3>
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../developer.html">Using <strong>Stingray Reader</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Additional Background</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Demo Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apidoc/index.html">stingray API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo.html">The TODO List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">Commercial Use</a></li>
 </ul>
 
@@ -312,16 +328,6 @@ than opening the given file name.</p>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
 
 
 
@@ -335,11 +341,11 @@ than opening the given file name.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2021, S.Lott.
+      &#169;2021, S.Lott.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/demo/cobol_reader.rst.txt"

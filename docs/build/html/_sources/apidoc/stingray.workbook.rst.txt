@@ -1,7 +1,0 @@
-stingray.workbook module
-========================
-
-.. automodule:: stingray.workbook
-   :members:
-   :undoc-members:
-   :show-inheritance:

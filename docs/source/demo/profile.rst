@@ -1,15 +1,25 @@
 ..  _`demo_profile`:
 
 ##########################################################
-Data Profiling Demonstration
+Data Profiling
 ##########################################################
 
-This is a data profiling application that can be applied
-to workbooks to examine the data. This can help design
-builder functions for applications.
+This is a data profiling application that can be applied to workbooks to examine the data.
+This can help design builder functions for applications.
+The idea is that when a data profiling run fails, there are three possible problems:
+
+-   The data has changed and this is the first we've heard of the change.
+    We need to extend the application to handle this.
+
+-   Our provious understanding of the data was incomplete, and this data shows a previously unknown case.
+    This suggests our application had a latent bug.
+
+-   The data really **is** bad.
+    The data must be rejected and reworked.
+
+Finding out which of these three things requires concrete details from a data profiling application.
 
 This produces simple RST-format output on stdout.
-
 A common use case is the following:
 
 ..  code-block:: bash
@@ -20,56 +30,46 @@ A common use case is the following:
 This gives us an HTML-formatted report showing distributions
 of values in each column.
 
-This follows the design patterns shown earlier.
-
-See ``demo/profile.py``.
+This will follow a number of the design patterns shown earlier.
+See the :file:`demo/profile.py` file in the Git repository for the complete source.
 
 Core Processing
 ===============
 
-The core proessing is to gather counts
-of individual sample values.
+The core proessing is to gather counts of individual sample values.
 
 ..  literalinclude:: ../../../demo/profile.py
-    :lines: 41-70
+    :lines: 40-69
 
-The serialization is based on a printed report.
-This lets us tinker with the formatting
-via ``print()`` functions. The final serialization
-uses ``contextlib.redirect_stdout`` to capture
-the print output into a single string.
+The serialization uses the :py:func:`print` function to create a file with the needed report.
+This lets us tinker with  string formatting, and use the ``string.Template`` or even the **Jinja** template processing tool.
+It also permits using ``contextlib.redirect_stdout`` to capture the print output into a file.
 
 Processing Context
 ==================
 
-This is an edge case.
-A data profiling application doesn't, generally,
-produce much stateful output. It doesn't often
-update a database.
+A data profiling application doesn't, generally, produce much stateful output.
+It doesn't often update a database.
 
-This is a "reporting" application, which has
-two important criteria:
+This is a "reporting" application.
+In effect, it's an elaborate query.
+This means it has two important features:
 
 -   The output is meant for human consumption.
 
 -   The processing is fully idempotent.
-    We can run the application as often as
-    needed without worrying about corrupting
-    a database with out-of-order operations
-    or duplicate operations.
+    We can run the application as often as needed without worrying about corrupting a database with out-of-order operations or duplicate operations.
 
-Because there isn't a significant, persistent
-state change a persistence management class
-is -- perhaps -- unnecessary.
+Because there isn't a significant, persistent state change a persistence management class is -- perhaps -- unnecessary.
 
-It helps, however, to follow the overall design
-pattern in case some persistent state change
-*does* become part of this application.
+It helps, however, to follow the overall design pattern in case some persistent state change *does* become part of this application.
 
 
 ..  literalinclude:: ../../../demo/profile.py
-    :lines: 76-94
+    :lines: 75-93
 
+This design lets us write a subclass that provides an alternative definition of the :py:meth:`save_stats` method.
+We can then use the alternative subclass to change the output processing.
 
 Sheet Processing
 =================
@@ -78,11 +78,10 @@ The :py:func:`process_sheet` function the heart of the application.
 This handles all the rows present in a given sheet.
 
 ..  literalinclude:: ../../../demo/profile.py
-    :lines: 100-116
+    :lines: 99-115
 
         
-Some applications will have variant processing for workbooks that
-contain different types of sheets.  
+Some applications will have variant processing for workbooks that contain different types of sheets.
 This leads to different ``process_this_sheet``  and ``process_that_sheet`` functions.  
 Each  will follow the above template to process all rows of the sheet.
 
@@ -90,7 +89,7 @@ Workbook Processing
 ===================
 
 ..  literalinclude:: ../../../demo/profile.py
-    :lines: 132-137
+    :lines: 131-136
 
 
 Command-Line Interface
@@ -98,12 +97,15 @@ Command-Line Interface
 
 We have an optional argument for verbosity and a positional argument that
 provides all the files to profile.
+This function parses the command-line arguments:
 
 ..  literalinclude:: ../../../demo/profile.py
-    :lines: 143-156
+    :lines: 142-154
+
+Here's the overall :py:func:`main` function:
 
 ..  literalinclude:: ../../../demo/profile.py
-    :lines: 158-168
+    :lines: 157-167
 
         
 Running the Demo
@@ -396,5 +398,4 @@ The RST output file looks like this:
         "datetime","1"
         "bool","1"
 
-This can be processed by pandoc or docutils
-to create an HTML report.
+This can be processed by **pandoc** or **docutils** to create an HTML report.

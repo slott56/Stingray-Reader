@@ -64,12 +64,11 @@ Here are the two record layouts.
               05  FILLER                                     PIC  X(30).
 """
 
-
 import argparse
 from collections import Counter
 import logging
 from pathlib import Path
-from pprint import pprint, pformat
+from pprint import pformat
 import sys
 from typing import Any
 
@@ -79,7 +78,6 @@ from stingray.workbook import (
     SchemaMaker,
     Sheet,
     Row,
-    Workbook,
     Schema,
 )
 

@@ -13,8 +13,8 @@ and http://wonder.cdc.gov/wonder/sci_data/datasets/zipctyB.zip
 Each of these archives contains five large files, with 2,310,000 rows of data, plus a header. 
 The 10th file has 2,037,944 rows of data plus a header.
 
-The member names of the ZIP archive are zipcty1 to zipcty5
-and zipcty6 to zipcty10.
+The member names of the ZIP archive are ``zipcty1`` to ``zipcty5``
+and ``zipcty6`` to ``zipcty10``.
 
 We'll work with two small subsets in the sample directory.
 
@@ -64,10 +64,10 @@ Here are the two record layouts.
               05  TAPE-SEQUENCE-NO                           PIC  X(03).
               05  FILLER                                     PIC  X(30).
 
-Implementation
+First Steps
 ==============
 
-The actual COBOL code is in :file:`sample/zipcty.cob`.
+The actual COBOL code for the schema is in :file:`sample/zipcty.cob`.
 This file has both record layouts.
 These are two ``01`` level items in a single file.
     
@@ -75,39 +75,44 @@ When working with unknown files, we sometimes need to preview a raw dump of the
 records.
 
 ..  literalinclude:: ../../../demo/cobol_reader.py
-    :lines: 89-91
+    :lines: 87-89
 
 This is a handy expedient for debugging.
 
-As suggested in :ref:`developer`, here are two builder functions.
-The ``header_builder()`` function creates a header object from the 
+Builder Functions
+=================
+
+As suggested in :ref:`using`, here are two builder functions.
+The :py:func:`header_builder` function creates a header object from the
 first row of each :file:`zipcty*` file. 
 
 ..  literalinclude:: ../../../demo/cobol_reader.py
-    :lines: 94-100
+    :lines: 92-98
 
   
-The ``detail_builder()`` function creates a detail object from the subsequent
+The :py:func:`detail_builder` function creates a detail object from the subsequent
 rows of each :file:`zipcty*` file. 
 
-Because the names within the COBOL layout are not unique at the bottom-most
-element level, we must use path names. The default path names include all
-levels of the DDE. More clever path name components might be useful here.
+Because the names within the COBOL layout are not unique at the bottom-most element level, we must use path names.
+The default path names include all levels of the DDE.
+More clever path name components might be useful here.
 
 COBOL uses an "of" to work up the hierarchy looking for a unique name.
 
 Maybe we could build a fluent interface ``schema['ZIP-SECTOR-NO'].of('ZIP-ADD-ON-LOW-NO')``.
 
 ..  literalinclude:: ../../../demo/cobol_reader.py
-    :lines: 110-129
+    :lines: 108-127
 
-Here's the ``process_sheet()`` function which applies the builders to the various
-rows in each sheet. Currently, all that happens is a print of the object that
-was built.
+Sheet Processing
+=================
 
-Note that we've transformed the schema from a simple, flat list into
-a dictionary keyed by field name. For COBOL processing, this is essential, since
-the numeric order of fields isn't often sensible.
+Here's the :py:func:`process_sheet` function which applies the builders to the various
+rows in each sheet.
+Currently, all that happens is a print of the object that was built.
+
+Note that we've transformed the schema from a simple, flat list into a dictionary keyed by field name.
+For COBOL processing, this is essential, since the numeric order of fields isn't often sensible.
 
 Also note that we've put two versions of each name into the schema dictionary.
 
@@ -115,32 +120,34 @@ Also note that we've put two versions of each name into the schema dictionary.
 
 -   The entire path down to the lowest level name.
 
-[For spreadsheets, where columns are numbered, the positional information may be
-useful.]
+[For spreadsheets, where columns are numbered, the positional information may be useful.]
 
 ..  literalinclude:: ../../../demo/cobol_reader.py
-    :lines: 132-150
+    :lines: 130-148
+
+Top-Level Script
+================
 
 The top-level script must do two things:
 
 1.  Parse the :file:`"zipcty.cob"` data definition to create a schema.
 
-2.  Open a data file as a :py:class:`cobol.Character_File`. This presumes
-    the file is all character (no COMP-3) and already translated into ASCII.
+2.  Open a data file as a :py:class:`cobol.Character_File`.
+    This presumes the file is all character (no COMP-3) and already translated into ASCII.
     
     The :py:func:`process_sheet` is applied to each file.
 
 Here's a function to parse arguments.
 
 ..  literalinclude:: ../../../demo/cobol_reader.py
-    :lines: 156-169
+    :lines: 154-167
 
 Given this function to parse the command-lines
 arguments, the ``main()`` function looks
 like this:
 
 ..  literalinclude:: ../../../demo/cobol_reader.py
-    :lines: 172-192
+    :lines: 170-190
 
 
 Running the demo
@@ -174,12 +181,11 @@ The output looks like this.
 Working with Archives
 =====================
 
-We don't need to unpack the archives to work with
-files inside them.
-We can open a ZipFile member and process that. 
+We don't need to unpack the archives to work with files inside them.
+We can open a ``ZipFile`` member and process that.
 This can be a helpful optimization when small extracts are pulled from ZIP archives.
 
-The trick is this.
+The trick is this:
 
 When we open the file with ``COBOL_Text_File(filename)``
 we can pass the file object created by ``ZipFile.open()`` as the second argument.

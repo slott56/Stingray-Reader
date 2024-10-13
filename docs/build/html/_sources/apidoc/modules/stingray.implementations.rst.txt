@@ -39,11 +39,9 @@ ODS
 ----
 
 
-.ODS files are unpacked with ``Pyexcel``.
+.ODS files are unpacked with ``pyexcel``.
 
 See http://docs.pyexcel.org/en/latest/
-
-See https://github.com/pyexcel/pyexcel-ods3
 
 Pyexcel seems to cover a wide variety of formats.
 It might be helpful to delegate more of the implementations to PyExcel.
@@ -60,7 +58,7 @@ Numbers
 -------
 
 
-.NUMBERS 13 files are unpacked by ``numbers-parser``.
+.NUMBERS files are unpacked by ``numbers-parser``.
 
 See https://pypi.org/project/numbers-parser/
 

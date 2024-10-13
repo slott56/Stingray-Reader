@@ -1,0 +1,42 @@
+[tox]
+envlist = ["py312"]
+
+[env_run_base]
+description = "Base test environment, used by default."
+runner = "uv-venv-lock-runner"
+with_dev = true
+commands = [
+    ["ruff", "format", "src{/}stingray"],
+    ["python", "-m", "doctest", "src{/}stingray{/}cobol_parser.py"],
+    ["python", "-m", "doctest", "src{/}stingray{/}estruct.py"],
+    ["python", "-m", "doctest", "src{/}stingray{/}schema_instance.py"],
+    ["python", "-m", "doctest", "src{/}stingray{/}workbook.py"],
+    ["python", "-m", "doctest", "src{/}stingray{/}implementations.py"],
+    ["python", "-m", "doctest", "docs{/}source{/}developer.rst"],
+    ["pytest", "-vv", "--cov=src", "--cov-report=term-missing", "tests"],
+    ["ruff", "check", "src{/}stingray"],
+    ["pyright", "src{/}stingray"],
+    ["pytest", "-vv", "demo"],
+]
+
+[env_run_base.setenv]
+PYTHONPATH = "{toxinidir}{/}src{:}{toxinidir}"
+SAMPLES = "{toxinidir}{/}sample"
+
+[env.quick]
+description = "Use ``tox run -e quick`` to run the test suite."
+commands = [
+    ["pytest", "-vv", "tests"]
+]
+
+[env.demo]
+description = "Use ``tox run -e demo`` to run the demonstration program suite."
+commands = [
+    ["pytest", "-vv", "demo"]
+]
+
+[env.docs]
+description = "Use ``tox run -e docs`` to test the documentation examples."
+commands = [
+        ["python", "-m", "doctest", "docs{/}source{/}developer.rst"],
+]

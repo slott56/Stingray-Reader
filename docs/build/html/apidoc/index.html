@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>stingray API Reference &#8212; Stingray-Reader 5.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <title>stingray API Reference &#8212; Stingray-Reader 5.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=4af8989d"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="stingray.estruct" href="modules/stingray.estruct.html" />
@@ -20,8 +19,9 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -34,7 +34,7 @@
           <div class="body" role="main">
             
   <section id="stingray-api-reference">
-<h1>stingray API Reference<a class="headerlink" href="#stingray-api-reference" title="Permalink to this headline">¶</a></h1>
+<h1>stingray API Reference<a class="headerlink" href="#stingray-api-reference" title="Link to this heading">¶</a></h1>
 <p>The overall structure of Stingray Reader is a
 collection of modules.</p>
 <p class="plantuml">
@@ -62,16 +62,76 @@ up from the bottom of the diagram.</p>
 <li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#unpacking-and-sizing">Unpacking and Sizing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#file-reading">File Reading</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#cobol-picture-parsing">COBOL Picture Parsing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#calcsize-function">Calcsize Function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#unpack-function">Unpack Function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#recfm-reader">RECFM_Reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#recfm-f">RECFM_F</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#recfm-fb">RECFM_FB</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#recfm-n">RECFM_N</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#recfm-v">RECFM_V</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#recfm-vb">RECFM_VB</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#representation">Representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#designerror">DesignError</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#calcsize-function">Calcsize Function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.calcsize"><code class="docutils literal notranslate"><span class="pre">calcsize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#unpack-function">Unpack Function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.unpack"><code class="docutils literal notranslate"><span class="pre">unpack()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#recfm-reader">RECFM_Reader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_Reader"><code class="docutils literal notranslate"><span class="pre">RECFM_Reader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_Reader.record_iter"><code class="docutils literal notranslate"><span class="pre">RECFM_Reader.record_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_Reader.used"><code class="docutils literal notranslate"><span class="pre">RECFM_Reader.used()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#recfm-f">RECFM_F</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_F"><code class="docutils literal notranslate"><span class="pre">RECFM_F</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_F.rdw_iter"><code class="docutils literal notranslate"><span class="pre">RECFM_F.rdw_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_F.record_iter"><code class="docutils literal notranslate"><span class="pre">RECFM_F.record_iter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#recfm-fb">RECFM_FB</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_FB"><code class="docutils literal notranslate"><span class="pre">RECFM_FB</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#recfm-n">RECFM_N</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_N"><code class="docutils literal notranslate"><span class="pre">RECFM_N</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_N.record_iter"><code class="docutils literal notranslate"><span class="pre">RECFM_N.record_iter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#recfm-v">RECFM_V</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_V"><code class="docutils literal notranslate"><span class="pre">RECFM_V</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_V.rdw_iter"><code class="docutils literal notranslate"><span class="pre">RECFM_V.rdw_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_V.record_iter"><code class="docutils literal notranslate"><span class="pre">RECFM_V.record_iter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#recfm-vb">RECFM_VB</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_VB"><code class="docutils literal notranslate"><span class="pre">RECFM_VB</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_VB.bdw_iter"><code class="docutils literal notranslate"><span class="pre">RECFM_VB.bdw_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_VB.rdw_iter"><code class="docutils literal notranslate"><span class="pre">RECFM_VB.rdw_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.RECFM_VB.record_iter"><code class="docutils literal notranslate"><span class="pre">RECFM_VB.record_iter()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#representation">Representation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.Representation"><code class="docutils literal notranslate"><span class="pre">Representation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.Representation.digit_groups"><code class="docutils literal notranslate"><span class="pre">Representation.digit_groups</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.Representation.normalize_picture"><code class="docutils literal notranslate"><span class="pre">Representation.normalize_picture()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.Representation.parse"><code class="docutils literal notranslate"><span class="pre">Representation.parse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.Representation.pattern"><code class="docutils literal notranslate"><span class="pre">Representation.pattern</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.Representation.picture_elements"><code class="docutils literal notranslate"><span class="pre">Representation.picture_elements</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.Representation.picture_size"><code class="docutils literal notranslate"><span class="pre">Representation.picture_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.Representation.usage"><code class="docutils literal notranslate"><span class="pre">Representation.usage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.Representation.zoned_decimal"><code class="docutils literal notranslate"><span class="pre">Representation.zoned_decimal</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.estruct.html#designerror">DesignError</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.estruct.html#stingray.estruct.DesignError"><code class="docutils literal notranslate"><span class="pre">DesignError</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/stingray.schema_instance.html">stingray.schema_instance</a><ul>
@@ -89,52 +149,453 @@ up from the bottom of the diagram.</p>
 <li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#non-delimited-files-cobol">Non-Delimited Files (COBOL)</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#decimal-places-function">decimal_places function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#digit-string-function">digit_string function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#schema">Schema</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#instance">Instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#decimal-places-function">decimal_places function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.decimal_places"><code class="docutils literal notranslate"><span class="pre">decimal_places()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#digit-string-function">digit_string function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.digit_string"><code class="docutils literal notranslate"><span class="pre">digit_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#schema">Schema</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Schema"><code class="docutils literal notranslate"><span class="pre">Schema</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Schema.attributes"><code class="docutils literal notranslate"><span class="pre">Schema.attributes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Schema.dump_iter"><code class="docutils literal notranslate"><span class="pre">Schema.dump_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Schema.json"><code class="docutils literal notranslate"><span class="pre">Schema.json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Schema.print"><code class="docutils literal notranslate"><span class="pre">Schema.print()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Schema.type"><code class="docutils literal notranslate"><span class="pre">Schema.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ArraySchema"><code class="docutils literal notranslate"><span class="pre">ArraySchema</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ArraySchema.dump_iter"><code class="docutils literal notranslate"><span class="pre">ArraySchema.dump_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ArraySchema.items"><code class="docutils literal notranslate"><span class="pre">ArraySchema.items</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ArraySchema.maxItems"><code class="docutils literal notranslate"><span class="pre">ArraySchema.maxItems</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ArraySchema.print"><code class="docutils literal notranslate"><span class="pre">ArraySchema.print()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.AtomicSchema"><code class="docutils literal notranslate"><span class="pre">AtomicSchema</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.DependsOnArraySchema"><code class="docutils literal notranslate"><span class="pre">DependsOnArraySchema</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.DependsOnArraySchema.maxItems"><code class="docutils literal notranslate"><span class="pre">DependsOnArraySchema.maxItems</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ObjectSchema"><code class="docutils literal notranslate"><span class="pre">ObjectSchema</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ObjectSchema.dump_iter"><code class="docutils literal notranslate"><span class="pre">ObjectSchema.dump_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ObjectSchema.print"><code class="docutils literal notranslate"><span class="pre">ObjectSchema.print()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.OneOfSchema"><code class="docutils literal notranslate"><span class="pre">OneOfSchema</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.OneOfSchema.dump_iter"><code class="docutils literal notranslate"><span class="pre">OneOfSchema.dump_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.OneOfSchema.print"><code class="docutils literal notranslate"><span class="pre">OneOfSchema.print()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.OneOfSchema.type"><code class="docutils literal notranslate"><span class="pre">OneOfSchema.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.RefToSchema"><code class="docutils literal notranslate"><span class="pre">RefToSchema</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.RefToSchema.attributes"><code class="docutils literal notranslate"><span class="pre">RefToSchema.attributes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.RefToSchema.dump_iter"><code class="docutils literal notranslate"><span class="pre">RefToSchema.dump_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.RefToSchema.items"><code class="docutils literal notranslate"><span class="pre">RefToSchema.items</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.RefToSchema.properties"><code class="docutils literal notranslate"><span class="pre">RefToSchema.properties</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.RefToSchema.type"><code class="docutils literal notranslate"><span class="pre">RefToSchema.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.SchemaMaker"><code class="docutils literal notranslate"><span class="pre">SchemaMaker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.SchemaMaker.from_json"><code class="docutils literal notranslate"><span class="pre">SchemaMaker.from_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.SchemaMaker.resolve"><code class="docutils literal notranslate"><span class="pre">SchemaMaker.resolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.SchemaMaker.walk_schema"><code class="docutils literal notranslate"><span class="pre">SchemaMaker.walk_schema()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Reference"><code class="docutils literal notranslate"><span class="pre">Reference</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#instance">Instance</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.WBInstance"><code class="docutils literal notranslate"><span class="pre">WBInstance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.DInstance"><code class="docutils literal notranslate"><span class="pre">DInstance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.NDInstance"><code class="docutils literal notranslate"><span class="pre">NDInstance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.BytesInstance"><code class="docutils literal notranslate"><span class="pre">BytesInstance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.TextInstance"><code class="docutils literal notranslate"><span class="pre">TextInstance</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#unpacker">Unpacker</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#implementation-notes">Implementation Notes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#unpacker-size-computations">Unpacker Size Computations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#conversions">Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#conversions">Conversions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Mode"><code class="docutils literal notranslate"><span class="pre">Mode</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Mode.BINARY"><code class="docutils literal notranslate"><span class="pre">Mode.BINARY</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Mode.TEXT"><code class="docutils literal notranslate"><span class="pre">Mode.TEXT</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#schema-and-instance-navigation">Schema and Instance Navigation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#locations">Locations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#exceptions">Exceptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Unpacker"><code class="docutils literal notranslate"><span class="pre">Unpacker</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Unpacker.instance_iter"><code class="docutils literal notranslate"><span class="pre">Unpacker.instance_iter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Unpacker.calcsize"><code class="docutils literal notranslate"><span class="pre">Unpacker.calcsize()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Unpacker.close"><code class="docutils literal notranslate"><span class="pre">Unpacker.close()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Unpacker.nav"><code class="docutils literal notranslate"><span class="pre">Unpacker.nav()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Unpacker.open"><code class="docutils literal notranslate"><span class="pre">Unpacker.open()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Unpacker.sheet_iter"><code class="docutils literal notranslate"><span class="pre">Unpacker.sheet_iter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Unpacker.used"><code class="docutils literal notranslate"><span class="pre">Unpacker.used()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Unpacker.value"><code class="docutils literal notranslate"><span class="pre">Unpacker.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Delimited"><code class="docutils literal notranslate"><span class="pre">Delimited</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Delimited.calcsize"><code class="docutils literal notranslate"><span class="pre">Delimited.calcsize()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Delimited.nav"><code class="docutils literal notranslate"><span class="pre">Delimited.nav()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Delimited.value"><code class="docutils literal notranslate"><span class="pre">Delimited.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.EBCDIC"><code class="docutils literal notranslate"><span class="pre">EBCDIC</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.EBCDIC.calcsize"><code class="docutils literal notranslate"><span class="pre">EBCDIC.calcsize()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.EBCDIC.close"><code class="docutils literal notranslate"><span class="pre">EBCDIC.close()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.EBCDIC.instance_iter"><code class="docutils literal notranslate"><span class="pre">EBCDIC.instance_iter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.EBCDIC.nav"><code class="docutils literal notranslate"><span class="pre">EBCDIC.nav()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.EBCDIC.open"><code class="docutils literal notranslate"><span class="pre">EBCDIC.open()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.EBCDIC.sheet_iter"><code class="docutils literal notranslate"><span class="pre">EBCDIC.sheet_iter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.EBCDIC.used"><code class="docutils literal notranslate"><span class="pre">EBCDIC.used()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.EBCDIC.value"><code class="docutils literal notranslate"><span class="pre">EBCDIC.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Struct"><code class="docutils literal notranslate"><span class="pre">Struct</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Struct.calcsize"><code class="docutils literal notranslate"><span class="pre">Struct.calcsize()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Struct.close"><code class="docutils literal notranslate"><span class="pre">Struct.close()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Struct.instance_iter"><code class="docutils literal notranslate"><span class="pre">Struct.instance_iter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Struct.nav"><code class="docutils literal notranslate"><span class="pre">Struct.nav()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Struct.open"><code class="docutils literal notranslate"><span class="pre">Struct.open()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Struct.sheet_iter"><code class="docutils literal notranslate"><span class="pre">Struct.sheet_iter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Struct.struct_format"><code class="docutils literal notranslate"><span class="pre">Struct.struct_format()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Struct.used"><code class="docutils literal notranslate"><span class="pre">Struct.used()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Struct.value"><code class="docutils literal notranslate"><span class="pre">Struct.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.TextUnpacker"><code class="docutils literal notranslate"><span class="pre">TextUnpacker</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.TextUnpacker.calcsize"><code class="docutils literal notranslate"><span class="pre">TextUnpacker.calcsize()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.TextUnpacker.close"><code class="docutils literal notranslate"><span class="pre">TextUnpacker.close()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.TextUnpacker.instance_iter"><code class="docutils literal notranslate"><span class="pre">TextUnpacker.instance_iter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.TextUnpacker.nav"><code class="docutils literal notranslate"><span class="pre">TextUnpacker.nav()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.TextUnpacker.open"><code class="docutils literal notranslate"><span class="pre">TextUnpacker.open()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.TextUnpacker.sheet_iter"><code class="docutils literal notranslate"><span class="pre">TextUnpacker.sheet_iter()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.TextUnpacker.value"><code class="docutils literal notranslate"><span class="pre">TextUnpacker.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.WBUnpacker"><code class="docutils literal notranslate"><span class="pre">WBUnpacker</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.WBUnpacker.calcsize"><code class="docutils literal notranslate"><span class="pre">WBUnpacker.calcsize()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.WBUnpacker.nav"><code class="docutils literal notranslate"><span class="pre">WBUnpacker.nav()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.WBUnpacker.value"><code class="docutils literal notranslate"><span class="pre">WBUnpacker.value()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#schema-and-instance-navigation">Schema and Instance Navigation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Nav"><code class="docutils literal notranslate"><span class="pre">Nav</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Nav.dump"><code class="docutils literal notranslate"><span class="pre">Nav.dump()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Nav.index"><code class="docutils literal notranslate"><span class="pre">Nav.index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Nav.name"><code class="docutils literal notranslate"><span class="pre">Nav.name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Nav.value"><code class="docutils literal notranslate"><span class="pre">Nav.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.DNav"><code class="docutils literal notranslate"><span class="pre">DNav</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.DNav.dump"><code class="docutils literal notranslate"><span class="pre">DNav.dump()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.DNav.index"><code class="docutils literal notranslate"><span class="pre">DNav.index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.DNav.name"><code class="docutils literal notranslate"><span class="pre">DNav.name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.DNav.value"><code class="docutils literal notranslate"><span class="pre">DNav.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.NDNav"><code class="docutils literal notranslate"><span class="pre">NDNav</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.NDNav.dump"><code class="docutils literal notranslate"><span class="pre">NDNav.dump()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.NDNav.index"><code class="docutils literal notranslate"><span class="pre">NDNav.index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.NDNav.name"><code class="docutils literal notranslate"><span class="pre">NDNav.name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.NDNav.raw"><code class="docutils literal notranslate"><span class="pre">NDNav.raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.NDNav.raw_instance"><code class="docutils literal notranslate"><span class="pre">NDNav.raw_instance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.NDNav.schema"><code class="docutils literal notranslate"><span class="pre">NDNav.schema</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.NDNav.value"><code class="docutils literal notranslate"><span class="pre">NDNav.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.WBNav"><code class="docutils literal notranslate"><span class="pre">WBNav</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.WBNav.dump"><code class="docutils literal notranslate"><span class="pre">WBNav.dump()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.WBNav.index"><code class="docutils literal notranslate"><span class="pre">WBNav.index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.WBNav.name"><code class="docutils literal notranslate"><span class="pre">WBNav.name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.WBNav.value"><code class="docutils literal notranslate"><span class="pre">WBNav.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.CSVNav"><code class="docutils literal notranslate"><span class="pre">CSVNav</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#locations">Locations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Location"><code class="docutils literal notranslate"><span class="pre">Location</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Location.dump_iter"><code class="docutils literal notranslate"><span class="pre">Location.dump_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Location.raw"><code class="docutils literal notranslate"><span class="pre">Location.raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Location.referent"><code class="docutils literal notranslate"><span class="pre">Location.referent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.Location.value"><code class="docutils literal notranslate"><span class="pre">Location.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ArrayLocation"><code class="docutils literal notranslate"><span class="pre">ArrayLocation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ArrayLocation.dump_iter"><code class="docutils literal notranslate"><span class="pre">ArrayLocation.dump_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ArrayLocation.raw"><code class="docutils literal notranslate"><span class="pre">ArrayLocation.raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ArrayLocation.value"><code class="docutils literal notranslate"><span class="pre">ArrayLocation.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.AtomicLocation"><code class="docutils literal notranslate"><span class="pre">AtomicLocation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.AtomicLocation.dump_iter"><code class="docutils literal notranslate"><span class="pre">AtomicLocation.dump_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.AtomicLocation.raw"><code class="docutils literal notranslate"><span class="pre">AtomicLocation.raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.AtomicLocation.value"><code class="docutils literal notranslate"><span class="pre">AtomicLocation.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ObjectLocation"><code class="docutils literal notranslate"><span class="pre">ObjectLocation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ObjectLocation.dump_iter"><code class="docutils literal notranslate"><span class="pre">ObjectLocation.dump_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ObjectLocation.raw"><code class="docutils literal notranslate"><span class="pre">ObjectLocation.raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.ObjectLocation.value"><code class="docutils literal notranslate"><span class="pre">ObjectLocation.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.OneOfLocation"><code class="docutils literal notranslate"><span class="pre">OneOfLocation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.OneOfLocation.dump_iter"><code class="docutils literal notranslate"><span class="pre">OneOfLocation.dump_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.OneOfLocation.raw"><code class="docutils literal notranslate"><span class="pre">OneOfLocation.raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.OneOfLocation.value"><code class="docutils literal notranslate"><span class="pre">OneOfLocation.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.RefToLocation"><code class="docutils literal notranslate"><span class="pre">RefToLocation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.RefToLocation.dump_iter"><code class="docutils literal notranslate"><span class="pre">RefToLocation.dump_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.RefToLocation.properties"><code class="docutils literal notranslate"><span class="pre">RefToLocation.properties</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.RefToLocation.raw"><code class="docutils literal notranslate"><span class="pre">RefToLocation.raw()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.RefToLocation.referent"><code class="docutils literal notranslate"><span class="pre">RefToLocation.referent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.RefToLocation.value"><code class="docutils literal notranslate"><span class="pre">RefToLocation.value()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.LocationMaker"><code class="docutils literal notranslate"><span class="pre">LocationMaker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.LocationMaker.from_instance"><code class="docutils literal notranslate"><span class="pre">LocationMaker.from_instance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.LocationMaker.from_schema"><code class="docutils literal notranslate"><span class="pre">LocationMaker.from_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.LocationMaker.ndnav"><code class="docutils literal notranslate"><span class="pre">LocationMaker.ndnav()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.LocationMaker.size"><code class="docutils literal notranslate"><span class="pre">LocationMaker.size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.LocationMaker.walk"><code class="docutils literal notranslate"><span class="pre">LocationMaker.walk()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.schema_instance.html#exceptions">Exceptions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.schema_instance.html#stingray.schema_instance.DesignError"><code class="docutils literal notranslate"><span class="pre">DesignError</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/stingray.cobol_parser.html">stingray.cobol_parser</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#approach">Approach</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#cobol-language">COBOL Language</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#reference-format-function">reference_format function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#parsing">Parsing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#high-level-parsing">High Level Parsing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#dde-class">DDE Class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#jsonschemamaker-class">JSONSchemaMaker Class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#exceptions">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#reference-format-function">reference_format function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.reference_format"><code class="docutils literal notranslate"><span class="pre">reference_format()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#parsing">Parsing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.dde_sentences"><code class="docutils literal notranslate"><span class="pre">dde_sentences()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.expand_repeat"><code class="docutils literal notranslate"><span class="pre">expand_repeat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.pass_non_empty"><code class="docutils literal notranslate"><span class="pre">pass_non_empty()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.normalize_picture"><code class="docutils literal notranslate"><span class="pre">normalize_picture()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.clause_dict"><code class="docutils literal notranslate"><span class="pre">clause_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#high-level-parsing">High Level Parsing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.structure"><code class="docutils literal notranslate"><span class="pre">structure()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.schema_iter"><code class="docutils literal notranslate"><span class="pre">schema_iter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#dde-class">DDE Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.DDE"><code class="docutils literal notranslate"><span class="pre">DDE</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.DDE.append"><code class="docutils literal notranslate"><span class="pre">DDE.append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.DDE.display"><code class="docutils literal notranslate"><span class="pre">DDE.display()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.DDE.filler_count"><code class="docutils literal notranslate"><span class="pre">DDE.filler_count</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#jsonschemamaker-class">JSONSchemaMaker Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.JSONSchemaMaker"><code class="docutils literal notranslate"><span class="pre">JSONSchemaMaker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.JSONSchemaMaker.build_json_schema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaMaker.build_json_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.JSONSchemaMaker.json_type"><code class="docutils literal notranslate"><span class="pre">JSONSchemaMaker.json_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.JSONSchemaMaker.jsonschema"><code class="docutils literal notranslate"><span class="pre">JSONSchemaMaker.jsonschema()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.JSONSchemaMakerExtendedVocabulary"><code class="docutils literal notranslate"><span class="pre">JSONSchemaMakerExtendedVocabulary</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.JSONSchemaMakerExtendedVocabulary.VOCABULARY"><code class="docutils literal notranslate"><span class="pre">JSONSchemaMakerExtendedVocabulary.VOCABULARY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.JSONSchemaMakerExtendedVocabulary.json_type"><code class="docutils literal notranslate"><span class="pre">JSONSchemaMakerExtendedVocabulary.json_type()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.cobol_parser.html#exceptions">Exceptions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.cobol_parser.html#stingray.cobol_parser.DesignError"><code class="docutils literal notranslate"><span class="pre">DesignError</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/stingray.workbook.html">stingray.workbook</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#cobol-file-implementation-ebcdic-and-text">COBOL File Implementation – EBCDIC and Text</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#api-concept">API Concept</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#sheet-and-row">Sheet and Row</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#open-workbook-function">open_workbook function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#name-cleaner-function">name_cleaner function</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#core-workbook-sheet-and-row-model">Core Workbook, Sheet, and Row Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#schema-loaders">Schema Loaders</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#cobol-files">COBOL Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#csv-workbooks">CSV Workbooks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#json-workbooks">JSON Workbooks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#workbook-file-registry">Workbook File Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#open-workbook-function">open_workbook function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.open_workbook"><code class="docutils literal notranslate"><span class="pre">open_workbook()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#name-cleaner-function">name_cleaner function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.name_cleaner"><code class="docutils literal notranslate"><span class="pre">name_cleaner()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#core-workbook-sheet-and-row-model">Core Workbook, Sheet, and Row Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Workbook"><code class="docutils literal notranslate"><span class="pre">Workbook</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Workbook.close"><code class="docutils literal notranslate"><span class="pre">Workbook.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Workbook.sheet"><code class="docutils literal notranslate"><span class="pre">Workbook.sheet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Workbook.sheet_iter"><code class="docutils literal notranslate"><span class="pre">Workbook.sheet_iter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Sheet"><code class="docutils literal notranslate"><span class="pre">Sheet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Sheet.row_iter"><code class="docutils literal notranslate"><span class="pre">Sheet.row_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Sheet.rows"><code class="docutils literal notranslate"><span class="pre">Sheet.rows()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Sheet.set_schema"><code class="docutils literal notranslate"><span class="pre">Sheet.set_schema()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Sheet.set_schema_loader"><code class="docutils literal notranslate"><span class="pre">Sheet.set_schema_loader()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Row"><code class="docutils literal notranslate"><span class="pre">Row</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Row.dump"><code class="docutils literal notranslate"><span class="pre">Row.dump()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Row.get"><code class="docutils literal notranslate"><span class="pre">Row.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Row.name"><code class="docutils literal notranslate"><span class="pre">Row.name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Row.schema"><code class="docutils literal notranslate"><span class="pre">Row.schema</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.Row.values"><code class="docutils literal notranslate"><span class="pre">Row.values()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#schema-loaders">Schema Loaders</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.SchemaLoader"><code class="docutils literal notranslate"><span class="pre">SchemaLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.SchemaLoader.body"><code class="docutils literal notranslate"><span class="pre">SchemaLoader.body()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.SchemaLoader.header"><code class="docutils literal notranslate"><span class="pre">SchemaLoader.header()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.COBOLSchemaLoader"><code class="docutils literal notranslate"><span class="pre">COBOLSchemaLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.COBOLSchemaLoader.load"><code class="docutils literal notranslate"><span class="pre">COBOLSchemaLoader.load()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.ExternalSchemaLoader"><code class="docutils literal notranslate"><span class="pre">ExternalSchemaLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.ExternalSchemaLoader.META_SCHEMA"><code class="docutils literal notranslate"><span class="pre">ExternalSchemaLoader.META_SCHEMA</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.ExternalSchemaLoader.load"><code class="docutils literal notranslate"><span class="pre">ExternalSchemaLoader.load()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.HeadingRowSchemaLoader"><code class="docutils literal notranslate"><span class="pre">HeadingRowSchemaLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.HeadingRowSchemaLoader.header"><code class="docutils literal notranslate"><span class="pre">HeadingRowSchemaLoader.header()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#cobol-files">COBOL Files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.COBOL_EBCDIC_File"><code class="docutils literal notranslate"><span class="pre">COBOL_EBCDIC_File</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.COBOL_EBCDIC_File.close"><code class="docutils literal notranslate"><span class="pre">COBOL_EBCDIC_File.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.COBOL_EBCDIC_File.sheet"><code class="docutils literal notranslate"><span class="pre">COBOL_EBCDIC_File.sheet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.COBOL_EBCDIC_File.sheet_iter"><code class="docutils literal notranslate"><span class="pre">COBOL_EBCDIC_File.sheet_iter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.COBOL_EBCDIC_Sheet"><code class="docutils literal notranslate"><span class="pre">COBOL_EBCDIC_Sheet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.COBOL_EBCDIC_Sheet.row_iter"><code class="docutils literal notranslate"><span class="pre">COBOL_EBCDIC_Sheet.row_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.COBOL_EBCDIC_Sheet.rows"><code class="docutils literal notranslate"><span class="pre">COBOL_EBCDIC_Sheet.rows()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.COBOL_EBCDIC_Sheet.set_schema"><code class="docutils literal notranslate"><span class="pre">COBOL_EBCDIC_Sheet.set_schema()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.COBOL_Text_File"><code class="docutils literal notranslate"><span class="pre">COBOL_Text_File</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.COBOL_Text_File.close"><code class="docutils literal notranslate"><span class="pre">COBOL_Text_File.close()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#csv-workbooks">CSV Workbooks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.CSVUnpacker"><code class="docutils literal notranslate"><span class="pre">CSVUnpacker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.CSVUnpacker.close"><code class="docutils literal notranslate"><span class="pre">CSVUnpacker.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.CSVUnpacker.instance_iter"><code class="docutils literal notranslate"><span class="pre">CSVUnpacker.instance_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.CSVUnpacker.open"><code class="docutils literal notranslate"><span class="pre">CSVUnpacker.open()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.CSVUnpacker.sheet_iter"><code class="docutils literal notranslate"><span class="pre">CSVUnpacker.sheet_iter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.CSV_Workbook"><code class="docutils literal notranslate"><span class="pre">CSV_Workbook</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.CSV_Workbook.close"><code class="docutils literal notranslate"><span class="pre">CSV_Workbook.close()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#json-workbooks">JSON Workbooks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.JSONUnpacker"><code class="docutils literal notranslate"><span class="pre">JSONUnpacker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.JSONUnpacker.close"><code class="docutils literal notranslate"><span class="pre">JSONUnpacker.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.JSONUnpacker.instance_iter"><code class="docutils literal notranslate"><span class="pre">JSONUnpacker.instance_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.JSONUnpacker.open"><code class="docutils literal notranslate"><span class="pre">JSONUnpacker.open()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.JSONUnpacker.sheet_iter"><code class="docutils literal notranslate"><span class="pre">JSONUnpacker.sheet_iter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.JSON_Workbook"><code class="docutils literal notranslate"><span class="pre">JSON_Workbook</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.JSON_Workbook.close"><code class="docutils literal notranslate"><span class="pre">JSON_Workbook.close()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#workbook-file-registry">Workbook File Registry</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.WBFileRegistry"><code class="docutils literal notranslate"><span class="pre">WBFileRegistry</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.WBFileRegistry.file_suffix"><code class="docutils literal notranslate"><span class="pre">WBFileRegistry.file_suffix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.WBFileRegistry.open_workbook"><code class="docutils literal notranslate"><span class="pre">WBFileRegistry.open_workbook()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.workbook.html#stingray.workbook.file_registry.file_suffix"><code class="docutils literal notranslate"><span class="pre">file_registry.file_suffix()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="modules/stingray.workbook.html#legacy-api-concept">Legacy API Concept</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/stingray.implementations.html">stingray.implementations</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.implementations.html#xls">XLS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.implementations.html#xlsx">XLSX</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.implementations.html#ods">ODS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/stingray.implementations.html#numbers">Numbers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.implementations.html#xls">XLS</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLSUnpacker"><code class="docutils literal notranslate"><span class="pre">XLSUnpacker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLSUnpacker.close"><code class="docutils literal notranslate"><span class="pre">XLSUnpacker.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLSUnpacker.instance_iter"><code class="docutils literal notranslate"><span class="pre">XLSUnpacker.instance_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLSUnpacker.open"><code class="docutils literal notranslate"><span class="pre">XLSUnpacker.open()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLSUnpacker.sheet_iter"><code class="docutils literal notranslate"><span class="pre">XLSUnpacker.sheet_iter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLS_Workbook"><code class="docutils literal notranslate"><span class="pre">XLS_Workbook</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLS_Workbook.close"><code class="docutils literal notranslate"><span class="pre">XLS_Workbook.close()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.implementations.html#xlsx">XLSX</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLSXUnpacker"><code class="docutils literal notranslate"><span class="pre">XLSXUnpacker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLSXUnpacker.close"><code class="docutils literal notranslate"><span class="pre">XLSXUnpacker.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLSXUnpacker.instance_iter"><code class="docutils literal notranslate"><span class="pre">XLSXUnpacker.instance_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLSXUnpacker.open"><code class="docutils literal notranslate"><span class="pre">XLSXUnpacker.open()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLSXUnpacker.sheet_iter"><code class="docutils literal notranslate"><span class="pre">XLSXUnpacker.sheet_iter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLSX_Workbook"><code class="docutils literal notranslate"><span class="pre">XLSX_Workbook</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.XLSX_Workbook.close"><code class="docutils literal notranslate"><span class="pre">XLSX_Workbook.close()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.implementations.html#ods">ODS</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.ODSUnpacker"><code class="docutils literal notranslate"><span class="pre">ODSUnpacker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.ODSUnpacker.close"><code class="docutils literal notranslate"><span class="pre">ODSUnpacker.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.ODSUnpacker.instance_iter"><code class="docutils literal notranslate"><span class="pre">ODSUnpacker.instance_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.ODSUnpacker.open"><code class="docutils literal notranslate"><span class="pre">ODSUnpacker.open()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.ODSUnpacker.sheet_iter"><code class="docutils literal notranslate"><span class="pre">ODSUnpacker.sheet_iter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.ODS_Workbook"><code class="docutils literal notranslate"><span class="pre">ODS_Workbook</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.ODS_Workbook.close"><code class="docutils literal notranslate"><span class="pre">ODS_Workbook.close()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules/stingray.implementations.html#numbers">Numbers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.NumbersUnpacker"><code class="docutils literal notranslate"><span class="pre">NumbersUnpacker</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.NumbersUnpacker.close"><code class="docutils literal notranslate"><span class="pre">NumbersUnpacker.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.NumbersUnpacker.instance_iter"><code class="docutils literal notranslate"><span class="pre">NumbersUnpacker.instance_iter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.NumbersUnpacker.open"><code class="docutils literal notranslate"><span class="pre">NumbersUnpacker.open()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.NumbersUnpacker.sheet_iter"><code class="docutils literal notranslate"><span class="pre">NumbersUnpacker.sheet_iter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.Numbers_Workbook"><code class="docutils literal notranslate"><span class="pre">Numbers_Workbook</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/stingray.implementations.html#stingray.implementations.Numbers_Workbook.close"><code class="docutils literal notranslate"><span class="pre">Numbers_Workbook.close()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -146,10 +607,10 @@ up from the bottom of the diagram.</p>
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo"/>
+              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo of Stingray-Reader"/>
             </a></p>
 <h1 class="logo"><a href="../index.html">Stingray-Reader</a></h1>
 
@@ -160,16 +621,26 @@ up from the bottom of the diagram.</p>
 
 
 
-<h3>Navigation</h3>
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../developer.html">Using <strong>Stingray Reader</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Additional Background</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/index.html">Demo Applications</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">stingray API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo.html">The TODO List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">Commercial Use</a></li>
 </ul>
 
@@ -182,16 +653,6 @@ up from the bottom of the diagram.</p>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
 
 
 
@@ -205,11 +666,11 @@ up from the bottom of the diagram.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2021, S.Lott.
+      &#169;2021, S.Lott.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/apidoc/index.rst.txt"
