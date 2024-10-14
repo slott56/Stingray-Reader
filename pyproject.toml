@@ -24,7 +24,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/slott56/Stingray-Reader"
+Homepage = "https://slott56.github.io/Stingray-Reader/build/html/index.html"
+GitHub = "https://github.com/slott56/Stingray-Reader"
 
 [tool.uv]
 dev-dependencies = [
