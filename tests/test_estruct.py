@@ -215,7 +215,7 @@ def test_faulty_recfm_n(recfm_n_reader):
     with pytest.raises(RuntimeError) as exception_info:
         for rec in recfm_n_reader.record_iter():
             records.append(rec)
-    assert exception_info.value.args[0] == "No bytes consumed from buffer via the .used() method!"
+    assert exception_info.value.args[0] == "no bytes consumed from buffer via the .used() method"
     assert records == [
         b'\x01\x02\x03\x04\x11\x12\x13\x14',
     ]

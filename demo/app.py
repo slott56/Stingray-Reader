@@ -40,7 +40,12 @@ class ThisForm:
         self.clean = kw
 
     def is_valid(self) -> bool:
-        return all([self.clean["key"] is not None, self.clean["value"] is not None,])
+        return all(
+            [
+                self.clean["key"] is not None,
+                self.clean["value"] is not None,
+            ]
+        )
 
     def create(self) -> This:
         return This(**self.clean)
@@ -89,26 +94,19 @@ class Validate_Only_Processing(Persistent_Processing):
 
 def builder_1(row: Row) -> dict[str, Any]:
     return dict(
-        key=row['Column "3" - string'].value(),
-        value=row["Col 2.0 - float"].value()
+        key=row['Column "3" - string'].value(), value=row["Col 2.0 - float"].value()
     )
 
 
 def builder_2(row: Row) -> dict[str, Any]:
-    return dict(
-        key=row["Column 3"].value(),
-        value=row["Column 2"].value()
-    )
+    return dict(key=row["Column 3"].value(), value=row["Column 2"].value())
 
 
 Builder_Func = Callable[[Row], dict[str, Any]]
 
 
 def builder_factory(args: argparse.Namespace) -> Builder_Func:
-    return {
-        "1": builder_1,
-        "2": builder_2
-    }[args.layout]
+    return {"1": builder_1, "2": builder_2}[args.layout]
 
 
 # Sheet Processing

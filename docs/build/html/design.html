@@ -1,28 +1,28 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Design Considerations &#8212; Stingray-Reader 5.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <title>Design Notes &#8212; Stingray-Reader 5.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=4af8989d"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Background" href="background.html" />
+    <link rel="next" title="Additional Background" href="background.html" />
     <link rel="prev" title="Using Stingray Reader" href="developer.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -34,53 +34,39 @@
 
           <div class="body" role="main">
             
-  <section id="design-considerations">
-<h1>Design Considerations<a class="headerlink" href="#design-considerations" title="Permalink to this headline">¶</a></h1>
-<p>We have two import constraints on the design,
-described in <a class="reference internal" href="#essential-constraints">Essential Constraints</a>.
-First, the source value for each instance of a
-schema is out of our control.
-Second, we need to treat schema information as
-immutable.</p>
-<p>Additionally, there are a number of constraints
-on the files and the way they are described by a
-schema. These are physical format issues. We’ll look at
-<a class="reference internal" href="#file-and-schema-binding">File and Schema Binding</a>, <a class="reference internal" href="#loading-a-schema">Loading a Schema</a>, and <a class="reference internal" href="#some-cobol-file-issues">Some COBOL File Issues</a> that
-will inform the rest of the design.</p>
-<p>We’ll dwell on some details of COBOL field
-sizes and offsets in
-<a class="reference internal" href="#formal-definitions-for-non-delimited-files">Formal Definitions for Non-Delimited Files</a>.</p>
-<p>Also, <a class="reference internal" href="#json-schema-considerations">JSON Schema Considerations</a> describes
-how we can extend JSON Schema to support
-the additional features required for schema
-to describe non-delimited files.</p>
+  <section id="design-notes">
+<h1>Design Notes<a class="headerlink" href="#design-notes" title="Link to this heading">¶</a></h1>
+<p>We’ll start by looking at two import constraints on the design.
+This is the <cite>Essential Constraints</cite> section, below.
+First, <strong>Stingray</strong> depends on external packages, making data parsing opaque.
+Second, schema information must be immutable, which collides with COBOL’s <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> definition.</p>
+<p>Additionally, there are a number of constraints on the files and the way they are described by a schema.
+These are physical format issues.
+We’ll look at <a class="reference internal" href="#file-and-schema-binding">File and Schema Binding</a>, <a class="reference internal" href="#loading-a-schema">Loading a Schema</a>, and <a class="reference internal" href="#some-cobol-file-issues">Some COBOL File Issues</a> that inform the design.</p>
+<p>We’ll dwell on some details of COBOL field sizes and offsets in <a class="reference internal" href="#formal-definitions-for-non-delimited-files">Formal Definitions for Non-Delimited Files</a>.</p>
+<p>Also, <a class="reference internal" href="#json-schema-considerations">JSON Schema Considerations</a> describes how we can extend JSON Schema to support the additional features required for schema to describe non-delimited files.</p>
 <section id="essential-constraints">
-<h2>Essential Constraints<a class="headerlink" href="#essential-constraints" title="Permalink to this headline">¶</a></h2>
+<h2>Essential Constraints<a class="headerlink" href="#essential-constraints" title="Link to this heading">¶</a></h2>
 <p>We have two essential boundaries on the implementation.</p>
 <ol class="arabic simple">
-<li><p>Each row of a spreadsheet or each record of a COBOL file
-is described by an opaque object outside the control
-of the <strong>Stingray Reader</strong> package. We will leverage
-external libraries to read spreadsheets, and we’ll treat
-COBOL files as if they are similarly opaque.</p></li>
-<li><p>The schema information is essentially immutable.</p></li>
+<li><p>Each row of a spreadsheet or each record of a COBOL file is described by an opaque object.
+These are defined outside the control of the <strong>Stingray Reader</strong> package.
+This is because external libraries to read spreadsheets are wrapped by <strong>Stingray</strong>.
+We therefore treat COBOL files as if they are similarly opaque.</p></li>
+<li><p>The schema information must be immutable.</p></li>
 </ol>
-<p>The first constraint suggests that each Workbook format
-requires a <strong>Facade</strong> class that make the workbook’s details
-irrelevant to this application.</p>
-<p>We decompose this <strong>Facade</strong> into two parts:</p>
+<p>The opacity constraint suggests that each Workbook format uses a <strong>Facade</strong> to make conceal the details.
+We decompose this <strong>Facade</strong> into two parts:</p>
 <ul class="simple">
 <li><p>An <code class="xref py py-class docutils literal notranslate"><span class="pre">Unpacker</span></code>.</p></li>
 <li><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Workbook</span></code> wrapper that makes
 use of an appropriate <code class="xref py py-class docutils literal notranslate"><span class="pre">Unpacker</span></code>.
-This often serves to provide consistent
+This wrapper often serves to provide consistent
 type hints.</p></li>
 </ul>
-<p>In some cases, there is unique workbook-specific
-processing that seems to be distinct from the
-details of unpacking sheets, rows, and cell values
-from the workbook.</p>
-<p>The second constraint reflects a tradeoff decision.</p>
+<p>In some cases, there may be unique workbook-specific processing that seems to be distinct from the details of unpacking sheets, rows, and cell values from the workbook.
+This is also, properly, part of the py:class:<cite>Workbook</cite> wrapper,</p>
+<p>The immutability constraint reflects a tradeoff decision.</p>
 <ul class="simple">
 <li><p>One option is to have a mutable schema.
 To locate fields with non-delimited (COBOL) files,
@@ -90,128 +76,100 @@ would change for each <code class="docutils literal notranslate"><span class="pr
 construct.</p></li>
 <li><p>The chosen option is to have an immutable schema.
 To locate fields with non-delimited (COBOL) files,
-a Location helper is used. This wraps the schema
-and offset locations into a new object.
+a <code class="xref py py-class docutils literal notranslate"><span class="pre">Location</span></code> helper is used. This wraps the schema and offset locations into a new object.
 The decorations relate to a specific instance,
 and are discarded.</p></li>
 </ul>
-<p>Annotating (or decorating) the schema with size
-and offset information makes it very difficult
-to keep multiple rows in memory when they
-have <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> constructs with distinct
-values.</p>
-<p>Keeping the size and offset information in separate
-objects, permits a great deal more flexibility.
-The cost associated with this flexibility is the
-creation and destruction of numerous small <code class="xref py py-class docutils literal notranslate"><span class="pre">Location</span></code>
-instances.</p>
+<p>Annotating (or decorating) the schema with size and offset information makes it very difficult to keep multiple COBOL records in memory when they have <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> constructs with distinct values.
+Keeping the size and offset information in separate objects, permits a great deal more flexibility.
+The cost associated with this flexibility is the creation and destruction of numerous small <code class="xref py py-class docutils literal notranslate"><span class="pre">Location</span></code> instances.</p>
 </section>
 <section id="file-and-schema-binding">
-<h2>File and Schema Binding<a class="headerlink" href="#file-and-schema-binding" title="Permalink to this headline">¶</a></h2>
+<h2>File and Schema Binding<a class="headerlink" href="#file-and-schema-binding" title="Link to this heading">¶</a></h2>
 <p>There are several ways to represent file schema information.</p>
 <ol class="arabic simple">
-<li><p>For spreadsheets, one (or more) rows in each workbook sheet can provide the attribute
-names.  The data types and other details are implicit.  This is often bound to the
-data, making it quite useful in practice.</p></li>
-<li><p>A distinct workbook sheet that lists name (and optionally type)
-for each attribute.  Offsets and sizes can
-also be provided, making this useful for fixed-format COBOL files.
-This may be bound to data in a separate sheet of the same workbook,
-making it more likely to be useful.</p></li>
-<li><p>A Python module that’s built from source information.  This
-allows us to trivially <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">schema.foo</span></code> and have lots of cool
-classes and functions in the <code class="docutils literal notranslate"><span class="pre">schema.foo</span></code> module.</p></li>
-<li><p>Some standardized metadata format. JSONSchema is preferred.
-XSD can also be used. While this is separate from the file,
-it can be incorporated into the application.</p></li>
+<li><p>For spreadsheets, one (or more) rows in each workbook sheet can provide the attribute names.
+The data types and other details are implicit.
+This is often bound to the data, making it quite useful in practice.</p></li>
+<li><p>A distinct workbook sheet that lists name (and optionally type) for each attribute.
+Offsets and sizes can also be provided, making this useful for fixed-format COBOL files.
+This may be bound to data in a separate sheet of the same workbook, making it more likely to be useful.</p></li>
+<li><p>A Python module that’s built from source information.
+This allows us to trivially <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">schema.foo</span></code> and have lots of cool classes and functions in the <code class="docutils literal notranslate"><span class="pre">schema.foo</span></code> module.</p></li>
+<li><p>Some standardized metadata format.
+JSON Schema is preferred.
+XSD can also be used.
+While this is separate from the file, it can be incorporated into the application.</p></li>
 </ol>
-<p>Options 1 and 2 (workbook-based schema) cover over 99%
-of the cases in practice.  While the data is casual and error-prone, it’s
-often readily available.</p>
+<p>Options 1 and 2 (workbook-based schema) cover over 99% of the cases in practice.
+While the data is casual and error-prone, it’s often readily available.</p>
 <p>Option 3 (a Python module) is very cool.
-Using JSONSchema means the schema can be encoded as a Python <code class="docutils literal notranslate"><span class="pre">dict</span></code>.
-This module can then be used through an application ecosystem to provide a
-single, consistent schema to all related applications.</p>
-<p>Option 4 (a JSONSchema document) can be consumed by a library module
-like Stingray Reader to enforce a schema throughout a suite of applications.</p>
-<p>Option 4 is rarely used in practice.  In the rare cases when an organization
-will consent to providing schema files in a standard format, they’re often prepared separately
-from the data and do not actually reflect the application software
+Using JSON Schema means the schema can be encoded as a Python <code class="docutils literal notranslate"><span class="pre">dict</span></code>.
+This module can then be used through an application ecosystem to provide a single, consistent schema to all related applications.</p>
+<p>Option 4 (a JSONSchema document) can be consumed by a library module like <strong>Stingray</strong> to enforce a schema throughout a suite of applications.</p>
+<p>Option 4 is rarely used in practice.
+In the rare cases when an organization will consent to providing schema files in a standard format, they’re often prepared separately from the data and do not actually reflect the application software
 that is used to build the data file.</p>
-<p>Option 2 also covers COBOL files, where the schema is a separate document with the
-Data Definition Entries (DDE’s).</p>
+<p>Option 2 also covers COBOL files, where the schema is a separate document with the Data Definition Entries (DDE’s).</p>
 </section>
 <section id="loading-a-schema">
-<h2>Loading a Schema<a class="headerlink" href="#loading-a-schema" title="Permalink to this headline">¶</a></h2>
-<p>An application needs to load schema information when processing a file
-described by that schema. There are three sources for schema information:</p>
+<h2>Loading a Schema<a class="headerlink" href="#loading-a-schema" title="Link to this heading">¶</a></h2>
+<p>An application needs to load schema information when processing a file described by that schema.
+There are three sources for schema information:</p>
 <ul class="simple">
 <li><p>Parse the embedded schema buried in the sheet of a workbook.
 Often, this is a header row.</p></li>
 <li><p>Load an external schema definition from a file.</p></li>
 <li><p>Code the schema into the application. This can be an explicit JSONSchema document.
-The worst case is an implicit schema in the form of code that refers to column
-names without any formalization of the schema.</p></li>
+The worst case is an implicit schema in the form of code that refers to column names without any formalization of the schema.</p></li>
 </ul>
-<p>Making the schema explicit makes it testable at development time and observable when
-used for production. An explicit schema allows us to partition
-application design into several components.</p>
+<p>Making the schema explicit makes it testable at development time and observable when used for production.
+An explicit schema allows us to partition application design into several components:</p>
 <ul class="simple">
-<li><p>Schema definition. These can be shared and pubished. Changes can be tracked explicitly
-and visibly.</p></li>
-<li><p>Schema parsing and loading. For JSONSchema documents, this is relatively simple.
+<li><p><strong>Schema definition</strong>. These can be shared and pubished.
+Changes can be tracked explicitly and visibly.</p></li>
+<li><p><strong>Schema parsing and loading</strong>.
+For JSON Schema documents, this is relatively simple.
 For COBOL DDE files, this is a bit more complex.</p></li>
-<li><p>Application data access using a schema.</p></li>
+<li><p><strong>Application data processing</strong>. The where data is consumed using a schema.</p></li>
 </ul>
-<p>The idea is to have a universal schema representation. An application
-can load this from a variety of sources, including JSON, COBOL, and heading
-rows of a spreadsheet.</p>
-<p>Having a published, testable schema assures that all of the applications
-can aggree to the physical format and logical layout of the data.
+<p>The idea is to have a universal schema representation. An application can load this from a variety of sources, including JSON, COBOL, and heading rows of a spreadsheet.</p>
+<p>Having a published, testable schema assures that all of the applications can agree to the physical format and logical layout of the data.
 It also makes data quality problems observable.</p>
 <section id="some-cobol-file-issues">
-<h3>Some COBOL File Issues<a class="headerlink" href="#some-cobol-file-issues" title="Permalink to this headline">¶</a></h3>
-<p>Non-spreadsheet files, including legacy COBOL files, introduce
-some additional complexities that workbook files don’t have.
+<h3>Some COBOL File Issues<a class="headerlink" href="#some-cobol-file-issues" title="Link to this heading">¶</a></h3>
+<p>Non-spreadsheet files, including legacy COBOL files, introduce some additional complexities that workbook files don’t have.
 Here’s a summary:</p>
 <ol class="arabic simple">
 <li><p>COBOL files have a fixed field layout, without delimiters.
-This means that the offset of each field into a sequence of characters or bytes must be used to
-decompose the record into its individual elements.</p></li>
+This means that the offset of each field into a sequence of characters or bytes must be used to decompose the record into its individual elements.</p></li>
 <li><p>Numeric fields can have an implied decimal point.
 The COBOL DDE <code class="docutils literal notranslate"><span class="pre">PICTURE</span></code> clause is essential for parsing the file contents into number values.</p></li>
-<li><p>COBOL can make use of numeric data represented in a variety
-of “Computational” forms.  The <code class="docutils literal notranslate"><span class="pre">COMP-3</span></code>
-form, for example, is very popular: decimal digits are
-packed two per byte and the final half-byte encodes
-sign information.</p></li>
+<li><p>COBOL can make use of numeric data represented in a variety of “Computational” forms.
+The <code class="docutils literal notranslate"><span class="pre">COMP-3</span></code> form, for example, is very popular: decimal digits are packed two per byte and the final half-byte encodes sign information.</p></li>
 <li><p>The string data may be encoded in EBCDIC bytes, requiring decoding.</p></li>
 <li><p>COBOL permits data aliases (or “unions”) via the <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> clause.
-Without the entire unviverse of COBOL programs that work with a given file,
-the general handling of <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code>
-alternatives can become an insoluable problem. While it’s clear some field’s value
-discriminates among the union alternatives, that detail is not part of the COBOL DDE.
-Only lazy field access can work;
-eager creation of individual cell values is doomed because a
-<code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> alternative may be defined over invalid data.</p></li>
-<li><p>COBOL has an <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> feature where one attribute of a DDE
-determines the size of an array. This means every attribute after the array has a location which varies.
-The locations within the flat file can only be computed with an actual
-instance of the record.</p></li>
+Without the entire unviverse of COBOL programs that work with a given file, the general handling of <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> alternatives can become an insoluable problem.
+While it’s clear some field’s value must discriminate among the union alternatives, that detail is not part of the COBOL DDE.
+Only lazy field access can work.
+Attempting eager creation of cell values is doomed because several <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> alternative may have valid interpretations of the bytes.</p></li>
+<li><p>COBOL has an <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> feature where one attribute of a DDE determines the size of an array.
+This means every attribute after the array has a location which varies.
+The locations within the flat file can only be computed with an actual instance of the record.</p></li>
 </ol>
-<p>Generally, COBOL files are defined by a “Data Definition Entry” (DDE)
-that provides the record layout.
-It’s essential to parse this source DDE, which has the original COBOL
-definition for the file.  A schema can be built from the parsed DDE.
-There’s no good reason to rely on any intermediate description separate from
-the DDE’s themselves.</p>
+<p>Generally, COBOL files are defined by a “Data Definition Entry” (DDE) that provides the record layout.
+It’s essential to parse this source DDE, which has the original COBOL definition for the file.
+A schema can be built from the parsed DDE.
+There’s no good reason to rely on any intermediate description separate from the DDE’s themselves.</p>
 </section>
 </section>
 <section id="formal-definitions-for-non-delimited-files">
-<h2>Formal Definitions for Non-Delimited Files<a class="headerlink" href="#formal-definitions-for-non-delimited-files" title="Permalink to this headline">¶</a></h2>
-<p>One approach to locating field values in a nested COBOL object with <cite>REDEFINES</cite> and <cite>OCCURS DEPENDING ON</cite> is to decorate the schema with instance location details for each item in the schema based on the current value of the instance.</p>
-<p>This handles <cite>OCCURS DEPENDING ON</cite> by computing unique decorations for each instance.</p>
-<p>We’ll describe this as being done eagerly. Pragmatically, it can be done lazily and cached. The <cite>REDEFINES</cite> is handled by application program logic to avoid references to invalid data.</p>
+<h2>Formal Definitions for Non-Delimited Files<a class="headerlink" href="#formal-definitions-for-non-delimited-files" title="Link to this heading">¶</a></h2>
+<p>One approach to locating field values in a nested COBOL object with <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> and <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> is to decorate the schema with instance location details for each item in the schema.
+This handles <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> by computing unique location decorations for each instance.</p>
+<p>We’ll describe this as being done eagerly.
+Pragmatically, it can be done lazily and cached.
+The <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> is handled by application program logic to avoid references to invalid data.</p>
 <p>The instance, <span class="math notranslate nohighlight">\(I\)</span>, is an array of <span class="math notranslate nohighlight">\(b\)</span> characters or bytes.</p>
 <div class="math notranslate nohighlight">
 \[I = \{ i_0, i_1, i_2, ..., i_{b-1} \}\]</div>
@@ -219,15 +177,22 @@ the DDE’s themselves.</p>
 <div class="math notranslate nohighlight">
 \[I[s: e] = \{ i_x \mid s \leq x &lt; e \}\]</div>
 <p>It seems like <span class="math notranslate nohighlight">\(I_{s:e}\)</span> might be slightly more traditional notation than <span class="math notranslate nohighlight">\(I[s:e]\)</span>. <span class="math notranslate nohighlight">\(I_{\{x \mid s \leq x &lt; e\}}\)</span> seems fussy.</p>
-<p>We can follow the Python convention of omitting <span class="math notranslate nohighlight">\(s\)</span> when <span class="math notranslate nohighlight">\(s = 0\)</span> and omitting <span class="math notranslate nohighlight">\(e\)</span> when <span class="math notranslate nohighlight">\(e = b\)</span>. This means that <span class="math notranslate nohighlight">\(I \equiv I[:]\)</span>.</p>
-<p>A Schema, <span class="math notranslate nohighlight">\(S\)</span>, is a static description of a number of instances, <span class="math notranslate nohighlight">\(I_0, I_1, I_2, ...\)</span>. We say the schema models an instance: <span class="math notranslate nohighlight">\(S \tilde \models I\)</span>. The modelling is approximate; the model is incomplete. A more complete model requires resolution of <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> to compute locations, <span class="math notranslate nohighlight">\(L\)</span>. This is <span class="math notranslate nohighlight">\(S \circ L \models I\)</span>.
+<p>We can follow the Python convention of omitting <span class="math notranslate nohighlight">\(s\)</span> when <span class="math notranslate nohighlight">\(s = 0\)</span> and omitting <span class="math notranslate nohighlight">\(e\)</span> when <span class="math notranslate nohighlight">\(e = b\)</span>.
+This means that <span class="math notranslate nohighlight">\(I \equiv I[:]\)</span>.</p>
+<p>A Schema, <span class="math notranslate nohighlight">\(S\)</span>, is a static description of a number of instances, <span class="math notranslate nohighlight">\(I_0, I_1, I_2, ...\)</span>.
+We say a schema is an approximate model for an instance: <span class="math notranslate nohighlight">\(S \tilde \models I\)</span>.
+The modelling is approximate because a model may be incomplete.
+Specifically, we may not know the locations of all fields because of an  <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> clause.</p>
+<p>A more complete model requires resolution of <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> to compute locations, <span class="math notranslate nohighlight">\(L\)</span>.
+This combination can be stated as <span class="math notranslate nohighlight">\(S \circ L \models I\)</span>.
 The schema, <span class="math notranslate nohighlight">\(S\)</span>, composed with additional location information, <span class="math notranslate nohighlight">\(L\)</span>, models the instance, <span class="math notranslate nohighlight">\(I\)</span>.</p>
 <p>A Schema has a structure with three kinds of elements:</p>
 <ul class="simple">
 <li><p>Atomic, with no further structure. This has a type conversion (or “unpack”) function, <span class="math notranslate nohighlight">\(t(I)\)</span>, to extract a value from an instance.
 It requires a length, <span class="math notranslate nohighlight">\(l\)</span>, that defines a slice from the instance.
 We can say <span class="math notranslate nohighlight">\(t_{S}(I[:l])\)</span> to refer to the type conversion function for a specific Schema, <span class="math notranslate nohighlight">\(S\)</span>, used to decode an instance, <span class="math notranslate nohighlight">\(I\)</span>.
-JSON Schema defines types of number, int, string, boolean, and null. Other types may need to be added to handle COBOL data.</p></li>
+JSON Schema defines types of number, int, string, boolean, and null.
+Other types may need to be added to handle COBOL data.</p></li>
 <li><p>Array, with an Items subschema, <span class="math notranslate nohighlight">\(S_i\)</span> that describes a repeating sub-instance.
 The number of sub instances, <span class="math notranslate nohighlight">\(r\)</span> may be provided explicitly.
 In the <code class="docutils literal notranslate"><span class="pre">OCCURS</span> <span class="pre">DEPENDING</span> <span class="pre">ON</span></code> case, the value of <span class="math notranslate nohighlight">\(r\)</span> is the value of another field.
@@ -260,34 +225,39 @@ This means <span class="math notranslate nohighlight">\(r = t_{S_d}(I)\)</span> 
 <p>This can be unrolled into a top-down, post-order traversal of the schema to create Location objects.</p>
 </section>
 <section id="json-schema-considerations">
-<h2>JSON Schema Considerations<a class="headerlink" href="#json-schema-considerations" title="Permalink to this headline">¶</a></h2>
-<p>JSON Schema is focused on delimited data where a parser has handled data type conversions.</p>
-<p>We require some extensions or adaptations to cover issues that not handled well by JSON Schema.</p>
+<h2>JSON Schema Considerations<a class="headerlink" href="#json-schema-considerations" title="Link to this heading">¶</a></h2>
+<p>JSON Schema is focused on delimited data where a parser has handled data type conversions.
+We require some extensions or adaptations to cover issues that not handled well by JSON Schema.</p>
 <ul class="simple">
-<li><p>COBOL encoded data (Packed-Decimal, Binary, etc.) JSON Schema presumes delimited files with a parser’s conversions of data. We are driving the parser from the JSON Schema, and additional details are required.</p></li>
-<li><p>Occurs Depending On reference. JSON Schema limits the <cite>maxItems</cite> to an unsigned integer. We need to <cite>$ref</cite>, and an extension vocabulary is required.</p></li>
-<li><p>Workbook conversions of numeric data to durations or timestamps. This distinct from the <cite>format</cite> option on a <cite>“type”: “string”</cite> where the format provides a pattern for parsing text. We need to specify an additional conversion.</p></li>
+<li><p>COBOL encoded data (Packed-Decimal, Binary, etc.) JSON Schema presumes delimited files with a parser’s conversions of data. We are driving the parser from the JSON Schema, therefore additional details are required.</p></li>
+<li><p>Occurs Depending On reference. JSON Schema limits the <code class="docutils literal notranslate"><span class="pre">maxItems</span></code> to an unsigned integer. We need to <code class="docutils literal notranslate"><span class="pre">$ref</span></code>, and an extension vocabulary is required.</p></li>
+<li><p>Workbook conversions of numeric data to durations or timestamps. This distinct from the <code class="docutils literal notranslate"><span class="pre">format</span></code> option on a <code class="docutils literal notranslate"><span class="pre">&quot;type&quot;:</span> <span class="pre">&quot;string&quot;</span></code> where the format provides a pattern for parsing text. We need to specify an additional conversion.</p></li>
 </ul>
 <p>See <a class="reference external" href="https://github.com/json-schema-org/json-schema-spec">https://github.com/json-schema-org/json-schema-spec</a> for the meta schema used to define a schema.</p>
-<p>We have two overall strategies: Update the meta schema or adapt to the existing meta schema.</p>
+<p>We have two overall strategies:</p>
+<ul class="simple">
+<li><p>Update the meta schema or</p></li>
+<li><p>Adapt to the existing meta schema.</p></li>
+</ul>
+<p>We’ll look at each in some detail.</p>
 <section id="update-the-meta-schema">
-<h3>Update the meta schema<a class="headerlink" href="#update-the-meta-schema" title="Permalink to this headline">¶</a></h3>
+<h3>Update the meta schema<a class="headerlink" href="#update-the-meta-schema" title="Link to this heading">¶</a></h3>
 <p>We could make some changes to the JSON Schema meta schema through a vocabulary addition.</p>
 <ul class="simple">
-<li><p>Add a new <cite>decimal</cite> type to the validation vocabulary.</p></li>
-<li><p>Permit a <cite>$ref</cite> validation for <cite>“maxItems”</cite> in the array vocabulary.</p></li>
+<li><p>Add a new <code class="docutils literal notranslate"><span class="pre">decimal</span></code> type to the validation vocabulary.</p></li>
+<li><p>Permit a <code class="docutils literal notranslate"><span class="pre">$ref</span></code> validation for <code class="docutils literal notranslate"><span class="pre">maxItems</span></code> in the array vocabulary.</p></li>
 <li><p>Additional unpacking details for “integer” and “number” are needed. Currently “format” is used for strings. We could expand it’s use to include encoding details for numbers. This would support bigendian integers, bigendian floats, packed decimal, and zoned decimal number, integer, and decimal values.</p></li>
 <li><p>Additional conversion details for Workbook numbers that are encodings of durations or timestamps.</p></li>
 </ul>
 <p>We can then use a revised meta schema to validate the schema used for Workbooks or COBOL.</p>
 </section>
 <section id="adapt-to-the-existing-meta-schema">
-<h3>Adapt to the existing meta schema<a class="headerlink" href="#adapt-to-the-existing-meta-schema" title="Permalink to this headline">¶</a></h3>
+<h3>Adapt to the existing meta schema<a class="headerlink" href="#adapt-to-the-existing-meta-schema" title="Link to this heading">¶</a></h3>
 <p>We could adapt to the existing JSON Schema meta schema.</p>
-<p>We <em>can</em> consider COBOL encoded numeric values as <cite>“type”: “string”</cite> with additional <cite>“contentEncoding”</cite> details. Calling these values strings seems to push the envelope a bit: JSON Schema generally avoies syntax and unpacking issues. The value truly is a number.</p>
-<p>It seems improper to require a separate type conversion to create the needed, Python-specific <cite>Decimal</cite>.  A conversion can be <em>implicit</em>, using the “cobol” keyword value. Or, it can be <em>explicit</em>, using a new “conversion” keyword for extended types like timestamp, duration based on float, and <cite>Decimal</cite> based unpacking bytes.</p>
-<p>This is the approach taken for Workbook values like durations and timestamps. A supplemental <cite>“format”: “duration”</cite> is used to parse a string that encodes a duration value. Parsers, generally, don’t do anything with this. Validation can be handled to conform the string matches the format. Decoding a useful object is left to the application.</p>
-<p>The <cite>“contentEncoding”</cite> provides a way to describe COBOL Packed Decimal and Binary as strings of bytes. A <cite>“cobol”</cite> keyword gets Usage and Picture values required to decode EBCDIC.</p>
+<p>We <em>can</em> consider COBOL encoded numeric values as <code class="docutils literal notranslate"><span class="pre">&quot;type&quot;:</span> <span class="pre">&quot;string&quot;</span></code> with additional <code class="docutils literal notranslate"><span class="pre">contentEncoding</span></code> details. Calling these values strings seems to push the envelope a bit: JSON Schema generally avoies syntax and unpacking issues. The value truly is a number.</p>
+<p>It seems improper to require a separate type conversion to create the needed, Python-specific <code class="docutils literal notranslate"><span class="pre">Decimal</span></code>.  A conversion can be <em>implicit</em>, using a <code class="docutils literal notranslate"><span class="pre">&quot;cobol&quot;</span></code> keyword value. Or, it can be <em>explicit</em>, using a new <code class="docutils literal notranslate"><span class="pre">&quot;conversion&quot;</span></code> keyword for extended types like timestamp, duration based on float, and <code class="docutils literal notranslate"><span class="pre">Decimal</span></code> based unpacking bytes.</p>
+<p>This is the approach taken for Workbook values like durations and timestamps. A supplemental <code class="docutils literal notranslate"><span class="pre">&quot;format&quot;:</span> <span class="pre">&quot;duration&quot;</span></code> is used to parse a string that encodes a duration value. Parsers, generally, don’t do anything with this. Validation can be handled to conform the string matches the format. Decoding a useful object is left to the application.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&quot;contentEncoding&quot;</span></code> provides a way to describe COBOL Packed Decimal and Binary as strings of bytes. A <code class="docutils literal notranslate"><span class="pre">&quot;cobol&quot;</span></code> keyword gets Usage and Picture values required to decode EBCDIC.</p>
 <p>Here’s an example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
  <span class="s2">&quot;contentEncoding&quot;</span><span class="p">:</span> <span class="s2">&quot;packed-decimal&quot;</span><span class="p">,</span>
@@ -296,9 +266,9 @@ This means <span class="math notranslate nohighlight">\(r = t_{S_d}(I)\)</span> 
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Other <cite>“contentEncoding”</cite> values include “bigendian-h”,  “bigendian-i”, “bigendian-q” (for short, int, and long long values.) Also, “bigendian-float” and “bigendian-double”. And, of course, “CP037” or “EBCDIC” to decode ordinary strings from EBCDIC to native text.</p>
-<p>This permits a little more flexibility for moving to native (non-EBCDIC) file formats. Instead of the “cobol” keyword to propvide unpackong details, we can use a “struct” keyword to provide Python’s “struct” module format codes.</p>
-<p>Also, we need to add “maxItemsDependsOn” keyword to include the “$ref” value for arrays. Here’s an example:</p>
+<p>Other <code class="docutils literal notranslate"><span class="pre">&quot;contentEncoding&quot;</span></code> values include “bigendian-h”,  “bigendian-i”, “bigendian-q” (for short, int, and long long values.) Also, “bigendian-float” and “bigendian-double”. And, of course, “CP037” or “EBCDIC” to decode ordinary strings from EBCDIC to native text.</p>
+<p>This permits a little more flexibility for moving to native (non-EBCDIC) file formats. Instead of the <code class="docutils literal notranslate"><span class="pre">&quot;cobol&quot;</span></code> keyword to propvide unpacking details, we can use a <code class="docutils literal notranslate"><span class="pre">&quot;struct&quot;</span></code> keyword to provide Python’s <code class="docutils literal notranslate"><span class="pre">&quot;struct&quot;</span></code> module format codes.</p>
+<p>Also, we need to add <code class="docutils literal notranslate"><span class="pre">&quot;maxItemsDependsOn&quot;</span></code> keyword to include the <code class="docutils literal notranslate"><span class="pre">&quot;$ref&quot;</span></code> value for arrays. Here’s an example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span>
  <span class="s2">&quot;maxItemsDependsOn&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/path/to/SIZE-FIELD&quot;</span><span class="p">},</span>
  <span class="s2">&quot;cobol&quot;</span><span class="p">:</span> <span class="s2">&quot;05 THINGS OCCURS DEPENDING ON SIZE-FIELD&quot;</span><span class="p">,</span>
@@ -306,7 +276,7 @@ This means <span class="math notranslate nohighlight">\(r = t_{S_d}(I)\)</span> 
  <span class="p">}</span>
 </pre></div>
 </div>
-<p>For <cite>REDEFINES</cite>, we use the existing “oneOf”:</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code>, we use the existing <code class="docutils literal notranslate"><span class="pre">&quot;oneOf&quot;</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;REDEFINES-A-B-C&quot;</span><span class="p">:</span> <span class="p">{</span>
     <span class="s2">&quot;oneOf&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;number&quot;</span><span class="p">}}},</span>
@@ -316,7 +286,8 @@ This means <span class="math notranslate nohighlight">\(r = t_{S_d}(I)\)</span> 
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>To provide COBOL-style naming to OneOf/REDEFINES schema, we impose a rule that each alternative must be an object, and each object must have at most one named property. The parent item is effectively anonymous, since it’s never used in COBOL.</p>
+<p>To provide COBOL-style naming to a <code class="docutils literal notranslate"><span class="pre">OneOf</span></code> (or <code class="docutils literal notranslate"><span class="pre">REDEFINES</span></code> schema,) we impose a rule that each alternative must be an object, and each object must have at most one named property.
+The parent item is effectively anonymous, since it’s never used in COBOL.</p>
 </section>
 </section>
 </section>
@@ -326,10 +297,10 @@ This means <span class="math notranslate nohighlight">\(r = t_{S_d}(I)\)</span> 
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/Stingray_belon1553_small.png" alt="Logo"/>
+              <img class="logo" src="_static/Stingray_belon1553_small.png" alt="Logo of Stingray-Reader"/>
             </a></p>
 <h1 class="logo"><a href="index.html">Stingray-Reader</a></h1>
 
@@ -340,16 +311,26 @@ This means <span class="math notranslate nohighlight">\(r = t_{S_d}(I)\)</span> 
 
 
 
-<h3>Navigation</h3>
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Using <strong>Stingray Reader</strong></a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Design Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Additional Background</a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/index.html">Demo Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="apidoc/index.html">stingray API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="todo.html">The TODO List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Commercial Use</a></li>
 </ul>
 
@@ -358,20 +339,10 @@ This means <span class="math notranslate nohighlight">\(r = t_{S_d}(I)\)</span> 
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="developer.html" title="previous chapter">Using <strong>Stingray Reader</strong></a></li>
-      <li>Next: <a href="background.html" title="next chapter">Background</a></li>
+      <li>Next: <a href="background.html" title="next chapter">Additional Background</a></li>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
 
 
 
@@ -385,11 +356,11 @@ This means <span class="math notranslate nohighlight">\(r = t_{S_d}(I)\)</span> 
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2021, S.Lott.
+      &#169;2021, S.Lott.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="_sources/design.rst.txt"

@@ -1,7 +1,6 @@
 """
 Test the Schema and Instance models.
 """
-import pytest
 from unittest.mock import Mock, MagicMock, call, sentinel
 import re
 try:  # pragma: no cover
@@ -10,10 +9,9 @@ except ImportError:
     from jsonschema import Draft7Validator as SchemaValidator  # type: ignore[import]
 
 import pytest
-from io import StringIO
-import csv
 from stingray.schema_instance import *
-from stingray.workbook import JSONUnpacker, CSVUnpacker
+from stingray.workbook import JSONUnpacker
+
 
 def test_conversions():
     assert digits_5(1020) == "01020"

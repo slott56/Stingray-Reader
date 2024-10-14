@@ -1,27 +1,27 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Testing &#8212; Stingray-Reader 5.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <title>Development &#8212; Stingray-Reader 5.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=4af8989d"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="installation.html" />
-    <link rel="prev" title="History" href="history.html" />
+    <link rel="next" title="The TODO List" href="todo.html" />
+    <link rel="prev" title="stingray.implementations" href="apidoc/modules/stingray.implementations.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -33,28 +33,62 @@
 
           <div class="body" role="main">
             
-  <section id="testing">
-<h1>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h1>
+  <section id="development">
+<h1>Development<a class="headerlink" href="#development" title="Link to this heading">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">tox.toml</span></code> and <code class="docutils literal notranslate"><span class="pre">Makefile</span></code>  provide an overview of the CI processing.</p>
+<p>Makefile targets:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">quick</span></code>: Uses the <code class="docutils literal notranslate"><span class="pre">quick</span></code> environment in <strong>tox</strong>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test</span></code>: the full test suite, including static analysis.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs</span></code>: Creates the documentation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs-coverage</span></code>: a report of how many modules, classes, methods, and functions have documentation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">apidoc_gen</span></code>: re-generates an <code class="docutils literal notranslate"><span class="pre">apidoc.rst</span></code>.
+Useful after significant revisions or extensions.</p></li>
+</ul>
+<p>Tox environments.</p>
+<ul class="simple">
+<li><p>default, used by <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">run</span></code> is a full test suite, and static analysis.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">quick</span></code> runs the tests in the <code class="docutils literal notranslate"><span class="pre">tests</span></code> directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">demo</span></code> runs the tests in the <code class="docutils literal notranslate"><span class="pre">demo</span></code> directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs</span></code> runs doctest on the examples in the documentation.</p></li>
+</ul>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
 <p>There are three “tiers” of testing for Stingray Reader.</p>
 <ul class="simple">
-<li><p>Unit testing in isolation.</p>
+<li><p>Unit testing.</p>
 <ul>
-<li><p>Some tests use <code class="docutils literal notranslate"><span class="pre">pytest</span></code>. This has 100% code coverage.</p></li>
-<li><p>Additional tests use <code class="docutils literal notranslate"><span class="pre">doctest</span></code>. These are additional examples that are also validated.</p></li>
+<li><p>Some tests use <code class="docutils literal notranslate"><span class="pre">pytest</span></code>. This should have 100% code coverage.</p></li>
+<li><p>Additional tests use <code class="docutils literal notranslate"><span class="pre">doctest</span></code>. These are examples from code and documentation that are also validated.</p></li>
 </ul>
 </li>
-<li><p>Integration testing.</p>
-<ul>
-<li><p>All of the sample files are processed through a test case.</p></li>
+<li><p>Integration testing.
+All of the sample files are processed through a test case to be sure they can be read.</p></li>
+<li><p>Acceptance testing.
+The <code class="docutils literal notranslate"><span class="pre">demo</span></code> directory contains applications which serve as acceptance test cases.</p></li>
 </ul>
-</li>
-<li><p>Acceptance testing.</p>
-<ul>
-<li><p>The demo directory contains applications which serve as acceptance test cases.</p></li>
-</ul>
-</li>
-</ul>
-<p>Additionally, <code class="docutils literal notranslate"><span class="pre">mypy</span></code> is used in strict mode to be sure the type hints are correct and consistent.</p>
+</section>
+<section id="static-analysis">
+<h2>Static Analysis<a class="headerlink" href="#static-analysis" title="Link to this heading">¶</a></h2>
+<p>Additionally, <code class="docutils literal notranslate"><span class="pre">ruff</span></code> and <code class="docutils literal notranslate"><span class="pre">pyright</span></code> are used to be sure the code has no obvious flaws and the type hints are correct and consistent.</p>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h2>
+<p>Sphinx is used.</p>
+<p>Note that diagrams are created with <strong>plantUML</strong>.
+This relies on Java.
+Both the <code class="docutils literal notranslate"><span class="pre">Makefile</span></code> and the <code class="docutils literal notranslate"><span class="pre">config.py</span></code> references to the required JAR file.</p>
+<p>Makefile:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">-</span><span class="n">LSf</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">plantuml</span><span class="o">/</span><span class="n">plantuml</span><span class="o">/</span><span class="n">releases</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="n">v1</span><span class="mf">.2024.7</span><span class="o">/</span><span class="n">plantuml</span><span class="o">-</span><span class="mf">1.2024.7</span><span class="o">.</span><span class="n">jar</span> <span class="o">-</span><span class="n">o</span> <span class="o">.</span><span class="n">plantuml</span><span class="o">/</span><span class="n">plantuml</span><span class="o">-</span><span class="mf">1.2024.7</span><span class="o">.</span><span class="n">jar</span>
+</pre></div>
+</div>
+<p>docs/source/config.py:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">_plantuml_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;.plantuml&quot;</span> <span class="o">/</span> <span class="s2">&quot;plantuml-1.2024.7.jar&quot;</span>
+</pre></div>
+</div>
+<p>Yes. Both of these pin a specific version number.
+It changes rarely.</p>
+</section>
 </section>
 
 
@@ -62,10 +96,10 @@
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/Stingray_belon1553_small.png" alt="Logo"/>
+              <img class="logo" src="_static/Stingray_belon1553_small.png" alt="Logo of Stingray-Reader"/>
             </a></p>
 <h1 class="logo"><a href="index.html">Stingray-Reader</a></h1>
 
@@ -76,16 +110,26 @@
 
 
 
-<h3>Navigation</h3>
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Using <strong>Stingray Reader</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="design.html">Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">Design Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background.html">Additional Background</a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/index.html">Demo Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="apidoc/index.html">stingray API Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="todo.html">The TODO List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Commercial Use</a></li>
 </ul>
 
@@ -93,21 +137,11 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="history.html" title="previous chapter">History</a></li>
-      <li>Next: <a href="installation.html" title="next chapter">Installation</a></li>
+      <li>Previous: <a href="apidoc/modules/stingray.implementations.html" title="previous chapter">stingray.implementations</a></li>
+      <li>Next: <a href="todo.html" title="next chapter">The TODO List</a></li>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
 
 
 
@@ -121,11 +155,11 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2021, S.Lott.
+      &#169;2021, S.Lott.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="_sources/testing.rst.txt"

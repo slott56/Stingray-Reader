@@ -2,13 +2,14 @@
 COBOL Parser Test Cases.
 """
 
-import pytest
-import os
 from io import StringIO
-from pprint import pprint
-from textwrap import dedent
-import json
+import os
 from pathlib import Path
+from textwrap import dedent
+
+import pytest
+
+
 from stingray.cobol_parser import *
 
 try:

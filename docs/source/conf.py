@@ -10,9 +10,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('../demo'))
+from pathlib import Path
+import sys
+src_path = Path.cwd().parent.parent / 'src'
+sys.path.insert(0, str(src_path))
+print(f"PYTHONPATH={src_path}")
 
 
 # -- Project information -----------------------------------------------------
@@ -22,7 +24,7 @@ copyright = '2021, S.Lott'
 author = 'S.Lott'
 
 # The full version, including alpha/beta/rc tags
-release = '5.0'
+release = '5.1'
 
 
 # -- General configuration ---------------------------------------------------
@@ -65,6 +67,5 @@ html_logo = 'Stingray_belon1553_small.png'
 
 # -- Options for UML -----
 
-from pathlib import Path
-_jar_path = Path.home() / "miniconda3" / "envs" / "stingray" / "share" / "plantuml-1.2021.14.jar"
-plantuml = f'java -jar {_jar_path!s}'
+_plantuml_path = Path.cwd().parent.parent / ".plantuml" / "plantuml-1.2024.7.jar"
+plantuml = f'java -jar "{_plantuml_path.absolute()}"'

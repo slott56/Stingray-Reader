@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Data Profiling Demonstration &#8212; Stingray-Reader 5.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <title>Data Profiling &#8212; Stingray-Reader 5.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=4af8989d"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data Conversion – ETL with Validation" href="conversion.html" />
@@ -20,8 +19,9 @@
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -33,25 +33,33 @@
 
           <div class="body" role="main">
             
-  <section id="data-profiling-demonstration">
-<span id="demo-profile"></span><h1>Data Profiling Demonstration<a class="headerlink" href="#data-profiling-demonstration" title="Permalink to this headline">¶</a></h1>
-<p>This is a data profiling application that can be applied
-to workbooks to examine the data. This can help design
-builder functions for applications.</p>
-<p>This produces simple RST-format output on stdout.</p>
-<p>A common use case is the following:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python demo/profile.py sample/<span class="se">\*</span>.csv &gt;profile_csv.rst
-rst2html.py profile_csv.rst profile_csv.html
+  <section id="data-profiling">
+<span id="demo-profile"></span><h1>Data Profiling<a class="headerlink" href="#data-profiling" title="Link to this heading">¶</a></h1>
+<p>This is a data profiling application that can be applied to workbooks to examine the data.
+This can help design builder functions for applications.
+The idea is that when a data profiling run fails, there are three possible problems:</p>
+<ul class="simple">
+<li><p>The data has changed and this is the first we’ve heard of the change.
+We need to extend the application to handle this.</p></li>
+<li><p>Our provious understanding of the data was incomplete, and this data shows a previously unknown case.
+This suggests our application had a latent bug.</p></li>
+<li><p>The data really <strong>is</strong> bad.
+The data must be rejected and reworked.</p></li>
+</ul>
+<p>Finding out which of these three things requires concrete details from a data profiling application.</p>
+<p>This produces simple RST-format output on stdout.
+A common use case is the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>demo/profile.py<span class="w"> </span>sample/<span class="se">\*</span>.csv<span class="w"> </span>&gt;profile_csv.rst
+rst2html.py<span class="w"> </span>profile_csv.rst<span class="w"> </span>profile_csv.html
 </pre></div>
 </div>
 <p>This gives us an HTML-formatted report showing distributions
 of values in each column.</p>
-<p>This follows the design patterns shown earlier.</p>
-<p>See <code class="docutils literal notranslate"><span class="pre">demo/profile.py</span></code>.</p>
+<p>This will follow a number of the design patterns shown earlier.
+See the <code class="file docutils literal notranslate"><span class="pre">demo/profile.py</span></code> file in the Git repository for the complete source.</p>
 <section id="core-processing">
-<h2>Core Processing<a class="headerlink" href="#core-processing" title="Permalink to this headline">¶</a></h2>
-<p>The core proessing is to gather counts
-of individual sample values.</p>
+<h2>Core Processing<a class="headerlink" href="#core-processing" title="Link to this heading">¶</a></h2>
+<p>The core proessing is to gather counts of individual sample values.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Stats</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sheet</span><span class="p">:</span> <span class="n">Sheet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sheet</span> <span class="o">=</span> <span class="n">sheet</span>
@@ -84,36 +92,26 @@ of individual sample values.</p>
         <span class="k">return</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The serialization is based on a printed report.
-This lets us tinker with the formatting
-via <code class="docutils literal notranslate"><span class="pre">print()</span></code> functions. The final serialization
-uses <code class="docutils literal notranslate"><span class="pre">contextlib.redirect_stdout</span></code> to capture
-the print output into a single string.</p>
+<p>The serialization uses the <code class="xref py py-func docutils literal notranslate"><span class="pre">print()</span></code> function to create a file with the needed report.
+This lets us tinker with  string formatting, and use the <code class="docutils literal notranslate"><span class="pre">string.Template</span></code> or even the <strong>Jinja</strong> template processing tool.
+It also permits using <code class="docutils literal notranslate"><span class="pre">contextlib.redirect_stdout</span></code> to capture the print output into a file.</p>
 </section>
 <section id="processing-context">
-<h2>Processing Context<a class="headerlink" href="#processing-context" title="Permalink to this headline">¶</a></h2>
-<p>This is an edge case.
-A data profiling application doesn’t, generally,
-produce much stateful output. It doesn’t often
-update a database.</p>
-<p>This is a “reporting” application, which has
-two important criteria:</p>
+<h2>Processing Context<a class="headerlink" href="#processing-context" title="Link to this heading">¶</a></h2>
+<p>A data profiling application doesn’t, generally, produce much stateful output.
+It doesn’t often update a database.</p>
+<p>This is a “reporting” application.
+In effect, it’s an elaborate query.
+This means it has two important features:</p>
 <ul class="simple">
 <li><p>The output is meant for human consumption.</p></li>
 <li><p>The processing is fully idempotent.
-We can run the application as often as
-needed without worrying about corrupting
-a database with out-of-order operations
-or duplicate operations.</p></li>
+We can run the application as often as needed without worrying about corrupting a database with out-of-order operations or duplicate operations.</p></li>
 </ul>
-<p>Because there isn’t a significant, persistent
-state change a persistence management class
-is – perhaps – unnecessary.</p>
-<p>It helps, however, to follow the overall design
-pattern in case some persistent state change
-<em>does</em> become part of this application.</p>
+<p>Because there isn’t a significant, persistent state change a persistence management class is – perhaps – unnecessary.</p>
+<p>It helps, however, to follow the overall design pattern in case some persistent state change <em>does</em> become part of this application.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Profile_Processing</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A subclass might avoid printing the results??&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A subclass might avoid printing the results??&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fail_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_on_exception</span> <span class="o">=</span> <span class="n">fail_fast</span>
@@ -133,10 +131,12 @@ pattern in case some persistent state change
         <span class="k">pass</span>
 </pre></div>
 </div>
+<p>This design lets us write a subclass that provides an alternative definition of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">save_stats()</span></code> method.
+We can then use the alternative subclass to change the output processing.</p>
 </section>
 <section id="sheet-processing">
-<h2>Sheet Processing<a class="headerlink" href="#sheet-processing" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="../developer.html#process_sheet" title="process_sheet"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_sheet()</span></code></a> function the heart of the application.
+<h2>Sheet Processing<a class="headerlink" href="#sheet-processing" title="Link to this heading">¶</a></h2>
+<p>The <code class="xref py py-func docutils literal notranslate"><span class="pre">process_sheet()</span></code> function the heart of the application.
 This handles all the rows present in a given sheet.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_sheet</span><span class="p">(</span><span class="n">sheet</span><span class="p">:</span> <span class="n">Sheet</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Profile_Processing</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Counter</span><span class="p">:</span>
     <span class="n">audit_counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
@@ -157,13 +157,12 @@ This handles all the rows present in a given sheet.</p>
     <span class="k">return</span> <span class="n">audit_counts</span>
 </pre></div>
 </div>
-<p>Some applications will have variant processing for workbooks that
-contain different types of sheets.
+<p>Some applications will have variant processing for workbooks that contain different types of sheets.
 This leads to different <code class="docutils literal notranslate"><span class="pre">process_this_sheet</span></code>  and <code class="docutils literal notranslate"><span class="pre">process_that_sheet</span></code> functions.
 Each  will follow the above template to process all rows of the sheet.</p>
 </section>
 <section id="workbook-processing">
-<h2>Workbook Processing<a class="headerlink" href="#workbook-processing" title="Permalink to this headline">¶</a></h2>
+<h2>Workbook Processing<a class="headerlink" href="#workbook-processing" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">process_workbook</span><span class="p">(</span><span class="nb">input</span><span class="p">:</span> <span class="n">Workbook</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Profile_Processing</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">sheet</span> <span class="ow">in</span> <span class="nb">input</span><span class="o">.</span><span class="n">sheet_iter</span><span class="p">():</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> :: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">sheet</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
@@ -174,9 +173,10 @@ Each  will follow the above template to process all rows of the sheet.</p>
 </div>
 </section>
 <section id="command-line-interface">
-<h2>Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h2>
+<h2>Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading">¶</a></h2>
 <p>We have an optional argument for verbosity and a positional argument that
-provides all the files to profile.</p>
+provides all the files to profile.
+This function parses the command-line arguments:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">:</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>
@@ -190,9 +190,9 @@ provides all the files to profile.</p>
         <span class="n">const</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
-
 </pre></div>
 </div>
+<p>Here’s the overall <code class="xref py py-func docutils literal notranslate"><span class="pre">main()</span></code> function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">verbosity</span><span class="p">)</span>
@@ -208,10 +208,10 @@ provides all the files to profile.</p>
 </div>
 </section>
 <section id="running-the-demo">
-<h2>Running the Demo<a class="headerlink" href="#running-the-demo" title="Permalink to this headline">¶</a></h2>
+<h2>Running the Demo<a class="headerlink" href="#running-the-demo" title="Link to this heading">¶</a></h2>
 <p>We can run this program like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 demo/profile.py sample/<span class="se">\*</span>.csv &gt;profile_csv.rst
-rst2html.py profile_csv.rst profile_csv.html
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>demo/profile.py<span class="w"> </span>sample/<span class="se">\*</span>.csv<span class="w"> </span>&gt;profile_csv.rst
+rst2html.py<span class="w"> </span>profile_csv.rst<span class="w"> </span>profile_csv.html
 </pre></div>
 </div>
 <p>The RST output file looks like this:</p>
@@ -492,8 +492,7 @@ AtomicSchema({&#39;title&#39;: &#39;type&#39;, &#39;$anchor&#39;: &#39;type&#39;
     &quot;bool&quot;,&quot;1&quot;
 </pre></div>
 </div>
-<p>This can be processed by pandoc or docutils
-to create an HTML report.</p>
+<p>This can be processed by <strong>pandoc</strong> or <strong>docutils</strong> to create an HTML report.</p>
 </section>
 </section>
 
@@ -502,10 +501,10 @@ to create an HTML report.</p>
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo"/>
+              <img class="logo" src="../_static/Stingray_belon1553_small.png" alt="Logo of Stingray-Reader"/>
             </a></p>
 <h1 class="logo"><a href="../index.html">Stingray-Reader</a></h1>
 
@@ -516,16 +515,26 @@ to create an HTML report.</p>
 
 
 
-<h3>Navigation</h3>
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../developer.html">Using <strong>Stingray Reader</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../background.html">Additional Background</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Demo Applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apidoc/index.html">stingray API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo.html">The TODO List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">Commercial Use</a></li>
 </ul>
 
@@ -540,16 +549,6 @@ to create an HTML report.</p>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
 
 
 
@@ -563,11 +562,11 @@ to create an HTML report.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2021, S.Lott.
+      &#169;2021, S.Lott.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../_sources/demo/profile.rst.txt"

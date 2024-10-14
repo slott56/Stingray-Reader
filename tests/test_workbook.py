@@ -1,13 +1,15 @@
 """
 Workbook Test Cases
 """
-import pytest
-from unittest.mock import Mock, MagicMock, call, sentinel
+from decimal import Decimal
 import os
-import re
-from unittest.mock import Mock, MagicMock
-from io import StringIO, BytesIO
+from unittest.mock import Mock
+from unittest.mock import call, sentinel
+
+import pytest
+
 from stingray.workbook import *
+from stingray.schema_instance import WBNav
 
 ### Base Workbook/Sheet/Row Features
 

@@ -1,0 +1,7 @@
+jsonschema>=4.23.0
+numbers-parser>=4.13.2
+openpyxl>=3.1.5
+pyexcel-ods>=0.6.0
+pyexcel-ods3>=0.6.1
+pyexcel>=0.7.0
+xlrd>=2.0.1

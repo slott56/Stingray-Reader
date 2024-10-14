@@ -15,6 +15,7 @@ Really, this needs to be decomposed like the app.py into two subclasses:
 The idea is to make persistence an optional feature so we can validate without making
 any code changes.
 """
+
 import argparse
 from collections import Counter
 import json
@@ -25,7 +26,7 @@ from pprint import pprint
 import sys
 from stingray.workbook import open_workbook, HeadingRowSchemaLoader, Sheet, Row
 from stingray.schema_instance import JSON
-from typing import Iterator, NamedTuple, TextIO, Any
+from typing import TextIO, Any
 from jsonschema import Draft202012Validator  # type: ignore [import]
 
 

@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>stingray.estruct &#8212; Stingray-Reader 5.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
+    <title>stingray.estruct &#8212; Stingray-Reader 5.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=4af8989d"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="stingray.schema_instance" href="stingray.schema_instance.html" />
@@ -20,8 +19,9 @@
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -34,12 +34,12 @@
           <div class="body" role="main">
             
   <section id="module-stingray.estruct">
-<span id="stingray-estruct"></span><h1>stingray.estruct<a class="headerlink" href="#module-stingray.estruct" title="Permalink to this headline">¶</a></h1>
+<span id="stingray-estruct"></span><h1>stingray.estruct<a class="headerlink" href="#module-stingray.estruct" title="Link to this heading">¶</a></h1>
 <p>estruct – Unpack bytes with EBCDIC encodings</p>
-<p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">estruct</span></code> module unpacks EBCDIC-encoded values. It is a big-endian version of the <code class="xref py py-mod docutils literal notranslate"><span class="pre">struct</span></code> module. 
+<p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">estruct</span></code> module unpacks EBCDIC-encoded values. It is a big-endian version of the <code class="xref py py-mod docutils literal notranslate"><span class="pre">struct</span></code> module.
 It uses two COBOL DDE clauses, <code class="docutils literal notranslate"><span class="pre">USAGE</span></code> and <code class="docutils literal notranslate"><span class="pre">PIC</span></code>, to describe the format of data represented by a sequence of bytes.</p>
 <section id="unpacking-and-sizing">
-<h2>Unpacking and Sizing<a class="headerlink" href="#unpacking-and-sizing" title="Permalink to this headline">¶</a></h2>
+<h2>Unpacking and Sizing<a class="headerlink" href="#unpacking-and-sizing" title="Link to this heading">¶</a></h2>
 <p>The format string is a COBOL DDE. The <code class="docutils literal notranslate"><span class="pre">USAGE</span></code> and <code class="docutils literal notranslate"><span class="pre">PIC</span></code> (also spelled <code class="docutils literal notranslate"><span class="pre">PICTURE</span></code>) clauses are required,
 the rest of the DDE is quietly ignored.
 For example, <code class="docutils literal notranslate"><span class="pre">'USAGE</span> <span class="pre">DISPLAY</span> <span class="pre">PIC</span> <span class="pre">S999.99'</span></code>, is the minimum to describe a textual value that occupies
@@ -80,7 +80,7 @@ An alternative interface for this module could be to use single-letter codes.</p
 </div>
 </section>
 <section id="file-reading">
-<h2>File Reading<a class="headerlink" href="#file-reading" title="Permalink to this headline">¶</a></h2>
+<h2>File Reading<a class="headerlink" href="#file-reading" title="Link to this heading">¶</a></h2>
 <p>An EBCDIC file can leverage physical “Record Format” (RECFM) assistance.
 These classes define a number of Z/OS RECFM conversion functions. We recognize four
 actual RECFM’s plus an additional special case.</p>
@@ -109,7 +109,7 @@ were consumed so the reader can advance an appropriate amount.
 </div>
 </section>
 <section id="cobol-picture-parsing">
-<h2>COBOL Picture Parsing<a class="headerlink" href="#cobol-picture-parsing" title="Permalink to this headline">¶</a></h2>
+<h2>COBOL Picture Parsing<a class="headerlink" href="#cobol-picture-parsing" title="Link to this heading">¶</a></h2>
 <p>The <a class="reference internal" href="#stingray.estruct.Representation" title="stingray.estruct.Representation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Representation</span></code></a> object provides representation details
 based on COBOL syntax. This is used by the Struct Unpacker (<code class="xref py py-class docutils literal notranslate"><span class="pre">schema_instance.Struct</span></code>) as well as the
 EBCDIC Unpacker (<code class="xref py py-class docutils literal notranslate"><span class="pre">schema_instance.EBCDIC</span></code>).</p>
@@ -117,16 +117,16 @@ EBCDIC Unpacker (<code class="xref py py-class docutils literal notranslate"><sp
 For now, it’s here and is reused by <code class="xref py py-mod docutils literal notranslate"><span class="pre">schema_instance</span></code>.</p>
 </section>
 <section id="calcsize-function">
-<h2>Calcsize Function<a class="headerlink" href="#calcsize-function" title="Permalink to this headline">¶</a></h2>
+<h2>Calcsize Function<a class="headerlink" href="#calcsize-function" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="stingray.estruct.calcsize">
-<span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">calcsize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#stingray.estruct.calcsize" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">calcsize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#stingray.estruct.calcsize" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the size, in bytes for an elementary (non-group-level) COBOL DDE format specification.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>format</strong> – The COBOL <code class="docutils literal notranslate"><span class="pre">DISPLAY</span></code> and <code class="docutils literal notranslate"><span class="pre">PIC</span></code> clauses.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>integer size of the item in bytes.</p>
 </dd>
 </dl>
@@ -134,10 +134,10 @@ For now, it’s here and is reused by <code class="xref py py-mod docutils liter
 
 </section>
 <section id="unpack-function">
-<h2>Unpack Function<a class="headerlink" href="#unpack-function" title="Permalink to this headline">¶</a></h2>
+<h2>Unpack Function<a class="headerlink" href="#unpack-function" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="stingray.estruct.unpack">
-<span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">unpack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.unpack" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">unpack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.unpack" title="Link to this definition">¶</a></dt>
 <dd><p>Unpack EBCDIC bytes given a COBOL DDE format specification and a buffer of bytes.</p>
 <p>USAGE DISPLAY special case: “external decimal” sometimes called “zoned decimal”.
 The PICTURE character-string of an external decimal item can contain only:</p>
@@ -147,19 +147,19 @@ The PICTURE character-string of an external decimal item can contain only:</p>
 <li><p>The assumed decimal point, V</p></li>
 <li><p>One or more of the symbol P</p></li>
 </ul>
-<p>External decimal items with USAGE DISPLAY are sometimes referred to as zoned decimal items. 
-Each digit of a number is represented by a single byte. 
-The 4 high-order bits of each byte are zone bits; 
-the 4 high-order bits of the low-order byte represent the sign of the item. 
+<p>External decimal items with USAGE DISPLAY are sometimes referred to as zoned decimal items.
+Each digit of a number is represented by a single byte.
+The 4 high-order bits of each byte are zone bits;
+the 4 high-order bits of the low-order byte represent the sign of the item.
 The 4 low-order bits of each byte contain the value of the digit.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>format</strong> – A format string; a COBOL DDE.</p></li>
 <li><p><strong>buffer</strong> – A bytes object with a value to be unpacked.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A Python object</p>
 </dd>
 </dl>
@@ -167,22 +167,22 @@ The 4 low-order bits of each byte contain the value of the digit.</p>
 
 </section>
 <section id="recfm-reader">
-<h2>RECFM_Reader<a class="headerlink" href="#recfm-reader" title="Permalink to this headline">¶</a></h2>
+<h2>RECFM_Reader<a class="headerlink" href="#recfm-reader" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_Reader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">RECFM_Reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BinaryIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrecl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.estruct.RECFM_Reader" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">RECFM_Reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BinaryIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrecl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.estruct.RECFM_Reader" title="Link to this definition">¶</a></dt>
 <dd><p>Reads records based on a physical file format.</p>
 <p>A subclass can handle details of the various kinds of Block and Record
 Descriptor Words (BDW, RDW) present a specific format.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_Reader.record_iter">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">record_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">collections.abc.Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_Reader.record_iter" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">record_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_Reader.record_iter" title="Link to this definition">¶</a></dt>
 <dd><p>Yields each physical record, stripped of headers.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_Reader.used">
-<span class="sig-name descname"><span class="pre">used</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_Reader.used" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">used</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_Reader.used" title="Link to this definition">¶</a></dt>
 <dd><p>Used by a row to announce the number of bytes consumed.
 Supports the rare case of RECFM_N, where records are variable length with no RDW or BDW headers.</p>
 </dd></dl>
@@ -191,17 +191,17 @@ Supports the rare case of RECFM_N, where records are variable length with no RDW
 
 </section>
 <section id="recfm-f">
-<h2>RECFM_F<a class="headerlink" href="#recfm-f" title="Permalink to this headline">¶</a></h2>
+<h2>RECFM_F<a class="headerlink" href="#recfm-f" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_F">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">RECFM_F</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BinaryIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrecl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.estruct.RECFM_F" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">RECFM_F</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BinaryIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrecl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.estruct.RECFM_F" title="Link to this definition">¶</a></dt>
 <dd><p>Read RECFM=F files.</p>
 <p>The schema’s record size is the lrecl, logical record length.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_F.rdw_iter">
-<span class="sig-name descname"><span class="pre">rdw_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">collections.abc.Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_F.rdw_iter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">rdw_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_F.rdw_iter" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Yields</dt>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
 <dd class="field-odd"><p>records with RDW injected, these look like RECFM_V format as a standard.</p>
 </dd>
 </dl>
@@ -209,9 +209,9 @@ Supports the rare case of RECFM_N, where records are variable length with no RDW
 
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_F.record_iter">
-<span class="sig-name descname"><span class="pre">record_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">collections.abc.Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_F.record_iter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">record_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_F.record_iter" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Yields</dt>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
 <dd class="field-odd"><p>physical records, stripped of headers.</p>
 </dd>
 </dl>
@@ -221,32 +221,32 @@ Supports the rare case of RECFM_N, where records are variable length with no RDW
 
 </section>
 <section id="recfm-fb">
-<h2>RECFM_FB<a class="headerlink" href="#recfm-fb" title="Permalink to this headline">¶</a></h2>
+<h2>RECFM_FB<a class="headerlink" href="#recfm-fb" title="Link to this heading">¶</a></h2>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_FB">
-<span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">RECFM_FB</span></span><a class="headerlink" href="#stingray.estruct.RECFM_FB" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="#stingray.estruct.RECFM_F" title="stingray.estruct.RECFM_F"><code class="xref py py-class docutils literal notranslate"><span class="pre">stingray.estruct.RECFM_F</span></code></a></p>
+<span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">RECFM_FB</span></span><a class="headerlink" href="#stingray.estruct.RECFM_FB" title="Link to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#stingray.estruct.RECFM_F" title="stingray.estruct.RECFM_F"><code class="xref py py-class docutils literal notranslate"><span class="pre">RECFM_F</span></code></a></p>
 </dd></dl>
 
 </section>
 <section id="recfm-n">
-<h2>RECFM_N<a class="headerlink" href="#recfm-n" title="Permalink to this headline">¶</a></h2>
+<h2>RECFM_N<a class="headerlink" href="#recfm-n" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_N">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">RECFM_N</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BinaryIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrecl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.estruct.RECFM_N" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">RECFM_N</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BinaryIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrecl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.estruct.RECFM_N" title="Link to this definition">¶</a></dt>
 <dd><p>Read variable-length records without RDW (or BDW).</p>
-<p>In the case of <code class="docutils literal notranslate"><span class="pre">Occurs</span> <span class="pre">Depending</span> <span class="pre">On</span></code>, the schema doesn’t have  single, fixed size. 
+<p>In the case of <code class="docutils literal notranslate"><span class="pre">Occurs</span> <span class="pre">Depending</span> <span class="pre">On</span></code>, the schema doesn’t have  single, fixed size.
 The client of this class announces how the bytes were actually used.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_N.record_iter">
-<span class="sig-name descname"><span class="pre">record_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">collections.abc.Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_N.record_iter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">record_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_N.record_iter" title="Link to this definition">¶</a></dt>
 <dd><p>Provides the entire buffer. The first bytes
 are a record.</p>
 <p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">used()</span></code> method informs
 this object how many bytes were used.
 From this, the next record can be returned.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Yields</dt>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
 <dd class="field-odd"><p>blocks of bytes.</p>
 </dd>
 </dl>
@@ -256,18 +256,18 @@ From this, the next record can be returned.</p>
 
 </section>
 <section id="recfm-v">
-<h2>RECFM_V<a class="headerlink" href="#recfm-v" title="Permalink to this headline">¶</a></h2>
+<h2>RECFM_V<a class="headerlink" href="#recfm-v" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_V">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">RECFM_V</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BinaryIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrecl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.estruct.RECFM_V" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">RECFM_V</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BinaryIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrecl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.estruct.RECFM_V" title="Link to this definition">¶</a></dt>
 <dd><p>Read RECFM=V files.</p>
-<p>The schema’s record size is irrelevant. 
+<p>The schema’s record size is irrelevant.
 Each record has a 4-byte Record Descriptor Word (RDW) followed by the data.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_V.rdw_iter">
-<span class="sig-name descname"><span class="pre">rdw_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">collections.abc.Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_V.rdw_iter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">rdw_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_V.rdw_iter" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Yields</dt>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
 <dd class="field-odd"><p>records which include the 4-byte RDW.</p>
 </dd>
 </dl>
@@ -275,9 +275,9 @@ Each record has a 4-byte Record Descriptor Word (RDW) followed by the data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_V.record_iter">
-<span class="sig-name descname"><span class="pre">record_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">collections.abc.Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_V.record_iter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">record_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_V.record_iter" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Yields</dt>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
 <dd class="field-odd"><p>records, stripped of RDW’s.</p>
 </dd>
 </dl>
@@ -287,19 +287,19 @@ Each record has a 4-byte Record Descriptor Word (RDW) followed by the data.</p>
 
 </section>
 <section id="recfm-vb">
-<h2>RECFM_VB<a class="headerlink" href="#recfm-vb" title="Permalink to this headline">¶</a></h2>
+<h2>RECFM_VB<a class="headerlink" href="#recfm-vb" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_VB">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">RECFM_VB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BinaryIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrecl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.estruct.RECFM_VB" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">RECFM_VB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BinaryIO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrecl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.estruct.RECFM_VB" title="Link to this definition">¶</a></dt>
 <dd><p>Read RECFM=VB files.</p>
-<p>The schema’s record size is irrelevant. 
+<p>The schema’s record size is irrelevant.
 Each record has a 4-byte Record Descriptor Word (RDW) followed by the data.
 Each block has a 4-byte Block Descriptor Word (BDW) followed by records.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_VB.bdw_iter">
-<span class="sig-name descname"><span class="pre">bdw_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">collections.abc.Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_VB.bdw_iter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">bdw_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_VB.bdw_iter" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Yields</dt>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
 <dd class="field-odd"><p>blocks, which include 4-byte BDW and records with 4-byte RDW’s.</p>
 </dd>
 </dl>
@@ -307,9 +307,9 @@ Each block has a 4-byte Block Descriptor Word (BDW) followed by records.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_VB.rdw_iter">
-<span class="sig-name descname"><span class="pre">rdw_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">collections.abc.Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_VB.rdw_iter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">rdw_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_VB.rdw_iter" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Yields</dt>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
 <dd class="field-odd"><p>records which include the 4-byte RDW.</p>
 </dd>
 </dl>
@@ -317,9 +317,9 @@ Each block has a 4-byte Block Descriptor Word (BDW) followed by records.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.estruct.RECFM_VB.record_iter">
-<span class="sig-name descname"><span class="pre">record_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">collections.abc.Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_VB.record_iter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">record_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">bytes</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.RECFM_VB.record_iter" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Yields</dt>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
 <dd class="field-odd"><p>records, stripped of RDW’s.</p>
 </dd>
 </dl>
@@ -329,10 +329,10 @@ Each block has a 4-byte Block Descriptor Word (BDW) followed by records.</p>
 
 </section>
 <section id="representation">
-<h2>Representation<a class="headerlink" href="#representation" title="Permalink to this headline">¶</a></h2>
+<h2>Representation<a class="headerlink" href="#representation" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="stingray.estruct.Representation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">Representation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">usage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picture_elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picture_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.estruct.Representation" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">Representation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">usage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picture_elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picture_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stingray.estruct.Representation" title="Link to this definition">¶</a></dt>
 <dd><p>COBOL Representation Details: Usage and Picture.</p>
 <p>This is used internally by <a class="reference internal" href="#stingray.estruct.unpack" title="stingray.estruct.unpack"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack()</span></code></a> and <a class="reference internal" href="#stingray.estruct.calcsize" title="stingray.estruct.calcsize"><code class="xref py py-func docutils literal notranslate"><span class="pre">calcsize()</span></code></a>.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">Representation</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;USAGE DISPLAY PICTURE S9(5)V99&quot;</span><span class="p">)</span>
@@ -346,23 +346,23 @@ Each block has a 4-byte Block Descriptor Word (BDW) followed by records.</p>
 </div>
 <dl class="py property">
 <dt class="sig sig-object py" id="stingray.estruct.Representation.digit_groups">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">digit_groups</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#stingray.estruct.Representation.digit_groups" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">digit_groups</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#stingray.estruct.Representation.digit_groups" title="Link to this definition">¶</a></dt>
 <dd><p>Parse the Picture into details: [sign, whole, separator, fraction] groups.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.estruct.Representation.normalize_picture">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalize_picture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.Representation.normalize_picture" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">normalize_picture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#stingray.estruct.Representation.normalize_picture" title="Link to this definition">¶</a></dt>
 <dd><p>Normalizes the <code class="docutils literal notranslate"><span class="pre">PIC</span></code> clause into a sequence of component details.
 This extracts <code class="docutils literal notranslate"><span class="pre">sign</span></code>, editing characters in <code class="docutils literal notranslate"><span class="pre">char</span></code>, the decimal place in <code class="docutils literal notranslate"><span class="pre">decimal</span></code>,
 any repeated picture characters with <code class="docutils literal notranslate"><span class="pre">x(n)</span></code>, and any non-repeat-count picture
 characters.</p>
 <p>The repeat count items are normalized into non-repeat-count. <code class="docutils literal notranslate"><span class="pre">9(5)</span></code> becomes <code class="docutils literal notranslate"><span class="pre">99999</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>source</strong> – The string value of a <cite>PICTURE</cite> clause</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a list of dictionaries that decomposes the picture</p>
 </dd>
 </dl>
@@ -370,17 +370,17 @@ characters.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="stingray.estruct.Representation.parse">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stingray.estruct.Representation" title="stingray.estruct.Representation"><span class="pre">stingray.estruct.Representation</span></a></span></span><a class="headerlink" href="#stingray.estruct.Representation.parse" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#stingray.estruct.Representation" title="stingray.estruct.Representation"><span class="pre">Representation</span></a></span></span><a class="headerlink" href="#stingray.estruct.Representation.parse" title="Link to this definition">¶</a></dt>
 <dd><p>Parse the COBOL DDE information. Extract the <code class="docutils literal notranslate"><span class="pre">USAGE</span></code> and <code class="docutils literal notranslate"><span class="pre">PICTURE</span></code> details
 to create a <code class="docutils literal notranslate"><span class="pre">Representation</span></code> object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cls</strong> – the class being created a subclass of <a class="reference internal" href="#stingray.estruct.Representation" title="stingray.estruct.Representation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Representation</span></code></a></p></li>
 <li><p><strong>format</strong> – the format specification string</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An instance of the requested class.</p>
 </dd>
 </dl>
@@ -388,31 +388,31 @@ to create a <code class="docutils literal notranslate"><span class="pre">Represe
 
 <dl class="py property">
 <dt class="sig sig-object py" id="stingray.estruct.Representation.pattern">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#stingray.estruct.Representation.pattern" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#stingray.estruct.Representation.pattern" title="Link to this definition">¶</a></dt>
 <dd><p>Summarize Picture Clause as a regexp to validate data.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stingray.estruct.Representation.picture_elements">
-<span class="sig-name descname"><span class="pre">picture_elements</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#stingray.estruct.Representation.picture_elements" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">picture_elements</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#stingray.estruct.Representation.picture_elements" title="Link to this definition">¶</a></dt>
 <dd><p>The decomposed <code class="docutils literal notranslate"><span class="pre">PIC</span></code> clause, created by the <a class="reference internal" href="#stingray.estruct.Representation.normalize_picture" title="stingray.estruct.Representation.normalize_picture"><code class="xref py py-meth docutils literal notranslate"><span class="pre">normalize_picture()</span></code></a> method.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stingray.estruct.Representation.picture_size">
-<span class="sig-name descname"><span class="pre">picture_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#stingray.estruct.Representation.picture_size" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">picture_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#stingray.estruct.Representation.picture_size" title="Link to this definition">¶</a></dt>
 <dd><p>Summary sizing information.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="stingray.estruct.Representation.usage">
-<span class="sig-name descname"><span class="pre">usage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#stingray.estruct.Representation.usage" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">usage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#stingray.estruct.Representation.usage" title="Link to this definition">¶</a></dt>
 <dd><p>The usage text, words like <code class="docutils literal notranslate"><span class="pre">DISPLAY</span></code> or <code class="docutils literal notranslate"><span class="pre">COMPUTATIONAL</span></code> or any of the numerous variants.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="stingray.estruct.Representation.zoned_decimal">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zoned_decimal</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#stingray.estruct.Representation.zoned_decimal" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zoned_decimal</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#stingray.estruct.Representation.zoned_decimal" title="Link to this definition">¶</a></dt>
 <dd><p>Examine the digit groups to see if this is purely numeric.</p>
 </dd></dl>
 
@@ -420,10 +420,10 @@ to create a <code class="docutils literal notranslate"><span class="pre">Represe
 
 </section>
 <section id="designerror">
-<h2>DesignError<a class="headerlink" href="#designerror" title="Permalink to this headline">¶</a></h2>
+<h2>DesignError<a class="headerlink" href="#designerror" title="Link to this heading">¶</a></h2>
 <dl class="py exception">
 <dt class="sig sig-object py" id="stingray.estruct.DesignError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">DesignError</span></span><a class="headerlink" href="#stingray.estruct.DesignError" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">stingray.estruct.</span></span><span class="sig-name descname"><span class="pre">DesignError</span></span><a class="headerlink" href="#stingray.estruct.DesignError" title="Link to this definition">¶</a></dt>
 <dd><p>This is a catastrophic design problem.
 A common root cause is a named REGEX capture clause that’s not properly
 handled by a class, method, or function.</p>
@@ -437,10 +437,10 @@ handled by a class, method, or function.</p>
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../index.html">
-              <img class="logo" src="../../_static/Stingray_belon1553_small.png" alt="Logo"/>
+              <img class="logo" src="../../_static/Stingray_belon1553_small.png" alt="Logo of Stingray-Reader"/>
             </a></p>
 <h1 class="logo"><a href="../../index.html">Stingray-Reader</a></h1>
 
@@ -451,16 +451,26 @@ handled by a class, method, or function.</p>
 
 
 
-<h3>Navigation</h3>
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../developer.html">Using <strong>Stingray Reader</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../design.html">Design Considerations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../background.html">Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../design.html">Design Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../background.html">Additional Background</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../demo/index.html">Demo Applications</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">stingray API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../todo.html">The TODO List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../license.html">Commercial Use</a></li>
 </ul>
 
@@ -475,16 +485,6 @@ handled by a class, method, or function.</p>
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
 
 
 
@@ -498,11 +498,11 @@ handled by a class, method, or function.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2021, S.Lott.
+      &#169;2021, S.Lott.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.5.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
       <a href="../../_sources/apidoc/modules/stingray.estruct.rst.txt"

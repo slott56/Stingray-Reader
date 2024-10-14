@@ -30,7 +30,7 @@ process files in spreadsheet formats.
 Additionally, the Stingray Reader provides some guidance on how to structure
 file-processing applications so that they are testable and composable.
 
-Stingray 5.0 requires Python >= 3.9. The code is fully annotated with type hints.
+Stingray 5.1 requires Python >= 3.12. The code is fully annotated with type hints.
 
 This depends on additional projects to read .XLS, .XLSX, .ODS, and .NUMBERS files.
 
@@ -41,9 +41,9 @@ This depends on additional projects to read .XLS, .XLSX, .ODS, and .NUMBERS file
 -   NDJSON or JSON Newline files are JSON with an extra provision that each document must be complete on one physical line. 
     These use the built-in ``json`` module.
 
--   XLS files can be read via the ``xlrd`` project:  http://www.lexicon.net/sjmachin/xlrd.htm
+-   XLS files are read via the ``xlrd`` project:  http://www.lexicon.net/sjmachin/xlrd.htm
 
--   ODS and XLSX can be read via two projects: https://openpyxl.readthedocs.io/en/stable/ and http://docs.pyexcel.org/en/v0.0.6-rc2/.
+-   XLSX files are read via two projects: https://openpyxl.readthedocs.io/en/stable/
 
 -   Numbers (v13 and higher) usees protobuf and and snappy compression. See https://pypi.org/project/numbers-parser/.
 
@@ -54,26 +54,22 @@ This depends on additional projects to read .XLS, .XLSX, .ODS, and .NUMBERS file
 -   XML files can be wrapped in a Workbook. There's no automated translation from XSD to JSONSchema here.
     A sample is provided, but this may not solve very many problems in general.
 
+-   ODS files are read via http://docs.pyexcel.org/. **NOTE**. Currently, ODS file processing has problems with the 0.7.0 release.
+
 A file-suffix registry is used to map a suffix to a Workbook subclass that handles the physical format.
-A decorator is used to add or replace file suffix mappings.
+A decorator is used to add or replace file suffix mappings, permitting an application to fold in extensions.
 
-Environment Setup
-=================
-
-Here's an example of building a working environment using
-Miniconda. See https://conda.io/miniconda.html for more information
-on how to use this environment management tool. With ``conda``
-all commands are the same on Windows, Linux, and macos.
+Installation
+============
 
 ::
 
-    conda create -n stingray python=3.9
-    conda activate stingray
-    python -m pip install tox
-    python -m pip install --requirement requirements.txt
+    python -m pip install stingray-reader
 
-This makes sure everything you need is in a tidy, self-contained
-environment.
+Or. Using ``uv``.
 
-This can be done entirely with **PIP**, also. A virtual environment
-is strongly encouraged to make sure the dependencies are all installed properly.
+::
+
+    uv add stingray-reader
+
+Note that there's a tall stack of dependencies.

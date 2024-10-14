@@ -1,2 +1,0 @@
-jsonschema>=4.1
-xlrd>=0.9

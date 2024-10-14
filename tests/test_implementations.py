@@ -9,13 +9,14 @@ import datetime
 import pytest
 from pathlib import Path
 import os
-from pprint import pprint
 from stingray import (
     HeadingRowSchemaLoader,
-    CSV_Workbook, JSON_Workbook, COBOL_Text_File,
-    XLS_Workbook, XLSX_Workbook, ODS_Workbook, Numbers_Workbook,
+    CSV_Workbook, COBOL_Text_File,
     SchemaMaker, CONVERSION, name_cleaner
     )
+from stingray.implementations import (
+    XLS_Workbook, XLSX_Workbook, ODS_Workbook, Numbers_Workbook,
+)
 try:  # pragma: no cover
     from jsonschema import Draft202012Validator as SchemaValidator
 except ImportError:
@@ -118,8 +119,8 @@ def test_numbers_workbook(numbers_path, capsys):
             print(row)
         out, err = capsys.readouterr()
         assert out.splitlines() == [
-            "[42.0, 3.1415926, 'string', datetime.datetime(1956, 9, 10, 0, 0), True, None, None]",
-            "[9973.0, 2.7182818, 'data', datetime.datetime(1959, 1, 18, 0, 0), False, None, None]"
+            "[42.0, 3.1415926, 'string', DateTime(1956, 9, 10, 0, 0, 0, tzinfo=Timezone('UTC')), True, None, None]",
+            "[9973.0, 2.7182818, 'data', DateTime(1959, 1, 18, 0, 0, 0, tzinfo=Timezone('UTC')), False, None, None]"
         ]
 
 @pytest.fixture
