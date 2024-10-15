@@ -5,7 +5,19 @@
 History
 ##############
 
-Latest release is 5.0
+Latest release is 5.1
+
+Version 5.1
+===========
+
+Switch to ``uv``.
+
+Move to Py3.12
+
+Switch to ``tox.toml`` from ``tox.ini``.
+
+Use ``uv publish`` to post to PyPI.
+See (https://github.com/slott56/Stingray-Reader/issues/7)
 
 Version 5
 =========

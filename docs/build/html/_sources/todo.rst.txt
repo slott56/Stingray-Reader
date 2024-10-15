@@ -2,22 +2,18 @@
 The TODO List
 ===============
 
-[ ] Use ``uv publish`` to post to PyPI.
-See (https://github.com/slott56/Stingray-Reader/issues/7)
+Look at https://github.com/slott56/DataSynthTool.
 
-From the code:
+The **Data Synth Tool** uses schema information to define ranges of values, and distributions.
+
+These schema extensions should be unified with schema extensions described here.
+
+Further, the **Data Synth Tool** emphasizes Pydantic's style of embedded data validation into the class definition.
+While this adds a dependency, it seems like a useful direction.
+
+From the Code
+=============
+
+These are items marked with ``..  todo::`` in the code.
 
 ..  todolist::
-
-Done
-=====
-
-[x] Switch to ``uv``.
-
-    [x]   ``uv init --lib``
-    [x]   ``uv add xxx`` all the various packages
-    [x]   ``uv add --dev xxx`` all the development tools
-
-[x] Move to Py3.12
-
-[x] Switch to tox.toml from tox.ini.
