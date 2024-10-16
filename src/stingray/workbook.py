@@ -51,24 +51,14 @@ import json
 import logging
 from pathlib import Path
 import re
+from re import Match
 from types import TracebackType
-from typing import (
-    Union,
-    Optional,
-    IO,
-    Type,
-    Any,
-    cast,
-    AnyStr,
-    Generic,
-    Match,
-)
+from typing import IO, Type, Any, cast, TypeVar
 import weakref
 
 import stingray
 import stingray.estruct
 from stingray.schema_instance import (
-    Instance,
     DInstance,
     WBInstance,
     NDInstance,
@@ -96,7 +86,7 @@ except ImportError:  # pragma: no cover
 logger = logging.getLogger("stingray.workbook")
 
 
-class Workbook(Generic[Instance]):
+class Workbook[Instance: (NDInstance, DInstance, WBInstance)]:
     """
     The **Facade** over all workbooks and COBOL Files.
 
@@ -119,7 +109,7 @@ class Workbook(Generic[Instance]):
     -   Via the :py:func:`open_workbook` function.
     """
 
-    def __init__(self, name: Union[Path, str], **kwargs: Any) -> None:
+    def __init__(self, name: Path | str, **kwargs: Any) -> None:
         """
         Creates a Workbook instance.
 
@@ -145,8 +135,8 @@ class Workbook(Generic[Instance]):
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
+        exc_type: Type[BaseException] | None,
+        exc_val: BaseException | None,
         exc_tb: TracebackType,
     ) -> None:
         self.close()
@@ -181,10 +171,10 @@ class Workbook(Generic[Instance]):
         yield from (Sheet(self, name) for name in self.unpacker.sheet_iter())
 
 
-WB = Union[Workbook[NDInstance], Workbook[WBInstance], Workbook[DInstance]]
+WB = Workbook[NDInstance] | Workbook[WBInstance] | Workbook[DInstance]
 
 
-class Sheet(Generic[Instance]):
+class Sheet[Instance: (NDInstance, DInstance, WBInstance)]:
     """
     A Sheet of a Workbook. This can also be a table on a page of a Numbers workbook.
 
@@ -294,7 +284,7 @@ class Sheet(Generic[Instance]):
                 return NotImplemented
 
 
-class Row(Generic[Instance]):
+class Row[Instance: (NDInstance, DInstance, WBInstance)]:
     """Wrapper around a :py:class:`Nav` object bound to an :py:class:`Instance`.
 
     Note that both Instance and Sheet have the schema. While can be excessive,
@@ -413,7 +403,7 @@ def name_cleaner(name: str) -> str:
     return name
 
 
-class SchemaLoader(Generic[Instance]):
+class SchemaLoader[Instance: (NDInstance, DInstance, WBInstance)]:
     """
     Loads a schema.
 
@@ -478,14 +468,18 @@ class SchemaLoader(Generic[Instance]):
         return source
 
 
-class HeadingRowSchemaLoader(SchemaLoader[Instance]):
+T_Inst = TypeVar("T_Inst")
+
+
+class HeadingRowSchemaLoader[T_Inst](SchemaLoader):
     """
     Create a schema from the first row of a workbook sheet.
-    The "Instance" is expected to be a WBInstance, which is a Sequence of column values,
+    While ``SchemaLoader`` is generic with respect to ``Instance``,
+    this class is expected to rely on a ``WBInstance``, which is a Sequence of column values,
     parsed by a WBUnpacker.
     """
 
-    def header(self, source: Iterator[Instance]) -> JSON:
+    def header(self, source: Iterator[T_Inst]) -> JSON:
         """
         Creates a JSONSchema from the first row of a sheet.
 
@@ -508,7 +502,7 @@ class HeadingRowSchemaLoader(SchemaLoader[Instance]):
         return json_schema
 
 
-class ExternalSchemaLoader(SchemaLoader[Instance]):
+class ExternalSchemaLoader[T_Inst](SchemaLoader):
     """
     Read an external source of data to prepare a schema.
 
@@ -545,12 +539,12 @@ class ExternalSchemaLoader(SchemaLoader[Instance]):
         },
     }
 
-    def __init__(self, sheet: Sheet[Instance]) -> None:
+    def __init__(self, sheet: Sheet) -> None:
         """
         Creates an external schema loader for a :py:class:`Sheet`
         :param sheet: The sheet to examine.
         """
-        self.sheet: Sheet[Instance] = sheet
+        self.sheet: Sheet = sheet
 
     def load(self) -> JSON:
         """
@@ -669,7 +663,7 @@ CSV Implementation
 class CSVUnpacker(WBUnpacker):
     """Upacker that wraps the :py:mod:`csv` module."""
 
-    def open(self, name: Path, file_object: Optional[IO[AnyStr]] = None) -> None:
+    def open(self, name: Path, file_object: IO[str] | IO[bytes] | None = None) -> None:
         """
         Opens a CSV file for unpacking.
 
@@ -715,8 +709,8 @@ class CSV_Workbook(Workbook[WBInstance]):
 
     def __init__(
         self,
-        name: Union[str, Path],
-        file_object: Optional[IO[AnyStr]] = None,
+        name: str | Path,
+        file_object: IO[str] | IO[bytes] | None = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -748,7 +742,7 @@ class JSONUnpacker(Delimited):
     def open(
         self,
         name: Path,
-        file_object: Optional[IO[AnyStr]] = None,
+        file_object: IO[str] | IO[bytes] | None = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -798,8 +792,8 @@ class JSON_Workbook(Workbook[DInstance]):
 
     def __init__(
         self,
-        name: Union[str, Path],
-        file_object: Optional[IO[AnyStr]] = None,
+        name: str | Path,
+        file_object: IO[str] | IO[bytes] | None = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -832,8 +826,8 @@ class COBOL_Text_File(Workbook[NDInstance]):
 
     def __init__(
         self,
-        name: Union[str, Path],
-        file_object: Optional[IO[AnyStr]] = None,
+        name: str | Path,
+        file_object: IO[str] | IO[bytes] | None = None,
         **kwargs: str,
     ) -> None:
         """
@@ -856,16 +850,16 @@ class COBOL_EBCDIC_File(Workbook[NDInstance]):
     """
     EBCDIC-encoded files. No newline delimiters are used.
 
-    The NDInstance is AnyStr, which is a union of str | bytes.
-    This is narrower than that, and could be bytes only, not NDInstance.
+    The ``NDInstance`` type is  ``str | bytes``.
+    This expects bytes only, not the domain of types for ``NDInstance``.
     """
 
     def __init__(
         self,
-        name: Union[str, Path],
-        file_object: Optional[IO[AnyStr]] = None,
-        recfm_class: Optional[Type["stingray.estruct.RECFM_Reader"]] = None,
-        lrecl: Optional[int] = None,
+        name: str | Path,
+        file_object: IO[str] | IO[bytes] | None = None,
+        recfm_class: Type["stingray.estruct.RECFM_Reader"] | None = None,
+        lrecl: int | None = None,
         **kwargs: str,
     ) -> None:
         """
@@ -881,7 +875,7 @@ class COBOL_EBCDIC_File(Workbook[NDInstance]):
         """
         super().__init__(name)
         self.recfm_class = recfm_class or stingray.estruct.RECFM_N
-        self.lrecl: Optional[int] = lrecl
+        self.lrecl: int | None = lrecl
         self.unpacker = EBCDIC()
         self.unpacker.open(self.name, file_object)
 

@@ -44,9 +44,7 @@ import logging
 import re
 from typing import (
     TextIO,
-    Optional,
     Any,
-    Union,
     cast,
 )
 import weakref
@@ -63,13 +61,13 @@ class DesignError(BaseException):
     pass
 
 
-JSON = Union[None, bool, int, float, str, list[Any], dict[str, Any]]
+JSON = None | bool | int | float | str | list[Any] | dict[str, Any]
 
 logger = logging.getLogger("stingray.cobol_parser")
 
 
 def reference_format(
-    source: TextIO, replacing: Optional[list[tuple[str, str]]] = None
+    source: TextIO, replacing: list[tuple[str, str]] | None = None
 ) -> Iterator[str]:
     """
     Extract source from files that have sequence numbers in 1-6, indicator in 7, and code in 8-72.
@@ -233,7 +231,7 @@ def normalize_picture(source: str) -> list[dict[str, str]]:
 # Most clauses are simple strings.
 # The parsed picture clause, however, is a list of dicts.
 
-CLAUSE = Union[str, list[dict[str, str]]]
+CLAUSE = str | list[dict[str, str]]
 
 
 def clause_dict(source: str) -> dict[str, CLAUSE]:
@@ -270,9 +268,7 @@ class DDE:
 
     filler_count = 0
 
-    def __init__(
-        self, *sentence: str, clauses: Optional[dict[str, Any]] = None
-    ) -> None:
+    def __init__(self, *sentence: str, clauses: dict[str, Any] | None = None) -> None:
         self.level, self.source = sentence
         self.clauses = clauses or clause_dict(self.source)
         self.name = self.clauses.get("name") or self.clauses.get("filler") or "FILLER"
@@ -284,7 +280,7 @@ class DDE:
         else:
             self.unique_name = str(self.name)
         self.children: list["DDE"] = []
-        self.parent: Optional[weakref.ReferenceType["DDE"]] = None
+        self.parent: weakref.ReferenceType["DDE"] | None = None
         self.compact_source = " ".join(self.source.split())
 
     def __repr__(self) -> str:
@@ -329,7 +325,7 @@ def structure(sentences: Iterable[Sequence[str]]) -> list[DDE]:
     the simple groups() function, however, it's technically a Sequence[str].
     """
     node_iter = iter(DDE(*s) for s in sentences)
-    bottom: Optional[DDE] = next(node_iter)
+    bottom: DDE | None = next(node_iter)
     trees = [cast(DDE, bottom)]
     for node in node_iter:
         if node.level in {"66", "77", "88"}:
@@ -668,7 +664,7 @@ class JSONSchemaMakerExtendedVocabulary(JSONSchemaMaker):
             raise DesignError(f"usage clause {usage!r} unknown")  # pragma: no cover
 
 
-REPLACING = Optional[list[tuple[str, str]]]
+REPLACING = list[tuple[str, str]] | None
 REFERENCE_FORMAT = Callable[[TextIO, REPLACING], Iterator[str]]
 
 

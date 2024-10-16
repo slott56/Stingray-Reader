@@ -15,7 +15,7 @@ We *could* use ``odfpy`` to read ODS directly.
 
 from collections.abc import Iterable, Iterator
 from pathlib import Path
-from typing import Optional, cast, Union, Any, IO, AnyStr
+from typing import cast, Any, IO
 import warnings
 
 from stingray.workbook import file_registry, Workbook
@@ -35,7 +35,7 @@ try:
         def open(
             self,
             name: Path,
-            file_object: Optional[IO[AnyStr]] = None,
+            file_object: IO[str] | IO[bytes] | None = None,
             **kwargs: Any,
         ) -> None:
             """
@@ -72,7 +72,7 @@ try:
     class XLS_Workbook(Workbook[WBInstance]):
         """Facade for XLS Workbooks."""
 
-        def __init__(self, name: Union[str, Path], **kwargs: Any) -> None:
+        def __init__(self, name: str | Path, **kwargs: Any) -> None:
             """
             Opens an XLS Workbook for access.
 
@@ -102,7 +102,7 @@ try:
         def open(
             self,
             name: Path,
-            file_object: Optional[IO[AnyStr]] = None,
+            file_object: IO[str] | IO[bytes] | None = None,
             **kwargs: Any,
         ) -> None:
             """
@@ -140,7 +140,7 @@ try:
     class XLSX_Workbook(Workbook[WBInstance]):
         """Facade for XLSX Workbooks."""
 
-        def __init__(self, name: Union[str, Path], **kwargs: Any) -> None:
+        def __init__(self, name: str | Path, **kwargs: Any) -> None:
             """
             Opens an XLSX workbook for access.
 
@@ -170,7 +170,7 @@ try:
         def open(
             self,
             name: Path,
-            file_object: Optional[IO[AnyStr]] = None,
+            file_object: IO[str] | IO[bytes] | None = None,
             **kwargs: Any,
         ) -> None:
             """
@@ -219,7 +219,7 @@ try:
     class ODS_Workbook(Workbook[WBInstance]):
         """Facade for XLSX Workbooks."""
 
-        def __init__(self, name: Union[str, Path], **kwargs: Any) -> None:
+        def __init__(self, name: str | Path, **kwargs: Any) -> None:
             """
             Opens the workbook for access.
 
@@ -261,7 +261,7 @@ try:
         def open(
             self,
             name: Path,
-            file_object: Optional[IO[AnyStr]] = None,
+            file_object: IO[str] | IO[bytes] | None = None,
             **kwargs: Any,
         ) -> None:
             """
@@ -313,7 +313,7 @@ try:
     class Numbers_Workbook(Workbook[WBInstance]):
         """Facade for XLSX Workbooks."""
 
-        def __init__(self, name: Union[str, Path], **kwargs: Any) -> None:
+        def __init__(self, name: str | Path, **kwargs: Any) -> None:
             """
             Opens the workbook for access.
 

@@ -21,7 +21,7 @@ import logging
 from pathlib import Path
 import pprint
 import sys
-from typing import Any, Optional
+from typing import Any
 from types import TracebackType
 
 from stingray.workbook import (
@@ -86,8 +86,8 @@ class Profile_Processing:
 
     def __exit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_val: Optional[BaseException],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
         exc_tb: TracebackType,
     ) -> None:
         pass

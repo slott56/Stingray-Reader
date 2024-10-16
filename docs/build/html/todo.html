@@ -35,11 +35,28 @@
             
   <section id="the-todo-list">
 <h1>The TODO List<a class="headerlink" href="#the-todo-list" title="Link to this heading">¶</a></h1>
+<section id="upgrade-deprecated-type-annotations">
+<h2>Upgrade deprecated Type Annotations<a class="headerlink" href="#upgrade-deprecated-type-annotations" title="Link to this heading">¶</a></h2>
+<p>Replace deprecated aliases (<a class="reference external" href="https://docs.python.org/3/library/typing.html#deprecated-aliases">https://docs.python.org/3/library/typing.html#deprecated-aliases</a>).
+This seems to be:</p>
+<p>[x] <code class="docutils literal notranslate"><span class="pre">typing.Union</span></code>
+[x] <code class="docutils literal notranslate"><span class="pre">typing.Optional</span></code>
+[x] <code class="docutils literal notranslate"><span class="pre">typing.Match</span></code>
+[x] <code class="docutils literal notranslate"><span class="pre">typing.Sequence</span></code>  – not actually used
+[ ] <code class="docutils literal notranslate"><span class="pre">typing.Type</span></code>
+[x] Replace <code class="docutils literal notranslate"><span class="pre">typing.AnyStr</span></code>. See <span class="target" id="index-0"></span><a class="pep reference external" href="https://peps.python.org/pep-0695/"><strong>PEP 695</strong></a>: may need to use use <code class="docutils literal notranslate"><span class="pre">AnyStr:</span> <span class="pre">(str,</span> <span class="pre">bytes)</span></code> as an argument to a generic type definition.</p>
+<p>There’s also the <code class="docutils literal notranslate"><span class="pre">Instance</span></code> <code class="docutils literal notranslate"><span class="pre">TypeVar</span></code> that needs to be replaced with a simpler Union, if possible.
+Otherwise <code class="docutils literal notranslate"><span class="pre">Instance:</span> <span class="pre">(NDInstance,</span> <span class="pre">DInstance,</span> <span class="pre">WBInstance)</span></code> where used.
+See <code class="docutils literal notranslate"><span class="pre">schema_instance.py</span></code>, line 701.</p>
+</section>
+<section id="json-schema-changes">
+<h2>JSON Schema Changes<a class="headerlink" href="#json-schema-changes" title="Link to this heading">¶</a></h2>
 <p>Look at <a class="reference external" href="https://github.com/slott56/DataSynthTool">https://github.com/slott56/DataSynthTool</a>.</p>
 <p>The <strong>Data Synth Tool</strong> uses schema information to define ranges of values, and distributions.</p>
 <p>These schema extensions should be unified with schema extensions described here.</p>
 <p>Further, the <strong>Data Synth Tool</strong> emphasizes Pydantic’s style of embedded data validation into the class definition.
 While this adds a dependency, it seems like a useful direction.</p>
+</section>
 </section>
 <section id="from-the-code">
 <h1>From the Code<a class="headerlink" href="#from-the-code" title="Link to this heading">¶</a></h1>

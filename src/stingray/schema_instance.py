@@ -46,17 +46,12 @@ import logging
 from pathlib import Path
 import struct
 from typing import (
-    Union,
     Any,
     Protocol,
     BinaryIO,
-    Optional,
     overload,
     cast,
     Type,
-    TypeVar,
-    Generic,
-    AnyStr,
     SupportsInt,
     IO,
 )
@@ -78,7 +73,7 @@ class DesignError(BaseException):
     pass
 
 
-JSON = Union[None, bool, int, float, str, list[Any], dict[str, Any]]
+JSON = None | bool | int | float | str | list[Any] | dict[str, Any]
 
 
 class Reference(Protocol):
@@ -113,8 +108,8 @@ class Schema:
         """
         self._attributes = cast(dict[str, Any], attributes)
         # keys for _attributes include "type", "items", "properties", "format", etc.
-        self.ref: Optional[str] = None
-        self.ref_to: Optional[Schema] = None
+        self.ref: str | None = None
+        self.ref_to: Schema | None = None
 
     @property
     def type(self) -> str:
@@ -166,8 +161,8 @@ class Schema:
         return self._attributes
 
     def dump_iter(
-        self, nav: Optional["Nav"], indent: int = 0
-    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+        self, nav: "Nav | None", indent: int = 0
+    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Any | None]]:
         """
         Navigate into a schema using a ``Nav`` object to provide unpacker, location and instance context.
 
@@ -237,8 +232,8 @@ class ArraySchema(Schema):
         self._items.print(indent + 1)
 
     def dump_iter(
-        self, nav: Optional["Nav"], indent: int = 0
-    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+        self, nav: "Nav | None", indent: int = 0
+    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Any | None]]:
         """
         Navigate into a schema using a ``Nav`` object to provide unpacker, location and instance context.
 
@@ -261,7 +256,7 @@ class DependsOnArraySchema(ArraySchema):
     """
 
     def __init__(
-        self, attributes: JSON, items: "Schema", ref_to: Optional["Schema"]
+        self, attributes: JSON, items: "Schema", ref_to: "Schema | None"
     ) -> None:
         """
         Builds an Array where the maxItems depends on another attribute.
@@ -318,8 +313,8 @@ class ObjectSchema(Schema):
             prop.print(indent + 1)
 
     def dump_iter(
-        self, nav: Optional["Nav"], indent: int = 0
-    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+        self, nav: "Nav | None", indent: int = 0
+    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Any | None]]:
         """
         Navigate into a schema using a ``Nav`` object to provide unpacker, location and instance context.
 
@@ -369,8 +364,8 @@ class OneOfSchema(Schema):
             alt.print(indent + 1)
 
     def dump_iter(
-        self, nav: Optional["Nav"], indent: int = 0
-    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+        self, nav: "Nav | None", indent: int = 0
+    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Any | None]]:
         """
         Navigate into a schema using a ``Nav`` object to provide unpacker, location and instance context.
 
@@ -391,7 +386,7 @@ class OneOfSchema(Schema):
 class RefToSchema(Schema):
     """Must deference type and attributes properties."""
 
-    def __init__(self, attributes: JSON, ref_to: Optional[Schema]) -> None:
+    def __init__(self, attributes: JSON, ref_to: Schema | None) -> None:
         """
         Builds a schema that's a reference to another schema.
 
@@ -437,8 +432,8 @@ class RefToSchema(Schema):
         raise ValueError(f"Invalid {self.__class__.__name__}")
 
     def dump_iter(
-        self, nav: Optional["Nav"], indent: int = 0
-    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Optional[Any]]]:
+        self, nav: "Nav | None", indent: int = 0
+    ) -> Iterator[tuple[int, "Schema", tuple[int, ...], Any | None]]:
         """
         Navigate into a schema using a ``Nav`` object to provide unpacker, location and instance context.
 
@@ -643,7 +638,7 @@ decimal_2 = partial(decimal_places, 2)
 #: Conversion functions that can be provided
 #: in a schema using the extension ``conversion``
 #: keyword.
-CONVERSION: dict[Union[str, None], Callable[[Any], Any]] = {
+CONVERSION: dict[str | None, Callable[[Any], Any]] = {
     "null": lambda x: None,
     "bool": bool,
     "integer": int,
@@ -657,16 +652,16 @@ CONVERSION: dict[Union[str, None], Callable[[Any], Any]] = {
 class NDInstance(Protocol):
     """
     The essential features of a non-delimited instance.
-    The underlying data is ``AnyStr``, either bytes or text.
+    The underlying data is either bytes or text.
     """
 
-    def __init__(self, source: AnyStr) -> None: ...
+    def __init__(self, source: str | bytes) -> None: ...
 
     @overload
-    def __getitem__(self, index: int) -> Union[str, int]: ...
+    def __getitem__(self, index: int) -> str | int: ...
 
     @overload
-    def __getitem__(self, index: slice) -> Union[str, bytes]: ...
+    def __getitem__(self, index: slice) -> str | bytes: ...
 
 
 class DInstance(Protocol):
@@ -701,7 +696,7 @@ class WBInstance(Protocol):
 # We'll define an Instance type is the union of the protocols for
 # non-delimited instances, workbook instances, and Python native ("Non-delimited" or "JSON")
 # objects.
-Instance = TypeVar("Instance", NDInstance, DInstance, WBInstance)
+# Instance = TypeVar("Instance", NDInstance, DInstance, WBInstance)
 
 
 class Mode:
@@ -713,15 +708,15 @@ class Mode:
     BINARY = "rb"
 
 
-class Unpacker(Generic[Instance]):
+class Unpacker[Instance: (NDInstance, DInstance, WBInstance)]:
     """
-    An Unpacker helps convert data from an ``Instance``.
-    For NDInstances, this involves size calculations and value conversions.
-    For WBInstances and JSON, this is a pass-through because the sizes don't matter and
-    the values are already Native Python objects.
+    An ``Unpacker`` helps convert data from an ``Instance``.
+    For ``NDInstances``, this involves size calculations and value conversions.
+    For ``WBInstances`` and JSON, this is a pass-through because the sizes don't matter and
+    the values are already native Python objects.
 
-    An Unpacker is a generic procotol. A class that implements the protocol **should**
-    provide all of the methods.
+    An ``Unpacker`` is a generic protocol. A class that implements the protocol **should**
+    provide all the methods.
 
     It might make sense to define one more method
 
@@ -764,7 +759,7 @@ class Unpacker(Generic[Instance]):
         ...
 
     def open(
-        self, name: Path, file_object: Optional[IO[AnyStr]] = None
+        self, name: Path, file_object: IO[str] | IO[bytes] | None = None
     ) -> None:  # pragma: no cover
         """
         File open. This is generally delegated to
@@ -863,7 +858,7 @@ class EBCDIC(Unpacker[NDInstance]):
         ).from_instance(instance)
         return NDNav(self, location, instance)
 
-    def open(self, name: Path, file_object: Optional[IO[AnyStr]] = None) -> None:
+    def open(self, name: Path, file_object: IO[str] | IO[bytes] | None = None) -> None:
         """
         A file open suitable for unpacking an EBCDIC-encoded file.
 
@@ -1007,7 +1002,7 @@ class Struct(Unpacker[NDInstance]):
         ).from_instance(instance)
         return NDNav(self, location, instance)
 
-    def open(self, name: Path, file_object: Optional[IO[AnyStr]] = None) -> None:
+    def open(self, name: Path, file_object: IO[str] | IO[bytes] | None = None) -> None:
         """
         A file open suitable for unpacking a bytes file.
 
@@ -1146,7 +1141,7 @@ class TextUnpacker(Unpacker[NDInstance]):
         ).from_instance(instance)
         return NDNav(self, location, instance)
 
-    def open(self, name: Path, file_object: Optional[IO[AnyStr]] = None) -> None:
+    def open(self, name: Path, file_object: IO[str] | IO[bytes] | None = None) -> None:
         """
         A file open suitable for unpacking a Text COBOL file.
 
@@ -1374,7 +1369,7 @@ class Location(abc.ABC):
     def dump_iter(
         self, nav: "NDNav", indent: int = 0
     ) -> Iterator[
-        tuple[int, "Location", tuple[int, ...], Optional[bytes], Any]
+        tuple[int, "Location", tuple[int, ...], bytes | None, Any]
     ]:  # pragma: no cover
         """
         Dump this location and all children in the schema.
@@ -1419,7 +1414,7 @@ class AtomicLocation(Location):
 
     def dump_iter(
         self, nav: "NDNav", indent: int = 0
-    ) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+    ) -> Iterator[tuple[int, Location, tuple[int, ...], bytes | None, Any]]:
         """
         Dump this atomic location.
 
@@ -1495,7 +1490,7 @@ class ArrayLocation(Location):
 
     def dump_iter(
         self, nav: "NDNav", indent: int = 0
-    ) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+    ) -> Iterator[tuple[int, Location, tuple[int, ...], bytes | None, Any]]:
         """
         Dump the first item of this array location.
 
@@ -1567,7 +1562,7 @@ class ObjectLocation(Location):
 
     def dump_iter(
         self, nav: "NDNav", indent: int = 0
-    ) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+    ) -> Iterator[tuple[int, Location, tuple[int, ...], bytes | None, Any]]:
         """
         Dump this object location and all the properties within it.
 
@@ -1635,7 +1630,7 @@ class OneOfLocation(Location):
 
     def dump_iter(
         self, nav: "NDNav", indent: int = 0
-    ) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+    ) -> Iterator[tuple[int, Location, tuple[int, ...], bytes | None, Any]]:
         """
         Dump this object location and all the alternative definitions.
         Since some of these may raise exceptions, displays may be incomplete.
@@ -1728,7 +1723,7 @@ class RefToLocation(Location):
 
     def dump_iter(
         self, nav: "NDNav", indent: int = 0
-    ) -> Iterator[tuple[int, Location, tuple[int, ...], Optional[bytes], Any]]:
+    ) -> Iterator[tuple[int, Location, tuple[int, ...], bytes | None, Any]]:
         """
         These items are silenced -- they were already displayed in an earlier OneOf.
         """
@@ -1747,7 +1742,7 @@ class LocationMaker:
     to support providing a properly-computed value for ``OCCURS DEPENDING ON`` arrays.
 
     This is based on an :py:class:`NDUnpacker` definition of the physical format of the file.
-    It's only used for non-delimited files where the underlying `NDInstance` is `Union[bytes, str]`.
+    It's only used for non-delimited files where the underlying ``NDInstance`` type is ``bytes | str``.
 
     This creates ``NDNav`` isntances for navigation through Non-Delimited instances.
 
@@ -2072,7 +2067,7 @@ class NDNav(Nav):
             cast(Unpacker[NDInstance], self.unpacker()), item_location, self.instance
         )
 
-    def __getitem__(self, selector: Union[int, str]) -> "NDNav":
+    def __getitem__(self, selector: int | str) -> "NDNav":
         """
         Wrapper for :py:meth:`name` and :py:meth:`index` methods.
 
@@ -2109,7 +2104,7 @@ class NDNav(Nav):
     def raw_instance(self) -> "NDInstance":
         """
         Clone a piece of this instance as a new :py:class:`NDInstance` object.
-        Since NDInstance is Union[BytesInstance, TextInstance], there are two paths:
+        Since ``NDInstance`` type is ``BytesInstance | TextInstance``, there are two paths:
         a new bytes or a new str.
 
         :returns: New :py:class:`NDInstance` for this loocation.

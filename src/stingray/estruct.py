@@ -93,7 +93,7 @@ For now, it's here and is reused by :py:mod:`schema_instance`.
 import abc
 from collections.abc import Iterator
 import logging
-from typing import Any, NamedTuple, Type, Optional, BinaryIO
+from typing import Any, NamedTuple, Type, BinaryIO
 import re
 from decimal import Decimal
 import struct
@@ -470,7 +470,7 @@ class RECFM_Reader(abc.ABC):
     Descriptor Words (BDW, RDW) present a specific format.
     """
 
-    def __init__(self, source: BinaryIO, lrecl: Optional[int] = None) -> None:
+    def __init__(self, source: BinaryIO, lrecl: int | None = None) -> None:
         """
         Initialize the RECFM reader with a source and a logical record length, ``lrecl``.
         :param source: A file opened for binary IO
@@ -510,7 +510,7 @@ class RECFM_N(RECFM_Reader):
                 reader.used(lrecl)
     """
 
-    def __init__(self, source: BinaryIO, lrecl: Optional[int] = None) -> None:
+    def __init__(self, source: BinaryIO, lrecl: int | None = None) -> None:
         """
         Initialize the RECFM helper.
 

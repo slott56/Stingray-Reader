@@ -11,7 +11,7 @@ import argparse
 import pprint
 from pathlib import Path
 from collections import Counter
-from typing import TextIO, Any, Optional, Callable
+from typing import TextIO, Any, Callable
 from types import TracebackType
 
 from stingray import Row, Sheet, Workbook, HeadingRowSchemaLoader, open_workbook
@@ -70,8 +70,8 @@ class Persistent_Processing:
 
     def __exit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_val: Optional[BaseException],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
         exc_tb: TracebackType,
     ) -> None:
         if self.file_or_database:

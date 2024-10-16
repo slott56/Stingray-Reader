@@ -293,8 +293,8 @@ The superclass defines the normal processing mode: we actually save objects.</p>
 
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">exc_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="ne">BaseException</span><span class="p">]],</span>
-        <span class="n">exc_val</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="ne">BaseException</span><span class="p">],</span>
+        <span class="n">exc_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="ne">BaseException</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exc_val</span><span class="p">:</span> <span class="ne">BaseException</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">exc_tb</span><span class="p">:</span> <span class="n">TracebackType</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_or_database</span><span class="p">:</span>
@@ -572,6 +572,7 @@ doesn’t match the schema required by the application.</p>
 <li class="toctree-l1"><a class="reference internal" href="../apidoc/index.html">stingray API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../testing.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../todo.html">The TODO List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo.html#from-the-code">From the Code</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../license.html">Commercial Use</a></li>
 </ul>
